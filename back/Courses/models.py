@@ -1,0 +1,46 @@
+from django.db import models
+
+class Log(models.Model):
+    username = models.CharField(max_length=20)
+    event_source = models.CharField(max_length=10)
+    name = models.TextField(blank=True, null=True)
+    accept_language = models.TextField()
+    ip = models.CharField(max_length=15)
+    agent = models.TextField()
+    page = models.TextField(blank=True, null=True)
+    host = models.CharField(max_length=30)
+    session = models.CharField(max_length=32)
+    referer = models.TextField()
+    time = models.DateTimeField()
+    event = models.TextField()
+    event_type = models.TextField()
+    course_id = models.TextField(blank=True)
+    org_id = models.CharField(max_length=30, blank=True)
+    user_id = models.IntegerField(blank=True,)
+    path = models.TextField()
+
+
+class CourseVertical(models.Model):
+    course = models.TextField()
+    course_name = models.TextField()
+    chapter = models.TextField()
+    chapter_name = models.TextField()
+    sequential = models.TextField()
+    sequential_name = models.TextField()
+    vertical = models.TextField()
+    vertical_name = models.TextField()
+    block_id = models.TextField()
+    vertical_number = models.IntegerField()
+    sequential_number = models.IntegerField()
+    chapter_number = models.IntegerField()
+    child_number = models.IntegerField()
+    block_type = models.TextField()
+    student_view_url = models.TextField()
+    lms_web_url = models.TextField()
+
+class TimeOnPage(models.Model):
+    event_type_vertical = models.TextField()
+    username = models.CharField(max_length=20)
+    session = models.IntegerField()
+    delta_time_float = models.FloatField()
+    course = models.TextField()
