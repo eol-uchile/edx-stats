@@ -12,9 +12,12 @@ export default function Routes() {
           <Col className="col-sm-2">
             <Link to="/">Dashboard</Link>
             <br />
+            <br />
             <Link to="/course-times">Tiempo por curso</Link>
             <br />
+            <br />
             <Link to="/course-videos">Videos por curso</Link>
+            <br />
             <br />
           </Col>
           <Col className="col-sm-10">

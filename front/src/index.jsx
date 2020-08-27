@@ -19,6 +19,7 @@ import Footer, {
 
 import appMessages from './i18n';
 
+import 'font-awesome/css/font-awesome.min.css';
 import './index.scss';
 import './assets/favicon.ico';
 import { Routes, configureStore } from './stats';
