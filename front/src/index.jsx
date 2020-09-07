@@ -24,7 +24,16 @@ import './index.scss';
 import './assets/favicon.ico';
 import { Routes, configureStore } from './stats';
 
-const store = configureStore({});
+/**
+ * Recover the URLs from here at startup
+ *
+ * The other options is to pass the URLs directly to each action
+ * by using the Context API to inject it as an argument for each action.
+ * Doing it here makes the components agnostic to this problem and less verbose
+ */
+const store = configureStore({
+  urls: { lms: process.env.LMS_BASE_URL, base: process.env.BASE_URL },
+});
 
 subscribe(APP_READY, () => {
   ReactDOM.render(
@@ -46,4 +55,5 @@ subscribe(APP_INIT_ERROR, (error) => {
 
 initialize({
   messages: [appMessages, headerMessages, footerMessages],
+  requireAuthenticatedUser: true,
 });

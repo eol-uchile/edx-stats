@@ -1,17 +1,17 @@
-from django.shortcuts import render
 from django.http import HttpResponse
-from django.db.models import Q
+from django.db.models import Q, Sum
 from rest_framework import viewsets, permissions, generics, mixins, filters, status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from .models import CourseVertical, Log, TimeOnPage
 from .serializers import LogSerializer, CourseVerticalSerializer, TimeOnPageSerializer
 from django_filters.rest_framework import DjangoFilterBackend
-
+from django.conf import settings
+from .autentication import recoverUserCourseRoles
 
 class LogViewSet(viewsets.ModelViewSet):
     """
-    API that I like to log
+    API to recover individual logs
     """
     queryset = Log.objects.all().order_by('-time')
     serializer_class = LogSerializer
@@ -24,7 +24,6 @@ class VerticalViewSet(viewsets.ModelViewSet):
     """
     queryset = CourseVertical.objects.all()
     serializer_class = CourseVerticalSerializer
-    permission_classes = [permissions.AllowAny]
     filter_backends = [filters.SearchFilter]
     search_fields = ['course']
 
@@ -35,21 +34,31 @@ class TimeOnPageViewSet(generics.ListAPIView, viewsets.ModelViewSet):
     """
     queryset = TimeOnPage.objects.all()
     serializer_class = TimeOnPageSerializer
-    permission_classes = [permissions.AllowAny]
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     search_fields = ['username']
     filterset_fields = ['course']
 
 
 @api_view()
-@permission_classes((permissions.AllowAny,))
 def times_on_course(request):
-    return Response({"message": "Hello, world!"})
+    """
+    Compact user time sessions for verticals
+    """
+    if "search" not in request.query_params:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={"Search field required"})
+    times = TimeOnPage.objects.filter(course=request.query_params["search"]).values("username","event_type_vertical").order_by("username","event_type_vertical").annotate(total=Sum("delta_time_float"))
+    if len(times) == 0:
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(times)
 
 
 @api_view()
-@permission_classes((permissions.AllowAny,))
 def get_course_structure(request):
+    """
+    Map a course structure using the recovered Verticals from the Edx API
+    """
+    roles = recoverUserCourseRoles(request)
+
     if "search" not in request.query_params:
         return Response(status=status.HTTP_400_BAD_REQUEST, data={"Search field required"})
     # Look on course name and course code
@@ -60,6 +69,7 @@ def get_course_structure(request):
     if len(verticals) == 0:
         return Response(status=status.HTTP_204_NO_CONTENT)
     courses = dict()
+    # Gather unique keys
     for v in verticals:
         if v.course not in courses:
             courses[v.course] = dict({"name": v.course_name, "course_id": v.course, "chapters": {}})
@@ -69,10 +79,30 @@ def get_course_structure(request):
             chapter[v.chapter_number] = dict({"name": v.chapter_name})
         if v.sequential_number not in chapter[v.chapter_number]:
             chapter[v.chapter_number][v.sequential_number] = dict(
-                {"name": v.sequential_number})
+                {"name": v.sequential_name})
         if v.vertical_number not in chapter[v.chapter_number][v.sequential_number]:
             chapter[v.chapter_number][v.sequential_number][v.vertical_number] = dict(
-                {"name": v.vertical_name, "block_id": v.block_id, "block_type": v.block_type, "block_url": v.student_view_url})
-
+                {"name": v.vertical_name, "block_id": v.block_id, "block_type": v.block_type, "block_url": v.student_view_url, "vertical_id": v.vertical})
+    # Parse keys as arrays
     courses_names = courses.keys()
-    return Response({"courses": [courses[k] for k in courses_names]})
+    mapped_courses = []
+    for course in courses_names:
+        current_course = courses[course]
+        chapter_list = []
+        for chapter in current_course["chapters"].keys():
+            current_chapter = current_course["chapters"][chapter]
+            sequential_list = []
+            for seq in current_chapter.keys():
+                if seq != "name":
+                    current_seq = current_chapter[seq]
+                    vertical_list = []         
+                    for vert in current_seq.keys():
+                        if vert != "name":
+                            # Add vertical object
+                            vertical_list.append(current_seq[vert])
+                    # Save sequential with verticals
+                    sequential_list.append({"name": current_seq["name"], "verticals": vertical_list})
+            # Save chapter with sequentials
+            chapter_list.append({"name": current_chapter["name"], "sequentials": sequential_list})
+        mapped_courses.append({"name": current_course["name"], "id": current_course["course_id"], "chapters": chapter_list})
+    return Response({"courses": mapped_courses})

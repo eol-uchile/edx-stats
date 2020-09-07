@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -42,16 +43,24 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'django_filters',
     'crispy_forms',
+    'csrf.apps.CsrfAppConfig',  # Enables frontend apps to retrieve CSRF tokens.
+    'social_django',
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    'edx_django_utils.cache.middleware.RequestCacheMiddleware',
+    'edx_rest_framework_extensions.auth.jwt.middleware.JwtRedirectToLoginIfUnauthenticatedMiddleware',
+    'edx_rest_framework_extensions.auth.jwt.middleware.JwtAuthCookieMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'edx_rest_framework_extensions.middleware.RequestMetricsMiddleware',
+    'edx_rest_framework_extensions.auth.jwt.middleware.EnsureJWTAuthSettingsMiddleware',
+    'edx_django_utils.cache.middleware.TieredCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'Stats.urls'
@@ -131,8 +140,13 @@ STATIC_URL = '/static/'
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    'DEFAULT_PERMISSION_CLASSES' : [
+        'edx_rest_framework_extensions.permissions.LoginRedirectIfUnauthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'edx_rest_framework_extensions.auth.jwt.authentication.JwtAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 25,
@@ -141,3 +155,55 @@ REST_FRAMEWORK = {
 
 CELERY_BROKER_URL = "redis://msecret318e401514dd45e97daf49d1d5c36cdbf9a7294395e84a9f52c08c6ad3699fcc0@redis:6380/2"
 CELERY_BACKEND = "redis://msecret318e401514dd45e97daf49d1d5c36cdbf9a7294395e84a9f52c08c6ad3699fcc0@redis:6380/2"
+
+JWT_AUTH = {
+    'JWT_ALGORITHM': 'RS512',
+    'JWT_AUDIENCE': None,
+    'JWT_ISSUER': 'issuer',
+    'JWT_VERIFY_AUDIENCE': False,
+    'JWT_SECRET_KEY': 'jwt_secret',
+    'JWT_DECODE_HANDLER': 'edx_rest_framework_extensions.auth.jwt.decoder.jwt_decode_handler',
+    'JWT_AUTH_COOKIE': 'edx-jwt-cookie',
+    'JWT_PUBLIC_SIGNING_JWK_SET': '{"keys": [{"kty": "RSA", "kid": "9YFYI3J6", "e": "AQAB", "n": "iZExe9pxsMO8n2R0N4YAcx7_e5ay3Z5ZMhQ1ok8hCp57SR1IX04MC5j0atVFX0a1GquXW65VasguMUzrMFvkpamkjeQ3CnIWQCyfFqqzfeO7e7x_sAcUcDbycRohKcXQVtEM_W-ObOi4-4KCf0bedsYfPMddTfgf-4buhzs2Qf0eim4PtD5d3AXO1q-P_i2kTbsq2VN8hWWFN4Dr0aIu8Jz7s4tZ0T57NfMQ6KcsDmVGMEucgoOvdWXN2g04yBkCBsnWUB-QZeGGgAslVsXvvizBWbkSSvwO6LHCYhsP0OfRZt-Qe5IF_Jd-FlH18coMLELfa3nL2ouYKffLakTiXQ"}]}',
+    'JWT_AUTH_COOKIE_HEADER_PAYLOAD': 'edx-jwt-cookie-header-payload',
+    'JWT_AUTH_COOKIE_SIGNATURE': 'edx-jwt-cookie-signature',
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+}
+
+EDX_DRF_EXTENSIONS = {
+    "OAUTH2_USER_INFO_URL": "https://eol.andhael.cl/oauth2/user_info",
+    "JWT_PAYLOAD_USER_ATTRIBUTES": {
+        'administrator': 'is_staff',
+        'email': 'email',
+    },
+    'ENABLE_SET_REQUEST_USER_FOR_JWT_COOKIE': True,
+}
+
+# Custom settings
+BACKEND_SERVICE_EDX_OAUTH2_KEY = 'g4S52ki5v1VjdozsLh0sgzoeovbunfqTz2pHZxOl' # Local Development Values
+BACKEND_SERVICE_EDX_OAUTH2_SECRET = 'ZLWeN0jegl0JxpwrSrgBvdNoP8X67HKKHJUi1rz2z49I4lQp6lPQQouYg9sDKp7D4dOnHyBxHccxmVdMBkHk877ZNGdx8CMDCVzuOxQlyrpLAtnFtn7EX5w9Lw1fXKZQ' # Local Development Values
+BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL = 'https://eol.andhael.cl/oauth2'
+BACKEND_LMS_BASE_URL = 'https://eol.andhael.cl'
+BACKEND_ALLOWED_ROLES = [
+    'staff',
+    'data researcher',
+    'instructor',
+    'administrator'
+]
+
+# EDX OAUTH2 
+SOCIAL_AUTH_EDX_OAUTH2_KEY = 'g4S52ki5v1VjdozsLh0sgzoeovbunfqTz2pHZxOl'
+SOCIAL_AUTH_EDX_OAUTH2_SECRET = 'ZLWeN0jegl0JxpwrSrgBvdNoP8X67HKKHJUi1rz2z49I4lQp6lPQQouYg9sDKp7D4dOnHyBxHccxmVdMBkHk877ZNGdx8CMDCVzuOxQlyrpLAtnFtn7EX5w9Lw1fXKZQ'
+SOCIAL_AUTH_EDX_OAUTH2_URL_ROOT = 'https://eol.andhael.cl'
+SOCIAL_AUTH_EDX_OAUTH2_PUBLIC_URL_ROOT = 'https://eol.andhael.cl'
+SOCIAL_AUTH_EDX_OAUTH2_JWS_HMAC_SIGNING_KEY = 'jwt_secret'
+# SOCIAL_AUTH_EDX_OAUTH2_PROVIDER_CONFIGURATION_CACHE_TTL use default 1 Week 
+# SOCIAL_AUTH_EDX_OAUTH2_JWKS_CACHE_TTL use default 1 day.
+SOCIAL_AUTH_STRATEGY = 'auth_backends.strategies.EdxDjangoStrategy'
+
+AUTHENTICATION_BACKENDS = (
+    'auth_backends.backends.EdXOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+LOGIN_REDIRECT_URL = '/'

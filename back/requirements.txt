@@ -7,6 +7,11 @@ django-filter
 django-celery-results==1.2.1
 django-celery-beat==2.0.0
 django-crispy-forms==1.9.2
+edx-drf-extensions==6.1.1
+djangorestframework-jwt==1.11.0
+edx-rest-api-client==5.2.1
+dx-auth-backends==3.1.0
+ptvsd==4.3.2
 numpy
 pandas
 celery

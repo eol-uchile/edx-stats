@@ -3,8 +3,20 @@ import { Route, Switch } from 'react-router';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { TimeLanding, TimeTable } from './times';
+import { connect } from 'react-redux';
 
-export default function Routes() {
+const Routes = ({ redirect }) => {
+  if (redirect) {
+    return (
+      <main>
+        <Container>
+          <Row>
+            <Col>Por favor inicia sesi&oacute;n</Col>
+          </Row>
+        </Container>
+      </main>
+    );
+  }
   return (
     <main>
       <Container>
@@ -23,7 +35,10 @@ export default function Routes() {
           <Col className="col-sm-10">
             <Switch>
               <Route exact path="/" component={TimeLanding} />
-              <Route path="/course-times" component={TimeTable} />
+              <Route
+                path={['/course-times/:course_url', '/course-times']}
+                component={TimeTable}
+              />
               <Route
                 path="/course-videos"
                 component={() => <div>Videos search and analysis...</div>}
@@ -34,4 +49,8 @@ export default function Routes() {
       </Container>
     </main>
   );
-}
+};
+
+const mapStateToProps = (state) => ({ redirect: state.auth.doLogin });
+
+export default connect(mapStateToProps, null)(Routes);

@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include,path
+from auth_backends.urls import oauth2_urlpatterns
 
 urlpatterns = [
-    path('courses/', include('Courses.urls')),
-    path('admin/', admin.site.urls),
+    path('api/',include(oauth2_urlpatterns)),
+    path('api/courses/', include('Courses.urls')),
+    path('api/admin/', admin.site.urls),
 ]
