@@ -11,6 +11,7 @@ import {
   LOADED_COURSE_RESET,
   LOADED_COURSE_ROLES,
   LOADED_COURSE_ROLES_ERROR,
+  REFRESH_LOGIN,
 } from './types';
 
 const initialTimeState = {
@@ -80,6 +81,8 @@ export function auth(state = initialAuthState, action) {
   switch (action.type) {
     case DO_LOGIN:
       return { ...state, doLogin: true };
+    case REFRESH_LOGIN:
+      return state;
     default:
       return state;
   }

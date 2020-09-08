@@ -21,7 +21,7 @@ const Routes = ({ redirect }) => {
     <main>
       <Container>
         <Row>
-          <Col className="col-sm-2">
+          <Col className="col-xs-12 col-sm-3 col-md-2">
             <Link to="/">Dashboard</Link>
             <br />
             <br />
@@ -32,7 +32,7 @@ const Routes = ({ redirect }) => {
             <br />
             <br />
           </Col>
-          <Col className="col-sm-10">
+          <Col className="col-xs-12 col-sm-9 col-md-10">
             <Switch>
               <Route exact path="/" component={TimeLanding} />
               <Route

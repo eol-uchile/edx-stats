@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import { getUserCourseRoles } from './data/actions';
 import { Link } from 'react-router-dom';
 import { Collapsible } from '@edx/paragon';
-import { Button } from 'react-bootstrap';
 
 const Landing = ({ courses, getUserCourseRoles }) => {
   const [state, setState] = useState({ selected: false, filtered: [] });
@@ -58,6 +57,6 @@ const Landing = ({ courses, getUserCourseRoles }) => {
 const mapStateToProps = (state) => ({ courses: state.course.availableCourses });
 
 const mapDispatchToProps = (dispatch) =>
-  bindActionCreators({ getUserCourseRoles }, dispatch);
+  bindActionCreators({ getUserCourseRoles, refreshTokens }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Landing);
