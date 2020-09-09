@@ -57,6 +57,6 @@ const Landing = ({ courses, getUserCourseRoles }) => {
 const mapStateToProps = (state) => ({ courses: state.course.availableCourses });
 
 const mapDispatchToProps = (dispatch) =>
-  bindActionCreators({ getUserCourseRoles, refreshTokens }, dispatch);
+  bindActionCreators({ getUserCourseRoles }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Landing);
