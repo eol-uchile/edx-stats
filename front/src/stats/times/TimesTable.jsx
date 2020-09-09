@@ -10,6 +10,7 @@ import {
   Table,
   OverlayTrigger,
   Tooltip,
+  Alert,
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faSearch } from '@fortawesome/free-solid-svg-icons';
@@ -94,6 +95,8 @@ const TimesTable = ({
     chapters: [],
     useChapters: false,
   });
+
+  const [errors, setErrors] = useState([]);
 
   // Cleanup on change view
   useEffect(() => {
@@ -212,9 +215,20 @@ const TimesTable = ({
     }
   }, [tableData.loaded, times.added_times]);
 
+  useEffect(() => {
+    if (course.errors.length > 0 || times.errors.length > 0) {
+      setErrors([...errors, ...course.errors, ...times.errors]);
+    }
+  }, [course.errors, times.errors]);
+
   const toggleChapters = (checked) => {
     setTableData({ ...tableData, useChapters: checked });
     setRowData({ ...rowData, useChapters: checked });
+  };
+
+  const removeErrors = (msg) => {
+    let newErrors = errors.filter((el) => e !== el);
+    setErrors(newErrors);
   };
 
   return (
@@ -299,6 +313,18 @@ const TimesTable = ({
                   <p>{course.course[0].id}</p>
                 </Collapsible>
               </h4>
+              {errors.length !== 0
+                ? errors.map((e, k) => (
+                    <Alert
+                      variant="warning"
+                      key={k}
+                      dismissible
+                      onClick={() => removeErrors(e)}
+                    >
+                      {e}
+                    </Alert>
+                  ))
+                : null}
               <Table bordered hover size="sm" responsive striped>
                 <caption>Tiempos de visita: {course.course[0].name}</caption>
                 {tableData.useChapters ? null : (
@@ -349,7 +375,9 @@ const TimesTable = ({
                   )}
                 </thead>
                 <tbody>
-                  {rowData.useChapters
+                  {errors.length !== 0
+                    ? null
+                    : rowData.useChapters
                     ? rowData.chapters.map(parseToTableRows)
                     : rowData.all.map(parseToTableRows)}
                   <tr></tr>
@@ -361,7 +389,20 @@ const TimesTable = ({
       ) : (
         <Row>
           <Col>
-            <p>No hay datos para el curso</p>
+            {errors.length === 0 ? (
+              <p>No hay datos para el curso</p>
+            ) : (
+              errors.map((e, k) => (
+                <Alert
+                  variant="warning"
+                  key={k}
+                  dismissible
+                  onClick={() => removeErrors(e)}
+                >
+                  {e}
+                </Alert>
+              ))
+            )}
           </Col>
         </Row>
       )}

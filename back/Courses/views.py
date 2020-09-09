@@ -44,8 +44,16 @@ def times_on_course(request):
     """
     Compact user time sessions for verticals
     """
+    roles = recoverUserCourseRoles(request)
+    allowed_list = [r['course_id'] for r  in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES ]
+
     if "search" not in request.query_params:
         return Response(status=status.HTTP_400_BAD_REQUEST, data={"Search field required"})
+
+    # Check that user has permissions
+    if request.query_params["search"] not in allowed_list:
+        return Response(status=status.HTTP_403_FORBIDDEN,  data="No tiene permisos para ver los datos en los cursos solicitados")
+
     times = TimeOnPage.objects.filter(course=request.query_params["search"]).values("username","event_type_vertical").order_by("username","event_type_vertical").annotate(total=Sum("delta_time_float"))
     if len(times) == 0:
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -58,16 +66,17 @@ def get_course_structure(request):
     Map a course structure using the recovered Verticals from the Edx API
     """
     roles = recoverUserCourseRoles(request)
+    allowed_list = [r['course_id'] for r  in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES ]
 
     if "search" not in request.query_params:
         return Response(status=status.HTTP_400_BAD_REQUEST, data={"Search field required"})
     # Look on course name and course code
-    verticals = CourseVertical.objects.filter(Q(
-        course_name__icontains=request.query_params["search"])
-        |
+    verticals = CourseVertical.objects.filter(
+        Q(course_name__icontains=request.query_params["search"])|
         Q(course__icontains=request.query_params["search"]))
     if len(verticals) == 0:
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
     courses = dict()
     # Gather unique keys
     for v in verticals:
@@ -88,6 +97,9 @@ def get_course_structure(request):
     mapped_courses = []
     for course in courses_names:
         current_course = courses[course]
+        # Remove courses that are not on the allowed list
+        if current_course["course_id"] not in allowed_list:
+            continue
         chapter_list = []
         for chapter in current_course["chapters"].keys():
             current_chapter = current_course["chapters"][chapter]
@@ -105,4 +117,7 @@ def get_course_structure(request):
             # Save chapter with sequentials
             chapter_list.append({"name": current_chapter["name"], "sequentials": sequential_list})
         mapped_courses.append({"name": current_course["name"], "id": current_course["course_id"], "chapters": chapter_list})
+    # If values where filtered then the user has no permissions
+    if len(mapped_courses) == 0:
+        return Response(status=status.HTTP_403_FORBIDDEN, data="No tiene permisos para ver los cursos solicitados")
     return Response({"courses": mapped_courses})

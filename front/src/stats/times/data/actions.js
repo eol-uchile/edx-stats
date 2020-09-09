@@ -42,7 +42,8 @@ export const recoverCourseStudentTimes = (
         return dispatch({ type: LOADED_TIMES, data: res.data.results });
       }
       return dispatch({ type: LOADING_TIMES_ERROR, data: [] });
-    });
+    })
+    .catch((error) => dispatch({ type: LOADING_TIMES_ERROR, data: [] }));
 };
 
 export const getUserCourseRoles = () => (dispatch, getState) => {
@@ -57,7 +58,8 @@ export const getUserCourseRoles = () => (dispatch, getState) => {
         return dispatch({ type: LOADED_COURSE_ROLES, data: res.data.roles });
       }
       return dispatch({ type: LOADED_COURSE_ROLES_ERROR, data: [] });
-    });
+    })
+    .catch((error) => dispatch({ type: LOADED_COURSE_ROLES_ERROR, data: [] }));
 };
 
 export const recoverCourseStructure = (course_id = 'nan') => (
@@ -80,6 +82,17 @@ export const recoverCourseStructure = (course_id = 'nan') => (
         return dispatch({ type: LOADED_COURSE, data: [res.data.courses[0]] });
       }
       return dispatch({ type: LOADING_COURSE_ERROR, data: [] });
+    })
+    .catch((error) => {
+      let msg = error.customAttributes.httpErrorResponseData;
+      if (msg === undefined) {
+        msg = 'Hubo un error en el servidor';
+      }
+      console.log(error);
+      dispatch({
+        type: LOADING_COURSE_ERROR,
+        data: [msg],
+      });
     });
 };
 
@@ -105,6 +118,13 @@ export const recoverCourseStudentTimesSum = (course_id = 'nan') => (
         return dispatch({ type: LOADED_TIMES_SUM, data: res.data });
       }
       return dispatch({ type: LOADING_TIMES_ERROR, data: [] });
+    })
+    .catch((error) => {
+      let msg = error.customAttributes.httpErrorResponseData;
+      if (msg === undefined) {
+        msg = 'Hubo un error en el servidor';
+      }
+      dispatch({ type: LOADING_TIMES_ERROR, data: [msg] });
     });
 };
 
@@ -117,5 +137,6 @@ export const refreshTokens = () => (dispatch, getState) => {
         return dispatch({ type: REFRESH_LOGIN });
       }
       return dispatch({ type: LOADING_TIMES_ERROR, data: ['what'] });
-    });
+    })
+    .catch((error) => dispatch({ type: LOADING_TIMES_ERROR, data: [] }));
 };
