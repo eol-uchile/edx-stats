@@ -12,6 +12,7 @@ djangorestframework-jwt==1.11.0
 edx-rest-api-client==5.2.1
 dx-auth-backends==3.1.0
 ptvsd==4.3.2
+factory-boy==2.12.0
 numpy
 pandas
 celery

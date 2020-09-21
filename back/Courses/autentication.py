@@ -7,7 +7,6 @@ def make_user_jwt_get_request(request, url, **kwargs):
     # Remove already processed JWT token
     cookies.pop('edx-jwt-cookie')
     response = req_client.get(url, cookies=cookies, **kwargs)
-    print(url)
     return response
 
 def recoverUserCourseRoles(request):
@@ -19,4 +18,6 @@ def recoverUserCourseRoles(request):
         if courses.status_code == req_client.codes.ok:
             cache.set(user_email+'-'+settings.BACKEND_LMS_BASE_URL+"/api/enrollment/v1/roles/", courses.json(), 3600)
             courses = courses.json()
+        else:
+            courses = {'roles': []}
     return courses

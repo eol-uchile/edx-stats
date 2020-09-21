@@ -160,6 +160,11 @@ JWT_AUTH = {
     'JWT_ALGORITHM': 'RS512',
     'JWT_AUDIENCE': None,
     'JWT_ISSUER': 'issuer',
+    'JWT_ISSUERS': [{
+        'AUDIENCE': 'set-me-please',
+        'ISSUER': 'issuer',
+        'SECRET_KEY': 'jwt_secret'
+    }],
     'JWT_VERIFY_AUDIENCE': False,
     'JWT_SECRET_KEY': 'jwt_secret',
     'JWT_DECODE_HANDLER': 'edx_rest_framework_extensions.auth.jwt.decoder.jwt_decode_handler',

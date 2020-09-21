@@ -15,7 +15,6 @@ class LogViewSet(viewsets.ModelViewSet):
     """
     queryset = Log.objects.all().order_by('-time')
     serializer_class = LogSerializer
-    permission_classes = [permissions.AllowAny]
 
 
 class VerticalViewSet(viewsets.ModelViewSet):
@@ -48,7 +47,7 @@ def times_on_course(request):
     allowed_list = [r['course_id'] for r  in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES ]
 
     if "search" not in request.query_params:
-        return Response(status=status.HTTP_400_BAD_REQUEST, data={"Search field required"})
+        return Response(status=status.HTTP_400_BAD_REQUEST, data="Search field required")
 
     # Check that user has permissions
     if request.query_params["search"] not in allowed_list:
@@ -69,11 +68,11 @@ def get_course_structure(request):
     allowed_list = [r['course_id'] for r  in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES ]
 
     if "search" not in request.query_params:
-        return Response(status=status.HTTP_400_BAD_REQUEST, data={"Search field required"})
+        return Response(status=status.HTTP_400_BAD_REQUEST, data="Search field required")
     # Look on course name and course code
     verticals = CourseVertical.objects.filter(
         Q(course_name__icontains=request.query_params["search"])|
-        Q(course__icontains=request.query_params["search"]))
+        Q(course__icontains=request.query_params["search"].replace("course-v1","block-v1")))
     if len(verticals) == 0:
         return Response(status=status.HTTP_204_NO_CONTENT)
     
@@ -81,7 +80,9 @@ def get_course_structure(request):
     # Gather unique keys
     for v in verticals:
         if v.course not in courses:
-            courses[v.course] = dict({"name": v.course_name, "course_id": v.course, "chapters": {}})
+            # Correct course id name
+            course_id = v.course.split("+type@")[0].replace("block","course")
+            courses[v.course] = dict({"name": v.course_name, "course_id": course_id, "chapters": {}})
         chapter = courses[v.course]["chapters"]
         # Check that sections exists
         if v.chapter_number not in chapter:

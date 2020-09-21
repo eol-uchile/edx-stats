@@ -227,7 +227,7 @@ const TimesTable = ({
   };
 
   const removeErrors = (msg) => {
-    let newErrors = errors.filter((el) => e !== el);
+    let newErrors = errors.filter((el) => msg !== el);
     setErrors(newErrors);
   };
 
