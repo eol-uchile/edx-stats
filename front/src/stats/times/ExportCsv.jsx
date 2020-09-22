@@ -5,7 +5,7 @@ import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
 
 const default_headers = [''];
-const default_data = [''];
+const default_data = [{}];
 
 const AsyncCSVButton = ({
   data = default_data,
@@ -20,6 +20,7 @@ const AsyncCSVButton = ({
       filename={filename}
       asyncOnClick={true}
       onClick={(_, done) => done()}
+      data-testid="csvLink"
     >
       <FontAwesomeIcon icon={faFileCsv} style={{ color: 'green' }} /> {text}
     </CSVLink>

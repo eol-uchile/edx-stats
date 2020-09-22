@@ -32,7 +32,12 @@ const Landing = ({ courses, getUserCourseRoles }) => {
         <Col>
           <Collapsible.Advanced className="collapsible-card">
             <Collapsible.Trigger className="collapsible-trigger d-flex">
-              <span className="flex-grow-1">Cursos disponibles</span>
+              <span
+                className="flex-grow-1"
+                data-testid="AvailableCoursesCollapse"
+              >
+                Cursos disponibles
+              </span>
               <Collapsible.Visible whenClosed> + </Collapsible.Visible>
               <Collapsible.Visible whenOpen> - </Collapsible.Visible>
             </Collapsible.Trigger>

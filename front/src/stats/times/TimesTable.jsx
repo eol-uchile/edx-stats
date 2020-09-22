@@ -140,7 +140,7 @@ const TimesTable = ({
           sequentials.push(
             <th colSpan={seq.verticals.length} scope="col" key={seq.name}>{`${
               key_ch + 1
-            }.${key_seq + 1}`}</th>,
+            }.${key_seq + 1}`}</th>
           );
         });
         chapters.push({ name: ch.name, subtotal });
@@ -242,7 +242,7 @@ const TimesTable = ({
         ...r.slice(1).map((el) => parseFloatToTimeString(el)),
       ]),
     }),
-    [rowData],
+    [rowData]
   );
 
   return (
@@ -343,7 +343,7 @@ const TimesTable = ({
                 <caption>Tiempos de visita: {course.course[0].name}</caption>
                 {tableData.useChapters ? null : (
                   <Fragment>
-                    <col />
+                    <colgroup />
                     {tableData.chapters.map((el, k) => (
                       <colgroup span={el.subtotal} key={k}></colgroup>
                     ))}
@@ -433,6 +433,7 @@ TimesTable.propTypes = {
   setLoadingTimes: PropTypes.func.isRequired,
   resetCourses: PropTypes.func.isRequired,
   resetTimes: PropTypes.func.isRequired,
+  match: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -450,7 +451,7 @@ const mapDispatchToProps = (dispatch) =>
       resetCourses,
       resetTimes,
     },
-    dispatch,
+    dispatch
   );
 
 export default connect(mapStateToProps, mapDispatchToProps)(TimesTable);

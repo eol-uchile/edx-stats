@@ -25,14 +25,14 @@ export const recoverCourseStudentTimes = (
   course_id = 'nan',
   offset = 0,
   limit = 25,
-  extra = '',
+  extra = ''
 ) => (dispatch, getState) => {
   let base = getState().urls.base;
   getAuthenticatedHttpClient()
     .get(
       `${base}/api/courses/timeonpage/?course=${encodeURIComponent(
-        course_id,
-      )}&offset=${offset}&limit=${limit}${extra}`,
+        course_id
+      )}&offset=${offset}&limit=${limit}${extra}`
     )
     .then((res) => {
       if (res.request.responseURL.includes('login/?next=')) {
@@ -64,15 +64,13 @@ export const getUserCourseRoles = () => (dispatch, getState) => {
 
 export const recoverCourseStructure = (course_id = 'nan') => (
   dispatch,
-  getState,
+  getState
 ) => {
   let base = getState().urls.base;
 
   getAuthenticatedHttpClient()
     .get(
-      `${base}/api/courses/course-structure/?search=${encodeURIComponent(
-        course_id,
-      )}`,
+      `/api/courses/course-structure/?search=${encodeURIComponent(course_id)}`
     )
     .then((res) => {
       if (res.request.responseURL.includes('login/?next=')) {
@@ -84,11 +82,12 @@ export const recoverCourseStructure = (course_id = 'nan') => (
       return dispatch({ type: LOADING_COURSE_ERROR, data: [] });
     })
     .catch((error) => {
-      let msg = error.customAttributes.httpErrorResponseData;
+      let msg = error.customAttributes
+        ? error.customAttributes.httpErrorResponseData
+        : undefined;
       if (msg === undefined) {
         msg = 'Hubo un error en el servidor';
       }
-      console.log(error);
       dispatch({
         type: LOADING_COURSE_ERROR,
         data: [msg],
@@ -104,7 +103,7 @@ export const setLoadingTimes = () => (dispatch) =>
 
 export const recoverCourseStudentTimesSum = (course_id = 'nan') => (
   dispatch,
-  getState,
+  getState
 ) => {
   let base = getState().urls.base;
 
@@ -120,7 +119,9 @@ export const recoverCourseStudentTimesSum = (course_id = 'nan') => (
       return dispatch({ type: LOADING_TIMES_ERROR, data: [] });
     })
     .catch((error) => {
-      let msg = error.customAttributes.httpErrorResponseData;
+      let msg = error.customAttributes
+        ? error.customAttributes.httpErrorResponseData
+        : undefined;
       if (msg === undefined) {
         msg = 'Hubo un error en el servidor';
       }
