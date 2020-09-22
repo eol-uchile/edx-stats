@@ -4,6 +4,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { TimeLanding, TimeTable } from './times';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 const Routes = ({ redirect }) => {
   if (redirect) {
@@ -49,6 +50,10 @@ const Routes = ({ redirect }) => {
       </Container>
     </main>
   );
+};
+
+Routes.propTypes = {
+  redirect: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({ redirect: state.auth.doLogin });

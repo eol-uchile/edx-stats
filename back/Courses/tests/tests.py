@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.urls import reverse
-from django.utils.http import urlencode
 from rest_framework.test import APITestCase
 from Courses.tests.mixins import JwtMixin, UserMixin
 from Courses.models import TimeOnPage, CourseVertical
@@ -143,3 +142,19 @@ class TestTimeOnPage(APITestCase):
     def test_redirect_to_login(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
+
+class TestDocs(UserMixin, JwtMixin, APITestCase):
+    url = reverse("api-root")
+
+    def setUp(self):
+        self.user = self.create_user()
+
+    def test_redirect_to_login(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+
+    def test_docs_render(self):
+        self.set_jwt_cookie()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        

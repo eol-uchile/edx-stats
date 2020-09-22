@@ -44,7 +44,7 @@ def times_on_course(request):
     Compact user time sessions for verticals
     """
     roles = recoverUserCourseRoles(request)
-    allowed_list = [r['course_id'] for r  in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES ]
+    allowed_list = [r['course_id'].replace("course","block") for r  in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES ]
 
     if "search" not in request.query_params:
         return Response(status=status.HTTP_400_BAD_REQUEST, data="Search field required")
@@ -53,7 +53,9 @@ def times_on_course(request):
     if request.query_params["search"] not in allowed_list:
         return Response(status=status.HTTP_403_FORBIDDEN,  data="No tiene permisos para ver los datos en los cursos solicitados")
 
-    times = TimeOnPage.objects.filter(course=request.query_params["search"]).values("username","event_type_vertical").order_by("username","event_type_vertical").annotate(total=Sum("delta_time_float"))
+    # Course will arrive in format block-v1:COURSE without +type@course-block@course
+    # hence we do a icontains query
+    times = TimeOnPage.objects.filter(course__icontains=request.query_params["search"]).values("username","event_type_vertical").order_by("username","event_type_vertical").annotate(total=Sum("delta_time_float"))
     if len(times) == 0:
         return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(times)
@@ -65,7 +67,7 @@ def get_course_structure(request):
     Map a course structure using the recovered Verticals from the Edx API
     """
     roles = recoverUserCourseRoles(request)
-    allowed_list = [r['course_id'] for r  in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES ]
+    allowed_list = [r['course_id'].replace("course","block") for r  in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES ]
 
     if "search" not in request.query_params:
         return Response(status=status.HTTP_400_BAD_REQUEST, data="Search field required")
@@ -81,7 +83,7 @@ def get_course_structure(request):
     for v in verticals:
         if v.course not in courses:
             # Correct course id name
-            course_id = v.course.split("+type@")[0].replace("block","course")
+            course_id = v.course.split("+type@")[0]
             courses[v.course] = dict({"name": v.course_name, "course_id": course_id, "chapters": {}})
         chapter = courses[v.course]["chapters"]
         # Check that sections exists

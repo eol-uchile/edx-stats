@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, useState, useMemo, Fragment } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -25,7 +25,6 @@ import {
   resetTimes,
 } from './data/actions';
 import AsyncCSVButton from './ExportCsv';
-import { matchPath } from 'react-router';
 
 const add = (a, b) => a + b;
 
@@ -201,13 +200,13 @@ const TimesTable = ({
           }
         }
         // Put rows for all
-        rows.push([u, ...values.map((v) => parseFloatToTimeString(v))]);
+        rows.push([u, ...values.map((v) => v)]);
         // Put each sub sum for each chapter
         let chapterRow = [u];
         subtotalsIndex.forEach((st, k) => {
           let leftIndex = subtotalsIndex[k - 1] ? subtotalsIndex[k - 1] : 0;
           let subArray = values.slice(leftIndex, st);
-          chapterRow.push(parseFloatToTimeString(subArray.reduce(add, 0)));
+          chapterRow.push(subArray.reduce(add, 0));
         });
         chapters.push(chapterRow);
       });
@@ -215,6 +214,7 @@ const TimesTable = ({
     }
   }, [tableData.loaded, times.added_times]);
 
+  // Copy errors to local state
   useEffect(() => {
     if (course.errors.length > 0 || times.errors.length > 0) {
       setErrors([...errors, ...course.errors, ...times.errors]);
@@ -230,6 +230,20 @@ const TimesTable = ({
     let newErrors = errors.filter((el) => msg !== el);
     setErrors(newErrors);
   };
+
+  const rowDataTimes = useMemo(
+    () => ({
+      all: rowData.all.map((r) => [
+        r[0],
+        ...r.slice(1).map((el) => parseFloatToTimeString(el)),
+      ]),
+      chapters: rowData.chapters.map((r) => [
+        r[0],
+        ...r.slice(1).map((el) => parseFloatToTimeString(el)),
+      ]),
+    }),
+    [rowData],
+  );
 
   return (
     <Container fluid>
@@ -378,8 +392,8 @@ const TimesTable = ({
                   {errors.length !== 0
                     ? null
                     : rowData.useChapters
-                    ? rowData.chapters.map(parseToTableRows)
-                    : rowData.all.map(parseToTableRows)}
+                    ? rowDataTimes.chapters.map(parseToTableRows)
+                    : rowDataTimes.all.map(parseToTableRows)}
                   <tr></tr>
                 </tbody>
               </Table>

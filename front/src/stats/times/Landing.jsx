@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { getUserCourseRoles } from './data/actions';
 import { Link } from 'react-router-dom';
 import { Collapsible } from '@edx/paragon';
+import PropTypes from 'prop-types';
 
 const Landing = ({ courses, getUserCourseRoles }) => {
   const [state, setState] = useState({ selected: false, filtered: [] });
@@ -52,6 +53,11 @@ const Landing = ({ courses, getUserCourseRoles }) => {
       </Row>
     </Container>
   );
+};
+
+Landing.propTypes = {
+  courses: PropTypes.array.isRequired,
+  getUserCourseRoles: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({ courses: state.course.availableCourses });
