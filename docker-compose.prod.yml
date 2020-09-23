@@ -17,15 +17,10 @@ services:
       - "3500:3500"
     depends_on:
       - db
-
   front:
     build: 
-      context: ./front
-      target: dev
-    command: npm start
-    volumes:
-      - ./front:/app
-      - /app/node_modules
+        context: ./front
+        target: static
     ports: 
       - "3000:3000"
 
