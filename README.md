@@ -12,6 +12,7 @@ For detailed documentations refer to docs/.
 ## Requirements
 
 * Sandbox environment with a subdomain and cors configuration (see docs/lms.md).
+* Nginx configuration following docs/nginx.md
 * Docker-Compose.
 
 ## Setup (dev)
