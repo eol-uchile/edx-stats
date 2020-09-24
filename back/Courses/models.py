@@ -1,5 +1,23 @@
 from django.db import models
 
+
+class SingletonModel(models.Model):
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super(SingletonModel, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass
+
+    @classmethod
+    def load(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+
 class Log(models.Model):
     username = models.CharField(max_length=20)
     event_source = models.CharField(max_length=10)
@@ -44,3 +62,10 @@ class TimeOnPage(models.Model):
     session = models.IntegerField()
     delta_time_float = models.FloatField()
     course = models.TextField()
+
+class StaffUserName(models.Model):
+    username = models.CharField(max_length=20)
+
+class ProcessedRecord(SingletonModel):
+    last_processed_time = models.ForeignKey(TimeOnPage, null=True, on_delete=models.SET_NULL)
+    last_processed_time_timestamp = models.DateTimeField(blank=True, null=True)

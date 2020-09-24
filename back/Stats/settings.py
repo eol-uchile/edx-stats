@@ -156,6 +156,7 @@ REST_FRAMEWORK = {
 CELERY_BROKER_URL = "redis://msecret318e401514dd45e97daf49d1d5c36cdbf9a7294395e84a9f52c08c6ad3699fcc0@redis:6380/2"
 CELERY_BACKEND = "redis://msecret318e401514dd45e97daf49d1d5c36cdbf9a7294395e84a9f52c08c6ad3699fcc0@redis:6380/2"
 
+# Oauth JWT Token verification config
 JWT_AUTH = {
     'JWT_ALGORITHM': 'RS512',
     'JWT_AUDIENCE': None,
@@ -195,6 +196,8 @@ BACKEND_ALLOWED_ROLES = [
     'instructor',
     'administrator'
 ]
+# Should be an absolute path
+BACKEND_LOGS_DIR = '/app/logs'
 
 # EDX OAUTH2 
 SOCIAL_AUTH_EDX_OAUTH2_KEY = 'g4S52ki5v1VjdozsLh0sgzoeovbunfqTz2pHZxOl'

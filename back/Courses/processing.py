@@ -8,9 +8,11 @@ import pandas as pd
 import numpy as np
 import json
 import re
+import gzip
+from edx_rest_api_client.client import OAuthAPIClient
+from django.conf import settings
 
-
-def read_json_course(filename):
+def read_json_course_file(filename):
     """ Read API recovered JSON and get blocks
 
     Arguments:
@@ -18,11 +20,23 @@ def read_json_course(filename):
     Returns:
         course_struct Pandas DataFrame
     """
-    course_json = json.load(open(filename))
+    course_json = json.load(filename)
     course_df = pd.DataFrame.from_records(course_json["blocks"])
     course_struct = course_df.T
     return course_struct
 
+def read_json_course(json_str):
+    """ Read API recovered JSON and get blocks
+
+    Arguments:
+        filename String
+    Returns:
+        course_struct Pandas DataFrame
+    """
+    course_json = json.loads(json_str)
+    course_df = pd.DataFrame.from_records(course_json["blocks"])
+    course_struct = course_df.T
+    return course_struct
 
 def expand_list(df, list_column, new_column):
     """Expand a DataFrame with a column of list values.
@@ -54,7 +68,6 @@ def expand_list(df, list_column, new_column):
     )
     expanded_df.reset_index(inplace=True, drop=True)
     return expanded_df
-
 
 def flatten_course_as_verticals(course_df):
     """ Recover vertical info from course API json
@@ -125,19 +138,23 @@ def flatten_course_as_verticals(course_df):
         .drop(columns="index")
     return course_structure
 
-
-def read_logs(filename):
+def read_logs(filename, ziped=False):
     """ Read logs and expand inner JSON values
 
     Recover valuable info
 
     Arguments:
         filename String
+        ziped bool to unzip file
     Returns:
         expanded_records List of dictionnaries
     """
-    with open(filename) as f:
-        l = f.readlines()
+    if ziped:
+        with gzip.open(filename) as f:
+            l = f.readlines()
+    else:
+        with open(filename) as f:
+            l = f.readlines()
     records = [json.loads(el) for el in l]
 
     # Clean context and event
@@ -181,8 +198,6 @@ def filter_by_log_qty(logs, min_logs = 15, user_field_name = 'username'):
     active_users = users_count[users_count['count'] > min_logs][user_field_name]
     return logs[logs.username.isin(active_users)]
 
-
-
 def filter_course_team(logs, user_field_name = 'username', other_people = None):
     """Keeps the users that are not part of the course team
     
@@ -213,3 +228,23 @@ def filter_course_team(logs, user_field_name = 'username', other_people = None):
         students = students[~students.isin(other_people)]
 
     return logs[logs.username.isin(students)]
+
+def load_course_from_LMS(course_code):
+    """Uses an OAuthAPIClient to recover the course structure from the LMS backend
+
+    Arguments:
+        course_code string as block-v1:course_name+type@course+block@course
+
+    Returns:
+        JSON text response
+    """
+    client = OAuthAPIClient(
+        settings.BACKEND_LMS_BASE_URL,
+        settings.BACKEND_SERVICE_EDX_OAUTH2_KEY,
+        settings.BACKEND_SERVICE_EDX_OAUTH2_SECRET
+    )
+
+    response = client.get(settings.BACKEND_LMS_BASE_URL+'/api/courses/v1/blocks/'+course_code+'?depth=all&all_blocks=true&requested_fields=all,children')
+    if response.status_code != 200:
+        raise Exception("Request to LMS failed for {}".format(course_code), str(response.text))
+    return response.text
