@@ -8,7 +8,9 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   stats:
-    build: ./back
+    build:
+      context: ./back
+      target: dev
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./back:/app
@@ -17,7 +19,6 @@ services:
       - "3500:3500"
     depends_on:
       - db
-
   front:
     build: 
       context: ./front

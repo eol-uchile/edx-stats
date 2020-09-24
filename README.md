@@ -17,10 +17,17 @@ For detailed documentations refer to docs/.
 ## Setup (dev)
 
 1. Configure the docker-compose.yml so the containers share the network with the LMS.
-2. Configure the domain files for the frontend application on .
+2. Configure the domain files for the frontend application on front/.env.development
 3. Configure the JWT configuration on the backend and on the lms.
 4. Start the backend app and run makemigrations, migrate and create super user.
+5. Configure OAuth credentials
+6. Lauch the docker-compose command with ```
+docker-compose up --build -d```
 
-## Build
+## Build and deploy
 
-**Work in Progress**
+1. Configure domains for frontend on front/.env
+2. Configure the JWT values and OAuth Credentials
+3. Lauch the docker-compose command with ```
+docker-compose -f docker-compose.prod.yml up --build  -d```
+4. **Work in Progress**

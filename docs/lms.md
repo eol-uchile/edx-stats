@@ -5,6 +5,7 @@
 The backend only needs to check the Token's signature. It requires the following fields to match the LMS values:
 * JWT_ALGORITHM
 * JWT_ISSUER
+* JWT_ISSUERS
 * JWT_SECRET_KEY
 * JWT_PUBLIC_SIGNING_JWK_SET
 * JWT_AUTH header and cookies
@@ -48,3 +49,14 @@ CORS_ALLOW_HEADERS = corsheaders_default_headers + (
 )
 ```
 This makes the LMS accept our domain and attach the CORS headers on the response for the pre-flight request OPTIONS. Tutor adds it on the [nginx](https://github.com/overhangio/tutor/commit/055c3cad3f8d1acd6934e82983349e27558771a6), but it is unclear that it works without adding this configuration to the LMS.
+
+## LMS OAuth and Backend config
+
+To enable different info recovery from the LMS without forwarding JWT tokens from the frontend it is necessary to add permissions via the django admin.
+1. Go to Django OAuth Toolkit > Aplications.
+2. Add new.
+3. Add your domain URL, i.e. https://front.eol.andhael.cl/api/complete/edx-oauth2/ (consider that in this case every /api/ url is forwarded to the backend app via nginx).
+4. Select Client Credentials as Authorization type and add a user with enough permissions to access the LMS API. The client id and client secret should be generated automatically .
+5. Enable Skip Authorization, set Public client type, and add a descriptive name like Stats App or so.
+6. Finally **complete the fields** on BACKEND_SERVICE_EDX_OAUTH2 and SOCIAL_AUTH_EDX_OAUTH2 on the **Backend Application**
+
