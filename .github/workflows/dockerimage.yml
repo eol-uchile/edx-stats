@@ -15,14 +15,6 @@ jobs:
     - name: Build the Docker image
       run: docker build ./back --file Dockerfile --tag eoluchile/edx-stats-back:${GITHUB_SHA}
 
-    - name: Push to dockerhub
-      run: |
-        echo "${DOCKERHUB_PASSWORD}" | docker login --username ${DOCKERHUB_USER} --password-stdin
-        docker push eoluchile/edx-stats-back:${GITHUB_SHA}
-      env:
-        DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
-        DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}}
-
     - name: Push to Github Container Registry
       run: |
           echo "${CR_PAT}" | docker login ghcr.io -u eolito --password-stdin
@@ -40,18 +32,10 @@ jobs:
     - name: Build the Docker image
       run: docker build ./front --file Dockerfile --tag eoluchile/edx-stats-front:${GITHUB_SHA}
 
-    - name: Push to dockerhub
-      run: |
-        echo "${DOCKERHUB_PASSWORD}" | docker login --username ${DOCKERHUB_USER} --password-stdin
-        docker push eoluchile/edx-stats-front:${GITHUB_SHA}
-      env:
-        DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
-        DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}}
-
     - name: Push to Github Container Registry
       run: |
         echo "${CR_PAT}" | docker login ghcr.io -u eolito --password-stdin
         docker tag eoluchile/edx-stats-front:${GITHUB_SHA} ghcr.io/eol-uchile/edx-stats-front:${GITHUB_SHA}
         docker push ghcr.io/eol-uchile/edx-stats-front:${GITHUB_SHA}
       env:
-      CR_PAT: ${{ secrets.CR_PAT }}
+        CR_PAT: ${{ secrets.CR_PAT }}
