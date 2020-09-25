@@ -1,5 +1,6 @@
 FROM python:3 as dev
 ENV PYTHONUNBUFFERED 1
+ENV DJANGO_DEBUG True
 RUN mkdir /app
 WORKDIR /app
 COPY requirements.txt /app/
@@ -12,6 +13,7 @@ CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 FROM dev as prod
 # Add gunicorn 
 RUN pip install gunicorn==19.9.0
+ENV DJANGO_DEBUG False
 #RUN python /app/manage.py collectstatic --noinput
 #RUN python /app/manage.py makemigrations
 #RUN python /app/manage.py migrate
