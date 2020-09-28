@@ -8,10 +8,15 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
+
+For reference on configs ENV and YAML see
+https://github.com/eol-uchile/edx-platform/blob/eol/juniper.master/lms/envs/production.py
 """
 
 import os
 import datetime
+import codecs
+import yaml
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,13 +24,33 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
+
+def get_env_setting(setting):
+    """ Get the environment setting or return exception """
+    try:
+        return os.environ[setting]
+    except KeyError:
+        error_msg = u"Set the %s env variable" % setting
+        raise ImproperlyConfigured(error_msg)
+
+
+# A file path to a YAML file from which to load all the configuration for the statistics platform
+CONFIG_FILE = get_env_setting('CONFIG_FILE')
+
+with codecs.open(CONFIG_FILE, encoding='utf-8') as f:
+    __config__ = yaml.safe_load(f)
+
+    # ENV_TOKENS are included for reverse compatibility.
+    # Removing them may break plugins that rely on them.
+    ENV_TOKENS = __config__
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'lif-s82+7##n-lma+v@l_suzftkxy0%o&-ohnt6^^g_t9fu1bx'
+SECRET_KEY = ENV_TOKENS.get('DJANGO_SECRET_KEY', "set-me")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG', False)
 
-ALLOWED_HOSTS = ['*', ""]
+ALLOWED_HOSTS = ENV_TOKENS.get('ALLOWED_HOSTS', ['*', ""])
 
 # Application definition
 INSTALLED_APPS = [
@@ -41,7 +66,8 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'django_filters',
     'crispy_forms',
-    'csrf.apps.CsrfAppConfig',  # Enables frontend apps to retrieve CSRF tokens.
+    # Enables frontend apps to retrieve CSRF tokens.
+    'csrf.apps.CsrfAppConfig',
     'social_django',
 ]
 
@@ -84,16 +110,10 @@ WSGI_APPLICATION = 'Stats.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'db',
-        'PORT': 5432,
-    }
-}
+DATABASES = ENV_TOKENS.get('DATABASES', {'default': {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': 'mydatabase',
+}})
 
 
 # Password validation
@@ -120,7 +140,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = ENV_TOKENS.get('TIME_ZONE','UTC')
 
 USE_I18N = True
 
@@ -137,7 +157,7 @@ STATIC_URL = '/static/'
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES' : [
+    'DEFAULT_PERMISSION_CLASSES': [
         'edx_rest_framework_extensions.permissions.LoginRedirectIfUnauthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -150,31 +170,14 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
-CELERY_BROKER_URL = "redis://msecret318e401514dd45e97daf49d1d5c36cdbf9a7294395e84a9f52c08c6ad3699fcc0@redis:6380/2"
-CELERY_BACKEND = "redis://msecret318e401514dd45e97daf49d1d5c36cdbf9a7294395e84a9f52c08c6ad3699fcc0@redis:6380/2"
+CELERY_BROKER_URL = ENV_TOKENS.get('CELERY_BROKER_URL')
+CELERY_BACKEND = ENV_TOKENS.get('CELERY_BACKEND')
 
 # Oauth JWT Token verification config
-JWT_AUTH = {
-    'JWT_ALGORITHM': 'RS512',
-    'JWT_AUDIENCE': None,
-    'JWT_ISSUER': 'issuer',
-    'JWT_ISSUERS': [{
-        'AUDIENCE': 'set-me-please',
-        'ISSUER': 'issuer',
-        'SECRET_KEY': 'jwt_secret'
-    }],
-    'JWT_VERIFY_AUDIENCE': False,
-    'JWT_SECRET_KEY': 'jwt_secret',
-    'JWT_DECODE_HANDLER': 'edx_rest_framework_extensions.auth.jwt.decoder.jwt_decode_handler',
-    'JWT_AUTH_COOKIE': 'edx-jwt-cookie',
-    'JWT_PUBLIC_SIGNING_JWK_SET': '{"keys": [{"kty": "RSA", "kid": "9YFYI3J6", "e": "AQAB", "n": "iZExe9pxsMO8n2R0N4YAcx7_e5ay3Z5ZMhQ1ok8hCp57SR1IX04MC5j0atVFX0a1GquXW65VasguMUzrMFvkpamkjeQ3CnIWQCyfFqqzfeO7e7x_sAcUcDbycRohKcXQVtEM_W-ObOi4-4KCf0bedsYfPMddTfgf-4buhzs2Qf0eim4PtD5d3AXO1q-P_i2kTbsq2VN8hWWFN4Dr0aIu8Jz7s4tZ0T57NfMQ6KcsDmVGMEucgoOvdWXN2g04yBkCBsnWUB-QZeGGgAslVsXvvizBWbkSSvwO6LHCYhsP0OfRZt-Qe5IF_Jd-FlH18coMLELfa3nL2ouYKffLakTiXQ"}]}',
-    'JWT_AUTH_COOKIE_HEADER_PAYLOAD': 'edx-jwt-cookie-header-payload',
-    'JWT_AUTH_COOKIE_SIGNATURE': 'edx-jwt-cookie-signature',
-    'JWT_AUTH_HEADER_PREFIX': 'JWT',
-}
+JWT_AUTH = ENV_TOKENS.get('JWT_AUTH')
 
 EDX_DRF_EXTENSIONS = {
-    "OAUTH2_USER_INFO_URL": "https://eol.andhael.cl/oauth2/user_info",
+    "OAUTH2_USER_INFO_URL": ENV_TOKENS.get('EDX_DRF_EXTENSIONS')['OAUTH2_USER_INFO_URL'],
     "JWT_PAYLOAD_USER_ATTRIBUTES": {
         'administrator': 'is_staff',
         'email': 'email',
@@ -183,10 +186,11 @@ EDX_DRF_EXTENSIONS = {
 }
 
 # Custom settings
-BACKEND_SERVICE_EDX_OAUTH2_KEY = 'g4S52ki5v1VjdozsLh0sgzoeovbunfqTz2pHZxOl' # Local Development Values
-BACKEND_SERVICE_EDX_OAUTH2_SECRET = 'ZLWeN0jegl0JxpwrSrgBvdNoP8X67HKKHJUi1rz2z49I4lQp6lPQQouYg9sDKp7D4dOnHyBxHccxmVdMBkHk877ZNGdx8CMDCVzuOxQlyrpLAtnFtn7EX5w9Lw1fXKZQ' # Local Development Values
-BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL = 'https://eol.andhael.cl/oauth2'
-BACKEND_LMS_BASE_URL = 'https://eol.andhael.cl'
+# Local Development Values
+BACKEND_SERVICE_EDX_OAUTH2_KEY = ENV_TOKENS.get('BACKEND_SERVICE_EDX_OAUTH2_KEY',"set-me-please")
+BACKEND_SERVICE_EDX_OAUTH2_SECRET = ENV_TOKENS.get('BACKEND_SERVICE_EDX_OAUTH2_SECRET',"set-me-please")  # Local Development Values
+BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL = ENV_TOKENS.get('BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL',"a.valid.url")
+BACKEND_LMS_BASE_URL = ENV_TOKENS.get('BACKEND_LMS_BASE_URL',"a.valid.url")
 BACKEND_ALLOWED_ROLES = [
     'staff',
     'data researcher',
@@ -196,13 +200,13 @@ BACKEND_ALLOWED_ROLES = [
 # Should be an absolute path
 BACKEND_LOGS_DIR = '/app/logs'
 
-# EDX OAUTH2 
-SOCIAL_AUTH_EDX_OAUTH2_KEY = 'g4S52ki5v1VjdozsLh0sgzoeovbunfqTz2pHZxOl'
-SOCIAL_AUTH_EDX_OAUTH2_SECRET = 'ZLWeN0jegl0JxpwrSrgBvdNoP8X67HKKHJUi1rz2z49I4lQp6lPQQouYg9sDKp7D4dOnHyBxHccxmVdMBkHk877ZNGdx8CMDCVzuOxQlyrpLAtnFtn7EX5w9Lw1fXKZQ'
-SOCIAL_AUTH_EDX_OAUTH2_URL_ROOT = 'https://eol.andhael.cl'
-SOCIAL_AUTH_EDX_OAUTH2_PUBLIC_URL_ROOT = 'https://eol.andhael.cl'
-SOCIAL_AUTH_EDX_OAUTH2_JWS_HMAC_SIGNING_KEY = 'jwt_secret'
-# SOCIAL_AUTH_EDX_OAUTH2_PROVIDER_CONFIGURATION_CACHE_TTL use default 1 Week 
+# EDX OAUTH2
+SOCIAL_AUTH_EDX_OAUTH2_KEY = ENV_TOKENS.get('BACKEND_SERVICE_EDX_OAUTH2_KEY',"set-me-please")
+SOCIAL_AUTH_EDX_OAUTH2_SECRET = ENV_TOKENS.get('BACKEND_SERVICE_EDX_OAUTH2_SECRET',"set-me-please")
+SOCIAL_AUTH_EDX_OAUTH2_URL_ROOT = ENV_TOKENS.get('BACKEND_LMS_BASE_URL',"a.valid.url")
+SOCIAL_AUTH_EDX_OAUTH2_PUBLIC_URL_ROOT = ENV_TOKENS.get('BACKEND_LMS_BASE_URL',"a.valid.url")
+SOCIAL_AUTH_EDX_OAUTH2_JWS_HMAC_SIGNING_KEY = ENV_TOKENS.get('JWT_AUTH').get('JWT_SECRET_KEY')
+# SOCIAL_AUTH_EDX_OAUTH2_PROVIDER_CONFIGURATION_CACHE_TTL use default 1 Week
 # SOCIAL_AUTH_EDX_OAUTH2_JWKS_CACHE_TTL use default 1 day.
 SOCIAL_AUTH_STRATEGY = 'auth_backends.strategies.EdxDjangoStrategy'
 

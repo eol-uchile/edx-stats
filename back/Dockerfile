@@ -1,6 +1,7 @@
 FROM python:3 as dev
 ENV PYTHONUNBUFFERED 1
 ENV DJANGO_DEBUG True
+ENV CONFIG_FILE  /app/production.yaml
 RUN mkdir /app
 WORKDIR /app
 COPY requirements.txt /app/
@@ -14,6 +15,7 @@ FROM dev as prod
 # Add gunicorn 
 RUN pip install gunicorn==19.9.0
 ENV DJANGO_DEBUG False
+ENV CONFIG_FILE  /app/production.yaml
 #RUN python /app/manage.py collectstatic --noinput
 #RUN python /app/manage.py makemigrations
 #RUN python /app/manage.py migrate
