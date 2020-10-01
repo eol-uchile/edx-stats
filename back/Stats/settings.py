@@ -48,7 +48,7 @@ with codecs.open(CONFIG_FILE, encoding='utf-8') as f:
 SECRET_KEY = ENV_TOKENS.get('DJANGO_SECRET_KEY', "set-me")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DJANGO_DEBUG', False)
+DEBUG = os.getenv('DJANGO_DEBUG', False) == 'True'
 
 ALLOWED_HOSTS = ENV_TOKENS.get('ALLOWED_HOSTS', ['*', ""])
 
