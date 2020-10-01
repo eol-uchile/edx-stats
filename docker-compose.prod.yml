@@ -8,8 +8,9 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   stats:
-    build: ./back
-    command: python manage.py runserver 0.0.0.0:8000
+    build:
+      context: ./back
+      target: prod
     volumes:
       - ./back:/app
     ports:
@@ -19,8 +20,8 @@ services:
       - db
   front:
     build: 
-        context: ./front
-        target: static
+      context: ./front
+      target: static
     ports: 
       - "3000:3000"
 
