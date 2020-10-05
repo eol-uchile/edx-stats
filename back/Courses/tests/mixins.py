@@ -35,7 +35,7 @@ class UserMixin:
 
     def generate_jwt_token_header(self, user, secret=None):
         """Generate a valid JWT token header for authenticated requests."""
-        secret = secret or settings.JWT_AUTH['JWT_SECRET_KEY']
+        secret = secret or settings.JWT_AUTH['JWT_ISSUERS'][0]['SECRET_KEY']
 
         # WARNING:
         #   If any test that uses this function fails with an error about a missing 'exp' or 'iat' or
@@ -50,14 +50,14 @@ class UserMixin:
         payload = {
             'username': user.username,
             'email': user.email,
-            'iss': settings.JWT_AUTH['JWT_ISSUER']
+            'iss': settings.JWT_AUTH['JWT_ISSUERS'][0]['ISSUER']
         }
         return "JWT {token}".format(token=jwt.encode(payload, secret).decode('utf-8'))
 
 class JwtMixin:
     """ Mixin with JWT-related helper functions. """
-    JWT_SECRET_KEY = settings.JWT_AUTH['JWT_SECRET_KEY']
-    issuer = settings.JWT_AUTH['JWT_ISSUER']
+    JWT_SECRET_KEY = settings.JWT_AUTH['JWT_ISSUERS'][0]['SECRET_KEY']
+    issuer = settings.JWT_AUTH['JWT_ISSUERS'][0]['ISSUER']
 
     def generate_token(self, payload, secret=None):
         """Generate a JWT token with the provided payload."""
