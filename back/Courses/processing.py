@@ -3,13 +3,13 @@
 #
 # Inspired by Valeria's work
 #
-from .models import *
 import pandas as pd
 import numpy as np
 import json
 import re
 import gzip
 from edx_rest_api_client.client import OAuthAPIClient
+from .models import *
 from django.conf import settings
 
 def read_json_course_file(filename):

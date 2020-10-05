@@ -1,6 +1,7 @@
 import math
 import pandas as pd
 import os
+import logging
 from datetime import timedelta
 from celery import shared_task
 from Courses.models import Log, CourseVertical, TimeOnPage as TimeModel, StaffUserName, ProcessedRecord
@@ -11,6 +12,7 @@ from Courses.classifier import LogParser, TimeOnPage
 from django.conf import settings
 from django.core.serializers import json as django_json_serializer
 
+logger = logging.getLogger(__name__)
 TIMEOUT = timedelta(minutes=10)
 LOWER_LIMIT = timedelta(seconds=15)  # files
 
@@ -49,6 +51,7 @@ def load_course(filepath):
     if len(previous_values) != 0:
         previous_values.delete()
     dataframe.apply(save_row, axis=1)
+    logger.info("Loaded course verticals for {}".format(course_code))
 
 @shared_task
 def load_course_from_api(course_code):
@@ -57,7 +60,12 @@ def load_course_from_api(course_code):
     Arguments:
     - course_code String as block-v1:course_name+type@course+block@course
     """
-    json_text = load_course_from_LMS(course_code)
+    try;
+        json_text = load_course_from_LMS(course_code)
+    except Exception as e:
+        # Abort processing
+        logger.warning(e)
+        return
     course_blocks = read_json_course(json_text)
     dataframe = flatten_course_as_verticals(course_blocks)
 
@@ -88,6 +96,7 @@ def load_course_from_api(course_code):
         previous_values.delete()
 
     dataframe.apply(save_row, axis=1)
+    logger.info("Loaded course verticals for {}".format(course_code))
 
 @shared_task
 def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
@@ -131,12 +140,14 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
             logs = pd.DataFrame.from_records(read_logs(filepath, zipped))
             logs.apply(save_row, axis=1)
             os.remove(filepath)
+            logger.info("Read logs from {}".format(filepath))
         except:
             # In case of failure move the file to erros dir
             errorDir = os.path.join(dirpath,'failed')
             if not os.path.isdir(errorDir):
                 os.mkdir(errorDir)
             os.rename(filepath, os.path.join(errorDir,file))
+            logger.warning("Error while reading logs from {}".format(filepath))
 
 @shared_task
 def process_log_times():
@@ -202,6 +213,7 @@ def process_log_times():
             recovered_blocks = load_course_from_LMS("{}+type@course+block@course".format(course_id.replace('course-v1','block-v1')))
         except Exception as e:
             print("Error while loading course structure", e)
+            logger.warning("Course {} times not processed due to {}".format(course_id,e))
             continue
         course_blocks = read_json_course(recovered_blocks)
         course_dataframe = flatten_course_as_verticals(course_blocks)
@@ -213,7 +225,7 @@ def process_log_times():
             previous_values.delete()
 
         # Update vertical information on DB
-        course_dataframe.apply(save_row, axis=1)
+        course_dataframe.apply(save_vertical_row, axis=1)
 
         # Parse and process time values
         parser = LogParser(df=course_dataframe)
@@ -231,10 +243,11 @@ def process_log_times():
         time_per_user_session = timer.time_on_page.copy()
         time_per_user_session["course"] = course_dataframe["course"][0]
         time_per_user_session.apply(save_row, axis=1)
+        logger.info("Course {} times processed".format(course_id))
 
 @shared_task
 def process_log_times_from_dir(logpath, coursepath, zipped=True):
-    """Read log files and process times for a single course locally
+    """OLD: Read log files and process times for a single course locally
 
     Arguments:
     - logpath String path to log file
