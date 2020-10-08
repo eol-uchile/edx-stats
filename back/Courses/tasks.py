@@ -60,7 +60,7 @@ def load_course_from_api(course_code):
     Arguments:
     - course_code String as block-v1:course_name+type@course+block@course
     """
-    try;
+    try:
         json_text = load_course_from_LMS(course_code)
     except Exception as e:
         # Abort processing
@@ -131,8 +131,8 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
             user_id=user_id,
             path=row["context.path"])
         log.save()
-    
-    files = [f for f in os.listdir(dirpath) if os.path.isfile(f)]
+
+    files = [f for f in os.listdir(dirpath) if os.path.isfile(os.path.join(dirpath,f))]
     for file in files:
         filepath = os.path.join(dirpath,file)
         try:
@@ -197,6 +197,10 @@ def process_log_times():
     else:
         logs_db = Log.objects.filter(time__gte=(record.last_processed_time_timestamp - LOWER_LIMIT))
   
+    if logs_db.count() == 0:
+        logger.info("No logs for time processing")
+        return
+        
     logs_full = pd.DataFrame(logs_db.values())
     # Get staff users to ban from stats
     users = [u.username for u in StaffUserName.objects.all()]
