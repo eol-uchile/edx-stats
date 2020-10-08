@@ -1,4 +1,4 @@
-FROM python:3 as dev
+FROM python:3.8.6 as dev
 ENV PYTHONUNBUFFERED 1
 ENV DJANGO_DEBUG True
 ENV CONFIG_FILE  /app/production.yaml

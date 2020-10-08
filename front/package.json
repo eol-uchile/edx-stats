@@ -1,7 +1,7 @@
 {
   "name": "@edx/eol-stats-front",
   "version": "0.1.0",
-  "description": "Frontend application template",
+  "description": "Analytics Micro Frontend",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/edx/frontend-template-application.git"
@@ -19,7 +19,7 @@
     "start": "fedx-scripts webpack-dev-server --progress",
     "test": "fedx-scripts jest --coverage --passWithNoTests"
   },
-  "author": "edX",
+  "author": "eol",
   "license": "AGPL-3.0",
   "homepage": "https://github.com/edx/frontend-template-application#readme",
   "publishConfig": {
@@ -33,7 +33,7 @@
     "@edx/frontend-component-header": "2.0.5",
     "@edx/frontend-platform": "1.5.0",
     "@edx/paragon": "10.0.1",
-    "@fortawesome/fontawesome-svg-core": "1.2.30",
+    "@fortawesome/fontawesome-svg-core": "1.2.32",
     "@fortawesome/free-brands-svg-icons": "5.11.2",
     "@fortawesome/free-regular-svg-icons": "5.11.2",
     "@fortawesome/free-solid-svg-icons": "5.11.2",
