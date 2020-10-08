@@ -141,13 +141,13 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
             logs.apply(save_row, axis=1)
             os.remove(filepath)
             logger.info("Read logs from {}".format(filepath))
-        except:
-            # In case of failure move the file to erros dir
+        except Exception as e:
+            # In case of failure move the file to errors dir
             errorDir = os.path.join(dirpath,'failed')
             if not os.path.isdir(errorDir):
                 os.mkdir(errorDir)
             os.rename(filepath, os.path.join(errorDir,file))
-            logger.warning("Error while reading logs from {}".format(filepath))
+            logger.warning("Error while reading logs from {}. Reason {}".format(filepath,e))
 
 @shared_task
 def process_log_times():
