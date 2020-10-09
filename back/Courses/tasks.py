@@ -137,7 +137,7 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
         filepath = os.path.join(dirpath,file)
         try:
             # Parse and save to db
-            logs = pd.DataFrame.from_records(read_logs(filepath, zipped))
+            logs = read_logs(filepath, zipped)
             logs.apply(save_row, axis=1)
             os.remove(filepath)
             logger.info("Read logs from {}".format(filepath))
@@ -269,7 +269,7 @@ def process_log_times_from_dir(logpath, coursepath, zipped=True):
             course=row["course"])
         time_on_page.save()
 
-    logs_full = pd.DataFrame.from_records(read_logs(logpath, zipped))
+    logs_full = read_logs(logpath, zipped)
     logs = filter_course_team(logs_full, other_people=[
                               'gap', 'francisco_sereno'])
     logs = filter_by_log_qty(logs, min_logs=15)

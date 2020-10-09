@@ -149,33 +149,19 @@ def read_logs(filename, ziped=False):
     Returns:
         expanded_records List of dictionnaries
     """
-    if ziped:
-        with gzip.open(filename) as f:
-            l = f.readlines()
-    else:
-        with open(filename) as f:
-            l = f.readlines()
-    records = [json.loads(el) for el in l]
-
-    # Clean context and event
-    expanded_records = []
-    for r in records:
-        context = r["context"]
-        expanded = r.copy()
-        del expanded["context"]
-        for c in context.keys():
-            expanded["context."+c] = context[c]
-        if "context.module" in expanded:
-            expanded["context.display_name"] = expanded["context.module"]["display_name"]
-            del expanded["context.module"]
+    def add_if_available(row, field, subfield):
         try:
-            del expanded["context.asides"]
-            del expanded["context.user_tags"]
+            return row[field][subfield]
         except Exception:
-            pass
-        expanded_records.append(expanded)
-
-    return expanded_records
+            return np.nan
+    # Either load records directly or do a json.loads and pandas.json_normalize
+    df = pd.read_json(filename,compression='gzip' if ziped else None, lines=True)
+    df["context.course_id"] = df.apply(lambda x: add_if_available(x,"context","course_id"),axis=1)
+    df["context.org_id"] = df.apply(lambda x: add_if_available(x,"context","org_id"),axis=1)
+    df["context.path"] = df.apply(lambda x: add_if_available(x,"context","path"),axis=1)
+    df["context.user_id"] = df.apply(lambda x: add_if_available(x,"context","user_id"),axis=1)
+    # Note: extra values to be extracted should be added here
+    return df
 
 def filter_by_log_qty(logs, min_logs = 15, user_field_name = 'username'):
     """Keeps the users with more than min_logs logs in the course

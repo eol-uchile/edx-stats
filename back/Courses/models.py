@@ -19,21 +19,21 @@ class SingletonModel(models.Model):
         return obj
 
 class Log(models.Model):
-    username = models.CharField(max_length=20)
+    username = models.CharField(max_length=150)
     event_source = models.CharField(max_length=10)
     name = models.TextField(blank=True, null=True)
     accept_language = models.TextField()
     ip = models.CharField(max_length=15)
     agent = models.TextField()
     page = models.TextField(blank=True, null=True)
-    host = models.CharField(max_length=30)
-    session = models.CharField(max_length=32)
+    host = models.CharField(max_length=255)
+    session = models.CharField(max_length=64)
     referer = models.TextField()
     time = models.DateTimeField()
     event = models.TextField()
     event_type = models.TextField()
     course_id = models.TextField(blank=True)
-    org_id = models.CharField(max_length=30, blank=True)
+    org_id = models.CharField(max_length=255, blank=True)
     user_id = models.IntegerField(blank=True,)
     path = models.TextField()
 
