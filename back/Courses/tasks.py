@@ -15,6 +15,7 @@ from django.core.serializers import json as django_json_serializer
 logger = logging.getLogger(__name__)
 TIMEOUT = timedelta(minutes=10)
 LOWER_LIMIT = timedelta(seconds=15)  # files
+BULK_UPLOAD_SIZE = 500
 
 @shared_task
 def load_course(filepath):
@@ -109,7 +110,7 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
     Arguments:
     - dirpath String for directory
     """
-    def save_row(row):
+    def make_row(row):
         user_id = 0 if math.isnan(
             row["context.user_id"]) else row["context.user_id"]
         log = Log(
@@ -130,15 +131,20 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
             org_id=row["context.org_id"],
             user_id=user_id,
             path=row["context.path"])
-        log.save()
+        return log
 
     files = [f for f in os.listdir(dirpath) if os.path.isfile(os.path.join(dirpath,f))]
     for file in files:
         filepath = os.path.join(dirpath,file)
         try:
             # Parse and save to db
-            logs = read_logs(filepath, zipped)
-            logs.apply(save_row, axis=1)
+            logDF = read_logs(filepath, zipped)
+            # Process bulks
+            count, _ = logDF.shape
+            for i in range(0,count,BULK_UPLOAD_SIZE):
+                bulk = logDF[i:i+BULK_UPLOAD_SIZE]
+                logs = list(bulk.apply(make_row, axis=1))
+                Log.objects.bulk_create(logs)
             os.remove(filepath)
             logger.info("Read logs from {}".format(filepath))
         except Exception as e:
@@ -158,7 +164,7 @@ def process_log_times():
 
     TODO: Mark completion milestone per course
     """
-    def save_row(row):
+    def make_row(row):
         delta = row["delta_time"].days*84600 + row["delta_time"].seconds
         time_on_page = TimeModel(
             session=row["session"],
@@ -166,7 +172,7 @@ def process_log_times():
             delta_time_float=delta,
             event_type_vertical=row["event_type_vertical"],
             course=row["course"])
-        time_on_page.save()
+        return time_on_page
 
     def save_vertical_row(row):
         vertical = CourseVertical(
@@ -246,7 +252,14 @@ def process_log_times():
             apply_navigation_lower_limit=True)
         time_per_user_session = timer.time_on_page.copy()
         time_per_user_session["course"] = course_dataframe["course"][0]
-        time_per_user_session.apply(save_row, axis=1)
+
+        # Process bulk
+        count, _ = time_per_user_session.shape
+        for i in range(0,count,BULK_UPLOAD_SIZE):
+            bulk = time_per_user_session[i:i+BULK_UPLOAD_SIZE]
+            times = list(bulk.apply(make_row, axis=1))
+            TimeOnPage.objects.bulk_create(times)
+
         logger.info("Course {} times processed".format(course_id))
 
 @shared_task
