@@ -16,7 +16,7 @@ FROM dev as prod
 RUN pip install gunicorn==19.9.0
 ENV DJANGO_DEBUG False
 ENV CONFIG_FILE  /app/production.yaml
-#RUN python /app/manage.py collectstatic --noinput
+RUN python /app/manage.py collectstatic --noinput
 #RUN python /app/manage.py makemigrations
 #RUN python /app/manage.py migrate
 CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "Stats.wsgi:application"]
