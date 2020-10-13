@@ -2,9 +2,10 @@ import math
 import pandas as pd
 import os
 import logging
-from datetime import timedelta
+import pytz
+from datetime import timedelta, datetime
 from celery import shared_task
-from Courses.models import Log, CourseVertical, TimeOnPage as TimeModel, StaffUserName, ProcessedRecord
+from Courses.models import Log, CourseVertical, TimeOnPage as TimeModel, StaffUserName
 from Courses.processing import read_json_course, read_json_course_file, \
     flatten_course_as_verticals, read_logs, filter_by_log_qty, filter_course_team, \
     load_course_from_LMS
@@ -14,7 +15,7 @@ from django.core.serializers import json as django_json_serializer
 
 logger = logging.getLogger(__name__)
 TIMEOUT = timedelta(minutes=10)
-LOWER_LIMIT = timedelta(seconds=15)  # files
+LOWER_LIMIT = timedelta(days=3)  # files
 BULK_UPLOAD_SIZE = 500
 
 @shared_task
@@ -156,13 +157,22 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
             logger.warning("Error while reading logs from {}. Reason {}".format(filepath,e))
 
 @shared_task
-def process_log_times():
+def process_log_times(endDate=None, lower_limit=None):
     """Recovers logs from DB and computes time per session
 
     It looks up the latests non processes logs, recovers them and
-    creates a pandas Dataframe to compute times. 
+    creates a pandas Dataframe to compute times.
 
-    TODO: Mark completion milestone per course
+    NOTE: Celery will set EndDate as datetime.datetime.now()
+    Timezone localization will be set according to settings.py
+
+    Arguments
+    - endDate datetime to use and upper date limit, 
+        lower date limit is set as endDate - LOWER_LIMIT.
+        If none is provided all logs will be processed
+    - lower_limit timedelta to subtract from endDate.
+        If none is provided default LOWER_LIMIT is useds
+
     """
     def make_row(row):
         delta = row["delta_time"].days*84600 + row["delta_time"].seconds
@@ -195,13 +205,17 @@ def process_log_times():
         vertical.save()
 
     # Recover logs:
-    # Check the last processed log. If it is not found process all logs
+    # Process using endDate as upper limit. If none is given process all logs
     # Parse to json
-    record = ProcessedRecord.load()
-    if record.last_processed_time is None:
+    if endDate is None:
         logs_db = Log.objects.all()
     else:
-        logs_db = Log.objects.filter(time__gte=(record.last_processed_time_timestamp - LOWER_LIMIT))
+        tz = pytz.timezone(settings.TIMEZONE)
+        endDate_localized = tz.localize(endDate)
+        if lower_limit is None:
+            logs_db = Log.objects.filter(time__gte=(endDate_localized - LOWER_LIMIT),time__lt=(endDate_localized))
+        else:
+            logs_db = Log.objects.filter(time__gte=(endDate_localized - lower_limit),time__lt=(endDate_localized))
   
     if logs_db.count() == 0:
         logger.info("No logs for time processing")
@@ -303,3 +317,20 @@ def process_log_times_from_dir(logpath, coursepath, zipped=True):
     time_per_user_session = timer.time_on_page.copy()
     time_per_user_session["course"] = dataframe["course"][0]
     time_per_user_session.apply(save_row, axis=1)
+
+
+def compute_time_batches(initialDate=None, time_delta=timedelta(days=3)):
+    """
+    Process all log times by batches from initialDate to today
+
+    Arguments
+    - initialDate string like 2018-09-24
+
+    - time_delta timedelta object
+    """
+    times = pd.date_range(start=initialDate, end=datetime.today(), freq=time_delta)
+    for i in range(1,len(times)):
+        logger.log("Processing time logs for time {} with offset {}".format(times[i],time_delta))
+        # This is a pandas timestamp Timestamp class, it should be replaced with datetime for a more
+        # standard module
+        process_log_times(times[i],lower_limit=time_delta)
