@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 
 class SingletonModel(models.Model):
 
@@ -40,13 +40,13 @@ class Log(models.Model):
 
 class CourseVertical(models.Model):
     course = models.TextField()
-    course_name = models.TextField()
+    course_name = models.CharField(max_length=255)
     chapter = models.TextField()
-    chapter_name = models.TextField()
+    chapter_name = models.CharField(max_length=255)
     sequential = models.TextField()
-    sequential_name = models.TextField()
+    sequential_name = models.CharField(max_length=255)
     vertical = models.TextField()
-    vertical_name = models.TextField()
+    vertical_name = models.CharField(max_length=255)
     block_id = models.TextField()
     vertical_number = models.IntegerField()
     sequential_number = models.IntegerField()
@@ -58,13 +58,14 @@ class CourseVertical(models.Model):
 
 class TimeOnPage(models.Model):
     event_type_vertical = models.TextField()
-    username = models.CharField(max_length=20)
+    username = models.CharField(max_length=150)
     session = models.IntegerField()
     delta_time_float = models.FloatField()
     course = models.TextField()
+    time = models.DateTimeField(default=timezone.now())
 
 class StaffUserName(models.Model):
-    username = models.CharField(max_length=20)
+    username = models.CharField(max_length=150)
 
 class ProcessedRecord(SingletonModel):
     last_processed_time = models.ForeignKey(TimeOnPage, null=True, on_delete=models.SET_NULL)
