@@ -67,8 +67,8 @@ def times_on_course(request):
 
     tz = pytz.timezone(settings.TIME_ZONE)
     try:
-        llimit = tz.localize(datetime.fromisoformat(request.query_params["llimit"]))
-        ulimit = tz.localize(datetime.fromisoformat(request.query_params["ulimit"]))
+        llimit = tz.localize(datetime.fromisoformat(request.query_params["llimit"].replace("Z","")))
+        ulimit = tz.localize(datetime.fromisoformat(request.query_params["ulimit"].replace("Z","")))
     except Exception as time_error:
         return Response(status=status.HTTP_400_BAD_REQUEST, data="Error while formating time limits. Expects isoformat.")
 

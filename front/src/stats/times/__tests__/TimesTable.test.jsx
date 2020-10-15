@@ -59,6 +59,8 @@ it('shows error when fetch fails', async () => {
   render(<TimesTable match={{ params: {} }} />);
 
   userEvent.type(screen.getByRole('searchbox'), 'Test');
+  userEvent.type(screen.getByTestId('times-lDate'), '2019-09-04');
+  userEvent.type(screen.getByTestId('times-uDate'), '2019-09-05');
   expect(screen.getByRole('searchbox')).toHaveValue('Test');
   fireEvent.submit(screen.getByRole('searchbox'));
   await waitFor(() =>
@@ -75,6 +77,8 @@ it('dismisses error messages', async () => {
   render(<TimesTable match={{ params: {} }} />);
 
   userEvent.type(screen.getByRole('searchbox'), 'Test');
+  userEvent.type(screen.getByTestId('times-lDate'), '2019-09-04');
+  userEvent.type(screen.getByTestId('times-uDate'), '2019-09-05');
   expect(screen.getByRole('searchbox')).toHaveValue('Test');
   fireEvent.submit(screen.getByRole('searchbox'));
   await waitFor(() =>
@@ -109,6 +113,8 @@ it('gets table values', async () => {
   render(<TimesTable match={{ params: {} }} />);
 
   userEvent.type(screen.getByRole('searchbox'), 'Test');
+  userEvent.type(screen.getByTestId('times-lDate'), '2019-09-04');
+  userEvent.type(screen.getByTestId('times-uDate'), '2019-09-05');
   fireEvent.submit(screen.getByRole('searchbox'));
   await waitFor(() =>
     expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(2)
@@ -137,6 +143,8 @@ it('has a second view mode', async () => {
   render(<TimesTable match={{ params: {} }} />);
 
   userEvent.type(screen.getByRole('searchbox'), 'Test');
+  userEvent.type(screen.getByTestId('times-lDate'), '2019-09-04');
+  userEvent.type(screen.getByTestId('times-uDate'), '2019-09-05');
   fireEvent.submit(screen.getByRole('searchbox'));
   await waitFor(() =>
     expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(2)

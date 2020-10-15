@@ -101,14 +101,19 @@ export const resetTimes = () => (dispatch) =>
 export const setLoadingTimes = () => (dispatch) =>
   dispatch({ type: LOADING_TIMES });
 
-export const recoverCourseStudentTimesSum = (course_id = 'nan') => (
-  dispatch,
-  getState
-) => {
+export const recoverCourseStudentTimesSum = (
+  course_id = 'nan',
+  lower_date,
+  upper_date
+) => (dispatch, getState) => {
   let base = getState().urls.base;
 
   getAuthenticatedHttpClient()
-    .get(`${base}/api/courses/times/?search=${encodeURIComponent(course_id)}`)
+    .get(
+      `${base}/api/courses/times/?search=${encodeURIComponent(
+        course_id
+      )}&llimit=${lower_date.toISOString()}&ulimit=${upper_date.toISOString()}`
+    )
     .then((res) => {
       if (res.request.responseURL.includes('login/?next=')) {
         return dispatch({ type: DO_LOGIN });

@@ -11,10 +11,11 @@ import {
   OverlayTrigger,
   Tooltip,
   Alert,
+  InputGroup,
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faSearch } from '@fortawesome/free-solid-svg-icons';
-import { SearchField, Collapsible, CheckBox } from '@edx/paragon';
+import { SearchField, Collapsible, CheckBox, Input } from '@edx/paragon';
 import { Helmet } from 'react-helmet';
 import {
   recoverCourseStudentTimesSum,
@@ -77,6 +78,8 @@ const TimesTable = ({
 }) => {
   const [searchState, setSearchState] = useState({
     current: match.params.course_url ? match.params.course_url : '',
+    lowerDate: '',
+    upperDate: '',
   });
 
   const [tableData, setTableData] = useState({
@@ -108,7 +111,13 @@ const TimesTable = ({
   // Load data when the button trigers
   useEffect(() => {
     if (searchState.current !== '') {
-      recoverCourseStructure(searchState.current);
+      if (searchState.lowerDate === '' && searchState.upperDate === '') {
+        setErrors([...errors, 'Por favor ingrese fechas válidas']);
+      } else {
+        setLoadingCourse();
+        setTableData({ ...tableData, loaded: false });
+        recoverCourseStructure(searchState.current);
+      }
     }
     // eslint-disable-next-line
   }, [searchState.current]);
@@ -157,7 +166,11 @@ const TimesTable = ({
       });
 
       // Load times for users
-      recoverCourseStudentTimesSum(current.id);
+      recoverCourseStudentTimesSum(
+        current.id,
+        new Date(searchState.lowerDate),
+        new Date(searchState.upperDate)
+      );
     }
     // eslint-disable-next-line
   }, [course.course]);
@@ -255,15 +268,21 @@ const TimesTable = ({
             : ''}
         </title>
       </Helmet>
-      <Row style={{ marginBottom: '2em' }}>
+      <Row>
         <Col>
           <h3>Cargar tiempo por módulos</h3>
+          <p>
+            Buscar por nombre o c&oacute;digo de curso y para una fecha
+            determinada.
+          </p>
+        </Col>
+      </Row>
+      <Row style={{ marginBottom: '1rem' }}>
+        <Col>
           <SearchField
             onSubmit={(value) => {
               if (searchState.current !== value) {
                 setSearchState({ ...searchState, current: value });
-                setTableData({ ...tableData, loaded: false });
-                setLoadingCourse();
               }
             }}
             inputLabel={'Cursos:'}
@@ -272,6 +291,38 @@ const TimesTable = ({
               clear: <FontAwesomeIcon icon={faTimes} />,
             }}
           />
+        </Col>
+      </Row>
+      <Row style={{ marginBottom: '2rem' }}>
+        <Col>
+          <InputGroup>
+            <InputGroup.Prepend>
+              <InputGroup.Text>Fecha de Inicio</InputGroup.Text>
+            </InputGroup.Prepend>
+            <Input
+              id="times-lDate"
+              data-testid="times-lDate"
+              type="date"
+              onChange={(e) =>
+                setSearchState({ ...searchState, lowerDate: e.target.value })
+              }
+            />
+          </InputGroup>
+        </Col>
+        <Col>
+          <InputGroup>
+            <InputGroup.Prepend>
+              <InputGroup.Text>Fecha de Fin</InputGroup.Text>
+            </InputGroup.Prepend>
+            <Input
+              id="times-uDate"
+              data-testid="times-uDate"
+              type="date"
+              onChange={(e) =>
+                setSearchState({ ...searchState, upperDate: e.target.value })
+              }
+            />
+          </InputGroup>
         </Col>
       </Row>
 

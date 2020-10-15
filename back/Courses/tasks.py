@@ -26,7 +26,8 @@ def load_course(filepath):
     Arguments:
     - filepath String
     """
-    course_blocks = read_json_course_file(filepath)
+    with open(filepath) as f:
+        course_blocks = read_json_course_file(f)
     dataframe = flatten_course_as_verticals(course_blocks)
 
     def save_row(row):
@@ -54,7 +55,7 @@ def load_course(filepath):
     if len(previous_values) != 0:
         previous_values.delete()
     dataframe.apply(save_row, axis=1)
-    logger.info("Loaded course verticals for {}".format(course_code))
+    logger.info("Loaded course verticals for {}".format(course_id))
 
 @shared_task
 def load_course_from_api(course_code):
@@ -182,7 +183,7 @@ def process_log_times(endDate=None, day_window=None):
             username=row["username"],
             delta_time_float=delta,
             event_type_vertical=row["event_type_vertical"],
-            course=course
+            course=course,
             time=date)
         return time_on_page
 
@@ -318,7 +319,8 @@ def process_log_times_from_dir(logpath, coursepath, zipped=True):
     logs = filter_course_team(logs_full, other_people=[
                               'gap', 'francisco_sereno'])
     logs = filter_by_log_qty(logs, min_logs=15)
-    course_blocks = read_json_course_file(coursepath)
+    with open(coursepath) as f:
+        course_blocks = read_json_course_file(f)
     dataframe = flatten_course_as_verticals(course_blocks)
     parser = LogParser(df=dataframe)
     parser.load_logs(logs)
