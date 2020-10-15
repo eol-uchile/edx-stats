@@ -1,3 +1,5 @@
+import pytz
+from datetime import datetime
 from django.http import HttpResponse
 from django.db.models import Q, Sum
 from rest_framework import viewsets, permissions, generics, mixins, filters, status
@@ -42,6 +44,14 @@ class TimeOnPageViewSet(generics.ListAPIView, viewsets.ModelViewSet):
 def times_on_course(request):
     """
     Compact user time sessions for verticals
+
+    Expects 3 query parameters
+    - search: course id in course-block format
+    - llimit (lower limit): a string datetime in isoformat 
+    - rlimit (upper limit): a string datetime in isoformat
+    both timestamps are included on the query.
+
+    Timezone is added on runtime
     """
     roles = recoverUserCourseRoles(request)
     allowed_list = [r['course_id'].replace("course","block") for r  in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES ]
@@ -49,13 +59,33 @@ def times_on_course(request):
     if "search" not in request.query_params:
         return Response(status=status.HTTP_400_BAD_REQUEST, data="Search field required")
 
+    if "llimit" not in request.query_params:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data="Lower limit field required")
+
+    if "ulimit" not in request.query_params:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data="Upper limit field required")
+
+    tz = pytz.timezone(settings.TIME_ZONE)
+    try:
+        llimit = tz.localize(datetime.fromisoformat(request.query_params["llimit"]))
+        ulimit = tz.localize(datetime.fromisoformat(request.query_params["ulimit"]))
+    except Exception as time_error:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data="Error while formating time limits. Expects isoformat.")
+
+    if llimit > ulimit :
+        return Response(status=status.HTTP_400_BAD_REQUEST, data="lower limit does not preceed upper limit")
+
     # Check that user has permissions
     if request.query_params["search"] not in allowed_list:
         return Response(status=status.HTTP_403_FORBIDDEN,  data="No tiene permisos para ver los datos en los cursos solicitados")
 
     # Course will arrive in format block-v1:COURSE without +type@course-block@course
     # hence we do a icontains query
-    times = TimeOnPage.objects.filter(course__icontains=request.query_params["search"]).values("username","event_type_vertical").order_by("username","event_type_vertical").annotate(total=Sum("delta_time_float"))
+    times = TimeOnPage.objects.filter(
+        course__icontains=request.query_params["search"],
+        time__lte=ulimit,
+        time__gte=llimit
+    ).values("username","event_type_vertical").order_by("username","event_type_vertical").annotate(total=Sum("delta_time_float"))
     if len(times) == 0:
         return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(times)
