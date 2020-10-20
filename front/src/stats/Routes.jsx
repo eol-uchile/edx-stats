@@ -37,7 +37,10 @@ const Routes = ({ redirect }) => {
             <Switch>
               <Route exact path="/" component={TimeLanding} />
               <Route
-                path={['/course-times/:course_url', '/course-times']}
+                path={[
+                  '/course-times/:course_url/:start/:end/',
+                  '/course-times',
+                ]}
                 component={TimeTable}
               />
               <Route

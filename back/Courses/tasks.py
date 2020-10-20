@@ -8,7 +8,7 @@ from celery import shared_task
 from Courses.models import Log, CourseVertical, TimeOnPage as TimeModel, StaffUserName
 from Courses.processing import read_json_course, read_json_course_file, \
     flatten_course_as_verticals, read_logs, filter_by_log_qty, filter_course_team, \
-    load_course_from_LMS
+    load_course_blocks_from_LMS, flatten_course_as_verticals_from_dict
 from Courses.classifier import LogParser, TimeOnPage
 from django.conf import settings
 from django.core.serializers import json as django_json_serializer
@@ -65,7 +65,7 @@ def load_course_from_api(course_code):
     - course_code String as block-v1:course_name+type@course+block@course
     """
     try:
-        json_text = load_course_from_LMS(course_code)
+        json_text = load_course_blocks_from_LMS(course_code)
     except Exception as e:
         # Abort processing
         logger.warning(e)
@@ -236,7 +236,7 @@ def process_log_times(endDate=None, day_window=None):
     # and update the Processed log if any was successful
     for course_id in course_ids:
         try:
-            recovered_blocks = load_course_from_LMS("{}+type@course+block@course".format(course_id.replace('course-v1','block-v1')))
+            recovered_blocks = load_course_blocks_from_LMS("{}+type@course+block@course".format(course_id.replace('course-v1','block-v1')))
         except Exception as e:
             print("Error while loading course structure", e)
             logger.warning("Course {} times not processed due to {}".format(course_id,e))
@@ -244,6 +244,10 @@ def process_log_times(endDate=None, day_window=None):
 
         course_blocks = read_json_course(recovered_blocks)
         course_dataframe = flatten_course_as_verticals(course_blocks)
+        # If no valid verticals were found abort
+        count, _ = course_dataframe.shape
+        if count == 0:
+            continue
 
         # Remove previous course info in the DB
         course_id_df = course_dataframe['course'].iloc[0]
@@ -261,38 +265,45 @@ def process_log_times(endDate=None, day_window=None):
         for period in periods:
 
             day_logs = course_logs[course_logs.time.dt.date == period]
+            # Continue if no logs exists
+            count, _ = day_logs.shape
+            if count == 0:
+                continue
+            try:
+                # Parse and process time values
+                parser = LogParser(df=course_dataframe)
+                parser.load_logs(day_logs)
+                parsed_logs = parser.parse_and_get_logs()
+                timer = TimeOnPage(
+                    timeout_last_action=TIMEOUT,
+                    timeout_outlier=TIMEOUT,
+                    navigation_time=COMPUTE_LOWER_LIMIT)
+                timer.load_logs(parsed_logs)
+                timer.do_user_time_session()
+                timer.do_time_on_page(
+                    apply_outlier_timeout=True,
+                    apply_navigation_lower_limit=True)
 
-            # Delete today's info to overwrite
-            previous_times = TimeModel.objects.filter(time__date=period)
-            previous_times.delete()
+                # Clean and recover only times on valid verticals
+                timer.clean_time_on_page_logs()
+                time_per_user_session = timer.time_on_page.copy()
+                time_per_user_session = time_per_user_session[time_per_user_session['vertical_id'] != 'NOT_LISTED']
 
-            # Parse and process time values
-            parser = LogParser(df=course_dataframe)
-            parser.load_logs(day_logs)
-            parsed_logs = parser.parse_and_get_logs()
-            timer = TimeOnPage(
-                timeout_last_action=TIMEOUT,
-                timeout_outlier=TIMEOUT,
-                navigation_time=COMPUTE_LOWER_LIMIT)
-            timer.load_logs(parsed_logs)
-            timer.do_user_time_session()
-            timer.do_time_on_page(
-                apply_outlier_timeout=True,
-                apply_navigation_lower_limit=True)
 
-            # Clean and recover only times on valid verticals
-            timer.clean_time_on_page_logs()
-            time_per_user_session = timer.time_on_page.copy()
-            time_per_user_session = time_per_user_session[time_per_user_session['vertical_id'] != 'NOT_LISTED']
+                # Delete today's info to overwrite
+                previous_times = TimeModel.objects.filter(time__date=period, course=course_dataframe["course"][0])
+                previous_times.delete()
 
-            # Upload bulks to DB
-            count, _ = time_per_user_session.shape
-            for i in range(0,count,BULK_UPLOAD_SIZE):
-                bulk = time_per_user_session[i:i+BULK_UPLOAD_SIZE]
-                times = list(bulk.apply(lambda row: make_row(row,period,course_dataframe["course"][0]), axis=1))
-                TimeModel.objects.bulk_create(times)
+                # Upload bulks to DB
+                count, _ = time_per_user_session.shape
+                for i in range(0,count,BULK_UPLOAD_SIZE):
+                    bulk = time_per_user_session[i:i+BULK_UPLOAD_SIZE]
+                    times = list(bulk.apply(lambda row: make_row(row,period,course_dataframe["course"][0]), axis=1))
+                    TimeModel.objects.bulk_create(times)
 
-            logger.info("Course {} times processed for {}".format(course_id, period))
+                logger.info("Course {} times processed for {}".format(course_id, period))
+            except Exception as error:
+                logger.warning("Failed to process times on {}, {}. Reason: {}".format(course_id, period, error))
 
 def process_log_times_from_dir(logpath, coursepath, zipped=True):
     """OLD: Read log files and process times for a single course locally
@@ -353,4 +364,4 @@ def compute_time_batches(initialDate=None, time_delta=timedelta(days=3)):
         logger.info("Processing time logs for time {} with offset {}".format(times[i],time_delta))
         # This is a pandas timestamp Timestamp class, it should be replaced with datetime for a more
         # standard module
-        process_log_times(times[i],lower_limit=time_delta)
+        process_log_times(times[i],time_delta)

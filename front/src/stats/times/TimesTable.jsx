@@ -78,8 +78,8 @@ const TimesTable = ({
 }) => {
   const [searchState, setSearchState] = useState({
     current: match.params.course_url ? match.params.course_url : '',
-    lowerDate: '',
-    upperDate: '',
+    lowerDate: match.params.start ? match.params.start : '',
+    upperDate: match.params.end ? match.params.end : '',
   });
 
   const [tableData, setTableData] = useState({
@@ -109,7 +109,7 @@ const TimesTable = ({
   }, []);
 
   // Load data when the button trigers
-  useEffect(() => {
+  const submit = (current) => {
     if (searchState.current !== '') {
       if (searchState.lowerDate === '' && searchState.upperDate === '') {
         setErrors([...errors, 'Por favor ingrese fechas válidas']);
@@ -119,8 +119,7 @@ const TimesTable = ({
         recoverCourseStructure(searchState.current);
       }
     }
-    // eslint-disable-next-line
-  }, [searchState.current]);
+  };
 
   // Recover incoming data for table
   useEffect(() => {
@@ -281,15 +280,18 @@ const TimesTable = ({
         <Col>
           <SearchField
             onSubmit={(value) => {
-              if (searchState.current !== value) {
-                setSearchState({ ...searchState, current: value });
-              }
+              setSearchState({ ...searchState, current: value });
+              submit(value);
             }}
             inputLabel={'Cursos:'}
             icons={{
               submit: <FontAwesomeIcon icon={faSearch} />,
               clear: <FontAwesomeIcon icon={faTimes} />,
             }}
+            value={searchState.current}
+            onChange={(value) =>
+              setSearchState({ ...searchState, current: value })
+            }
           />
         </Col>
       </Row>
@@ -303,6 +305,7 @@ const TimesTable = ({
               id="times-lDate"
               data-testid="times-lDate"
               type="date"
+              defaultValue={searchState.lowerDate}
               onChange={(e) =>
                 setSearchState({ ...searchState, lowerDate: e.target.value })
               }
@@ -318,6 +321,7 @@ const TimesTable = ({
               id="times-uDate"
               data-testid="times-uDate"
               type="date"
+              defaultValue={searchState.upperDate}
               onChange={(e) =>
                 setSearchState({ ...searchState, upperDate: e.target.value })
               }

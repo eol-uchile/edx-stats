@@ -7,8 +7,19 @@ import { Link } from 'react-router-dom';
 import { Collapsible } from '@edx/paragon';
 import PropTypes from 'prop-types';
 
+const getDate = (d) => {
+  let dd = String(d.getDate()).padStart(2, '0');
+  let mm = String(d.getMonth() + 1).padStart(2, '0'); //January is 0!
+  let yyyy = d.getFullYear();
+  return `${yyyy}-${mm}-${dd}`;
+};
+
 const Landing = ({ courses, getUserCourseRoles }) => {
-  const [state, setState] = useState({ selected: false, filtered: [] });
+  const [state, setState] = useState({
+    selected: false,
+    filtered: [],
+    today: new Date(),
+  });
 
   useEffect(() => {
     getUserCourseRoles();
@@ -46,7 +57,11 @@ const Landing = ({ courses, getUserCourseRoles }) => {
               <ul>
                 {state.filtered.map((el) => (
                   <li>
-                    <Link to={`/course-times/${el.course_id}`}>
+                    <Link
+                      to={`/course-times/${el.course_id}/${getDate(
+                        state.today
+                      )}/${getDate(state.today)}/`}
+                    >
                       Ver {el.course_id}
                     </Link>
                   </li>
