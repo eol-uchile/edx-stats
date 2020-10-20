@@ -182,7 +182,7 @@ def process_log_times(endDate=None, day_window=None):
             session=row["session"],
             username=row["username"],
             delta_time_float=delta,
-            event_type_vertical=row["event_type_vertical"],
+            event_type_vertical=row["vertical_id"],
             course=course,
             time=date)
         return time_on_page
