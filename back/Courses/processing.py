@@ -138,6 +138,56 @@ def flatten_course_as_verticals(course_df):
         .drop(columns="index")
     return course_structure
 
+def flatten_course_as_verticals_from_dict(course_dict):
+    """
+    Parse json course structure from studio API into 
+    numbered vertical blocks
+    """
+    data = []
+    columns = [
+        'course','course_name', 'chapter', 'chapter_name', 'sequential',
+        'sequential_name', 'vertical', 'vertical_name', 'id', 'vertical_number',
+        'sequential_number', 'chapter_number', 'child_number', 'type',
+        'student_view_url', 'lms_web_url']
+    
+    # Recover info
+    course = course_dict['id']
+    course_name = course_dict['display_name']
+    # Nothing to parse
+    if not course_dict['has_children']:
+        return pd.DataFrame(data,columns=columns)
+
+    for chapter_number in range(len(course_dict['child_info']['children'])):
+        chapter = course_dict['child_info']['children'][chapter_number]
+        chapter_id = chapter['id']
+        chapter_name = chapter['display_name']
+        if chapter['has_children'] and 'child_info' in chapter:
+            for sequential_number in range(len(chapter['child_info']['children'])):
+                sequential = chapter['child_info']['children'][sequential_number]
+                sequential_id = sequential['id']
+                sequential_name = sequential['display_name']
+                if sequential['has_children'] and 'child_info' in sequential:
+                    for vertical_number in range(len(sequential['child_info']['children'])):
+                        vertical = sequential['child_info']['children'][vertical_number]
+                        vertical_id = vertical['id']
+                        vertical_name = vertical['display_name']
+                        if vertical['has_children'] and 'child_info' in vertical:
+                            for child_number in range(len(vertical['child_info']['children'])):
+                                child = vertical['child_info']['children'][child_number]
+                                c_id = child['id']
+                                c_type  = child['category']
+                                data.append([
+                                    course, course_name,
+                                    chapter_id, chapter_name,
+                                    sequential_id, sequential_name,
+                                    vertical_id, vertical_name, c_id,
+                                    vertical_number + 1, sequential_number + 1, 
+                                    chapter_number + 1, child_number + 1,
+                                    c_type, "",""
+                                    ])
+
+    return pd.DataFrame(data,columns=columns)
+
 def read_logs(filename, ziped=False):
     """ Read logs and expand inner JSON values
 
@@ -215,14 +265,14 @@ def filter_course_team(logs, user_field_name = 'username', other_people = None):
 
     return logs[logs.username.isin(students)]
 
-def load_course_from_LMS(course_code):
+def load_course_blocks_from_LMS(course_code):
     """Uses an OAuthAPIClient to recover the course structure from the LMS backend
 
     Arguments:
         course_code string as block-v1:course_name+type@course+block@course
 
     Returns:
-        JSON text response
+        JSON text response with course enumerated blocks
     """
     client = OAuthAPIClient(
         settings.BACKEND_LMS_BASE_URL,
@@ -230,7 +280,29 @@ def load_course_from_LMS(course_code):
         settings.BACKEND_SERVICE_EDX_OAUTH2_SECRET
     )
 
-    response = client.get(settings.BACKEND_LMS_BASE_URL+'/api/courses/v1/blocks/'+course_code+'?depth=all&all_blocks=true&requested_fields=all,children')
+    response = client.get('{}/api/courses/v1/blocks/{}?depth=all&all_blocks=true&requested_fields=all,children'.format(settings.BACKEND_LMS_BASE_URL,course_code))
     if response.status_code != 200:
         raise Exception("Request to LMS failed for {}".format(course_code), str(response.text))
+    return response.text
+
+def load_course_structure_from_CMS(course_code):
+    """Uses an OAuthAPIClient to recover the course structure from the CMS backend
+
+    Arguments:
+        course_code string course-v1:coursename
+
+    Returns:
+        JSON text response with course tree
+    """
+    client = OAuthAPIClient(
+        settings.BACKEND_LMS_BASE_URL,
+        settings.BACKEND_SERVICE_EDX_OAUTH2_KEY,
+        settings.BACKEND_SERVICE_EDX_OAUTH2_SECRET
+    )
+    client.headers.update({"Accept" : "application/json, text/javascript, */*; q=0.01", "Content-Type": "application/json"})
+
+    response = client.get("{}/course/{}?format=concise".format(settings.BACKEND_CMS_BASE_URL,course_code))
+
+    if response.status_code != 200:
+        raise Exception("Request to CMS failed for {}".format(course_code), str(response.text))
     return response.text

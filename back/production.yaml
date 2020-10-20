@@ -31,6 +31,7 @@ BACKEND_SERVICE_EDX_OAUTH2_KEY: 'g4S52ki5v1VjdozsLh0sgzoeovbunfqTz2pHZxOl'
 BACKEND_SERVICE_EDX_OAUTH2_SECRET:  'ZLWeN0jegl0JxpwrSrgBvdNoP8X67HKKHJUi1rz2z49I4lQp6lPQQouYg9sDKp7D4dOnHyBxHccxmVdMBkHk877ZNGdx8CMDCVzuOxQlyrpLAtnFtn7EX5w9Lw1fXKZQ'  # Local Development Values
 BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL: 'https://eol.andhael.cl/oauth2'
 BACKEND_LMS_BASE_URL: 'https://eol.andhael.cl'
+BACKEND_CMS_BASE_URL: 'https://cms.eol.andhael.cl'
 BACKEND_ALLOWED_ROLES:
   - 'staff'
   - 'data researcher'
