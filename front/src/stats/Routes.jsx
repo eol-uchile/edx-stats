@@ -23,15 +23,17 @@ const Routes = ({ redirect }) => {
       <Container>
         <Row>
           <Col className="col-xs-12 col-sm-3 col-md-2">
-            <Link to="/">Dashboard</Link>
-            <br />
-            <br />
-            <Link to="/course-times">Tiempo por curso</Link>
-            <br />
-            <br />
-            <Link to="/course-videos">Videos por curso</Link>
-            <br />
-            <br />
+            <Container fluid>
+              <Link to="/">Dashboard</Link>
+              <br />
+              <br />
+              <Link to="/course-times">Tiempo en cursos</Link>
+              <br />
+              <br />
+              <Link to="/course-videos">Videos por curso</Link>
+              <br />
+              <br />
+            </Container>
           </Col>
           <Col className="col-xs-12 col-sm-9 col-md-10">
             <Switch>

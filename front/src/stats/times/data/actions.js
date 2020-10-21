@@ -41,9 +41,17 @@ export const recoverCourseStudentTimes = (
       if (res.status === 200) {
         return dispatch({ type: LOADED_TIMES, data: res.data.results });
       }
-      return dispatch({ type: LOADING_TIMES_ERROR, data: [] });
+      return dispatch({
+        type: LOADING_TIMES_ERROR,
+        data: ['No hay datos para el curso, por favor intente mas tarde.'],
+      });
     })
-    .catch((error) => dispatch({ type: LOADING_TIMES_ERROR, data: [] }));
+    .catch((error) =>
+      dispatch({
+        type: LOADING_TIMES_ERROR,
+        data: ['Ha ocurrido un error en los servidores de Eol.'],
+      })
+    );
 };
 
 export const getUserCourseRoles = () => (dispatch, getState) => {
@@ -79,7 +87,12 @@ export const recoverCourseStructure = (course_id = 'nan') => (
       if (res.status === 200) {
         return dispatch({ type: LOADED_COURSE, data: [res.data.courses[0]] });
       }
-      return dispatch({ type: LOADING_COURSE_ERROR, data: [] });
+      return dispatch({
+        type: LOADING_COURSE_ERROR,
+        data: [
+          'El curso no ha sido ingresado al sistema de analítica, por favor intente mas tarde.',
+        ],
+      });
     })
     .catch((error) => {
       let msg = error.customAttributes
@@ -121,7 +134,12 @@ export const recoverCourseStudentTimesSum = (
       if (res.status === 200) {
         return dispatch({ type: LOADED_TIMES_SUM, data: res.data });
       }
-      return dispatch({ type: LOADING_TIMES_ERROR, data: [] });
+      return dispatch({
+        type: LOADING_TIMES_ERROR,
+        data: [
+          'No hay datos para el curso para estas fechas, por favor intente mas tarde.',
+        ],
+      });
     })
     .catch((error) => {
       let msg = error.customAttributes

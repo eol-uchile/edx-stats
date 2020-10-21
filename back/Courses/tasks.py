@@ -237,13 +237,13 @@ def process_log_times(endDate=None, day_window=None):
     for course_id in course_ids:
         try:
             recovered_blocks = load_course_blocks_from_LMS("{}+type@course+block@course".format(course_id.replace('course-v1','block-v1')))
+            course_blocks = read_json_course(recovered_blocks)
+            course_dataframe = flatten_course_as_verticals(course_blocks)
         except Exception as e:
             print("Error while loading course structure", e)
             logger.warning("Course {} times not processed due to {}".format(course_id,e))
             continue
-
-        course_blocks = read_json_course(recovered_blocks)
-        course_dataframe = flatten_course_as_verticals(course_blocks)
+        
         # If no valid verticals were found abort
         count, _ = course_dataframe.shape
         if count == 0:

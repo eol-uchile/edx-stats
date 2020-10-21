@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getUserCourseRoles } from './data/actions';
+import { getUserCourseRoles, setLoadingCourse } from './data/actions';
 import { Link } from 'react-router-dom';
 import { Collapsible } from '@edx/paragon';
 import PropTypes from 'prop-types';
@@ -14,7 +14,12 @@ const getDate = (d) => {
   return `${yyyy}-${mm}-${dd}`;
 };
 
-const Landing = ({ courses, getUserCourseRoles }) => {
+const Landing = ({
+  loadingCourses,
+  courses,
+  getUserCourseRoles,
+  setLoadingCourse,
+}) => {
   const [state, setState] = useState({
     selected: false,
     filtered: [],
@@ -22,14 +27,25 @@ const Landing = ({ courses, getUserCourseRoles }) => {
   });
 
   useEffect(() => {
+    setLoadingCourse();
     getUserCourseRoles();
   }, []);
 
   useEffect(() => {
     if (courses.length !== 0) {
+      let availableCourses = new Set(
+        courses
+          .filter(
+            (el) =>
+              el.role === 'instructor' ||
+              el.role === 'staff' ||
+              el.role === 'administrator'
+          )
+          .map((el) => el.course_id)
+      );
       setState({
         ...state,
-        filtered: courses.filter((el) => el.role === 'instructor'),
+        filtered: [...availableCourses],
       });
     }
   }, [courses]);
@@ -37,7 +53,9 @@ const Landing = ({ courses, getUserCourseRoles }) => {
   return (
     <Container>
       <Row>
-        <Col>Bonito dashboard</Col>
+        <Col>
+          <h2>Dashboard</h2>
+        </Col>
       </Row>
       <Row>
         <Col>
@@ -47,7 +65,7 @@ const Landing = ({ courses, getUserCourseRoles }) => {
                 className="flex-grow-1"
                 data-testid="AvailableCoursesCollapse"
               >
-                Cursos disponibles
+                Tiempo en Cursos: cursos disponibles
               </span>
               <Collapsible.Visible whenClosed> + </Collapsible.Visible>
               <Collapsible.Visible whenOpen> - </Collapsible.Visible>
@@ -55,17 +73,21 @@ const Landing = ({ courses, getUserCourseRoles }) => {
 
             <Collapsible.Body className="collapsible-body">
               <ul>
-                {state.filtered.map((el) => (
-                  <li>
-                    <Link
-                      to={`/course-times/${el.course_id}/${getDate(
-                        state.today
-                      )}/${getDate(state.today)}/`}
-                    >
-                      Ver {el.course_id}
-                    </Link>
-                  </li>
-                ))}
+                {loadingCourses ? (
+                  <Spinner animation="border" variant="primary" />
+                ) : (
+                  state.filtered.map((el) => (
+                    <li>
+                      <Link
+                        to={`/course-times/${el}/${getDate(
+                          state.today
+                        )}/${getDate(state.today)}/`}
+                      >
+                        Ver {el}
+                      </Link>
+                    </li>
+                  ))
+                )}
               </ul>
             </Collapsible.Body>
           </Collapsible.Advanced>
@@ -76,13 +98,24 @@ const Landing = ({ courses, getUserCourseRoles }) => {
 };
 
 Landing.propTypes = {
+  loadingCourses: PropTypes.bool.isRequired,
   courses: PropTypes.array.isRequired,
   getUserCourseRoles: PropTypes.func.isRequired,
+  setLoadingCourse: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => ({ courses: state.course.availableCourses });
+const mapStateToProps = (state) => ({
+  loadingCourses: state.course.loading,
+  courses: state.course.availableCourses,
+});
 
 const mapDispatchToProps = (dispatch) =>
-  bindActionCreators({ getUserCourseRoles }, dispatch);
+  bindActionCreators(
+    {
+      getUserCourseRoles,
+      setLoadingCourse,
+    },
+    dispatch
+  );
 
 export default connect(mapStateToProps, mapDispatchToProps)(Landing);

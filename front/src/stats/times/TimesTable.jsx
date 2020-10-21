@@ -64,7 +64,7 @@ const parseToTableRows = (r, k) => (
  * @param {Function} setLoadingCourse
  * @param {Function} resetCourses
  * @param {Function} resetTimes
- * @param {Object} location
+ * @param {Object} match
  */
 const TimesTable = ({
   course,
@@ -102,6 +102,9 @@ const TimesTable = ({
 
   // Cleanup on change view
   useEffect(() => {
+    if (searchState.current !== '') {
+      submit('');
+    }
     return () => {
       resetCourses();
       resetTimes();
@@ -278,25 +281,6 @@ const TimesTable = ({
       </Row>
       <Row style={{ marginBottom: '1rem' }}>
         <Col>
-          <SearchField
-            onSubmit={(value) => {
-              setSearchState({ ...searchState, current: value });
-              submit(value);
-            }}
-            inputLabel={'Cursos:'}
-            icons={{
-              submit: <FontAwesomeIcon icon={faSearch} />,
-              clear: <FontAwesomeIcon icon={faTimes} />,
-            }}
-            value={searchState.current}
-            onChange={(value) =>
-              setSearchState({ ...searchState, current: value })
-            }
-          />
-        </Col>
-      </Row>
-      <Row style={{ marginBottom: '2rem' }}>
-        <Col>
           <InputGroup>
             <InputGroup.Prepend>
               <InputGroup.Text>Fecha de Inicio</InputGroup.Text>
@@ -329,10 +313,30 @@ const TimesTable = ({
           </InputGroup>
         </Col>
       </Row>
-
+      <Row style={{ marginBottom: '2rem' }}>
+        <Col>
+          <SearchField
+            onSubmit={(value) => {
+              setSearchState({ ...searchState, current: value });
+              setErrors([]);
+              submit(value);
+            }}
+            inputLabel={'Cursos:'}
+            icons={{
+              submit: <FontAwesomeIcon icon={faSearch} />,
+              clear: <FontAwesomeIcon icon={faTimes} />,
+            }}
+            value={searchState.current}
+            onChange={(value) =>
+              setSearchState({ ...searchState, current: value })
+            }
+            placeholder="Nombre o Código de curso"
+          />
+        </Col>
+      </Row>
       {course.loading && !tableData.loaded ? (
         <Row>
-          <Col>
+          <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />
           </Col>
         </Row>
@@ -362,15 +366,6 @@ const TimesTable = ({
                 label="Agrupar Módulos"
                 onClick={(e) => {
                   toggleChapters(e.target.checked);
-                }}
-              />
-            </Col>
-            <Col>
-              <CheckBox
-                name="checkbox"
-                label="Ver total"
-                onClick={(e) => {
-                  console.log(e.target.checked);
                 }}
               />
             </Col>
@@ -458,9 +453,7 @@ const TimesTable = ({
       ) : (
         <Row>
           <Col>
-            {errors.length === 0 ? (
-              <p>No hay datos para el curso</p>
-            ) : (
+            {errors.length !== 0 &&
               errors.map((e, k) => (
                 <Alert
                   variant="warning"
@@ -470,8 +463,7 @@ const TimesTable = ({
                 >
                   {e}
                 </Alert>
-              ))
-            )}
+              ))}
           </Col>
         </Row>
       )}
