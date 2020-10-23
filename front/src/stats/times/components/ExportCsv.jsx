@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { CSVLink } from 'react-csv';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';

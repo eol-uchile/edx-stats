@@ -1,8 +1,8 @@
 import React from 'react';
 import { Route, Switch } from 'react-router';
 import { Container, Row, Col } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { TimeLanding, TimeTable } from './times';
+import { TimeLanding } from './times';
+import { RedirectToFeature } from './Redirect';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -22,37 +22,22 @@ const Routes = ({ redirect }) => {
     <main>
       <Container>
         <Row>
-          <Col className="col-xs-12 col-sm-3 col-md-2">
-            <Container fluid>
-              <Link to="/">Dashboard</Link>
-              <br />
-              <br />
-              <Link to="/course-times">Tiempo en cursos</Link>
-              <br />
-              <br />
-              <Link to="/course-videos">Videos por curso</Link>
-              <br />
-              <br />
-            </Container>
-          </Col>
-          <Col className="col-xs-12 col-sm-9 col-md-10">
-            <Switch>
-              <Route exact path="/" component={TimeLanding} />
-              <Route
-                path={[
-                  '/course-times/:course_url/:start/:end/',
-                  '/course-times',
-                ]}
-                component={TimeTable}
-              />
-              <Route
-                path="/course-videos"
-                component={() => <div>Videos search and analysis...</div>}
-              />
-            </Switch>
+          <Col>
+            <h4>Sistema de estad&iacute;stica y an&aacute;lisis</h4>
           </Col>
         </Row>
       </Container>
+      <Switch>
+        <Route path="/times" component={TimeLanding} />
+        <Route
+          render={(props) => (
+            <RedirectToFeature
+              path="/times"
+              message="Tiempo de Visita por módulos"
+            />
+          )}
+        />
+      </Switch>
     </main>
   );
 };

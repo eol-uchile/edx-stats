@@ -37,19 +37,22 @@ const store = configureStore({
 
 subscribe(APP_READY, () => {
   ReactDOM.render(
-    <AppProvider store={store}>
+    <AppProvider
+      store={store}
+      value={{ logo: '/public/static/logo.f09bd38cb6bf.png' }}
+    >
       <Header />
       <Routes />
-      <Footer />
+      <Footer logo="/public/static/0vti.ef83f16aa682.jpg" />
     </AppProvider>,
-    document.getElementById('root'),
+    document.getElementById('root')
   );
 });
 
 subscribe(APP_INIT_ERROR, (error) => {
   ReactDOM.render(
     <ErrorPage message={error.message} />,
-    document.getElementById('root'),
+    document.getElementById('root')
   );
 });
 

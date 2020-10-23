@@ -12,14 +12,16 @@ import {
   LOADED_COURSE_ROLES,
   LOADED_COURSE_ROLES_ERROR,
   REFRESH_LOGIN,
+  LOADED_COURSES_INFO,
+  LOADED_COURSES_INFO_ERROR,
 } from './types';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 export const resetCourses = () => (dispatch) =>
   dispatch({ type: LOADED_COURSE_RESET });
 
-export const setLoadingCourse = () => (dispatch) =>
-  dispatch({ type: LOADING_COURSE });
+export const setLoadingCourse = (prop) => (dispatch) =>
+  dispatch({ type: LOADING_COURSE, data: prop });
 
 export const recoverCourseStudentTimes = (
   course_id = 'nan',
@@ -65,9 +67,16 @@ export const getUserCourseRoles = () => (dispatch, getState) => {
       if (res.status === 200) {
         return dispatch({ type: LOADED_COURSE_ROLES, data: res.data.roles });
       }
-      return dispatch({ type: LOADED_COURSE_ROLES_ERROR, data: [] });
+      return dispatch({ type: LOADED_COURSE_ROLES_ERROR, data: [res.status] });
     })
-    .catch((error) => dispatch({ type: LOADED_COURSE_ROLES_ERROR, data: [] }));
+    .catch((error) =>
+      dispatch({
+        type: LOADED_COURSE_ROLES_ERROR,
+        data: [
+          'Hubo un error al obtener sus cursos. Por favor intente más tarde.',
+        ],
+      })
+    );
 };
 
 export const recoverCourseStructure = (course_id = 'nan') => (
@@ -163,4 +172,29 @@ export const refreshTokens = () => (dispatch, getState) => {
       return dispatch({ type: LOADING_TIMES_ERROR, data: ['what'] });
     })
     .catch((error) => dispatch({ type: LOADING_TIMES_ERROR, data: [] }));
+};
+
+export const getEnrolledCourses = () => (dispatch, getState) => {
+  let lms = getState().urls.lms;
+  getAuthenticatedHttpClient()
+    .get(`${lms}/api/courses/v1/courses/?page_size=200`)
+    .then((res) => {
+      if (res.status === 200) {
+        return dispatch({ type: LOADED_COURSES_INFO, data: res.data.results });
+      }
+      return dispatch({
+        type: LOADED_COURSES_INFO_ERROR,
+        data: [
+          'Hubo un error al obtener la información de los cursos. Por favor intente más tarde.',
+        ],
+      });
+    })
+    .catch((error) =>
+      dispatch({
+        type: LOADED_COURSES_INFO_ERROR,
+        data: [
+          'Hubo un error al obtener la información de los cursos. Por favor intente más tarde.',
+        ],
+      })
+    );
 };

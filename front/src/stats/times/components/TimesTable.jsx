@@ -2,20 +2,8 @@ import React, { useEffect, useState, useMemo, Fragment } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import {
-  Container,
-  Row,
-  Col,
-  Spinner,
-  Table,
-  OverlayTrigger,
-  Tooltip,
-  Alert,
-  InputGroup,
-} from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faSearch } from '@fortawesome/free-solid-svg-icons';
-import { SearchField, Collapsible, CheckBox, Input } from '@edx/paragon';
+import { Row, Col, Spinner, Alert, InputGroup } from 'react-bootstrap';
+import { Button, Collapsible, CheckBox, Input } from '@edx/paragon';
 import { Helmet } from 'react-helmet';
 import {
   recoverCourseStudentTimesSum,
@@ -24,8 +12,9 @@ import {
   setLoadingTimes,
   resetCourses,
   resetTimes,
-} from './data/actions';
-import AsyncCSVButton from './ExportCsv';
+} from '../data/actions';
+import { AsyncCSVButton, TableChapter, TableVertical } from '.';
+import './TimesTable.css';
 
 const add = (a, b) => a + b;
 
@@ -43,14 +32,6 @@ const parseFloatToTimeString = (seconds) => {
   }`;
 };
 
-const parseToTableRows = (r, k) => (
-  <tr key={'row' + k}>
-    {r.map((d, kd) => (
-      <td key={kd}>{d}</td>
-    ))}
-  </tr>
-);
-
 /**
  * TimesTable
  *
@@ -64,7 +45,6 @@ const parseToTableRows = (r, k) => (
  * @param {Function} setLoadingCourse
  * @param {Function} resetCourses
  * @param {Function} resetTimes
- * @param {Object} match
  */
 const TimesTable = ({
   course,
@@ -74,12 +54,15 @@ const TimesTable = ({
   setLoadingCourse,
   resetCourses,
   resetTimes,
-  match,
+  course_id,
+  start,
+  end,
+  data,
 }) => {
   const [searchState, setSearchState] = useState({
-    current: match.params.course_url ? match.params.course_url : '',
-    lowerDate: match.params.start ? match.params.start : '',
-    upperDate: match.params.end ? match.params.end : '',
+    current: course_id,
+    lowerDate: start,
+    upperDate: end,
   });
 
   const [tableData, setTableData] = useState({
@@ -89,30 +72,20 @@ const TimesTable = ({
     verticals: [],
     mapping: [], // Vertical_ids to column index
     all: 0, // Column counter
-    useChapters: false,
+    useChapters: true,
+    course_info: {},
   });
 
   const [rowData, setRowData] = useState({
     all: [],
     chapters: [],
-    useChapters: false,
+    useChapters: true,
   });
 
   const [errors, setErrors] = useState([]);
 
-  // Cleanup on change view
-  useEffect(() => {
-    if (searchState.current !== '') {
-      submit('');
-    }
-    return () => {
-      resetCourses();
-      resetTimes();
-    };
-  }, []);
-
   // Load data when the button trigers
-  const submit = (current) => {
+  const submit = () => {
     if (searchState.current !== '') {
       if (searchState.lowerDate === '' && searchState.upperDate === '') {
         setErrors([...errors, 'Por favor ingrese fechas válidas']);
@@ -120,9 +93,25 @@ const TimesTable = ({
         setLoadingCourse();
         setTableData({ ...tableData, loaded: false });
         recoverCourseStructure(searchState.current);
+        setErrors([]);
       }
     }
   };
+
+  // Reset on Unmount
+  useEffect(() => {
+    return () => {
+      resetTimes();
+      resetCourses();
+    };
+  }, []);
+
+  // Change state on course_id
+  useEffect(() => {
+    if (course_id !== null) {
+      setSearchState({ current: course_id, lowerDate: start, upperDate: end });
+    }
+  }, [course_id]);
 
   // Recover incoming data for table
   useEffect(() => {
@@ -164,7 +153,8 @@ const TimesTable = ({
         verticals,
         mapping,
         all,
-        useChapters: false,
+        useChapters: true,
+        course_info: data,
       });
 
       // Load times for users
@@ -225,7 +215,8 @@ const TimesTable = ({
         });
         chapters.push(chapterRow);
       });
-      setRowData({ all: rows, useChapters: false, chapters: chapters });
+      setRowData({ all: rows, useChapters: true, chapters: chapters });
+      setErrors([]);
     }
   }, [tableData.loaded, times.added_times]);
 
@@ -261,7 +252,7 @@ const TimesTable = ({
   );
 
   return (
-    <Container fluid>
+    <Fragment>
       <Helmet>
         <title>
           Tiempos por módulos
@@ -270,17 +261,8 @@ const TimesTable = ({
             : ''}
         </title>
       </Helmet>
-      <Row>
-        <Col>
-          <h3>Cargar tiempo por módulos</h3>
-          <p>
-            Buscar por nombre o c&oacute;digo de curso y para una fecha
-            determinada.
-          </p>
-        </Col>
-      </Row>
       <Row style={{ marginBottom: '1rem' }}>
-        <Col>
+        <Col className="col-sm-12 col-md-4">
           <InputGroup>
             <InputGroup.Prepend>
               <InputGroup.Text>Fecha de Inicio</InputGroup.Text>
@@ -289,14 +271,14 @@ const TimesTable = ({
               id="times-lDate"
               data-testid="times-lDate"
               type="date"
-              defaultValue={searchState.lowerDate}
+              value={searchState.lowerDate}
               onChange={(e) =>
                 setSearchState({ ...searchState, lowerDate: e.target.value })
               }
             />
           </InputGroup>
         </Col>
-        <Col>
+        <Col className="col-sm-12 col-md-4">
           <InputGroup>
             <InputGroup.Prepend>
               <InputGroup.Text>Fecha de Fin</InputGroup.Text>
@@ -305,33 +287,17 @@ const TimesTable = ({
               id="times-uDate"
               data-testid="times-uDate"
               type="date"
-              defaultValue={searchState.upperDate}
+              value={searchState.upperDate}
               onChange={(e) =>
                 setSearchState({ ...searchState, upperDate: e.target.value })
               }
             />
           </InputGroup>
         </Col>
-      </Row>
-      <Row style={{ marginBottom: '2rem' }}>
-        <Col>
-          <SearchField
-            onSubmit={(value) => {
-              setSearchState({ ...searchState, current: value });
-              setErrors([]);
-              submit(value);
-            }}
-            inputLabel={'Cursos:'}
-            icons={{
-              submit: <FontAwesomeIcon icon={faSearch} />,
-              clear: <FontAwesomeIcon icon={faTimes} />,
-            }}
-            value={searchState.current}
-            onChange={(value) =>
-              setSearchState({ ...searchState, current: value })
-            }
-            placeholder="Nombre o Código de curso"
-          />
+        <Col className="col-sm-12 col-md-4">
+          <Button variant="success" onClick={submit} block>
+            Buscar
+          </Button>
         </Col>
       </Row>
       {course.loading && !tableData.loaded ? (
@@ -364,6 +330,7 @@ const TimesTable = ({
               <CheckBox
                 name="checkbox"
                 label="Agrupar Módulos"
+                checked={tableData.useChapters}
                 onClick={(e) => {
                   toggleChapters(e.target.checked);
                 }}
@@ -373,10 +340,22 @@ const TimesTable = ({
           <Row style={{ marginTop: '1em' }}>
             <Col>
               <h4>
-                <Collapsible title={course.course[0].name} styling="basic">
-                  <p>{course.course[0].id}</p>
+                <Collapsible title={tableData.course_info.name} styling="basic">
+                  <ul>
+                    <li>C&oacute;digo {course_id}</li>
+                    {tableData.course_info.short_description && (
+                      <li>
+                        Descripci&oacute;n{' '}
+                        {tableData.course_info.short_description}
+                      </li>
+                    )}
+                  </ul>
                 </Collapsible>
               </h4>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
               {errors.length !== 0
                 ? errors.map((e, k) => (
                     <Alert
@@ -389,66 +368,23 @@ const TimesTable = ({
                     </Alert>
                   ))
                 : null}
-              <Table bordered hover size="sm" responsive striped>
-                <caption>Tiempos de visita: {course.course[0].name}</caption>
-                {tableData.useChapters ? null : (
-                  <Fragment>
-                    <colgroup />
-                    {tableData.chapters.map((el, k) => (
-                      <colgroup span={el.subtotal} key={k}></colgroup>
-                    ))}
-                  </Fragment>
-                )}
-                <thead>
-                  {tableData.useChapters ? (
-                    <tr>
-                      <th>Estudiantes</th>
-                      {tableData.chapters.map((el) => (
-                        <th key={el.name}>{el.name}</th>
-                      ))}
-                    </tr>
-                  ) : (
-                    <Fragment>
-                      <tr>
-                        <th rowSpan="3">Estudiantes</th>
-                        {tableData.chapters.map((el) => (
-                          <th colSpan={el.subtotal} key={el.name}>
-                            {el.name}
-                          </th>
-                        ))}
-                      </tr>
-                      <tr>{tableData.sequentials}</tr>
-                      <tr>
-                        {tableData.verticals.map((el) => (
-                          <th key={el.id}>
-                            <OverlayTrigger
-                              key={el.id}
-                              placement={'bottom'}
-                              overlay={(props) => (
-                                <Tooltip id={`tooltip-${el.id}`} {...props}>
-                                  {el.tooltip}.
-                                </Tooltip>
-                              )}
-                            >
-                              <span>{el.val}</span>
-                            </OverlayTrigger>
-                          </th>
-                        ))}
-                      </tr>
-                    </Fragment>
-                  )}
-                </thead>
-                <tbody>
-                  {errors.length !== 0
-                    ? null
-                    : rowData.useChapters
-                    ? rowDataTimes.chapters.map(parseToTableRows)
-                    : rowDataTimes.all.map(parseToTableRows)}
-                  <tr></tr>
-                </tbody>
-              </Table>
             </Col>
           </Row>
+          {tableData.useChapters ? (
+            <TableChapter
+              title={course.course[0].name}
+              headers={tableData}
+              data={rowDataTimes.chapters}
+              errors={errors}
+            />
+          ) : (
+            <TableVertical
+              title={course.course[0].name}
+              headers={tableData}
+              data={rowDataTimes.all}
+              errors={errors}
+            />
+          )}
         </Fragment>
       ) : (
         <Row>
@@ -467,7 +403,7 @@ const TimesTable = ({
           </Col>
         </Row>
       )}
-    </Container>
+    </Fragment>
   );
 };
 
@@ -480,7 +416,6 @@ TimesTable.propTypes = {
   setLoadingTimes: PropTypes.func.isRequired,
   resetCourses: PropTypes.func.isRequired,
   resetTimes: PropTypes.func.isRequired,
-  match: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({

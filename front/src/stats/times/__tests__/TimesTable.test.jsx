@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { render, fireEvent, waitFor, screen } from '../../data/tests-utils';
-import TimesTable from '../TimesTable';
+import TimesTable from '../components/TimesTable';
 // Mock calls to the Edx modules
 import * as frontenAuth from '@edx/frontend-platform/auth';
 jest.mock('@edx/frontend-platform/auth');
