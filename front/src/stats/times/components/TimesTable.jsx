@@ -408,6 +408,10 @@ const TimesTable = ({
 };
 
 TimesTable.propTypes = {
+  course_id: PropTypes.string.isRequired,
+  start: PropTypes.string,
+  end: PropTypes.string,
+  data: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   course: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   times: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   recoverCourseStructure: PropTypes.func.isRequired,

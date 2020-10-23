@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router';
 import { Container, Row, Col, Spinner } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
 const RedirectToFeature = ({ path, message }) => {
   const [state, setState] = useState(false);
@@ -24,6 +25,11 @@ const RedirectToFeature = ({ path, message }) => {
       </Row>
     </Container>
   );
+};
+
+RedirectToFeature.propTypes = {
+  path: PropTypes.string.isRequired,
+  message: PropTypes.string.isRequired,
 };
 
 export default RedirectToFeature;

@@ -36,7 +36,7 @@ const Landing = ({
 }) => {
   const [state, setState] = useState({
     selected: -1,
-    filtered: [],
+    filtered: [{ label: '- Seleccionar curso -', value: -1 }],
   });
 
   useEffect(() => {
@@ -101,7 +101,8 @@ const Landing = ({
         ) : (
           <Col>
             <InputSelect
-              name="courses"
+              name="courses-select"
+              data-testid="courses-select"
               label="Mis Cursos"
               options={state.filtered}
               onChange={(value) =>

@@ -11,11 +11,21 @@ const parseToTableRows = (r, k) => (
   </tr>
 );
 
-const TableChapter = ({ title, headers, data, errors }) => {
+/**
+ * Display course data by chapter
+ * with pagination support
+ *
+ * @param {String} title
+ * @param {Object} headers
+ * @param {Array} data
+ * @param {Array} errors
+ * @param {Number} defaultPage
+ */
+const TableChapter = ({ title, headers, data, errors, defaultPage = 10 }) => {
   const [pagination, setPagination] = useState({
     current: 1,
     total: data.length,
-    size: 10,
+    size: defaultPage,
   });
 
   useEffect(() => setPagination({ ...pagination, total: data.length }), [data]);
@@ -79,9 +89,16 @@ const TableChapter = ({ title, headers, data, errors }) => {
 
 TableChapter.propTypes = {
   title: PropTypes.string,
-  headers: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  data: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  errors: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+  headers: PropTypes.shape({
+    chapters: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string,
+      })
+    ),
+  }).isRequired,
+  data: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
+  errors: PropTypes.array.isRequired,
+  defaultPage: PropTypes.number,
 };
 
 export default TableChapter;

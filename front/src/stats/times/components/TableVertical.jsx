@@ -17,11 +17,22 @@ const parseToTableRows = (r, k) => (
   </tr>
 );
 
-const TableVertical = ({ title, headers, data, errors }) => {
+/**
+ * Display course data with sub headers
+ * for chapter, sequential and verticals
+ * with pagination support
+ *
+ * @param {String} title
+ * @param {Object} headers
+ * @param {Array} data
+ * @param {Array} errors
+ * @param {Number} defaultPage
+ */
+const TableVertical = ({ title, headers, data, errors, defaultPage = 10 }) => {
   const [pagination, setPagination] = useState({
     current: 1,
     total: data.length,
-    size: 10,
+    size: defaultPage,
   });
 
   useEffect(() => setPagination({ ...pagination, total: data.length }), [data]);
@@ -109,9 +120,25 @@ const TableVertical = ({ title, headers, data, errors }) => {
 
 TableVertical.propTypes = {
   title: PropTypes.string,
-  headers: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  data: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  errors: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+  headers: PropTypes.shape({
+    chapters: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string,
+        subtotal: PropTypes.number,
+      })
+    ),
+    sequentials: PropTypes.arrayOf(PropTypes.element),
+    verticals: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.any,
+        tooltip: PropTypes.any,
+        val: PropTypes.string,
+      })
+    ),
+  }).isRequired,
+  data: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
+  errors: PropTypes.array.isRequired,
+  defaultPage: PropTypes.number,
 };
 
 export default TableVertical;
