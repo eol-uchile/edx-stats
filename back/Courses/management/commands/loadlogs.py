@@ -1,16 +1,27 @@
 from django.core.management.base import BaseCommand, no_translations
-from Courses.tasks import load_logs, load_course_from_api, process_log_times_from_dir
+from Courses.tasks import load_logs
+
 
 class Command(BaseCommand):
-    help = 'Loads logs from files into the db'
+    help = 'Loads logs from configured directory into the db'
     requires_migrations_checks = True
 
     def add_arguments(self, parser):
-        parser.add_argument('course_log', nargs=1, type=str)
-        parser.add_argument('course_structure', nargs=1, type=str)
+        # Optional arguments
+        parser.add_argument('--dir', action='store', nargs='?',
+                            help='Use a directory (with full path) to load logs')
+        parser.add_argument('--non-zipped', action='store_true',
+                            help='Expect plain text instead of .gz')
 
     @no_translations
     def handle(self, *args, **options):
-        load_course_from_api(options['course_structure'])
-        load_logs(options['course_log'])
-        process_log_times_from_dir(options['course_log'] , options['course_structure'])
+        print(options)
+        return
+        if options['non_zipped']:
+            zipped = False
+        else:
+            zipped = True
+        if options['dir'] is not None:
+            load_logs(options['dir'], zipped=zipped)
+        else:
+            load_logs(zipped=zipped)

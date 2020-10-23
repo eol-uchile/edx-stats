@@ -19,7 +19,6 @@ DAY_WINDOW = timedelta(days=3)
 COMPUTE_LOWER_LIMIT = timedelta(seconds=15) 
 BULK_UPLOAD_SIZE = 500
 
-@shared_task
 def load_course(filepath):
     """Load course structure from filesystem
 
@@ -57,7 +56,6 @@ def load_course(filepath):
     dataframe.apply(save_row, axis=1)
     logger.info("Loaded course verticals for {}".format(course_id))
 
-@shared_task
 def load_course_from_api(course_code):
     """Load course structure from LMS API
 
@@ -348,7 +346,6 @@ def process_log_times_from_dir(logpath, coursepath, zipped=True):
     time_per_user_session = timer.time_on_page.copy()
     time_per_user_session["course"] = dataframe["course"][0]
     time_per_user_session.apply(save_row, axis=1)
-
 
 def compute_time_batches(initialDate=None, time_delta=timedelta(days=3)):
     """
