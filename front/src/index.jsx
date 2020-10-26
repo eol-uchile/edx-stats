@@ -7,12 +7,13 @@ import {
   initialize,
 } from '@edx/frontend-platform';
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Header, {
   messages as headerMessages,
-} from '@edx/frontend-component-header';
+} from './frontend-component-header/dist';
 import Footer, {
   messages as footerMessages,
 } from '@edx/frontend-component-footer';
@@ -23,6 +24,7 @@ import 'font-awesome/css/font-awesome.min.css';
 import './index.scss';
 import './assets/favicon.ico';
 import { Routes, configureStore } from './stats';
+import footerLogo from './assets/0vti.ef83f16aa682.jpg';
 
 /**
  * Recover the URLs from here at startup
@@ -43,7 +45,7 @@ subscribe(APP_READY, () => {
     >
       <Header />
       <Routes />
-      <Footer logo="/public/static/0vti.ef83f16aa682.jpg" />
+      <Footer logo={footerLogo} />
     </AppProvider>,
     document.getElementById('root')
   );

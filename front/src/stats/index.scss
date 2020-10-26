@@ -3,6 +3,7 @@ main {
   padding-top: 2em;
 }
 
+/*
 .site-header-desktop .logo img {
   background: url(/public/static/logo.f09bd38cb6bf.png) left top no-repeat;
   width: 250px;
@@ -12,11 +13,10 @@ main {
   background-size: contain !important;
   height: 125% !important;
 }
-
-/* No a working img replacement for mobile.
+ No a working img replacement for mobile.
   It does remove the other logo
   TODO: fix
-*/
+
 .site-header-mobile .logo img {
   background: url(/public/static/logo.f09bd38cb6bf.png) left top no-repeat;
   width: 250px;
@@ -26,3 +26,4 @@ main {
   background-size: contain !important;
   height: 125% !important;
 }
+*/
