@@ -8,8 +8,8 @@ ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json ./
 COPY package-lock.json ./
 RUN npm install --silent
-RUN git clone https://github.com/eol-uchile/frontend-component-header
-COPY . ./
+# Submodule with header is assumed to be copied beforehand
+COPY . ./ 
 EXPOSE 3000
 CMD ["npm", "start"]
 
