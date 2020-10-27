@@ -29,9 +29,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - name: Pull submodules
-      run: git submodule update --init --recursive
-
     - name: Build the Docker image
       run: docker build --target staging ./front --tag eoluchile/edx-stats-front:${GITHUB_SHA}
 
