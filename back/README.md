@@ -11,9 +11,9 @@ The backend includes the following manage.py commands:
   
   Example usage:
   - ```manage.py loadlogs```
-- processtimes.py will read logs from an start date (today by default) and use a time window of X days to process student times until the start date. Optional arguments 
-  - --start: set the start date with the format YYYY-MM-DD
+- processtimes.py will read logs from an start date to today. Optional arguments 
+  - --day-step: how many days to process in memory at a time
 
   Example usage:
-  - ```manage.py processtimes 3```
-  - ```manage.py processtimes 3 --start 2019-03-01```
+  - ```manage.py processtimes 2019-03-01```
+  - ```manage.py processtimes 2019-03-01 --day-step 4 ```

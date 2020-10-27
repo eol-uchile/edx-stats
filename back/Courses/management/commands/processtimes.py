@@ -3,20 +3,20 @@ from Courses.tasks import compute_time_batches
 from datetime import date, timedelta
 
 class Command(BaseCommand):
-    help = 'Compute Student view times from logs on the db'
+    help = 'Compute Student view times from logs on the db from a start date until today.'
     requires_migrations_checks = True
 
     def add_arguments(self, parser):
-        parser.add_argument('day-window', nargs=1, type=int,
-                            help='Days to count backwards from start date (default start date is today)')
+        parser.add_argument('start', action='store',
+                            help='Set start date as YYYY-MM-DD')
 
         # Optional arguments
-        parser.add_argument('--start', action='store',
-                            help='Set start date as YYYY-MM-DD')
+        parser.add_argument('--day-step', nargs=1, type=int,
+                            help='Days loaded into memory (default is 3)')
 
     @no_translations
     def handle(self, *args, **options):
-        if options['start'] is not None:
-            compute_time_batches(options['start'],time_delta=timedelta(days=options['day-window'][0]))
+        if options['day_step'] is not None:
+            compute_time_batches(options['start'], time_delta=timedelta(days=options['day_step'][0]))
         else:
-            compute_time_batches(str(date.today()), time_delta=timedelta(days=options['day-window'][0]))
+            compute_time_batches(options['start'])
