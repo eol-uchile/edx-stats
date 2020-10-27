@@ -262,7 +262,7 @@ const TimesTable = ({
         </title>
       </Helmet>
       <Row style={{ marginBottom: '1rem' }}>
-        <Col className="col-sm-12 col-md-4">
+        <Col className="col-xs-12 col-sm-12 col-md-4">
           <InputGroup>
             <InputGroup.Prepend>
               <InputGroup.Text>Fecha de Inicio</InputGroup.Text>
@@ -278,7 +278,7 @@ const TimesTable = ({
             />
           </InputGroup>
         </Col>
-        <Col className="col-sm-12 col-md-4">
+        <Col className="col-xs-12 col-sm-12 col-md-4">
           <InputGroup>
             <InputGroup.Prepend>
               <InputGroup.Text>Fecha de Fin</InputGroup.Text>
@@ -294,7 +294,7 @@ const TimesTable = ({
             />
           </InputGroup>
         </Col>
-        <Col className="col-sm-12 col-md-4">
+        <Col className="col-xs-12 col-sm-12 col-md-4">
           <Button variant="success" onClick={submit} block>
             Buscar
           </Button>
