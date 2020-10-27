@@ -15,8 +15,6 @@ class Command(BaseCommand):
 
     @no_translations
     def handle(self, *args, **options):
-        print(options)
-        return
         if options['non_zipped']:
             zipped = False
         else:
