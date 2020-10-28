@@ -23,7 +23,7 @@ jobs:
       env:
         CR_PAT: ${{ secrets.CR_PAT }}
 
-  build-front:
+  build-front-staging:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,7 +33,27 @@ jobs:
       run: git submodule update --init --recursive
 
     - name: Build the Docker image
-      run: docker build --target staging ./front --tag eoluchile/edx-stats-front:${GITHUB_SHA}
+      run: docker build --target staging --build-arg env_file=.env.staging ./front --tag eoluchile/edx-stats-front-staging:${GITHUB_SHA}
+
+    - name: Push to Github Container Registry
+      run: |
+        echo "${CR_PAT}" | docker login ghcr.io -u eolito --password-stdin
+        docker tag eoluchile/edx-stats-front:${GITHUB_SHA} ghcr.io/eol-uchile/edx-stats-front:${GITHUB_SHA}
+        docker push ghcr.io/eol-uchile/edx-stats-front:${GITHUB_SHA}
+      env:
+        CR_PAT: ${{ secrets.CR_PAT }}
+
+  build-front-eol:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Pull submodules
+      run: git submodule update --init --recursive
+
+    - name: Build the Docker image
+      run: docker build --target staging --build-arg env_file=.env.eol ./front --tag eoluchile/edx-stats-front-eol:${GITHUB_SHA}
 
     - name: Push to Github Container Registry
       run: |

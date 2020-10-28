@@ -15,22 +15,13 @@ CMD ["npm", "start"]
 
 # Production Layers
 FROM dev as prod
+ARG env_file=.env.prod
+RUN cp $env_file .env
 RUN npm run build
 
 FROM nginx:stable-alpine as static
 # Copy stuff for nginx
 COPY --from=prod /app/dist /usr/share/nginx/html
-COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
-CMD ["nginx","-g","daemon off;"]
-
-# Staging layers    
-FROM dev as prodstaging
-COPY .env.edx .env
-RUN npm run build
-FROM nginx:stable-alpine as staging
-# Copy stuff for nginx
-COPY --from=prodstaging /app/dist /usr/share/nginx/html
 COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx","-g","daemon off;"]
