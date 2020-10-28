@@ -38,8 +38,8 @@ jobs:
     - name: Push to Github Container Registry
       run: |
         echo "${CR_PAT}" | docker login ghcr.io -u eolito --password-stdin
-        docker tag eoluchile/edx-stats-front:${GITHUB_SHA} ghcr.io/eol-uchile/edx-stats-front:${GITHUB_SHA}
-        docker push ghcr.io/eol-uchile/edx-stats-front:${GITHUB_SHA}
+        docker tag eoluchile/edx-stats-front-staging:${GITHUB_SHA} ghcr.io/eol-uchile/edx-stats-front-staging:${GITHUB_SHA}
+        docker push ghcr.io/eol-uchile/edx-stats-front-staging:${GITHUB_SHA}
       env:
         CR_PAT: ${{ secrets.CR_PAT }}
 
@@ -58,7 +58,7 @@ jobs:
     - name: Push to Github Container Registry
       run: |
         echo "${CR_PAT}" | docker login ghcr.io -u eolito --password-stdin
-        docker tag eoluchile/edx-stats-front:${GITHUB_SHA} ghcr.io/eol-uchile/edx-stats-front:${GITHUB_SHA}
-        docker push ghcr.io/eol-uchile/edx-stats-front:${GITHUB_SHA}
+        docker tag eoluchile/edx-stats-front-eol:${GITHUB_SHA} ghcr.io/eol-uchile/edx-stats-front-eol:${GITHUB_SHA}
+        docker push ghcr.io/eol-uchile/edx-stats-front-eol:${GITHUB_SHA}
       env:
         CR_PAT: ${{ secrets.CR_PAT }}
