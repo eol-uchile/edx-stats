@@ -33,7 +33,7 @@ jobs:
       run: git submodule update --init --recursive
 
     - name: Build the Docker image
-      run: docker build --target staging --build-arg env_file=.env.staging ./front --tag eoluchile/edx-stats-front-staging:${GITHUB_SHA}
+      run: docker build --build-arg env_file=.env.staging ./front --tag eoluchile/edx-stats-front-staging:${GITHUB_SHA}
 
     - name: Push to Github Container Registry
       run: |
@@ -53,7 +53,7 @@ jobs:
       run: git submodule update --init --recursive
 
     - name: Build the Docker image
-      run: docker build --target staging --build-arg env_file=.env.eol ./front --tag eoluchile/edx-stats-front-eol:${GITHUB_SHA}
+      run: docker build --build-arg env_file=.env.eol ./front --tag eoluchile/edx-stats-front-eol:${GITHUB_SHA}
 
     - name: Push to Github Container Registry
       run: |
