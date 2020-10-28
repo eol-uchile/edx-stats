@@ -62,7 +62,7 @@ class TimeOnPage(models.Model):
     session = models.IntegerField()
     delta_time_float = models.FloatField()
     course = models.TextField()
-    time = models.DateTimeField(default=timezone.now())
+    time = models.DateTimeField(default=timezone.now)
 
 class StaffUserName(models.Model):
     username = models.CharField(max_length=150)
@@ -70,3 +70,7 @@ class StaffUserName(models.Model):
 class ProcessedRecord(SingletonModel):
     last_processed_time = models.ForeignKey(TimeOnPage, null=True, on_delete=models.SET_NULL)
     last_processed_time_timestamp = models.DateTimeField(blank=True, null=True)
+
+class LogFile(models.Model):
+    file_name = models.CharField(max_length=50)
+    processed_on = models.DateTimeField(default=timezone.now)

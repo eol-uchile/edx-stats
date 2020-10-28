@@ -5,7 +5,8 @@ import logging
 import pytz
 from datetime import timedelta, datetime
 from celery import shared_task
-from Courses.models import Log, CourseVertical, TimeOnPage as TimeModel, StaffUserName
+from Courses.models import Log, CourseVertical, TimeOnPage as TimeModel, \
+    StaffUserName, LogFile
 from Courses.processing import read_json_course, read_json_course_file, \
     flatten_course_as_verticals, read_logs, filter_by_log_qty, filter_course_team, \
     load_course_blocks_from_LMS, flatten_course_as_verticals_from_dict
@@ -147,6 +148,8 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
                 logs = list(bulk.apply(make_row, axis=1))
                 Log.objects.bulk_create(logs)
             os.remove(filepath)
+            # Register file saved
+            LogFile(file_name=file).save()
             logger.info("Read logs from {}".format(filepath))
         except Exception as e:
             # In case of failure move the file to errors dir
