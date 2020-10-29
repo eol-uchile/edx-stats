@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, no_translations
-from Courses.tasks import compute_time_batches
+from courses.tasks import compute_time_batches
 from datetime import date, timedelta
 
 class Command(BaseCommand):

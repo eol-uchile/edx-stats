@@ -1,5 +1,5 @@
 import jwt
-from Courses.tests.factory import UserFactory
+from courses.tests.factory import UserFactory
 from django.conf import settings
 from edx_rest_framework_extensions.auth.jwt.cookies import jwt_cookie_name
 from edx_rest_framework_extensions.auth.jwt.tests.utils import generate_jwt_token, generate_unversioned_payload

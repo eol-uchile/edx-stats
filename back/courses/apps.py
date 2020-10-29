@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class CoursesConfig(AppConfig):
-    name = 'Courses'
+    name = 'courses'

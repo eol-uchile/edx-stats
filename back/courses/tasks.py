@@ -5,12 +5,12 @@ import logging
 import pytz
 from datetime import timedelta, datetime
 from celery import shared_task
-from Courses.models import Log, CourseVertical, TimeOnPage as TimeModel, \
+from courses.models import Log, CourseVertical, TimeOnPage as TimeModel, \
     StaffUserName, LogFile
-from Courses.processing import read_json_course, read_json_course_file, \
+from courses.processing import read_json_course, read_json_course_file, \
     flatten_course_as_verticals, read_logs, filter_by_log_qty, filter_course_team, \
     load_course_blocks_from_LMS, flatten_course_as_verticals_from_dict
-from Courses.classifier import LogParser, TimeOnPage
+from courses.classifier import LogParser, TimeOnPage
 from django.conf import settings
 from django.core.serializers import json as django_json_serializer
 

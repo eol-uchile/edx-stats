@@ -19,6 +19,6 @@ from auth_backends.urls import oauth2_urlpatterns
 
 urlpatterns = [
     path('api/',include(oauth2_urlpatterns)),
-    path('api/courses/', include('Courses.urls')),
+    path('api/courses/', include('courses.urls')),
     path('api/admin/', admin.site.urls),
 ]

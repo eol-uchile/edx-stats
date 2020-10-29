@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'Courses',
+    'courses',
     'django_celery_results',
     'django_celery_beat',
     'django_filters',

@@ -2,8 +2,8 @@ from django.test import TestCase
 from django.urls import reverse
 from datetime import datetime
 from rest_framework.test import APITestCase
-from Courses.tests.mixins import JwtMixin, UserMixin
-from Courses.models import TimeOnPage, CourseVertical
+from courses.tests.mixins import JwtMixin, UserMixin
+from courses.models import TimeOnPage, CourseVertical
 from unittest.mock import patch
 
 class TestTimesOnCourse(UserMixin, JwtMixin, APITestCase):
@@ -45,14 +45,14 @@ class TestTimesOnCourse(UserMixin, JwtMixin, APITestCase):
         response = self.client.get(self.url+"?search=Test-EOL_T1&llimit=2019-09-04T00:00:00.000000&ulimit=2019-09-05T00:00:00.000000")
         self.assertEqual(response.status_code, 403)
 
-    @patch('Courses.views.recoverUserCourseRoles')
+    @patch('courses.views.recoverUserCourseRoles')
     def test_course_empty(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {'roles': [{'course_id': 'Test-EOL_T1', 'role': 'staff' }]}
         response = self.client.get(self.url+"?search=Test-EOL_T1&llimit=2019-09-04T00:00:00.000000&ulimit=2019-09-05T00:00:00.000000")
         self.assertEqual(response.status_code, 204)
 
-    @patch('Courses.views.recoverUserCourseRoles')
+    @patch('courses.views.recoverUserCourseRoles')
     def test_course_has_content(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {'roles': [{'course_id': 'Test-EOL_T2', 'role': 'staff' }]}
@@ -94,28 +94,28 @@ class TestCourseStructure(UserMixin, JwtMixin, APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 400)
     
-    @patch('Courses.views.recoverUserCourseRoles')
+    @patch('courses.views.recoverUserCourseRoles')
     def test_course_empty(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {'roles': [{'course_id': self.non_existing_course, 'role': 'staff' }]}
         response = self.client.get(self.url+"?search=LMS")
         self.assertEqual(response.status_code, 204)
 
-    @patch('Courses.views.recoverUserCourseRoles')
+    @patch('courses.views.recoverUserCourseRoles')
     def test_course_not_allowed(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {'roles': [{'course_id': self.non_existing_course, 'role': 'staff' }]}
         response = self.client.get(self.url+"?search=EOL")
         self.assertEqual(response.status_code, 403)
 
-    @patch('Courses.views.recoverUserCourseRoles')
+    @patch('courses.views.recoverUserCourseRoles')
     def test_recover_structure_by_name(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {'roles': [{'course_id': self.existing_course, 'role': 'staff' }]}
         response = self.client.get(self.url+"?search=EOL")
         self.assertEqual(response.status_code, 200)
 
-    @patch('Courses.views.recoverUserCourseRoles')
+    @patch('courses.views.recoverUserCourseRoles')
     def test_recover_structure_by_code(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {'roles': [{'course_id': self.existing_course, 'role': 'staff' }]}

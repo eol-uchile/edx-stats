@@ -1,5 +1,5 @@
 from django.contrib import admin
-from Courses.models import Log, CourseVertical, TimeOnPage, StaffUserName, ProcessedRecord, LogFile
+from courses.models import Log, CourseVertical, TimeOnPage, StaffUserName, ProcessedRecord, LogFile
 
 class LogAdmin(admin.ModelAdmin):
     pass

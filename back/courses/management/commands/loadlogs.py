@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, no_translations
-from Courses.tasks import load_logs
+from courses.tasks import load_logs
 
 
 class Command(BaseCommand):

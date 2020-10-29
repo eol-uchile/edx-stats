@@ -8,7 +8,7 @@ from django.utils.timezone import utc
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('Courses', '0003_auto_20201014_2106'),
+        ('courses', '0003_auto_20201014_2106'),
     ]
 
     operations = [
