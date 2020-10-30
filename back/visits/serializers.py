@@ -1,5 +1,5 @@
-from visits.models import VisitOnPage
 from rest_framework import serializers
+from visits.models import VisitOnPage
 
 
 class VisitOnPageSerializer(serializers.ModelSerializer):
