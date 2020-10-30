@@ -32,7 +32,7 @@ export const recoverCourseStudentTimes = (
   let base = getState().urls.base;
   getAuthenticatedHttpClient()
     .get(
-      `${base}/api/courses/timeonpage/?course=${encodeURIComponent(
+      `${base}/api/times/timeonpage/?course=${encodeURIComponent(
         course_id
       )}&offset=${offset}&limit=${limit}${extra}`
     )
@@ -86,9 +86,7 @@ export const recoverCourseStructure = (course_id = 'nan') => (
   let base = getState().urls.base;
 
   getAuthenticatedHttpClient()
-    .get(
-      `/api/courses/course-structure/?search=${encodeURIComponent(course_id)}`
-    )
+    .get(`/api/core/course-structure/?search=${encodeURIComponent(course_id)}`)
     .then((res) => {
       if (res.request.responseURL.includes('login/?next=')) {
         return dispatch({ type: DO_LOGIN });
@@ -132,7 +130,7 @@ export const recoverCourseStudentTimesSum = (
 
   getAuthenticatedHttpClient()
     .get(
-      `${base}/api/courses/times/?search=${encodeURIComponent(
+      `${base}/api/times/timeoncourse/?search=${encodeURIComponent(
         course_id
       )}&llimit=${lower_date.toISOString()}&ulimit=${upper_date.toISOString()}`
     )

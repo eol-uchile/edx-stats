@@ -11,5 +11,5 @@ class VisitOnPageViewSet(generics.ListAPIView, viewsets.ModelViewSet):
     queryset = VisitOnPage.objects.all()
     serializer_class = VisitOnPageSerializer
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
-    search_fields = ['username', 'time']
-    filterset_fields = ['course']
+    search_fields = ['username']
+    filterset_fields = ['course', 'time']

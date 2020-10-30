@@ -1,4 +1,5 @@
 import re
+import json
 import pandas as pd
 import numpy as np
 
@@ -25,15 +26,6 @@ re_next_sequence = re.compile("^edx.ui.lms.sequence.next_selected$")
 re_previous_vertical = re.compile("^seq_prev$")
 re_previous_sequence = re.compile("^edx.ui.lms.sequence.previous_selected$")
 re_goto_vertical = re.compile("^seq_goto$")
-
-# to match event column in navigation events
-re_event_vertical = re.compile(
-    '^\{\\\\old\\\\\"\: (\d), \\\\\"current_tab\\\\\"\: (\d), \\\\\"tab_count\\\\\"\: (\d), \\\\\"new\\\\\"\: (\d), \\\\\"widget_placement\\\\\"\: \\\\\"(.*?)\\\\", \\\\\"id\\\\\"\: \\\\\"(.+?)\\\\\"\}\"$')
-re_event_sequence = re.compile(
-    '^\{\\\\tab_count\\\\\"\: (\d), \\\\\"widget_placement\\\\\"\: \\\\\"(.*?)\\\\\", \\\\\"current_tab\\\\\"\: (\d), \\\\\"id\\\\\"\: \\\\\"(.+?)\\\\\"\}\"$')
-re_event_goto_vertical = re.compile(
-    '^\{\\\\target_tab\\\\\"\: (\d), \\\\\"old\\\\\"\: (\d), \\\\\"current_tab\\\\\"\: (\d), \\\\\"tab_count\\\\\"\: (\d), \\\\\"new\\\\\"\: (\d), \\\\\"widget_placement\\\\\"\: \\\\\"(.*?)\\\\\", \\\\\"id\\\\\"\: \\\\\"(.+?)\\\\\"\}\"$')
-
 
 class LogParser:
     """LogParser Class
@@ -249,6 +241,7 @@ class LogParser:
             return 'NOT_CLASSIFIED'
 
         else:
+            # course_view has no classifications yet
             return np.nan
 
     def __get_next_vertical(self, event):
@@ -262,16 +255,13 @@ class LogParser:
             str -- vertical id
         """
         # get the next vertical in the same sequential
-        match = re_event_vertical.search(event)
-        if match:
-            sequential = match[6]
-            next_vertical_number = int(match[4])
-            actual_vertical_number = int(match[2])
-            assert next_vertical_number == actual_vertical_number + \
-                1, 'actual vertical number must be 1 lower than next_vertical_number'
-        else:
-            return 'NO_MATCH'
-
+        json_sequence = json.loads(event)
+        sequential = json_sequence['id']
+        next_vertical_number = json_sequence['new']
+        actual_vertical_number = json_sequence['old']
+        assert next_vertical_number == actual_vertical_number + \
+            1, 'actual vertical number must be 1 lower than next_vertical_number'
+        
         try:
             row_next_vertical = self.course[((self.course.vertical_number == next_vertical_number) & (
                 self.course.sequential == sequential))].iloc[0]
@@ -290,16 +280,12 @@ class LogParser:
             str -- vertical id
         """
         # get previous vertical in the same sequential
-        match = re_event_vertical.search(event)
-        if match:
-            sequential = match[6]
-            previous_vertical_number = int(match[4])
-            actual_vertical_number = int(match[2])
-            assert previous_vertical_number == actual_vertical_number - \
-                1, 'actual vertical number must be 1 greater than previous_vertical_number'
-        else:
-            return 'NO_MATCH'
-
+        json_sequence = json.loads(event)
+        sequential = json_sequence['id']
+        previous_vertical_number = json_sequence['new']
+        actual_vertical_number = json_sequence['old']
+        assert previous_vertical_number == actual_vertical_number - \
+            1, 'actual vertical number must be 1 greater than previous_vertical_number'
         try:
             row_previous_vertical = self.course[((self.course.vertical_number == previous_vertical_number) & (
                 self.course.sequential == sequential))].iloc[0]
@@ -320,11 +306,8 @@ class LogParser:
             str -- vertical id
         """
         # get the first vertical of the next sequential
-        match = re_event_sequence.search(event)
-        if match:
-            sequential = match[4]
-        else:
-            return 'NO_MATCH'
+        json_sequence = json.loads(event)
+        sequential = json_sequence['id']
         row = self.course[self.course.sequential == sequential].iloc[0]
         chapter = row['chapter']  # chapter actual
         next_sequential_number = row['sequential_number'] + 1
@@ -352,11 +335,8 @@ class LogParser:
             str -- vertical id
         """
         # get the last vertical of the previous sequential
-        match = re_event_sequence.search(event)
-        if match:
-            sequential = match[4]
-        else:
-            return 'NO_MATCH'
+        json_sequence = json.loads(event)
+        sequential = json_sequence['id']
         row = self.course[self.course.sequential == sequential].iloc[0]
         chapter = row['chapter']  # chapter actual
         previous_sequential_number = row['sequential_number'] - 1
@@ -387,14 +367,12 @@ class LogParser:
         Returns:
             str -- vertical id
         """
-        match = re_event_goto_vertical.search(event)
-
-        if match:
-            sequential = match[7]  # id
-            goto_vertical_number = int(match[5])  # new
-        else:
-            return 'NO_MATCH'
-
-        row_goto_vertical = self.course[((self.course.vertical_number == goto_vertical_number) & (
-            self.course.sequential == sequential))].iloc[0]
-        return row_goto_vertical['vertical']
+        json_sequence = json.loads(event)
+        sequential = json_sequence['id']  # id
+        goto_vertical_number = json_sequence['new']  # new
+        try:
+            row_goto_vertical = self.course[((self.course.vertical_number == goto_vertical_number) & (
+                self.course.sequential == sequential))].iloc[0]
+            return row_goto_vertical['vertical']
+        except IndexError:
+            return 'NO_VERTICAL_FOUND'

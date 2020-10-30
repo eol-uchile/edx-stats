@@ -3,7 +3,7 @@ from django.utils import timezone
 
 
 class VisitOnPage(models.Model):
-    event_type_vertical = models.TextField()
+    vertical = models.TextField()
     sequential = models.TextField(blank=True)
     course = models.TextField()
     username = models.CharField(max_length=150)

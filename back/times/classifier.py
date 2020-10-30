@@ -1,39 +1,6 @@
-import re
 from datetime import timedelta
 import pandas as pd
 import numpy as np
-
-re_page_view_courseware = re.compile("courseware\/[^/]+([^/]+)*\/?")
-re_page_view_course = re.compile("course\/$")
-re_wiki_view = re.compile("wiki")
-re_progress_view = re.compile("progress$")
-re_bookmarks_view = re.compile("bookmarks\/$")
-re_page_view_main = re.compile("courses\/.+")
-re_page_close = re.compile("^page_close$")
-# discussion related
-re_forum_view = re.compile("discussion\/forum\/$")
-re_forum_view_user_profile = re.compile(
-    "discussion\/forum\/users\/[^/]+$")
-re_forum_thread_view = re.compile("discussion\/forum\/[^/]+\/threads\/[^/]+$")
-
-# pages for referer
-re_from_login = re.compile("eol.uchile.cl\/login?")
-re_from_dashboard = re.compile("\/dashboard$")
-
-# navigation
-re_next_vertical = re.compile("^seq_next$")
-re_next_sequence = re.compile("^edx.ui.lms.sequence.next_selected$")
-re_previous_vertical = re.compile("^seq_prev$")
-re_previous_sequence = re.compile("^edx.ui.lms.sequence.previous_selected$")
-re_goto_vertical = re.compile("^seq_goto$")
-
-# to match event column in navigation events
-re_event_vertical = re.compile(
-    '^\{\\\\old\\\\\"\: (\d), \\\\\"current_tab\\\\\"\: (\d), \\\\\"tab_count\\\\\"\: (\d), \\\\\"new\\\\\"\: (\d), \\\\\"widget_placement\\\\\"\: \\\\\"(.*?)\\\\", \\\\\"id\\\\\"\: \\\\\"(.+?)\\\\\"\}\"$')
-re_event_sequence = re.compile(
-    '^\{\\\\tab_count\\\\\"\: (\d), \\\\\"widget_placement\\\\\"\: \\\\\"(.*?)\\\\\", \\\\\"current_tab\\\\\"\: (\d), \\\\\"id\\\\\"\: \\\\\"(.+?)\\\\\"\}\"$')
-re_event_goto_vertical = re.compile(
-    '^\{\\\\target_tab\\\\\"\: (\d), \\\\\"old\\\\\"\: (\d), \\\\\"current_tab\\\\\"\: (\d), \\\\\"tab_count\\\\\"\: (\d), \\\\\"new\\\\\"\: (\d), \\\\\"widget_placement\\\\\"\: \\\\\"(.*?)\\\\\", \\\\\"id\\\\\"\: \\\\\"(.+?)\\\\\"\}\"$')
 
 
 class TimeOnPage:
