@@ -19,6 +19,11 @@ const RedirectToFeature = ({ path, message }) => {
     <Container>
       <Row>
         <Col>
+          <h5>Sistema de estad&iacute;stica y an&aacute;lisis</h5>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
           Redirigiendo a {message} ...{' '}
           <Spinner animation="border" variant="primary" />
         </Col>

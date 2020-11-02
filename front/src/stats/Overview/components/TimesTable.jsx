@@ -2,8 +2,17 @@ import React, { useEffect, useState, useMemo, Fragment } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Row, Col, Spinner, Alert, InputGroup } from 'react-bootstrap';
-import { Button, Collapsible, CheckBox, Input } from '@edx/paragon';
+import {
+  Row,
+  Col,
+  Spinner,
+  Alert,
+  InputGroup,
+  Container,
+  Breadcrumb,
+} from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { Button, CheckBox, Input } from '@edx/paragon';
 import { Helmet } from 'react-helmet';
 import {
   recoverCourseStudentTimesSum,
@@ -54,15 +63,12 @@ const TimesTable = ({
   setLoadingCourse,
   resetCourses,
   resetTimes,
-  course_id,
-  start,
-  end,
-  data,
+  match,
 }) => {
   const [searchState, setSearchState] = useState({
-    current: course_id,
-    lowerDate: start,
-    upperDate: end,
+    current: match.params.course_id ? match.params.course_id : '',
+    lowerDate: match.params.start ? match.params.start : '',
+    upperDate: match.params.end ? match.params.end : '',
   });
 
   const [tableData, setTableData] = useState({
@@ -106,13 +112,6 @@ const TimesTable = ({
     };
   }, []);
 
-  // Change state on course_id
-  useEffect(() => {
-    if (course_id !== null) {
-      setSearchState({ current: course_id, lowerDate: start, upperDate: end });
-    }
-  }, [course_id]);
-
   // Recover incoming data for table
   useEffect(() => {
     if (course.course.length !== 0) {
@@ -154,7 +153,6 @@ const TimesTable = ({
         mapping,
         all,
         useChapters: true,
-        course_info: data,
       });
 
       // Load times for users
@@ -251,8 +249,10 @@ const TimesTable = ({
     [rowData]
   );
 
+  const tableCaption = 'Tiempos de visita por unidad';
+
   return (
-    <Fragment>
+    <Container>
       <Helmet>
         <title>
           Tiempos por módulos
@@ -261,6 +261,31 @@ const TimesTable = ({
             : ''}
         </title>
       </Helmet>
+      <Row>
+        <Col>
+          <Breadcrumb>
+            <Breadcrumb.Item href="/modules" to="/modules" as={Link}>
+              General
+            </Breadcrumb.Item>
+            <Breadcrumb.Item
+              href="#"
+              active
+            >{`Tiempos ${searchState.current}`}</Breadcrumb.Item>
+          </Breadcrumb>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <h2>Tiempo de visita de estudiantes por Módulo</h2>
+          <p>
+            Este curso tiene fechas de inicio{' '}
+            {new Date(searchState.lowerDate).toLocaleDateString('es-ES')} y de
+            término{' '}
+            {new Date(searchState.upperDate).toLocaleDateString('es-ES')}.
+            También se puede buscar fuera de estos límites de tiempo.
+          </p>
+        </Col>
+      </Row>
       <Row style={{ marginBottom: '1rem' }}>
         <Col className="col-xs-12 col-sm-12 col-md-4">
           <InputGroup>
@@ -339,19 +364,7 @@ const TimesTable = ({
           </Row>
           <Row style={{ marginTop: '1em' }}>
             <Col>
-              <h4>
-                <Collapsible title={tableData.course_info.name} styling="basic">
-                  <ul>
-                    <li>C&oacute;digo {course_id}</li>
-                    {tableData.course_info.short_description && (
-                      <li>
-                        Descripci&oacute;n{' '}
-                        {tableData.course_info.short_description}
-                      </li>
-                    )}
-                  </ul>
-                </Collapsible>
-              </h4>
+              <h4>Curso: {course.course[0].name}</h4>
             </Col>
           </Row>
           <Row>
@@ -375,6 +388,7 @@ const TimesTable = ({
               title={course.course[0].name}
               headers={tableData}
               data={rowDataTimes.chapters}
+              caption={tableCaption}
               errors={errors}
             />
           ) : (
@@ -382,6 +396,7 @@ const TimesTable = ({
               title={course.course[0].name}
               headers={tableData}
               data={rowDataTimes.all}
+              caption={tableCaption}
               errors={errors}
             />
           )}
@@ -403,15 +418,11 @@ const TimesTable = ({
           </Col>
         </Row>
       )}
-    </Fragment>
+    </Container>
   );
 };
 
 TimesTable.propTypes = {
-  course_id: PropTypes.string.isRequired,
-  start: PropTypes.string,
-  end: PropTypes.string,
-  data: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   course: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   times: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   recoverCourseStructure: PropTypes.func.isRequired,

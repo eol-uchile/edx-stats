@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Spinner } from 'react-bootstrap';
+import {
+  Container,
+  Row,
+  Col,
+  Spinner,
+  ListGroup,
+  ListGroupItem,
+} from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
@@ -8,9 +15,9 @@ import {
   getEnrolledCourses,
 } from './data/actions';
 import { selectMyCourses } from './data/reducers';
-import { InputSelect } from '@edx/paragon';
+import { InputSelect, Button, Card } from '@edx/paragon';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { TimesTable } from './components';
 
 const getDate = (d) => {
   let date = new Date(d);
@@ -32,7 +39,7 @@ const Landing = ({
   getUserCourseRoles,
   getEnrolledCourses,
   setLoadingCourse,
-  match,
+  lms,
 }) => {
   const [state, setState] = useState({
     selected: -1,
@@ -82,14 +89,19 @@ const Landing = ({
     <Container>
       <Row>
         <Col>
-          <h2>Tiempo de visita por m&oacute;dulos</h2>
+          <h5>Sistema de estad&iacute;stica y an&aacute;lisis</h5>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <h2>Estad&iacute;sticas por m&oacute;dulos</h2>
         </Col>
       </Row>
       <Row>
         <Col>
           <p>
-            Buscar por nombre o c&oacute;digo de curso y para una fecha
-            determinada.
+            Ver estad&iacute;sticas para cursos con acceso de <b>staff</b>,{' '}
+            <b>instructor</b> o <b>administrador</b>.
           </p>
         </Col>
       </Row>
@@ -113,7 +125,40 @@ const Landing = ({
         )}
       </Row>
       {state.selected !== -1 && state.filtered.length > 1 && (
-        <TimesTable course_id={id} start={start} end={end} data={data} />
+        <Row style={{ marginBottom: '1rem' }}>
+          <Col md={4}>
+            <Card>
+              <Card.Body>
+                <Card.Title>{data.name}</Card.Title>
+                <Card.Text>{data.short_description}</Card.Text>
+                <Button
+                  variant="primary"
+                  href={`${lms}/courses/${data.id}/course`}
+                >
+                  Ver Curso
+                </Button>
+              </Card.Body>
+              <Card.Img variant="bottom" src={data.media.image.small} alt="" />
+            </Card>
+          </Col>
+          <Col md={8}>
+            <ListGroup>
+              <ListGroupItem>
+                <h5>Consultar</h5>
+              </ListGroupItem>
+              <ListGroupItem>
+                <Link to={`/modules/times/${id}/${start}/${end}`}>
+                  Ver tiempo de visita por contenido
+                </Link>
+              </ListGroupItem>
+              <ListGroupItem>
+                <Link to={`/modules/visits/${id}/${start}/${end}`}>
+                  Ver visitas por contenido
+                </Link>
+              </ListGroupItem>
+            </ListGroup>
+          </Col>
+        </Row>
       )}
     </Container>
   );
@@ -126,12 +171,14 @@ Landing.propTypes = {
   getUserCourseRoles: PropTypes.func.isRequired,
   getEnrolledCourses: PropTypes.func.isRequired,
   setLoadingCourse: PropTypes.func.isRequired,
+  lms: PropTypes.string,
 };
 
 const mapStateToProps = (state) => ({
   loadingCourses: state.course.course_roles.loading,
   loadingEnrolled: state.course.courses_enrolled.loading,
   myCourses: selectMyCourses(state),
+  lms: state.urls.lms,
 });
 
 const mapDispatchToProps = (dispatch) =>

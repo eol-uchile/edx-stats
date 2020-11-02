@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router';
 import { Container, Row, Col } from 'react-bootstrap';
-import { TimeLanding } from './times';
+import { OverviewLanding, VisitsTable, TimesTable } from './Overview';
 import { RedirectToFeature } from './Redirect';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -20,20 +20,21 @@ const Routes = ({ redirect }) => {
   }
   return (
     <main>
-      <Container>
-        <Row>
-          <Col>
-            <h4>Sistema de estad&iacute;stica y an&aacute;lisis</h4>
-          </Col>
-        </Row>
-      </Container>
       <Switch>
-        <Route path="/times" component={TimeLanding} />
+        <Route
+          path="/modules/times/:course_id/:start/:end"
+          component={TimesTable}
+        />
+        <Route
+          path="/modules/visits/:course_id/:start/:end"
+          component={VisitsTable}
+        />
+        <Route path="/modules" component={OverviewLanding} />
         <Route
           render={(props) => (
             <RedirectToFeature
-              path="/times"
-              message="Tiempo de Visita por módulos"
+              path="/modules"
+              message="Estadísticas generales"
             />
           )}
         />

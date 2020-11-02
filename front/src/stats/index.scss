@@ -2,6 +2,10 @@ main {
   min-height: calc(100vh - 145px);
   padding-top: 2em;
 }
+
+.btn, .btn:focus, .btn:active, .btn:focus::before{
+  border-radius: 0.3rem;
+}
 /* 
 .site-header-desktop .logo img {
   background: url(/public/static/logo.f09bd38cb6bf.png) left top no-repeat;
