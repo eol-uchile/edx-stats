@@ -131,6 +131,8 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
     files = [f for f in os.listdir(
         dirpath) if os.path.isfile(os.path.join(dirpath, f))]
     for file in files:
+        if file == ".gitkeep":
+            continue
         filepath = os.path.join(dirpath, file)
         try:
             # Parse and save to db

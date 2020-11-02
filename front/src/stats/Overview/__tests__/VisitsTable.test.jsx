@@ -7,7 +7,7 @@ import {
   screen,
   renderWithRouter,
 } from '../../data/tests-utils';
-import TimesTable from '../components/TimesTable';
+import VisitsTable from '../components/VisitsTable';
 // Mock calls to the Edx modules
 import * as frontenAuth from '@edx/frontend-platform/auth';
 jest.mock('@edx/frontend-platform/auth');
@@ -53,7 +53,7 @@ const mock_server_error = {
 
 const mock_course_response = {
   get: jest.fn((url) => {
-    if (url.includes('/api/times/timeoncourse')) {
+    if (url.includes('/api/visits/visitsoncourse')) {
       return Promise.reject({
         customAttributes: { httpErrorResponseData: 'Custom error message' },
       });
@@ -83,10 +83,10 @@ it('renders without crashing', () => {
   jest
     .spyOn(frontenAuth, 'getAuthenticatedHttpClient')
     .mockReturnValue(mock_empty_response);
-  renderWithRouter(<TimesTable match={mock_router_path} data={{}} />);
+  renderWithRouter(<VisitsTable match={mock_router_path} data={{}} />);
 
-  expect(screen.getByTestId('times-lDate'));
-  expect(screen.getByTestId('times-uDate'));
+  expect(screen.getByTestId('visits-lDate'));
+  expect(screen.getByTestId('visits-uDate'));
   expect(screen.getByText('Buscar'));
 });
 
@@ -94,10 +94,10 @@ it('renders prop dates without crashing', () => {
   jest
     .spyOn(frontenAuth, 'getAuthenticatedHttpClient')
     .mockReturnValue(mock_empty_response);
-  renderWithRouter(<TimesTable match={mock_router_path} data={{}} />);
+  renderWithRouter(<VisitsTable match={mock_router_path} data={{}} />);
 
-  expect(screen.getByTestId('times-lDate')).toHaveValue('2019-09-04');
-  expect(screen.getByTestId('times-uDate')).toHaveValue('2019-09-05');
+  expect(screen.getByTestId('visits-lDate')).toHaveValue('2019-09-04');
+  expect(screen.getByTestId('visits-uDate')).toHaveValue('2019-09-05');
   expect(screen.getByText('Buscar'));
 });
 
@@ -106,10 +106,10 @@ it('shows error when fetch fails', async () => {
     .spyOn(frontenAuth, 'getAuthenticatedHttpClient')
     .mockReturnValue(mock_server_error);
 
-  renderWithRouter(<TimesTable match={mock_router_path} data={{}} />);
+  renderWithRouter(<VisitsTable match={mock_router_path} data={{}} />);
 
-  userEvent.type(screen.getByTestId('times-lDate'), '2019-09-04');
-  userEvent.type(screen.getByTestId('times-uDate'), '2019-09-05');
+  userEvent.type(screen.getByTestId('visits-lDate'), '2019-09-04');
+  userEvent.type(screen.getByTestId('visits-uDate'), '2019-09-05');
   userEvent.click(screen.getByRole('button'));
   await waitFor(() =>
     expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(1)
@@ -122,10 +122,10 @@ it('dismisses error messages', async () => {
     .spyOn(frontenAuth, 'getAuthenticatedHttpClient')
     .mockReturnValue(mock_server_error);
 
-  renderWithRouter(<TimesTable match={mock_router_path} data={{}} />);
+  renderWithRouter(<VisitsTable match={mock_router_path} data={{}} />);
 
-  userEvent.type(screen.getByTestId('times-lDate'), '2019-09-04');
-  userEvent.type(screen.getByTestId('times-uDate'), '2019-09-05');
+  userEvent.type(screen.getByTestId('visits-lDate'), '2019-09-04');
+  userEvent.type(screen.getByTestId('visits-uDate'), '2019-09-05');
   userEvent.click(screen.getByRole('button'));
   await waitFor(() =>
     expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(1)
@@ -144,11 +144,11 @@ it('gets table values', async () => {
     .mockReturnValue(mock_course_response);
 
   renderWithRouter(
-    <TimesTable match={mock_router_path} data={{ name: 'foo' }} />
+    <VisitsTable match={mock_router_path} data={{ name: 'foo' }} />
   );
 
-  userEvent.type(screen.getByTestId('times-lDate'), '2019-09-04');
-  userEvent.type(screen.getByTestId('times-uDate'), '2019-09-05');
+  userEvent.type(screen.getByTestId('visits-lDate'), '2019-09-04');
+  userEvent.type(screen.getByTestId('visits-uDate'), '2019-09-05');
   userEvent.click(screen.getByRole('button'));
   await waitFor(() =>
     expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(2)
@@ -163,11 +163,11 @@ it('has a second view mode', async () => {
     .mockReturnValue(mock_course_response);
 
   renderWithRouter(
-    <TimesTable match={mock_router_path} data={{ name: 'foo' }} />
+    <VisitsTable match={mock_router_path} data={{ name: 'foo' }} />
   );
 
-  userEvent.type(screen.getByTestId('times-lDate'), '2019-09-04');
-  userEvent.type(screen.getByTestId('times-uDate'), '2019-09-05');
+  userEvent.type(screen.getByTestId('visits-lDate'), '2019-09-04');
+  userEvent.type(screen.getByTestId('visits-uDate'), '2019-09-05');
   userEvent.click(screen.getByRole('button'));
   await waitFor(() =>
     expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(2)

@@ -240,9 +240,9 @@ const VisitsTable = ({
       <Row>
         <Col>
           <Breadcrumb>
-            <Breadcrumb.Item href="/modules" to="/modules" as={Link}>
+            <Link className="breadcrumb-item" to="/modules">
               General
-            </Breadcrumb.Item>
+            </Link>
             <Breadcrumb.Item
               href="#"
               active

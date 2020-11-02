@@ -4,10 +4,11 @@ import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { Provider } from 'react-redux';
+import { Router } from 'react-router';
+import { createMemoryHistory } from 'history';
 import rootReducer from './rootReducer';
 
 // Reference https://redux.js.org/recipes/writing-tests#connected-components
-
 function render(
   ui,
   {
@@ -26,7 +27,22 @@ function render(
   return rtlRender(ui, { wrapper: Wrapper, ...renderOptions });
 }
 
+// Reference https://www.rockyourcode.com/test-redirect-with-jest-react-router-and-react-testing-library/
+function renderWithRouter(
+  ui,
+  {
+    route = '/',
+    history = createMemoryHistory({ initialEntries: [route] }),
+  } = {}
+) {
+  return {
+    ...render(<Router history={history}>{ui}</Router>),
+    history,
+  };
+}
+
 // re-export everything
 export * from '@testing-library/react';
-// override render method
-export { render };
+// override render method and add
+// Router wrapper for routes
+export { render, renderWithRouter };

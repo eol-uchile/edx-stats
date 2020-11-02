@@ -15,6 +15,7 @@ it('renders without crashing', () => {
       }}
       data={[]}
       errors={[]}
+      captio={''}
     />
   );
   expect(screen.getByText('Estudiantes'));
@@ -35,6 +36,7 @@ it('renders two pages', () => {
         ['bar student', 'bar data'],
       ]}
       errors={[]}
+      captio={''}
       defaultPage={1}
     />
   );
@@ -57,6 +59,7 @@ it('changes to next page', () => {
         ['bar student', 'bar data'],
       ]}
       errors={[]}
+      captio={''}
       defaultPage={1}
     />
   );

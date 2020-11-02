@@ -41,7 +41,6 @@ subscribe(APP_READY, () => {
   ReactDOM.render(
     <AppProvider
       store={store}
-      value={{ logo: '/public/static/logo.f09bd38cb6bf.png' }}
     >
       <Header />
       <Routes />

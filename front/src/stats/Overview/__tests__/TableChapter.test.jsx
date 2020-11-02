@@ -11,6 +11,7 @@ it('renders without crashing', () => {
       headers={{ chapters: [{ name: 'bar', subtotal: 1 }] }}
       data={[]}
       errors={[]}
+      caption={''}
     />
   );
   expect(screen.getByText('Estudiantes')).toBeInTheDocument();
@@ -27,6 +28,7 @@ it('renders two pages', () => {
         ['bar student', 'bar data'],
       ]}
       errors={[]}
+      caption={''}
       defaultPage={1}
     />
   );
@@ -45,6 +47,7 @@ it('changes to next page', () => {
         ['bar student', 'bar data'],
       ]}
       errors={[]}
+      caption={''}
       defaultPage={1}
     />
   );
