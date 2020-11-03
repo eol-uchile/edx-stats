@@ -100,7 +100,7 @@ def process_visit_count(end_date, day_window=None):
         except Exception as e:
             print("Error while loading course structure", e)
             logger.warning(
-                "Course {} times not processed due to {}".format(course_id, e))
+                "Course {} times not processed due to {}".format(course_id, e), exc_info=True)
             continue
 
         # If no valid verticals were found abort
@@ -171,7 +171,7 @@ def process_visit_count(end_date, day_window=None):
                     course_id, period))
             except Exception as error:
                 logger.warning("Failed to process visits on {}, {}. Reason: {}".format(
-                    course_id, period, str(error)))
+                    course_id, period, str(error)), exc_info=True)
 
 
 def compute_visit_batches(initial_date=None, time_delta=timedelta(days=3)):

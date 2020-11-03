@@ -13,6 +13,7 @@ For reference on configs ENV and YAML see
 https://github.com/eol-uchile/edx-platform/blob/eol/juniper.master/lms/envs/production.py
 """
 
+import sys
 import os
 import datetime
 import codecs
@@ -107,6 +108,38 @@ TEMPLATES = [
         },
     },
 ]
+
+# Reference https://www.askpython.com/django/django-logging
+LOGGING = {
+    'version': 1,
+    # Version of logging
+    'disable_existing_loggers': False,
+    'filters':{
+        #information regarding filters
+    },
+    'formatters':{
+        'default':{
+            'format': '[{asctime}] ({levelname}@{module}:{lineno}) {message}',
+            'style': '{',
+        }
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'analytics-out.log',
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    },
+}
 
 WSGI_APPLICATION = 'Stats.wsgi.application'
 
@@ -221,3 +254,9 @@ AUTHENTICATION_BACKENDS = (
 )
 
 LOGIN_REDIRECT_URL = '/'
+
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase'
+    }

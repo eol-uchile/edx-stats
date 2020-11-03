@@ -15,5 +15,13 @@ The backend includes the following manage.py commands:
   - --day-step: how many days to process in memory at a time
 
   Example usage:
-  - ```manage.py processtimes 2019-03-01```
-  - ```manage.py processtimes 2019-03-01 --day-step 4 ```
+  - ```manage.py processtimes 2019-03-23```
+  - ```manage.py processtimes 2019-03-23 --day-step 4 ```
+
+- processvisits.py counts the number from the navigation logs given a starting date.
+Optional arguments 
+  - --day-step: how many days to process in memory at a time
+
+  Example usage:
+  - ```manage.py processvisits 2019-03-23```
+  - ```manage.py processvisits 2019-03-23 --day-step 4 ```

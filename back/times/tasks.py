@@ -105,7 +105,7 @@ def process_log_times(endDate=None, day_window=None):
         except Exception as e:
             print("Error while loading course structure", e)
             logger.warning(
-                "Course {} times not processed due to {}".format(course_id, e))
+                "Course {} times not processed due to {}".format(course_id, e), exc_info=True)
             continue
 
         # If no valid verticals were found abort
@@ -172,7 +172,7 @@ def process_log_times(endDate=None, day_window=None):
                     course_id, period))
             except Exception as error:
                 logger.warning("Failed to process times on {}, {}. Reason: {}".format(
-                    course_id, period, error))
+                    course_id, period, error), exc_info=True)
 
 
 def process_log_times_from_dir(logpath, coursepath, zipped=True):

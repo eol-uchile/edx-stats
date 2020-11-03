@@ -59,7 +59,7 @@ def load_course_from_api(course_code):
         json_text = load_course_blocks_from_LMS(course_code)
     except Exception as e:
         # Abort processing
-        logger.warning(e)
+        logger.warning(e, exc_info=True)
         return
     course_blocks = read_json_course(json_text)
     dataframe = flatten_course_as_verticals(course_blocks)
@@ -134,6 +134,9 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
         if file == ".gitkeep":
             continue
         filepath = os.path.join(dirpath, file)
+        if len(LogFile.objects.filter(file_name=file).count()) > 0:
+            logger.info("Skipping file {}".format(file))
+            continue
         try:
             # Parse and save to db
             log_df = read_logs(filepath, zipped)
@@ -154,4 +157,4 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
                 os.mkdir(error_dir)
             os.rename(filepath, os.path.join(error_dir, file))
             logger.warning(
-                "Error while reading logs from {}. Reason {}".format(filepath, e))
+                "Error while reading logs from {}. Reason {}".format(filepath, e), exc_info=True)

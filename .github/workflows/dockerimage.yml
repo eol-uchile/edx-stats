@@ -15,6 +15,9 @@ jobs:
     - name: Build the Docker image
       run: docker build --target prod ./back --tag eoluchile/edx-stats-back:${GITHUB_SHA}
 
+    - name: Run tests
+      run: docker run eoluchile/edx-stats-back:${GITHUB_SHA} python manage.py test
+
     - name: Push to Github Container Registry
       run: |
           echo "${CR_PAT}" | docker login ghcr.io -u eolito --password-stdin
@@ -31,6 +34,12 @@ jobs:
 
     - name: Pull submodules
       run: git submodule update --init --recursive
+
+    - name: Build dev
+      run: docker build --target dev ./front --tag eoluchile/edx-front-test
+    
+    - name: Run Tests
+      run: docker run eoluchile/edx-front-test npm test
 
     - name: Build the Docker image
       run: docker build --build-arg env_file=.env.staging ./front --tag eoluchile/edx-stats-front-staging:${GITHUB_SHA}
@@ -51,6 +60,12 @@ jobs:
 
     - name: Pull submodules
       run: git submodule update --init --recursive
+
+    - name: Build dev
+      run: docker build --target dev ./front --tag eoluchile/edx-front-test
+    
+    - name: Run Tests
+      run: docker run eoluchile/edx-front-test npm test
 
     - name: Build the Docker image
       run: docker build --build-arg env_file=.env.eol ./front --tag eoluchile/edx-stats-front-eol:${GITHUB_SHA}

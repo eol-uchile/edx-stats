@@ -19,4 +19,4 @@ ENV CONFIG_FILE  /app/production.yaml
 RUN python /app/manage.py collectstatic --noinput
 #RUN python /app/manage.py makemigrations
 #RUN python /app/manage.py migrate
-CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "Stats.wsgi:application"]
+CMD ["gunicorn", "Stats.wsgi:application", "-c", "gunicorn.conf.py"]
