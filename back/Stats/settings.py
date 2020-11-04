@@ -114,11 +114,11 @@ LOGGING = {
     'version': 1,
     # Version of logging
     'disable_existing_loggers': False,
-    'filters':{
-        #information regarding filters
+    'filters': {
+        # information regarding filters
     },
-    'formatters':{
-        'default':{
+    'formatters': {
+        'default': {
             'format': '[{asctime}] ({levelname}@{module}:{lineno}) {message}',
             'style': '{',
         }
@@ -138,6 +138,18 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'INFO',
         },
+        'visits': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'core': {
+            'handlers': ['console'],
+            'level': 'INFO', 
+        },
+        'times': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        }
     },
 }
 
@@ -176,7 +188,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = ENV_TOKENS.get('TIME_ZONE','UTC')
+TIME_ZONE = ENV_TOKENS.get('TIME_ZONE', 'UTC')
 
 USE_I18N = True
 
@@ -224,11 +236,14 @@ EDX_DRF_EXTENSIONS = {
 
 # Custom settings
 # Local Development Values
-BACKEND_SERVICE_EDX_OAUTH2_KEY = ENV_TOKENS.get('BACKEND_SERVICE_EDX_OAUTH2_KEY',"set-me-please")
-BACKEND_SERVICE_EDX_OAUTH2_SECRET = ENV_TOKENS.get('BACKEND_SERVICE_EDX_OAUTH2_SECRET',"set-me-please")  # Local Development Values
-BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL = ENV_TOKENS.get('BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL',"a.valid.url")
-BACKEND_LMS_BASE_URL = ENV_TOKENS.get('BACKEND_LMS_BASE_URL',"a.valid.url")
-BACKEND_CMS_BASE_URL = ENV_TOKENS.get('BACKEND_CMS_BASE_URL',"a.valid.url")
+BACKEND_SERVICE_EDX_OAUTH2_KEY = ENV_TOKENS.get(
+    'BACKEND_SERVICE_EDX_OAUTH2_KEY', "set-me-please")
+BACKEND_SERVICE_EDX_OAUTH2_SECRET = ENV_TOKENS.get(
+    'BACKEND_SERVICE_EDX_OAUTH2_SECRET', "set-me-please")  # Local Development Values
+BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL = ENV_TOKENS.get(
+    'BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL', "a.valid.url")
+BACKEND_LMS_BASE_URL = ENV_TOKENS.get('BACKEND_LMS_BASE_URL', "a.valid.url")
+BACKEND_CMS_BASE_URL = ENV_TOKENS.get('BACKEND_CMS_BASE_URL', "a.valid.url")
 BACKEND_ALLOWED_ROLES = [
     'staff',
     'data researcher',
@@ -239,11 +254,16 @@ BACKEND_ALLOWED_ROLES = [
 BACKEND_LOGS_DIR = '/app/logs'
 
 # EDX OAUTH2
-SOCIAL_AUTH_EDX_OAUTH2_KEY = ENV_TOKENS.get('BACKEND_SERVICE_EDX_OAUTH2_KEY',"set-me-please")
-SOCIAL_AUTH_EDX_OAUTH2_SECRET = ENV_TOKENS.get('BACKEND_SERVICE_EDX_OAUTH2_SECRET',"set-me-please")
-SOCIAL_AUTH_EDX_OAUTH2_URL_ROOT = ENV_TOKENS.get('BACKEND_LMS_BASE_URL',"a.valid.url")
-SOCIAL_AUTH_EDX_OAUTH2_PUBLIC_URL_ROOT = ENV_TOKENS.get('BACKEND_LMS_BASE_URL',"a.valid.url")
-SOCIAL_AUTH_EDX_OAUTH2_JWS_HMAC_SIGNING_KEY = ENV_TOKENS.get('JWT_AUTH').get('JWT_SECRET_KEY')
+SOCIAL_AUTH_EDX_OAUTH2_KEY = ENV_TOKENS.get(
+    'BACKEND_SERVICE_EDX_OAUTH2_KEY', "set-me-please")
+SOCIAL_AUTH_EDX_OAUTH2_SECRET = ENV_TOKENS.get(
+    'BACKEND_SERVICE_EDX_OAUTH2_SECRET', "set-me-please")
+SOCIAL_AUTH_EDX_OAUTH2_URL_ROOT = ENV_TOKENS.get(
+    'BACKEND_LMS_BASE_URL', "a.valid.url")
+SOCIAL_AUTH_EDX_OAUTH2_PUBLIC_URL_ROOT = ENV_TOKENS.get(
+    'BACKEND_LMS_BASE_URL', "a.valid.url")
+SOCIAL_AUTH_EDX_OAUTH2_JWS_HMAC_SIGNING_KEY = ENV_TOKENS.get(
+    'JWT_AUTH').get('JWT_SECRET_KEY')
 # SOCIAL_AUTH_EDX_OAUTH2_PROVIDER_CONFIGURATION_CACHE_TTL use default 1 Week
 # SOCIAL_AUTH_EDX_OAUTH2_JWKS_CACHE_TTL use default 1 day.
 SOCIAL_AUTH_STRATEGY = 'auth_backends.strategies.EdxDjangoStrategy'
