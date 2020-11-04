@@ -30,7 +30,7 @@ const AsyncCSVButton = ({
 AsyncCSVButton.propTypes = {
   data: PropTypes.array,
   headers: PropTypes.array,
-  filename: PropTypes.array,
+  filename: PropTypes.string,
   text: PropTypes.string.isRequired,
 };
 

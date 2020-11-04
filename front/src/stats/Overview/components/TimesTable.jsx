@@ -23,7 +23,7 @@ import {
   resetTimes,
 } from '../data/actions';
 import { AsyncCSVButton, TableChapter, TableVertical } from '.';
-import './TimesTable.css';
+import './TableandChart.css';
 
 const add = (a, b) => a + b;
 

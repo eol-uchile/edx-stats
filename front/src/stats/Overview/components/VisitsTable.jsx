@@ -22,16 +22,16 @@ import {
   resetCourses,
   resetTimes,
 } from '../data/actions';
-import { AsyncCSVButton, TableChapter, TableVertical } from '.';
-import './TimesTable.css';
+import { AsyncCSVButton, TableChapter, TableVertical, StackedBar } from '.';
+import './TableandChart.css';
 
 const add = (a, b) => a + b;
 
 /**
  * VisitsTable
  *
- * Search and display the student spent time on a course.
- * The course can be provided by the URL, the
+ * Search and display the visits on a course.
+ * The course is provided by the URL
  *
  * @param {Object} course
  * @param {Object} visits
@@ -39,7 +39,7 @@ const add = (a, b) => a + b;
  * @param {Function} recoverCourseStudentVisitSum
  * @param {Function} setLoadingCourse
  * @param {Function} resetCourses
- * @param {Function} resetTimes
+ * @param {Object} match
  */
 const VisitsTable = ({
   course,
@@ -71,6 +71,7 @@ const VisitsTable = ({
     all: [],
     chapters: [],
     useChapters: true,
+    verticals: [],
   });
 
   const [errors, setErrors] = useState([]);
@@ -155,6 +156,7 @@ const VisitsTable = ({
       let rows = [];
       let users = {};
       let chapters = [];
+      let verticals = {}; // {students, views, name, id}
       // Group by username
       visits.added_visits.map((t) => {
         if (t.username in users) {
@@ -178,14 +180,29 @@ const VisitsTable = ({
       Object.keys(users).forEach((u) => {
         // Fill array with zeros
         let values = Array.from(Array(tableData.all), () => 0);
-        // Fill positions with delta time
+        // Fill positions with visit
         for (let index = 0; index < users[u].length; index++) {
           if (tableData.mapping[users[u][index].vertical] !== undefined) {
-            values[index] = users[u][index].total;
+            values[tableData.mapping[users[u][index].vertical]] =
+              users[u][index].total;
+
+            // Check if verticals have info
+            if (verticals[users[u][index].vertical] !== undefined) {
+              verticals[users[u][index].vertical].visits =
+                verticals[users[u][index].vertical].visits +
+                users[u][index].total;
+              verticals[users[u][index].vertical].students =
+                verticals[users[u][index].vertical].students + 1;
+            } else {
+              verticals[users[u][index].vertical] = {
+                visits: users[u][index].total,
+                students: 1,
+              };
+            }
           }
         }
         // Put rows for all
-        rows.push([u, ...values.map((v) => v)]);
+        rows.push([u, ...values]);
         // Put each sub sum for each chapter
         let chapterRow = [u];
         subtotalsIndex.forEach((st, k) => {
@@ -195,7 +212,24 @@ const VisitsTable = ({
         });
         chapters.push(chapterRow);
       });
-      setRowData({ all: rows, useChapters: true, chapters: chapters });
+
+      // Compute totals per vertical
+      let named_verticals = tableData.verticals.map((vertical) => {
+        let v_info = verticals[vertical.id]
+          ? verticals[vertical.id]
+          : { visits: 0, students: 0 };
+        return {
+          ...v_info,
+          ...vertical,
+        };
+      });
+
+      setRowData({
+        all: rows,
+        useChapters: true,
+        chapters: chapters,
+        verticals: named_verticals,
+      });
       setErrors([]);
     }
   }, [tableData.loaded, visits.added_visits]);
@@ -309,6 +343,50 @@ const VisitsTable = ({
         </Row>
       ) : tableData.loaded ? (
         <Fragment>
+          <Row style={{ marginTop: '1em' }}>
+            <Col>
+              <h4>Curso: {course.course[0].name}</h4>
+              <ul>
+                <li>
+                  <a href="#VisitasTotales">Visitas totales</a>
+                </li>
+                <li>
+                  <a href="#DetallesPorEstudiante">Detalles por estudiante</a>
+                </li>
+              </ul>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <h5 id="VisitasTotales">Visitas totales por módulo</h5>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <AsyncCSVButton
+                text="Descargar Datos"
+                filename="Visitas_totales.csv"
+                headers={tableData.verticals.map((el) => el.val)}
+                data={[rowData.verticals.map((el) => el.visits)]}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <StackedBar
+                data={rowData.verticals}
+                bar1_key="students"
+                bar2_key="visits"
+                name_key="val"
+                x_label="Unidades del curso"
+              />
+            </Col>
+          </Row>
+          <Row style={{ marginTop: '1em' }}>
+            <Col>
+              <h5 id="DetallesPorEstudiante">Detalle por estudiante</h5>
+            </Col>
+          </Row>
           <Row>
             <Col>
               <AsyncCSVButton
@@ -324,6 +402,7 @@ const VisitsTable = ({
                         ...tableData.verticals.map((el) => el.val),
                       ]
                 }
+                filename="Visitas_por_estudiante.csv"
                 data={rowData.useChapters ? rowData.chapters : rowData.all}
               />
             </Col>
@@ -336,11 +415,6 @@ const VisitsTable = ({
                   toggleChapters(e.target.checked);
                 }}
               />
-            </Col>
-          </Row>
-          <Row style={{ marginTop: '1em' }}>
-            <Col>
-              <h4>Curso: {course.course[0].name}</h4>
             </Col>
           </Row>
           <Row>

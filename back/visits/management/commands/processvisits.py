@@ -1,6 +1,6 @@
 from datetime import timedelta
 from django.core.management.base import BaseCommand, no_translations
-from visits.tasks import compute_time_batches
+from visits.tasks import compute_visit_batches
 
 
 class Command(BaseCommand):
@@ -18,7 +18,7 @@ class Command(BaseCommand):
     @no_translations
     def handle(self, *args, **options):
         if options['day_step'] is not None:
-            compute_time_batches(options['start'], time_delta=timedelta(
+            compute_visit_batches(options['start'], time_delta=timedelta(
                 days=options['day_step'][0]))
         else:
-            compute_time_batches(options['start'])
+            compute_visit_batches(options['start'])

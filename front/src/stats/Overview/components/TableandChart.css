@@ -16,3 +16,19 @@
   border-right: 1px solid  #b9babe;
   border-left: none;
 }
+
+.custom-tooltip {
+  background-color: white;
+  border-radius: 0.3rem;
+  padding: 0.5rem;
+  border: 1px solid #b9babe;
+}
+
+.custom-tooltip .label{
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.custom-tooltip .views, .custom-tooltip .students{
+  font-size: 1rem;
+}
