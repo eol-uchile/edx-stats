@@ -1,16 +1,50 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import {
-  render,
-  waitFor,
-  screen,
-  renderWithRouter,
-} from '../../data/tests-utils';
-import TimesTable from '../components/TimesTable';
+import { waitFor, screen, renderWithRouter } from '../../data/tests-utils';
+import TimesTable from '../TimesTable';
 // Mock calls to the Edx modules
 import * as frontenAuth from '@edx/frontend-platform/auth';
 jest.mock('@edx/frontend-platform/auth');
+
+const course_data = {
+  id: 'foo_id',
+  end: '2019-02-02',
+  start: '2019-02-01',
+  name: 'foo',
+  blocks_url:
+    'https://eol.andhael.cl/api/courses/v2/blocks/?course_id=course-v1%3AUChile%2BKUBER1%2B2020_T2',
+  effort: null,
+  enrollment_start: null,
+  enrollment_end: null,
+  media: {
+    course_image: {
+      uri:
+        '/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
+    },
+    course_video: {
+      uri: null,
+    },
+    image: {
+      raw:
+        'https://eol.andhael.cl/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
+      small:
+        'https://eol.andhael.cl/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
+      large:
+        'https://eol.andhael.cl/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
+    },
+  },
+  number: 'KUBER1',
+  org: 'UChile',
+  short_description: '',
+  start_display: '1 de Octubre de 2020',
+  start_type: 'timestamp',
+  pacing: 'instructor',
+  mobile_available: false,
+  hidden: false,
+  invitation_only: false,
+  course_id: 'foo_id',
+};
 
 const structureData = {
   courses: [
@@ -57,6 +91,20 @@ const mock_course_response = {
       return Promise.reject({
         customAttributes: { httpErrorResponseData: 'Custom error message' },
       });
+    } else if (url.includes('/api/enrollment/v1/roles')) {
+      return Promise.resolve({
+        status: 200,
+        request: { responseURL: '' },
+        data: { roles: [{ course_id: 'foo_id', role: 'foo' }] },
+      });
+    } else if (url.includes('/api/courses/v1/courses/?page_size=200')) {
+      return Promise.resolve({
+        status: 200,
+        request: { responseURL: '' },
+        data: {
+          results: [course_data],
+        },
+      });
     } else {
       return Promise.resolve({
         status: 200,
@@ -69,7 +117,7 @@ const mock_course_response = {
 
 const mock_router_path = {
   params: {
-    course_id: 'foo',
+    course_id: 'foo_id',
     start: '2019-09-04',
     end: '2019-09-05',
   },
@@ -112,7 +160,7 @@ it('shows error when fetch fails', async () => {
   userEvent.type(screen.getByTestId('times-uDate'), '2019-09-05');
   userEvent.click(screen.getByRole('button'));
   await waitFor(() =>
-    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(1)
+    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(3)
   );
   expect(screen.getByText('Hubo un error en el servidor'));
 });
@@ -128,11 +176,13 @@ it('dismisses error messages', async () => {
   userEvent.type(screen.getByTestId('times-uDate'), '2019-09-05');
   userEvent.click(screen.getByRole('button'));
   await waitFor(() =>
-    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(1)
+    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(3)
   );
   expect(screen.getByText('Hubo un error en el servidor'));
 
-  userEvent.click(screen.getByRole('alert'));
+  screen.getAllByRole('alert').forEach((element) => {
+    userEvent.click(element);
+  });
   expect(
     screen.queryByText('Hubo un error en el servidor')
   ).not.toBeInTheDocument();
@@ -143,15 +193,13 @@ it('gets table values', async () => {
     .spyOn(frontenAuth, 'getAuthenticatedHttpClient')
     .mockReturnValue(mock_course_response);
 
-  renderWithRouter(
-    <TimesTable match={mock_router_path} data={{ name: 'foo' }} />
-  );
+  renderWithRouter(<TimesTable match={mock_router_path} />);
 
   userEvent.type(screen.getByTestId('times-lDate'), '2019-09-04');
   userEvent.type(screen.getByTestId('times-uDate'), '2019-09-05');
   userEvent.click(screen.getByRole('button'));
   await waitFor(() =>
-    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(2)
+    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(4)
   );
   expect(screen.getByText('Ch1'));
   expect(screen.getByText('Custom error message'));
@@ -162,15 +210,13 @@ it('has a second view mode', async () => {
     .spyOn(frontenAuth, 'getAuthenticatedHttpClient')
     .mockReturnValue(mock_course_response);
 
-  renderWithRouter(
-    <TimesTable match={mock_router_path} data={{ name: 'foo' }} />
-  );
+  renderWithRouter(<TimesTable match={mock_router_path} />);
 
   userEvent.type(screen.getByTestId('times-lDate'), '2019-09-04');
   userEvent.type(screen.getByTestId('times-uDate'), '2019-09-05');
   userEvent.click(screen.getByRole('button'));
   await waitFor(() =>
-    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(2)
+    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(4)
   );
   expect(screen.getByText('Ch1'));
   expect(screen.getByText('Custom error message'));

@@ -408,7 +408,6 @@ const TimesTable = ({
                         ? averageChapterChart
                         : averageChart
                     }
-                    bar_key="Tiempo de visualización"
                     area_key="Tiempo promedio visto"
                     name_key="val"
                     x_label={

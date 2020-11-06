@@ -76,10 +76,7 @@ export const recoverCourseStudentTimesSum = (
     .catch((error) => {
       let msg = error.customAttributes
         ? error.customAttributes.httpErrorResponseData
-        : undefined;
-      if (msg === undefined) {
-        msg = 'Hubo un error en el servidor';
-      }
+        : 'Hubo un error en el servidor';
       dispatch({ type: LOADING_TIMES_ERROR, data: [msg] });
     });
 };

@@ -140,7 +140,7 @@ TableVertical.propTypes = {
     ),
   }).isRequired,
   data: PropTypes.arrayOf(
-    PropTypes.arrayOf(PropTypes.oneOf([PropTypes.string, PropTypes.number]))
+    PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number]))
   ).isRequired,
   errors: PropTypes.array.isRequired,
   caption: PropTypes.string.isRequired,

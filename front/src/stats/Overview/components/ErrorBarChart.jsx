@@ -51,8 +51,9 @@ const ErrorBarChart = ({
   x_label,
   y_label,
   tooltipLabel = false,
+  width = '100%',
 }) => (
-  <ResponsiveContainer width="100%" height={450}>
+  <ResponsiveContainer width={width} height={450}>
     <BarChart data={data} margin={{ top: 5, right: 20, bottom: 30, left: 20 }}>
       <XAxis dataKey={name_key} stroke="#8884d8">
         <Label value={x_label} offset={-10} position="insideBottom" />
@@ -99,12 +100,14 @@ ErrorBarChart.propTypes = {
       tooltip: PropTypes.string.isRequired,
       val: PropTypes.string.isRequired,
       id: PropTypes.string,
+      errorX: PropTypes.number.isRequired,
     })
   ),
   area_key: PropTypes.string.isRequired,
   name_key: PropTypes.string.isRequired,
   x_label: PropTypes.string.isRequired,
   y_label: PropTypes.string.isRequired,
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 export default ErrorBarChart;

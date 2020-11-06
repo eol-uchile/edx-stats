@@ -189,18 +189,6 @@ function useProcessSumData(
         vertical_errors.push(std(user_v));
       }
 
-      let test_ver = [
-        [0, 1, 2, 3],
-        [0, 1, 2, 3],
-        [0, 1, 2, 3],
-      ];
-      let test_sum_index = [2, 4];
-      test_sum_index.forEach((st, k) => {
-        let leftIndex = test_sum_index[k - 1] ? test_sum_index[k - 1] : 0;
-        let subArray = test_ver.map((row) => row.slice(leftIndex + 1, st + 1));
-        let var_a = std(subArray);
-      });
-
       // Compute std deviation
       // Traverse groups of rows
       // to create a matrix to compute std

@@ -15,11 +15,13 @@ const mock_empty_resolve = {
         request: { responseURL: '' },
         data: { roles: [] },
       });
-    } else {
+    } else if (url.includes('/api/courses/v1/courses/?page_size=200')) {
       return Promise.resolve({
         status: 200,
         request: { responseURL: '' },
-        data: { results: [] },
+        data: {
+          results: [],
+        },
       });
     }
   }),
@@ -33,7 +35,7 @@ const mock_foo_course = {
         request: { responseURL: '' },
         data: { roles: [{ course_id: 'foo_id', role: 'foo' }] },
       });
-    } else {
+    } else if (url.includes('/api/courses/v1/courses/?page_size=200')) {
       return Promise.resolve({
         status: 200,
         request: { responseURL: '' },
@@ -44,6 +46,38 @@ const mock_foo_course = {
               end: '2019-02-02',
               start: '2019-02-01',
               name: 'foo',
+              blocks_url:
+                'https://eol.andhael.cl/api/courses/v2/blocks/?course_id=course-v1%3AUChile%2BKUBER1%2B2020_T2',
+              effort: null,
+              enrollment_start: null,
+              enrollment_end: null,
+              media: {
+                course_image: {
+                  uri:
+                    '/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
+                },
+                course_video: {
+                  uri: null,
+                },
+                image: {
+                  raw:
+                    'https://eol.andhael.cl/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
+                  small:
+                    'https://eol.andhael.cl/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
+                  large:
+                    'https://eol.andhael.cl/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
+                },
+              },
+              number: 'KUBER1',
+              org: 'UChile',
+              short_description: '',
+              start_display: '1 de Octubre de 2020',
+              start_type: 'timestamp',
+              pacing: 'instructor',
+              mobile_available: false,
+              hidden: false,
+              invitation_only: false,
+              course_id: 'foo_id',
             },
           ],
         },
@@ -72,7 +106,7 @@ it('displays default option', async () => {
   await waitFor(() =>
     expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(2)
   );
-  expect(screen.getByLabelText('Mis Cursos'));
+  expect(screen.getByText('Mis cursos'));
   const optionInput = await screen.findByText('- Seleccionar curso -');
   expect(optionInput).toHaveValue('-1');
 });
@@ -85,7 +119,7 @@ it('displays multiple options', async () => {
   await waitFor(() =>
     expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(2)
   );
-  expect(screen.getByLabelText('Mis Cursos'));
+  expect(screen.getByText('Mis cursos'));
   const optionInput = await screen.findByText('foo (foo_id)');
   expect(optionInput).toHaveValue('1');
 });
@@ -98,7 +132,7 @@ it.skip('displays dates and search on select', async () => {
   await waitFor(() =>
     expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(2)
   );
-  expect(screen.getByLabelText('Mis Cursos'));
+  expect(screen.getByText('Mis cursos'));
   const optionInput = await screen.findByText('foo (foo_id)');
   userEvent.selectOptions(
     screen.getByTestId('courses-select'),

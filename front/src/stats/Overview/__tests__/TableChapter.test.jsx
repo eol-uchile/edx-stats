@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import { render, fireEvent, waitFor, screen } from '../../data/tests-utils';
+import { render, screen } from '../../data/tests-utils';
 import TableChapter from '../components/TableChapter';
 
 it('renders without crashing', () => {
