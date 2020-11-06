@@ -275,11 +275,6 @@ AUTHENTICATION_BACKENDS = (
 
 LOGIN_REDIRECT_URL = '/'
 
-if 'test' in sys.argv:
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mydatabase'
-    }
 
 CACHES = ENV_TOKENS.get("CACHES", {
     "default": {
@@ -294,3 +289,19 @@ CACHES = ENV_TOKENS.get("CACHES", {
 })
 
 CACHE_TTL = ENV_TOKENS.get("CACHE_TTL", 60 * 60 * 6)  # s * m * h
+
+"""
+    Simple test configuration for backends and services
+"""
+
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase'
+    }
+
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache"
+        }
+    }
