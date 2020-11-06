@@ -34,14 +34,16 @@ import footerLogo from './assets/0vti.ef83f16aa682.jpg';
  * Doing it here makes the components agnostic to this problem and less verbose
  */
 const store = configureStore({
-  urls: { lms: process.env.LMS_BASE_URL, base: process.env.BASE_URL },
+  urls: {
+    lms: process.env.LMS_BASE_URL,
+    base: process.env.BASE_URL,
+    cms: process.env.CMS_BASE_URL,
+  },
 });
 
 subscribe(APP_READY, () => {
   ReactDOM.render(
-    <AppProvider
-      store={store}
-    >
+    <AppProvider store={store}>
       <Header />
       <Routes />
       <Footer logo={footerLogo} />

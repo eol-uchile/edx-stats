@@ -144,7 +144,7 @@ LOGGING = {
         },
         'core': {
             'handlers': ['console'],
-            'level': 'INFO', 
+            'level': 'INFO',
         },
         'times': {
             'handlers': ['console'],
@@ -280,3 +280,17 @@ if 'test' in sys.argv:
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'mydatabase'
     }
+
+CACHES = ENV_TOKENS.get("CACHES", {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6380/3",
+        "OPTIONS": {
+            "PASSWORD": "msecret318e401514dd45e97daf49d1d5c36cdbf9a7294395e84a9f52c08c6ad3699fcc0",
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+        },
+        "KEY_PREFIX": "stats"
+    }
+})
+
+CACHE_TTL = ENV_TOKENS.get("CACHE_TTL", 60 * 60 * 6)  # s * m * h

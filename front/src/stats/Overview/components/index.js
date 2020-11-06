@@ -1,7 +1,15 @@
 import AsyncCSVButton from './ExportCsv';
 import TableChapter from './TableChapter';
 import TableVertical from './TableVertical';
-import TimesTable from './TimesTable';
-import StackedBar from './StackedBar';
+import ParallelBar from './ParallelBar';
+import MultiAxisBars from './MultiAxisBars';
+import ErrorBarChart from './ErrorBarChart';
 
-export { AsyncCSVButton, TableChapter, TableVertical, TimesTable, StackedBar };
+export {
+  AsyncCSVButton,
+  TableChapter,
+  TableVertical,
+  ParallelBar,
+  ErrorBarChart,
+  MultiAxisBars,
+};

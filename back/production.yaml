@@ -38,3 +38,11 @@ BACKEND_ALLOWED_ROLES:
   - 'instructor'
   - 'administrator'
 BACKEND_LOGS_DIR: '/app/logs'
+CACHE:
+  default:
+    BACKEND: 'django_redis.cache.RedisCache'
+    LOCATION: 'redis://@redis:6380/3'
+    OPTIONS:
+      CLIENT_CLASS: 'django_redis.client.DefaultClient'
+      PASSWORD: 'msecret318e401514dd45e97daf49d1d5c36cdbf9a7294395e84a9f52c08c6ad3699fcc0'
+    KEY_PREFIX: 'stats'

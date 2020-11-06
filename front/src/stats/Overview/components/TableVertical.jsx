@@ -8,14 +8,7 @@ import {
 } from 'react-bootstrap';
 import { Pagination } from '@edx/paragon';
 import PropTypes from 'prop-types';
-
-const parseToTableRows = (r, k) => (
-  <tr key={'row' + k}>
-    {r.map((d, kd) => (
-      <td key={kd}>{d}</td>
-    ))}
-  </tr>
-);
+import { parseToTableRows } from '../helpers';
 
 /**
  * Display course data with sub headers
@@ -146,7 +139,9 @@ TableVertical.propTypes = {
       })
     ),
   }).isRequired,
-  data: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
+  data: PropTypes.arrayOf(
+    PropTypes.arrayOf(PropTypes.oneOf([PropTypes.string, PropTypes.number]))
+  ).isRequired,
   errors: PropTypes.array.isRequired,
   caption: PropTypes.string.isRequired,
   defaultPage: PropTypes.number,

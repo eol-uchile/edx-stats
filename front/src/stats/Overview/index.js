@@ -1,6 +1,6 @@
 import { default as OverviewLanding } from './Landing';
-import TimesTable from './components/TimesTable';
-import VisitsTable from './components/VisitsTable';
+import TimesTable from './TimesTable';
+import VisitsTable from './VisitsTable';
 import {
   course,
   times,
@@ -8,6 +8,7 @@ import {
   urls,
   selectMyCourses,
   visits,
+  dashboard,
 } from './data/reducers';
 
 export {
@@ -20,4 +21,5 @@ export {
   urls,
   selectMyCourses,
   visits,
+  dashboard,
 };

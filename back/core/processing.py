@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 from edx_rest_api_client.client import OAuthAPIClient
 from django.conf import settings
+from django.core.cache import cache
 
 
 def read_json_course_file(filename):
@@ -87,7 +88,7 @@ def flatten_course_as_verticals(course_df):
 
     # 'type', 'block_id', 'student_view_url', 'lms_web_url', 'id', 'display_name', 'child', 'child_number'
     course_children = expand_list(course_df.dropna(), "children", "child")
-    #'index', 'type', 'block_id', 'student_view_url', 'lms_web_url','children', 'id', 'display_name'
+    # 'index', 'type', 'block_id', 'student_view_url', 'lms_web_url','children', 'id', 'display_name'
     course_no_children = course_df[course_df["children"].isna()].copy(
     ).reset_index()
     # The id of terminal nodes at any level
@@ -295,12 +296,19 @@ def load_course_blocks_from_LMS(course_code):
         settings.BACKEND_SERVICE_EDX_OAUTH2_SECRET
     )
 
-    response = client.get('{}/api/courses/v1/blocks/{}?depth=all&all_blocks=true&requested_fields=all,children'.format(
-        settings.BACKEND_LMS_BASE_URL, course_code))
-    if response.status_code != 200:
-        raise Exception("Request to LMS failed for {}".format(
-            course_code), str(response.text))
-    return response.text
+    url = '{}/api/courses/v1/blocks/{}?depth=all&all_blocks=true&requested_fields=all,children'.format(
+        settings.BACKEND_LMS_BASE_URL, course_code)
+    blocks = cache.get(url, 'has_expired')
+
+    if blocks == 'has_expired':
+        response = client.get(url)
+        if response.status_code != 200:
+            raise Exception("Request to LMS failed for {}".format(
+                course_code), str(response.text))
+        else:
+            cache.set(url, response.text, settings.CACHE_TTL)
+            blocks = response.text
+    return blocks
 
 
 def load_course_structure_from_CMS(course_code):

@@ -12,6 +12,18 @@ The backend only needs to check the Token's signature. It requires the following
 
 Also the EDX Django Rest Framework configuration needs the correct domain. Replace the field OAUTH2_USER_INFO_URL on EDX_DRF_EXTENSIONS.
 
+## CMS
+
+On the cms.yml file the changes are:
+```
+FEATURES:
+    ...
+    ENABLE_CORS_HEADERS: true
+    ...
+CORS_ORIGIN_WHITELIST:
+  - front.eol.andhael.cl
+```
+
 ## LMS
 
 On the lms.yml file the changes are:

@@ -112,7 +112,7 @@ it('shows error when fetch fails', async () => {
   userEvent.type(screen.getByTestId('visits-uDate'), '2019-09-05');
   userEvent.click(screen.getByRole('button'));
   await waitFor(() =>
-    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(1)
+    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(3)
   );
   expect(screen.getByText('Hubo un error en el servidor'));
 });
@@ -128,7 +128,7 @@ it('dismisses error messages', async () => {
   userEvent.type(screen.getByTestId('visits-uDate'), '2019-09-05');
   userEvent.click(screen.getByRole('button'));
   await waitFor(() =>
-    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(1)
+    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(3)
   );
   expect(screen.getByText('Hubo un error en el servidor'));
 
@@ -151,7 +151,7 @@ it('gets table values', async () => {
   userEvent.type(screen.getByTestId('visits-uDate'), '2019-09-05');
   userEvent.click(screen.getByRole('button'));
   await waitFor(() =>
-    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(2)
+    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(4)
   );
   expect(screen.getByText('Ch1'));
   expect(screen.getByText('Custom error message'));
@@ -170,7 +170,7 @@ it('has a second view mode', async () => {
   userEvent.type(screen.getByTestId('visits-uDate'), '2019-09-05');
   userEvent.click(screen.getByRole('button'));
   await waitFor(() =>
-    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(2)
+    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(4)
   );
   expect(screen.getByText('Ch1'));
   expect(screen.getByText('Custom error message'));

@@ -41,7 +41,7 @@ class CourseVertical(models.Model):
     sequential_number = models.IntegerField()
     chapter_number = models.IntegerField()
     child_number = models.IntegerField()
-    block_type = models.TextField()
+    block_type = models.CharField(max_length=100)
     student_view_url = models.TextField()
     lms_web_url = models.TextField()
 

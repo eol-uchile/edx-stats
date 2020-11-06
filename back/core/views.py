@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.conf import settings
+from django.views.decorators.cache import cache_page
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -27,6 +28,7 @@ class VerticalViewSet(viewsets.ModelViewSet):
 
 
 @api_view()
+@cache_page(settings.CACHE_TTL)
 def get_course_structure(request):
     """
     Map a course structure using the recovered Verticals from the Edx API
@@ -71,20 +73,26 @@ def get_course_structure(request):
         if current_course["course_id"] not in allowed_list:
             continue
         chapter_list = []
-        for chapter in current_course["chapters"].keys():
+        chapter_indexes = [int(k) for k in current_course["chapters"].keys()]
+        chapter_indexes.sort()
+        for chapter in chapter_indexes:
             current_chapter = current_course["chapters"][chapter]
             sequential_list = []
-            for seq in current_chapter.keys():
-                if seq != "name":
-                    current_seq = current_chapter[seq]
-                    vertical_list = []
-                    for vert in current_seq.keys():
-                        if vert != "name":
-                            # Add vertical object
-                            vertical_list.append(current_seq[vert])
-                    # Save sequential with verticals
-                    sequential_list.append(
-                        {"name": current_seq["name"], "verticals": vertical_list})
+            sequential_indexes = [
+                int(k) for k in current_chapter.keys() if k != 'name']
+            sequential_indexes.sort()
+            for seq in sequential_indexes:
+                current_seq = current_chapter[seq]
+                vertical_list = []
+                vertical_indexes = [int(k)
+                                    for k in current_seq.keys() if k != 'name']
+                vertical_indexes.sort()
+                for vert in vertical_indexes:
+                    # Add vertical object
+                    vertical_list.append(current_seq[vert])
+                # Save sequential with verticals
+                sequential_list.append(
+                    {"name": current_seq["name"], "verticals": vertical_list})
             # Save chapter with sequentials
             chapter_list.append(
                 {"name": current_chapter["name"], "sequentials": sequential_list})
