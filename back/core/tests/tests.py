@@ -35,7 +35,10 @@ class TestCourseStructure(UserMixin, JwtMixin, APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
 
-    def test_no_search_field_fails(self):
+    @patch('core.views.recoverUserCourseRoles')
+    def test_no_search_field_fails(self, mock_recoverUserCourseRoles):
+        mock_recoverUserCourseRoles.return_value = {
+            'roles': [{'course_id': self.non_existing_course, 'role': 'staff'}]}
         self.set_jwt_cookie()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 400)

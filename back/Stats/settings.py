@@ -251,7 +251,9 @@ BACKEND_ALLOWED_ROLES = [
     'administrator'
 ]
 # Should be an absolute path
-BACKEND_LOGS_DIR = '/app/logs'
+# DOT NOT INCLUDE TRAILING /
+BACKEND_LOGS_DIR = ENV_TOKENS.get(
+    'BACKEND_LOGS_DIR','/app/logs')
 
 # EDX OAUTH2
 SOCIAL_AUTH_EDX_OAUTH2_KEY = ENV_TOKENS.get(
@@ -289,6 +291,17 @@ CACHES = ENV_TOKENS.get("CACHES", {
 })
 
 CACHE_TTL = ENV_TOKENS.get("CACHE_TTL", 60 * 60 * 6)  # s * m * h
+
+# Bucket datalogs extraction
+
+AWS_ACCESS_KEY_ID = ENV_TOKENS.get("AWS_ACCESS_KEY_ID", 'myaccessid')
+AWS_SECRET_ACCESS_KEY = ENV_TOKENS.get("AWS_SECRET_ACCESS_KEY", 'mysecretkey')
+AWS_STORAGE_BUCKET_NAME = ENV_TOKENS.get(
+    "AWS_STORAGE_BUCKET_NAME", 'mybucket-2020')
+AWS_DEFAULT_ACL = ENV_TOKENS.get("AWS_DEFAULT_ACL", 'public-read')
+AWS_S3_REGION_NAME = ENV_TOKENS.get("AWS_S3_REGION_NAME", '')
+AWS_S3_ENDPOINT_URL = ENV_TOKENS.get(
+    "AWS_S3_ENDPOINT_URL", 'https://s3.nl-ams.scw.cloud')
 
 """
     Simple test configuration for backends and services

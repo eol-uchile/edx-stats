@@ -25,24 +25,33 @@ class TestTimesOnCourse(UserMixin, JwtMixin, APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
 
-    def test_no_search_field_fails(self):
+    @patch('times.views.recoverUserCourseRoles')
+    def test_no_search_field_fails(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
+        mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "", "role": ""}]}
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 400)
 
-    def test_no_llimit_field_fails(self):
+    @patch('times.views.recoverUserCourseRoles')
+    def test_no_llimit_field_fails(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
+        mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "", "role": ""}]}
         response = self.client.get(self.url+"?search=Test-EOL_T1")
         self.assertEqual(response.status_code, 400)
-
-    def test_no_ulimit_field_fails(self):
+    
+    @patch('times.views.recoverUserCourseRoles')
+    def test_no_ulimit_field_fails(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
+        mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "", "role": ""}]}
         response = self.client.get(
             self.url+"?search=Test-EOL_T1&llimit=2019-09-04T00:00:00.000000")
         self.assertEqual(response.status_code, 400)
-
-    def test_course_not_allowed(self):
+    
+    @patch('times.views.recoverUserCourseRoles')
+    def test_course_not_allowed(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
+        mock_recoverUserCourseRoles.return_value = {
+            'roles': [{'course_id': 'Test-EOL_T2', 'role': 'staff'}]}
         response = self.client.get(
             self.url+"?search=Test-EOL_T1&llimit=2019-09-04T00:00:00.000000&ulimit=2019-09-05T00:00:00.000000")
         self.assertEqual(response.status_code, 403)
