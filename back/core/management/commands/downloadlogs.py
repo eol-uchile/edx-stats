@@ -25,13 +25,15 @@ class Command(BaseCommand):
         parser.add_argument('--prefix',
                             help='Prefix directory for bucket.')
         parser.add_argument('--from-date',
-                            help='Download tracking logs from initial date. Format YYYYMMDD')
+                            help='Download tracking logs from initial date. Format YYYY-MM-DD')
         parser.add_argument('--load-all', action="store_true",
                             help='Load all logs available regarless of date and processing.')
 
-    def get_date_from_timestamp(self, date_string):
+    def get_date_from_timestamp(self, date_string, dash=False):
         if date_string is None:
             return None
+        if dash:
+            return datetime.date(int(date_string[:4]), int(date_string[5:7]), int(date_string[8:]))
         return datetime.date(int(date_string[:4]), int(date_string[4:6]), int(date_string[6:8]))
 
     def recover_and_save(self, client, check=False):
@@ -107,7 +109,7 @@ class Command(BaseCommand):
             raise Exception(
                 "Configured S3 bucket is not available on your S3!")
 
-        self.init_date = self.get_date_from_timestamp(options["from_date"])
+        self.init_date = self.get_date_from_timestamp(options["from_date"],dash=True)
         self.prefix = options["prefix"] if options["prefix"] is not None else "logrotate"
         self.skip_checks = options["load_all"] is not None
         self.bucket = settings.AWS_STORAGE_BUCKET_NAME if options[

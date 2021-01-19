@@ -191,3 +191,4 @@ def compute_visit_batches(initial_date=None, time_delta=timedelta(days=3)):
         # This is a pandas timestamp Timestamp class, it should be replaced with datetime for a more
         # standard module
         process_visit_count(times[i], time_delta)
+    logger.info("Finished processing visits")

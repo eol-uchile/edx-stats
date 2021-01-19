@@ -134,7 +134,7 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
         if file == ".gitkeep":
             continue
         filepath = os.path.join(dirpath, file)
-        if len(LogFile.objects.filter(file_name=file).count()) > 0:
+        if LogFile.objects.filter(file_name=file).count() > 0:
             logger.info("Skipping file {}".format(file))
             continue
         try:

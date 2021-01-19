@@ -237,3 +237,4 @@ def compute_time_batches(initialDate=None, time_delta=timedelta(days=3)):
         # This is a pandas timestamp Timestamp class, it should be replaced with datetime for a more
         # standard module
         process_log_times(times[i], time_delta)
+    logger.info("Finished processing time on logs")
