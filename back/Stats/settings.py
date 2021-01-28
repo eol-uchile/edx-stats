@@ -278,7 +278,7 @@ AUTHENTICATION_BACKENDS = (
 LOGIN_REDIRECT_URL = '/'
 
 
-CACHES = ENV_TOKENS.get("CACHES", {
+CACHES = ENV_TOKENS.get("CACHE", {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://redis:6380/3",
