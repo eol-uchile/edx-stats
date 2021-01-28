@@ -80,7 +80,7 @@ def process_log_times(endDate=None, day_window=None):
         logs_db = Log.objects.filter(time__gte=(
             endDate_localized - time_window), time__lt=(endDate_localized))
 
-    if logs_db.count() == 0:
+    if logs_db.first() is None:
         logger.info("No logs for time processing")
         return
     logs_full = pd.DataFrame(logs_db.values())

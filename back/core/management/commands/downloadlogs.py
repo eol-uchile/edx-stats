@@ -75,7 +75,7 @@ class Command(BaseCommand):
                     continue
 
                 recovered_file = client.get_object(
-                    Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                    Bucket=self.bucket,
                     Key=key,
                 )
 
@@ -105,15 +105,17 @@ class Command(BaseCommand):
 
         bucket_response = s3.list_buckets()
         buckets = [b["Name"] for b in bucket_response["Buckets"]]
-        if settings.AWS_STORAGE_BUCKET_NAME not in buckets:
-            raise Exception(
-                "Configured S3 bucket is not available on your S3!")
-
+        
         self.init_date = self.get_date_from_timestamp(options["from_date"],dash=True)
         self.prefix = options["prefix"] if options["prefix"] is not None else "logrotate"
         self.skip_checks = options["load_all"] is not None
         self.bucket = settings.AWS_STORAGE_BUCKET_NAME if options[
             "bucket"] is None else options["bucket"]
+
+        if self.bucket not in buckets:
+            raise Exception(
+                "Configured S3 bucket is not available on your S3!")
+
         self.continuationToken = None
 
         while self.recover_and_save(s3, check=options["check_exists"]):

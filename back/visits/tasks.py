@@ -75,7 +75,7 @@ def process_visit_count(end_date, day_window=None):
         logs_db = Log.objects.filter(time__gte=(
             end_date_localized - time_window), time__lt=(end_date_localized))
 
-    if logs_db.count() == 0:
+    if logs_db.first() is None:
         logger.info("No logs for time processing")
         return
     logs_full = pd.DataFrame(logs_db.values())

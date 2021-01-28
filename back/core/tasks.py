@@ -108,25 +108,29 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
     def make_row(row):
         user_id = 0 if math.isnan(
             row["context.user_id"]) else row["context.user_id"]
-        log = Log(
-            username=row["username"],
-            event_source=row["event_source"],
-            name=row["name"],
-            accept_language=row["accept_language"],
-            ip=row["ip"],
-            agent=row["agent"],
-            page=row["page"],
-            host=row["host"],
-            session=row["session"],
-            referer=row["referer"],
-            time=row["time"],
-            event=row["event"],
-            event_type=row["event_type"],
-            course_id=row["context.course_id"],
-            org_id=row["context.org_id"],
-            user_id=user_id,
-            path=row["context.path"])
-        return log
+        try:
+            log = Log(
+                username=row["username"],
+                event_source=row["event_source"],
+                name=row["name"],
+                accept_language=row["accept_language"],
+                ip=row["ip"],
+                agent=row["agent"],
+                page=row["page"],
+                host=row["host"],
+                session=row["session"],
+                referer=row["referer"],
+                time=row["time"],
+                event=row["event"],
+                event_type=row["event_type"],
+                course_id=row["context.course_id"],
+                org_id=row["context.org_id"],
+                user_id=user_id,
+                path=row["context.path"])
+            return log
+        except Exception:
+            logger.warn(str(Exception))
+            return None
 
     files = [f for f in os.listdir(
         dirpath) if os.path.isfile(os.path.join(dirpath, f))]
@@ -134,7 +138,7 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
         if file == ".gitkeep":
             continue
         filepath = os.path.join(dirpath, file)
-        if LogFile.objects.filter(file_name=file).count() > 0:
+        if LogFile.objects.filter(file_name=file).first() is not None:
             logger.info("Skipping file {}".format(file))
             continue
         try:
@@ -144,7 +148,7 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
             count, _ = log_df.shape
             for i in range(0, count, BULK_UPLOAD_SIZE):
                 bulk = log_df[i:i+BULK_UPLOAD_SIZE]
-                logs = list(bulk.apply(make_row, axis=1))
+                logs = list(filter(lambda x: x is not None, list(bulk.apply(make_row, axis=1))))
                 Log.objects.bulk_create(logs)
             os.remove(filepath)
             # Register file saved
