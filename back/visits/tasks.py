@@ -20,7 +20,7 @@ BULK_UPLOAD_SIZE = 500
 def process_visit_count(end_date, day_window=None):
     """Recovers logs from DB and computes visits per day for each vertical
 
-    Computes times for each day until the end date given a day window.
+    Computes visits for each day until the end date given a day window.
     Default Day window is DAY_WINDOW (3 days).
 
     Note: Celery will set end_date as datetime.datetime.now()
@@ -100,7 +100,7 @@ def process_visit_count(end_date, day_window=None):
         except Exception as e:
             print("Error while loading course structure", e)
             logger.warning(
-                "Course {} times not processed due to {}".format(course_id, e), exc_info=True)
+                "Course {} visits not processed due to {}".format(course_id, e), exc_info=True)
             continue
 
         # If no valid verticals were found abort
@@ -186,7 +186,7 @@ def compute_visit_batches(initial_date=None, time_delta=timedelta(days=3)):
     times = pd.date_range(
         start=initial_date, end=datetime.today(), freq=time_delta)
     for i in range(1, len(times)):
-        logger.info("Processing time logs for time {} with offset {}".format(
+        logger.info("Processing visit logs for time {} with offset {}".format(
             times[i], time_delta))
         # This is a pandas timestamp Timestamp class, it should be replaced with datetime for a more
         # standard module

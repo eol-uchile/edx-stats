@@ -51,11 +51,11 @@ const selectMyCourses = (state) => {
     my_courses[course.course_id] = course.roles;
   });
   let filtered_courses = state.course.courses_enrolled.data.filter(
-    (course) => course.id in my_courses
+    (course) => course.key in my_courses
   );
   return filtered_courses.map((course) => ({
     ...course,
-    roles: my_courses[course.id],
+    roles: my_courses[course.key],
   }));
 };
 

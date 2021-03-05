@@ -15,7 +15,9 @@ const mock_empty_resolve = {
         request: { responseURL: '' },
         data: { roles: [] },
       });
-    } else if (url.includes('/api/courses/v1/courses/?page_size=200')) {
+    } else if (
+      url.includes('/api/v1/course_runs/?format=json&limit=200&offset=0')
+    ) {
       return Promise.resolve({
         status: 200,
         request: { responseURL: '' },
@@ -35,38 +37,30 @@ const mock_foo_course = {
         request: { responseURL: '' },
         data: { roles: [{ course_id: 'foo_id', role: 'foo' }] },
       });
-    } else if (url.includes('/api/courses/v1/courses/?page_size=200')) {
+    } else if (
+      url.includes('/api/v1/course_runs/?format=json&limit=200&offset=0')
+    ) {
       return Promise.resolve({
         status: 200,
         request: { responseURL: '' },
         data: {
           results: [
             {
-              id: 'foo_id',
+              key: 'foo_id',
               end: '2019-02-02',
               start: '2019-02-01',
-              name: 'foo',
+              title: 'foo',
               blocks_url:
                 'https://eol.andhael.cl/api/courses/v2/blocks/?course_id=course-v1%3AUChile%2BKUBER1%2B2020_T2',
               effort: null,
               enrollment_start: null,
               enrollment_end: null,
-              media: {
-                course_image: {
-                  uri:
-                    '/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
-                },
-                course_video: {
-                  uri: null,
-                },
-                image: {
-                  raw:
-                    'https://eol.andhael.cl/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
-                  small:
-                    'https://eol.andhael.cl/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
-                  large:
-                    'https://eol.andhael.cl/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
-                },
+              course_video: {
+                uri: null,
+              },
+              image: {
+                src:
+                  'https://eol.andhael.cl/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
               },
               number: 'KUBER1',
               org: 'UChile',

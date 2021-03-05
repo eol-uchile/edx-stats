@@ -59,9 +59,9 @@ const Landing = ({
   useEffect(() => {
     if (state.filtered.length > 1 && state.selected !== -1) {
       // Removing the final condition triggers an infinite loop WTF
-      let id = state.filtered[state.selected].data.id;
-      if (selectedCache !== id) {
-        setSelectedCourse(id);
+      let key = state.filtered[state.selected].data.key;
+      if (selectedCache !== key) {
+        setSelectedCourse(key);
       }
     }
   }, [state.filtered, state.selected]);
@@ -71,7 +71,7 @@ const Landing = ({
     if (myCourses.length > 0 && state.filtered.length > 1) {
       let selected = state.filtered
         .slice(1)
-        .filter((l) => l.data.id === selectedCache)[0];
+        .filter((l) => l.data.key === selectedCache)[0];
       if (selected && !state.interacted) {
         setState({ ...state, selected: selected.value });
       }
@@ -84,12 +84,12 @@ const Landing = ({
       let availableCourses = myCourses
         .filter((el) => !('student' in el.roles))
         .map((el, k) => ({
-          label: `${el.name} (${el.id})`,
+          label: `${el.title} (${el.key})`,
           value: k + 1,
           data: el,
         }));
       let saved_choice = availableCourses.filter(
-        (el) => el.data.id === selectedCache
+        (el) => el.data.key === selectedCache
       );
       setState({
         ...state,
@@ -110,8 +110,8 @@ const Landing = ({
   const end = state.filtered[state.selected]
     ? getDate(state.filtered[state.selected].data.end)
     : null;
-  const id = state.filtered[state.selected]
-    ? state.filtered[state.selected].data.id
+  const key = state.filtered[state.selected]
+    ? state.filtered[state.selected].data.key
     : null;
 
   const data = state.filtered[state.selected]
@@ -193,12 +193,12 @@ const Landing = ({
                 <Card.Text>{data.short_description}</Card.Text>
                 <Button
                   variant="primary"
-                  href={`${lms}/courses/${data.id}/course`}
+                  href={`${lms}/courses/${data.key}/course`}
                 >
                   Ver Curso
                 </Button>
               </Card.Body>
-              <Card.Img variant="bottom" src={data.media.image.small} alt="" />
+              <Card.Img variant="bottom" src={data.image.src} alt="" />
             </Card>
           </Col>
           <Col md={8}>
@@ -207,12 +207,12 @@ const Landing = ({
                 <h5>Consultar</h5>
               </ListGroupItem>
               <ListGroupItem>
-                <Link to={`/modules/times/${id}/${start}/${end}`}>
+                <Link to={`/modules/times/${key}/${start}/${end}`}>
                   Ver tiempo de visita por contenido
                 </Link>
               </ListGroupItem>
               <ListGroupItem>
-                <Link to={`/modules/visits/${id}/${start}/${end}`}>
+                <Link to={`/modules/visits/${key}/${start}/${end}`}>
                   Ver visitas por contenido
                 </Link>
               </ListGroupItem>

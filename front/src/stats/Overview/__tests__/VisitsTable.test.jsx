@@ -8,31 +8,21 @@ import * as frontenAuth from '@edx/frontend-platform/auth';
 jest.mock('@edx/frontend-platform/auth');
 
 const course_data = {
-  id: 'foo_id',
+  key: 'foo_id',
   end: '2019-02-02',
   start: '2019-02-01',
-  name: 'foo',
+  title: 'foo',
   blocks_url:
     'https://eol.andhael.cl/api/courses/v2/blocks/?course_id=course-v1%3AUChile%2BKUBER1%2B2020_T2',
   effort: null,
   enrollment_start: null,
   enrollment_end: null,
-  media: {
-    course_image: {
-      uri:
-        '/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
-    },
-    course_video: {
-      uri: null,
-    },
-    image: {
-      raw:
-        'https://eol.andhael.cl/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
-      small:
-        'https://eol.andhael.cl/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
-      large:
-        'https://eol.andhael.cl/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
-    },
+  course_video: {
+    uri: null,
+  },
+  image: {
+    src:
+      'https://eol.andhael.cl/asset-v1:UChile+KUBER1+2020_T2+type@asset+block@images_course_image.jpg',
   },
   number: 'KUBER1',
   org: 'UChile',

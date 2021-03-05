@@ -117,9 +117,9 @@ const TimesTable = ({
   useEffect(() => {
     if (myCourses.length !== 0) {
       let thisCourse = myCourses.filter(
-        (el) => el.id === match.params.course_id
+        (el) => el.key === match.params.course_id
       )[0];
-      setState({ ...state, courseName: thisCourse.name });
+      setState({ ...state, courseName: thisCourse.title });
     }
   }, [myCourses]);
 
@@ -204,7 +204,7 @@ const TimesTable = ({
         <title>
           Tiempos por módulos
           {!course.loading & tableData.loaded
-            ? `: ${course.course[0].name}`
+            ? `: ${course.course[0].title}`
             : ''}
         </title>
       </Helmet>
@@ -462,7 +462,7 @@ const TimesTable = ({
           </Row>
           {state.useChaptersTable ? (
             <TableChapter
-              title={course.course[0].name}
+              title={course.course[0].title}
               headers={tableData}
               data={rowDataTimes.chapters}
               caption={tableCaption}
@@ -470,7 +470,7 @@ const TimesTable = ({
             />
           ) : (
             <TableVertical
-              title={course.course[0].name}
+              title={course.course[0].title}
               headers={tableData}
               data={rowDataTimes.all}
               caption={tableCaption}

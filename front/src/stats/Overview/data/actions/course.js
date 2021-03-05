@@ -120,13 +120,15 @@ export const recoverCourseStructureFromCMS = (course_id = 'nan') => (
     });
 };
 
-export const getEnrolledCourses = () => (dispatch, getState) => {
-  let lms = getState().urls.lms;
+export const getEnrolledCourses = (offset = 0) => (dispatch, getState) => {
+  let discovery = getState().urls.discovery;
   getAuthenticatedHttpClient()
-    .get(`${lms}/api/courses/v1/courses/?page_size=200`)
+    .get(
+      `${discovery}/api/v1/course_runs/?format=json&limit=200&offset=${offset}`
+    )
     .then((res) => {
       if (res.status === 200) {
-        return dispatch({ type: LOADED_COURSES_INFO, data: res.data.results });
+        return dispatch({ type: LOADED_COURSES_INFO, data: res.data });
       }
       return dispatch({
         type: LOADED_COURSES_INFO_ERROR,

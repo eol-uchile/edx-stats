@@ -38,6 +38,7 @@ const store = configureStore({
     lms: process.env.LMS_BASE_URL,
     base: process.env.BASE_URL,
     cms: process.env.CMS_BASE_URL,
+    discovery: process.env.DISCOVERY_API_BASE_URL,
   },
 });
 

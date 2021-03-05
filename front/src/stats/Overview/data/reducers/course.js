@@ -16,7 +16,7 @@ const initialCourseState = {
   verticals: [],
   errors: [],
   loading: false,
-  course_roles: { data: [], loading: false },
+  course_roles: { data: [], count: 0, loading: false },
   courses_enrolled: { data: [], loading: false },
 };
 export function course(state = initialCourseState, action) {
@@ -63,7 +63,11 @@ export function course(state = initialCourseState, action) {
     case LOADED_COURSES_INFO:
       return {
         ...state,
-        courses_enrolled: { data: [...action.data], loading: false },
+        courses_enrolled: {
+          data: [...action.data.results],
+          count: action.data.count,
+          loading: false,
+        },
       };
     case LOADED_COURSES_INFO_ERROR:
       return {

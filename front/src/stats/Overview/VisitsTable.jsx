@@ -101,9 +101,9 @@ const VisitsTable = ({
   useEffect(() => {
     if (myCourses.length !== 0) {
       let thisCourse = myCourses.filter(
-        (el) => el.id === match.params.course_id
+        (el) => el.key === match.params.course_id
       )[0];
-      setState({ ...state, courseName: thisCourse.name });
+      setState({ ...state, courseName: thisCourse.title });
     }
   }, [myCourses]);
 
@@ -160,7 +160,7 @@ const VisitsTable = ({
         <title>
           Visitas por Módulo
           {!course.loading & tableData.loaded
-            ? `: ${course.course[0].name}`
+            ? `: ${course.course[0].title}`
             : ''}
         </title>
       </Helmet>
@@ -360,7 +360,7 @@ const VisitsTable = ({
           </Row>
           {state.useChaptersTable ? (
             <TableChapter
-              title={course.course[0].name}
+              title={course.course[0].title}
               headers={tableData}
               data={rowDataVisits.chapters}
               caption={tableCaption}
@@ -368,7 +368,7 @@ const VisitsTable = ({
             />
           ) : (
             <TableVertical
-              title={course.course[0].name}
+              title={course.course[0].title}
               headers={tableData}
               data={rowDataVisits.all}
               caption={tableCaption}
