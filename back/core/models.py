@@ -3,6 +3,13 @@ from django.utils import timezone
 
 
 class Log(models.Model):
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["course_id", "time"]),
+            models.Index(fields=["time"]), # might be redundant over time
+        ]
+
     username = models.CharField(max_length=150)
     event_source = models.CharField(max_length=10)
     name = models.TextField(blank=True, null=True)

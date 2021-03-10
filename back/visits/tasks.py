@@ -66,32 +66,30 @@ def process_visit_count(end_date, day_window=None):
             lms_web_url=row["lms_web_url"])
         vertical.save()
 
+    # Get all course ids for the required date
     time_window = DAY_WINDOW if day_window is None else day_window
-    if end_date is None:
-        logs_db = Log.objects.all()
-    else:
-        tz = pytz.timezone(settings.TIME_ZONE)
-        end_date_localized = tz.localize(end_date)
-        logs_db = Log.objects.filter(time__gte=(
-            end_date_localized - time_window), time__lt=(end_date_localized))
+    tz = pytz.timezone(settings.TIME_ZONE)
+    end_date_localized = None if end_date is None else tz.localize(end_date)
 
-    if logs_db.first() is None:
+    if end_date_localized is None:
+        course_ids_db = Log.objects.all().values("course_id").distinct("course_id")
+    else:
+        course_ids_db = Log.objects.filter(time__gte=(
+            end_date_localized - time_window), time__lt=(end_date_localized)).values("course_id").distinct("course_id")
+
+    if course_ids_db.first() is None:
         logger.info("No logs for time processing")
         return
-    logs_full = pd.DataFrame(logs_db.values())
 
-    # Get staff users to ban from stats
-    users = [u.username for u in StaffUserName.objects.all()]
-    logs = filter_course_team(logs_full, other_people=users)
-    logs = filter_by_log_qty(logs, min_logs=15)
-
-    # Drop elements without course_id
-    logs = logs[logs['course_id'] != '']
-    course_ids = set(logs['course_id'].values)
-
+    # Staff users
+    staff_users = StaffUserName.objects.all()
+    
     # Create subsets for each course
     # and update the Processed log if any was successful
-    for course_id in course_ids:
+    for course_dict in course_ids_db:
+        course_id = course_dict["course_id"]
+        if course_id == '':
+            continue
         try:
             recovered_blocks = load_course_blocks_from_LMS(
                 "{}+type@course+block@course".format(course_id.replace('course-v1', 'block-v1')))
@@ -117,14 +115,26 @@ def process_visit_count(end_date, day_window=None):
         course_dataframe.apply(save_vertical_row, axis=1)
 
         # This course
-        course_logs = logs[logs['course_id'] == course_id]
+        if end_date is None:
+            course_logs = Log.objects.filter(course_id=course_id).values('username', 'event_type', 'name', 'referer', 'time', 'event', 'course_id', 'org_id', 'user_id', 'path')
+        else:
+            course_logs = Log.objects.filter(time__gte=(
+                end_date_localized - time_window), time__lt=(end_date_localized),course_id=course_id).values('username', 'event_type', 'name', 'referer', 'time', 'event', 'course_id', 'org_id', 'user_id', 'path')
+
+        logs_full = pd.DataFrame(course_logs)
+
+        # Get staff users to ban from stats
+        users = [u.username for u in staff_users]
+        logs = filter_course_team(logs_full, other_people=users)
+        del logs_full # Save memory on run
+        logs = filter_by_log_qty(logs, min_logs=15)
 
         # Create time windows and process for each period
         periods = pd.date_range(start=end_date_localized - time_window,
                                 end=end_date_localized, freq=timedelta(days=1), tz=settings.TIME_ZONE)
         for period in periods:
 
-            day_logs = course_logs[course_logs.time.dt.date == period]
+            day_logs = logs[logs.time.dt.date == period]
             # Continue if no logs exists
             count, _ = day_logs.shape
             if count == 0:
@@ -136,6 +146,8 @@ def process_visit_count(end_date, day_window=None):
                 parsed_logs = parser.parse_and_get_logs()
 
                 # CLASSIFIER PART
+                # Note: we could remove each iteration of indexes
+                # to reduce memory usage as we go
                 cet = 'classification_event_type'
                 condition = (parsed_logs[cet] == 'next_vertical') | \
                     (parsed_logs[cet] == 'next_sequence_first_vertical') | \

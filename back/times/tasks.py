@@ -20,20 +20,20 @@ BULK_UPLOAD_SIZE = 500
 
 
 @shared_task
-def process_log_times(endDate=None, day_window=None):
+def process_log_times(end_date=None, day_window=None):
     """Recovers logs from DB and computes time per session
 
     Computes times for each day until the end date given a day window.
     Default Day window is DAY_WINDOW (3 days).
 
-    Note: Celery will set EndDate as datetime.datetime.now()
+    Note: Celery will set end_date as datetime.datetime.now()
     Timezone localization will be set according to settings.py
 
     Arguments
-    - endDate datetime to use and upper date limit, 
-        lower date limit is set as endDate - DAY_WINDOW.
+    - end_date datetime to use and upper date limit, 
+        lower date limit is set as end_date - DAY_WINDOW.
         If none is provided all logs will be processed
-    - day_window timedelta to subtract from endDate.
+    - day_window timedelta to subtract from end_date.
         If none is provided default DAY_WINDOW is used
 
     """
@@ -69,34 +69,28 @@ def process_log_times(endDate=None, day_window=None):
         vertical.save()
 
     # Recover logs:
-    # Process using endDate as upper limit. If none is given process all logs
+    # Process using end_date as upper limit. If none is given process all logs
     # Parse to json
     time_window = DAY_WINDOW if day_window is None else day_window
-    if endDate is None:
-        logs_db = Log.objects.all()
+    tz = pytz.timezone(settings.TIME_ZONE)
+    end_date_localized = None if end_date is None else tz.localize(end_date)
+    # Get all course ids for the required date
+    if end_date_localized is None:
+        course_ids_db = Log.objects.all().values("course_id").distinct("course_id")
     else:
-        tz = pytz.timezone(settings.TIME_ZONE)
-        endDate_localized = tz.localize(endDate)
-        logs_db = Log.objects.filter(time__gte=(
-            endDate_localized - time_window), time__lt=(endDate_localized))
+        course_ids_db = Log.objects.filter(time__gte=(
+            end_date_localized - time_window), time__lt=(end_date_localized)).values("course_id").distinct("course_id")
 
-    if logs_db.first() is None:
+    if course_ids_db.first() is None:
         logger.info("No logs for time processing")
         return
-    logs_full = pd.DataFrame(logs_db.values())
-
-    # Get staff users to ban from stats
-    users = [u.username for u in StaffUserName.objects.all()]
-    logs = filter_course_team(logs_full, other_people=users)
-    logs = filter_by_log_qty(logs, min_logs=15)
-
-    # Drop elements without course_id
-    logs = logs[logs['course_id'] != '']
-    course_ids = set(logs['course_id'].values)
+    # Staff users
+    staff_users = StaffUserName.objects.all()
 
     # Create subsets for each course
     # and update the Processed log if any was successful
-    for course_id in course_ids:
+    for course_id in course_ids_db:
+        course_id = course_dict["course_id"]
         try:
             recovered_blocks = load_course_blocks_from_LMS(
                 "{}+type@course+block@course".format(course_id.replace('course-v1', 'block-v1')))
@@ -122,14 +116,26 @@ def process_log_times(endDate=None, day_window=None):
         course_dataframe.apply(save_vertical_row, axis=1)
 
         # This course
-        course_logs = logs[logs['course_id'] == course_id]
+        if end_date is None:
+            course_logs = Log.objects.filter(course_id=course_id).values('username', 'event_type', 'name', 'referer', 'time', 'event', 'course_id', 'org_id', 'user_id', 'path')
+        else:
+            course_logs = Log.objects.filter(time__gte=(
+                end_date_localized - time_window), time__lt=(end_date_localized),course_id=course_id).values('username', 'event_type', 'name', 'referer', 'time', 'event', 'course_id', 'org_id', 'user_id', 'path')
+
+        logs_full = pd.DataFrame(course_logs)
+
+        # Get staff users to ban from stats
+        users = [u.username for u in staff_users]
+        logs = filter_course_team(logs_full, other_people=users)
+        del logs_full # Save memory on run
+        logs = filter_by_log_qty(logs, min_logs=15)
 
         # Create time windows and process for each period
         periods = pd.date_range(start=endDate_localized - time_window,
                                 end=endDate_localized, freq=timedelta(days=1), tz=settings.TIME_ZONE)
         for period in periods:
 
-            day_logs = course_logs[course_logs.time.dt.date == period]
+            day_logs = logs[logs.time.dt.date == period]
             # Continue if no logs exists
             count, _ = day_logs.shape
             if count == 0:
