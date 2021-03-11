@@ -196,6 +196,31 @@ const TimesTable = ({
     [rowData.grouped_verticals]
   );
 
+  const csvHeaders = useMemo(
+    () => ['Título', ...tableData.verticals.map((el) => el.tooltip)],
+    [tableData.verticals]
+  );
+
+  const csvData = useMemo(
+    () => [
+      ['Sección', ...tableData.verticals.map((el) => el.val)],
+      ['Tiempo total (s)', ...rowData.verticals.map((el) => el.visits)],
+    ],
+    [tableData.verticals, rowData.verticals]
+  );
+
+  const csvAvData = useMemo(
+    () => [
+      ['Sección', ...tableData.verticals.map((el) => el.val)],
+      [
+        'Tiempo promedio visto',
+        ...averageChart.map((el) => el['Tiempo promedio visto']),
+      ],
+      ['Desviación estándar', ...averageChart.map((el) => el['errorX'])],
+    ],
+    [tableData.verticals, averageChart]
+  );
+
   const tableCaption = 'Tiempos de visita por unidad';
 
   return (
@@ -204,7 +229,7 @@ const TimesTable = ({
         <title>
           Tiempos por módulos
           {!course.loading & tableData.loaded
-            ? `: ${course.course[0].title}`
+            ? `: ${course.course[0].name}`
             : ''}
         </title>
       </Helmet>
@@ -332,8 +357,8 @@ const TimesTable = ({
                   <AsyncCSVButton
                     text="Descargar Datos"
                     filename="tiempos_totales.csv"
-                    headers={tableData.verticals.map((el) => el.val)}
-                    data={[rowData.verticals.map((el) => el.visits)]}
+                    headers={csvHeaders}
+                    data={csvData}
                   />
                 </Col>
                 <Col>
@@ -384,9 +409,9 @@ const TimesTable = ({
                 <Col>
                   <AsyncCSVButton
                     text="Descargar Datos"
-                    filename="tiempos_totales.csv"
-                    headers={tableData.verticals.map((el) => el.val)}
-                    data={[rowData.verticals.map((el) => el.visits)]}
+                    filename="tiempos_promedio.csv"
+                    headers={csvHeaders}
+                    data={csvAvData}
                   />
                 </Col>
                 <Col>
@@ -435,6 +460,7 @@ const TimesTable = ({
             <Col>
               <AsyncCSVButton
                 text="Descargar Datos"
+                filename="tiempos_por_estudiantes.csv"
                 headers={
                   state.useChaptersTable
                     ? [

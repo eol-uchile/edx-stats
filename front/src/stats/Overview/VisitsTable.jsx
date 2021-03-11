@@ -152,6 +152,19 @@ const VisitsTable = ({
     [rowData.grouped_verticals]
   );
 
+  const csvHeaders = useMemo(
+    () => ['Título', ...tableData.verticals.map((el) => el.tooltip)],
+    [tableData.verticals]
+  );
+
+  const csvData = useMemo(
+    () => [
+      ['Sección', ...tableData.verticals.map((el) => el.val)],
+      ['Tiempo total (s)', ...rowData.verticals.map((el) => el.visits)],
+    ],
+    [tableData.verticals, rowData.verticals]
+  );
+
   const tableCaption = 'Visitas por Módulo';
 
   return (
@@ -160,7 +173,7 @@ const VisitsTable = ({
         <title>
           Visitas por Módulo
           {!course.loading & tableData.loaded
-            ? `: ${course.course[0].title}`
+            ? `: ${course.course[0].name}`
             : ''}
         </title>
       </Helmet>
@@ -282,9 +295,9 @@ const VisitsTable = ({
                 <Col>
                   <AsyncCSVButton
                     text="Descargar Datos"
-                    filename="Visitas_totales.csv"
-                    headers={tableData.verticals.map((el) => el.val)}
-                    data={[rowData.verticals.map((el) => el.visits)]}
+                    filename="visitas_totales.csv"
+                    headers={csvHeaders}
+                    data={csvData}
                   />
                 </Col>
                 <Col>

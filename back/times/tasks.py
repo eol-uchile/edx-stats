@@ -3,6 +3,7 @@ import pytz
 from datetime import timedelta, datetime
 import pandas as pd
 from django.conf import settings
+from django.db import transaction
 from celery import shared_task
 from core.models import Log, CourseVertical, StaffUserName
 from times.models import TimeOnPage as TimeModel
@@ -76,10 +77,10 @@ def process_log_times(end_date=None, day_window=None):
     end_date_localized = None if end_date is None else tz.localize(end_date)
     # Get all course ids for the required date
     if end_date_localized is None:
-        course_ids_db = Log.objects.all().values("course_id").distinct("course_id")
+        course_ids_db = Log.objects.all().values("course_id").distinct()
     else:
         course_ids_db = Log.objects.filter(time__gte=(
-            end_date_localized - time_window), time__lt=(end_date_localized)).values("course_id").distinct("course_id")
+            end_date_localized - time_window), time__lt=(end_date_localized)).values("course_id").distinct()
 
     if course_ids_db.first() is None:
         logger.info("No logs for time processing")
@@ -89,8 +90,10 @@ def process_log_times(end_date=None, day_window=None):
 
     # Create subsets for each course
     # and update the Processed log if any was successful
-    for course_id in course_ids_db:
+    for course_dict in course_ids_db:
         course_id = course_dict["course_id"]
+        if course_id == '':
+            continue
         try:
             recovered_blocks = load_course_blocks_from_LMS(
                 "{}+type@course+block@course".format(course_id.replace('course-v1', 'block-v1')))
@@ -117,10 +120,10 @@ def process_log_times(end_date=None, day_window=None):
 
         # This course
         if end_date is None:
-            course_logs = Log.objects.filter(course_id=course_id).values('username', 'event_type', 'name', 'referer', 'time', 'event', 'course_id', 'org_id', 'user_id', 'path')
+            course_logs = Log.objects.filter(course_id=course_id).values('username', 'event_type', 'name', 'referer', 'time', 'event', 'course_id', 'org_id', 'user_id', 'path', 'page')
         else:
             course_logs = Log.objects.filter(time__gte=(
-                end_date_localized - time_window), time__lt=(end_date_localized),course_id=course_id).values('username', 'event_type', 'name', 'referer', 'time', 'event', 'course_id', 'org_id', 'user_id', 'path')
+                end_date_localized - time_window), time__lt=(end_date_localized),course_id=course_id).values('username', 'event_type', 'name', 'referer', 'time', 'event', 'course_id', 'org_id', 'user_id', 'path', 'page')
 
         logs_full = pd.DataFrame(course_logs)
 
@@ -131,8 +134,8 @@ def process_log_times(end_date=None, day_window=None):
         logs = filter_by_log_qty(logs, min_logs=15)
 
         # Create time windows and process for each period
-        periods = pd.date_range(start=endDate_localized - time_window,
-                                end=endDate_localized, freq=timedelta(days=1), tz=settings.TIME_ZONE)
+        periods = pd.date_range(start=end_date_localized - time_window,
+                                end=end_date_localized, freq=timedelta(days=1), tz=settings.TIME_ZONE)
         for period in periods:
 
             day_logs = logs[logs.time.dt.date == period]
@@ -162,20 +165,22 @@ def process_log_times(end_date=None, day_window=None):
                     time_per_user_session['vertical_id'] != 'NOT_LISTED']
 
                 # Delete today's info to overwrite
-                previous_times = TimeModel.objects.filter(
-                    time__date=period, course=course_dataframe["course"][0])
-                previous_times.delete()
+                with transaction.atomic():
+                    previous_times = TimeModel.objects.filter(
+                        time__date=period, course=course_dataframe["course"][0])
+                    previous_times.delete()
 
-                # Upload bulks to DB
-                count, _ = time_per_user_session.shape
-                for i in range(0, count, BULK_UPLOAD_SIZE):
-                    bulk = time_per_user_session[i:i+BULK_UPLOAD_SIZE]
-                    times = list(bulk.apply(lambda row: make_row(
-                        row, period, course_dataframe["course"][0]), axis=1))
-                    TimeModel.objects.bulk_create(times)
+                    # Upload bulks to DB
+                    count, _ = time_per_user_session.shape
+                    for i in range(0, count, BULK_UPLOAD_SIZE):
+                        bulk = time_per_user_session[i:i+BULK_UPLOAD_SIZE]
+                        times = list(bulk.apply(lambda row: make_row(
+                            row, period, course_dataframe["course"][0]), axis=1))
+                        TimeModel.objects.bulk_create(times)
 
-                logger.info("Course {} times processed for {}".format(
-                    course_id, period))
+                    logger.info("Course {} times processed for {}".format(
+                        course_id, period))
+                        
             except Exception as error:
                 logger.warning("Failed to process times on {}, {}. Reason: {}".format(
                     course_id, period, error), exc_info=True)

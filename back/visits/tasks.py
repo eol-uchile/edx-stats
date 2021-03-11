@@ -3,6 +3,7 @@ import pytz
 from datetime import timedelta, datetime
 import pandas as pd
 from django.conf import settings
+from django.db import transaction
 from celery import shared_task
 from core.models import Log, CourseVertical, StaffUserName
 from visits.models import VisitOnPage
@@ -72,10 +73,10 @@ def process_visit_count(end_date, day_window=None):
     end_date_localized = None if end_date is None else tz.localize(end_date)
 
     if end_date_localized is None:
-        course_ids_db = Log.objects.all().values("course_id").distinct("course_id")
+        course_ids_db = Log.objects.all().values("course_id").distinct()
     else:
         course_ids_db = Log.objects.filter(time__gte=(
-            end_date_localized - time_window), time__lt=(end_date_localized)).values("course_id").distinct("course_id")
+            end_date_localized - time_window), time__lt=(end_date_localized)).values("course_id").distinct()
 
     if course_ids_db.first() is None:
         logger.info("No logs for time processing")
@@ -166,21 +167,23 @@ def process_visit_count(end_date, day_window=None):
                     .rename(columns={"event_type_vertical": "vertical"}) \
                     .merge(course_dataframe, on='vertical')
 
-                # Delete today's info to overwrite
-                previous_visits = VisitOnPage.objects.filter(
-                    time__date=period, course=course_dataframe["course"][0])
-                previous_visits.delete()
+                with transaction.atomic():
+                    # Delete today's info to overwrite
+                    previous_visits = VisitOnPage.objects.filter(
+                        time__date=period, course=course_dataframe["course"][0])
+                    previous_visits.delete()
 
-                # Upload bulks to DB
-                count, _ = merged_sequential_visits.shape
-                for i in range(0, count, BULK_UPLOAD_SIZE):
-                    bulk = merged_sequential_visits[i:i+BULK_UPLOAD_SIZE]
-                    visits = list(bulk.apply(
-                        lambda row: make_row(row, period), axis=1))
-                    VisitOnPage.objects.bulk_create(visits)
+                    # Upload bulks to DB
+                    count, _ = merged_sequential_visits.shape
+                    for i in range(0, count, BULK_UPLOAD_SIZE):
+                        bulk = merged_sequential_visits[i:i+BULK_UPLOAD_SIZE]
+                        visits = list(bulk.apply(
+                            lambda row: make_row(row, period), axis=1))
+                        VisitOnPage.objects.bulk_create(visits)
 
-                logger.info("Course {} visits processed for {}".format(
-                    course_id, period))
+                    logger.info("Course {} visits processed for {}".format(
+                        course_id, period))
+                        
             except Exception as error:
                 logger.warning("Failed to process visits on {}, {}. Reason: {}".format(
                     course_id, period, str(error)), exc_info=True)
