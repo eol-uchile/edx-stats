@@ -2,6 +2,8 @@ import re
 import json
 import pandas as pd
 import numpy as np
+import logging
+import datetime
 
 re_page_view_courseware = re.compile("courseware\/[^/]+([^/]+)*\/?")
 re_page_view_course = re.compile("course\/$")
@@ -27,12 +29,15 @@ re_previous_vertical = re.compile("^seq_prev$")
 re_previous_sequence = re.compile("^edx.ui.lms.sequence.previous_selected$")
 re_goto_vertical = re.compile("^seq_goto$")
 
+logger = logging.getLogger(__name__)
+
+
 class LogParser:
     """LogParser Class
     Parse logs from edX with type of event and page/vertical id
     """
 
-    def __init__(self, course_filepath="", df=None):
+    def __init__(self, course_filepath="", df=None, run_code=None):
         """LogParser class constructor
 
         Arguments:
@@ -44,6 +49,21 @@ class LogParser:
             self.course = df
         else:
             self.course = pd.read_csv(self.course_filepath, sep='\t')
+        if run_code is None:
+            self.run_code = str(datetime.date.today())
+        else:
+            self.run_code = run_code
+
+    def debug_course_id(self, id):
+        """
+        Store course structure and problematic id
+        """
+        try:
+            self.course.to_csv("Course-{}.csv".format(self.course.course_name.iloc[0],self.run_code), index=False)
+            with open("Error-ids-{}-{}.log".format(self.course.course_name.iloc[0],self.run_code), 'a') as f:
+                f.write(id+'\n')
+        except Exception:
+            logger.warning("!hola", exc_info=True)
 
     def load_logs(self, logs):
         """Load DataFrame with logs to parse
@@ -191,57 +211,66 @@ class LogParser:
         Returns:
             str -- id of the vertical visited in the log
         """
-        cet = row['classification_event_type']
-        if cet == 'page_view':
-            path = row['event_type'].split('courseware')[1]
-            path = path[:-1].split("/") if path[-1] == "/" else path.split("/")
-            chapter = sequential = vertical = ''
-            chapter = path[1]
-            sequential = path[2]
-            try:
-                vertical = path[3]
-            except IndexError:
-                vertical = '1'
-            try:
-                tmp_course = self.__get_page(chapter, sequential, vertical)
-                return tmp_course['vertical'].iloc[0]
-            except Exception:
-                # no valid id
-                return "NOT_LISTED"
+        try:
+            cet = row['classification_event_type']
+            if cet == 'page_view':
+                path = row['event_type'].split('courseware')[1]
+                path = path[:-1].split("/") if path[-1] == "/" else path.split("/")
+                chapter = sequential = vertical = ''
+                chapter = path[1]
+                sequential = path[2]
+                try:
+                    vertical = path[3]
+                except IndexError:
+                    vertical = '1'
+                try:
+                    tmp_course = self.__get_page(chapter, sequential, vertical)
+                    return tmp_course['vertical'].iloc[0]
+                except Exception:
+                    # no valid id
+                    return "NOT_LISTED"
 
-        elif cet == 'forum_thread_view':
-            try:
-                discussion_id = row['event_type'].split('forum')[
-                    1].split("/")[1]
+            elif cet == 'forum_thread_view':
+                try:
+                    discussion_id = row['event_type'].split('forum')[
+                        1].split("/")[1]
 
-                tmp_course = self.course[self.course.discussion_id ==
-                                         discussion_id]
+                    tmp_course = self.course[self.course.discussion_id ==
+                                            discussion_id]
 
-                return tmp_course['vertical'].iloc[0]
-                # si se quisiera ser mas especifico, cambiar el return por discussion_id
-            except AttributeError:
-                return 'DISCUSSION'
+                    return tmp_course['vertical'].iloc[0]
+                    # si se quisiera ser mas especifico, cambiar el return por discussion_id
+                except AttributeError:
+                    return 'DISCUSSION'
 
-        elif cet == 'next_vertical':
-            return self.__get_next_vertical(row['event'])
+            elif cet == 'next_vertical':
+                return self.__get_next_vertical(row['event'])
 
-        elif cet == 'next_sequence_first_vertical':
-            return self.__get_next_sequence_first_vertical(row['event'])
+            elif cet == 'next_sequence_first_vertical':
+                return self.__get_next_sequence_first_vertical(row['event'])
 
-        elif cet == 'previous_vertical':
-            return self.__get_previous_vertical(row['event'])
+            elif cet == 'previous_vertical':
+                return self.__get_previous_vertical(row['event'])
 
-        elif cet == 'previous_sequence_last_vertical':
-            return self.__get_previous_sequence_last_vertical(row['event'])
+            elif cet == 'previous_sequence_last_vertical':
+                return self.__get_previous_sequence_last_vertical(row['event'])
 
-        elif cet == 'goto_vertical':
-            return self.__get_goto_vertical(row['event'])
+            elif cet == 'goto_vertical':
+                return self.__get_goto_vertical(row['event'])
 
-        elif cet == 'not_classified':
-            return 'NOT_CLASSIFIED'
+            elif cet == 'not_classified':
+                return 'NOT_CLASSIFIED'
 
-        else:
-            # course_view has no classifications yet
+            else:
+                # course_view has no classifications yet
+                return np.nan
+        except IndexError:
+            event = json.loads(row['event'])['id']
+            self.debug_course_id(event)
+            logger.warning("Pandas coundn't find index for event: {} - {}".format(cet, event))
+            return np.nan
+        except Exception:
+            logger.warning("Unforseen exception, event: {}, skipping row".format(cet))
             return np.nan
 
     def __get_next_vertical(self, event):

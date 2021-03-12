@@ -4,7 +4,7 @@ from times.tasks import compute_time_batches
 
 
 class Command(BaseCommand):
-    help = 'Compute Student view times from logs on the db from a start date until today.'
+    help = 'Compute Student view times from logs on the db from a start date until today. You can also provide an optional end date'
     requires_migrations_checks = True
 
     def add_arguments(self, parser):
@@ -14,11 +14,18 @@ class Command(BaseCommand):
         # Optional arguments
         parser.add_argument('--day-step', nargs=1, type=int,
                             help='Days loaded into memory (default is 3)')
+        
+        parser.add_argument('--end-date', nargs=1, type=str,
+                            help='Set end date as YYYY-MM-DD')
 
     @no_translations
     def handle(self, *args, **options):
+        final_date = None
+        if options['end_date'] is not None:
+            final_date = options['end_date'][0]
+
         if options['day_step'] is not None:
             compute_time_batches(options['start'], time_delta=timedelta(
-                days=options['day_step'][0]))
+                days=options['day_step'][0]), final_date=final_date)
         else:
-            compute_time_batches(options['start'])
+            compute_time_batches(options['start'], final_date=final_date)

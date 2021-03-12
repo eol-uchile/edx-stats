@@ -1,6 +1,6 @@
 import logging
 import pytz
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 import pandas as pd
 from django.conf import settings
 from django.db import transaction
@@ -21,7 +21,7 @@ BULK_UPLOAD_SIZE = 500
 
 
 @shared_task
-def process_log_times(end_date=None, day_window=None):
+def process_log_times(end_date=None, day_window=None, run_code=None):
     """Recovers logs from DB and computes time per session
 
     Computes times for each day until the end date given a day window.
@@ -36,6 +36,7 @@ def process_log_times(end_date=None, day_window=None):
         If none is provided all logs will be processed
     - day_window timedelta to subtract from end_date.
         If none is provided default DAY_WINDOW is used
+    - run_code to save errors on a single file with the same code
 
     """
     def make_row(row, date, course):
@@ -94,21 +95,19 @@ def process_log_times(end_date=None, day_window=None):
         course_id = course_dict["course_id"]
         if course_id == '':
             continue
-        try:
-            recovered_blocks = load_course_blocks_from_LMS(
-                "{}+type@course+block@course".format(course_id.replace('course-v1', 'block-v1')))
-            course_blocks = read_json_course(recovered_blocks)
-            course_dataframe = flatten_course_as_verticals(course_blocks)
-        except Exception as e:
-            print("Error while loading course structure", e)
-            logger.warning(
-                "Course {} times not processed due to {}".format(course_id, e), exc_info=True)
-            continue
+        recovered_blocks = load_course_blocks_from_LMS(
+            "{}+type@course+block@course".format(course_id.replace('course-v1', 'block-v1')))
+        course_blocks = read_json_course(recovered_blocks)
+        course_dataframe = flatten_course_as_verticals(course_blocks)
 
         # If no valid verticals were found abort
         count, _ = course_dataframe.shape
         if count == 0:
+            logger.warning(
+                "Course {} was either empty or an error ocurred".format(course_id))
             continue
+        
+        #course_dataframe.to_csv("text.csv")
 
         # Remove previous course info in the DB
         course_id_df = course_dataframe['course'].iloc[0]
@@ -145,14 +144,16 @@ def process_log_times(end_date=None, day_window=None):
                 continue
             try:
                 # Parse and process time values
-                parser = LogParser(df=course_dataframe)
-                parser.load_logs(day_logs)
-                parsed_logs = parser.parse_and_get_logs()
+                parser = LogParser(df=course_dataframe, run_code=run_code)
+                parser.load_logs(day_logs) # Create log copy and modify
+                del day_logs # Free old value
+                parsed_logs = parser.parse_and_get_logs() # Recover log reference
                 timer = TimeOnPage(
                     timeout_last_action=TIMEOUT,
                     timeout_outlier=TIMEOUT,
                     navigation_time=COMPUTE_LOWER_LIMIT)
-                timer.load_logs(parsed_logs)
+                timer.load_logs(parsed_logs) # Create log copy and modify
+                del parsed_logs # Free old value
                 timer.do_user_time_session()
                 timer.do_time_on_page(
                     apply_outlier_timeout=True,
@@ -231,7 +232,7 @@ def process_log_times_from_dir(logpath, coursepath, zipped=True):
     time_per_user_session.apply(save_row, axis=1)
 
 
-def compute_time_batches(initialDate=None, time_delta=timedelta(days=3)):
+def compute_time_batches(initialDate=None, time_delta=timedelta(days=3),final_date=None):
     """
     Process all log times by batches from initialDate to today
 
@@ -240,12 +241,17 @@ def compute_time_batches(initialDate=None, time_delta=timedelta(days=3)):
 
     - time_delta timedelta object
     """
+    end = datetime.today()
+    if final_date is not None:
+        end = final_date
     times = pd.date_range(
-        start=initialDate, end=datetime.today(), freq=time_delta)
+        start=initialDate, end=end, freq=time_delta)
+    run_code = str(date.today())
+
     for i in range(1, len(times)):
         logger.info("Processing time logs for time {} with offset {}".format(
             times[i], time_delta))
         # This is a pandas timestamp Timestamp class, it should be replaced with datetime for a more
         # standard module
-        process_log_times(times[i], time_delta)
+        process_log_times(times[i], time_delta, run_code=run_code)
     logger.info("Finished processing time on logs")

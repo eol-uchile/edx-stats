@@ -1,6 +1,6 @@
 import logging
 import pytz
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 import pandas as pd
 from django.conf import settings
 from django.db import transaction
@@ -18,7 +18,7 @@ BULK_UPLOAD_SIZE = 500
 
 
 @shared_task
-def process_visit_count(end_date, day_window=None):
+def process_visit_count(end_date, day_window=None, run_code=None):
     """Recovers logs from DB and computes visits per day for each vertical
 
     Computes visits for each day until the end date given a day window.
@@ -91,20 +91,16 @@ def process_visit_count(end_date, day_window=None):
         course_id = course_dict["course_id"]
         if course_id == '':
             continue
-        try:
-            recovered_blocks = load_course_blocks_from_LMS(
-                "{}+type@course+block@course".format(course_id.replace('course-v1', 'block-v1')))
-            course_blocks = read_json_course(recovered_blocks)
-            course_dataframe = flatten_course_as_verticals(course_blocks)
-        except Exception as e:
-            print("Error while loading course structure", e)
-            logger.warning(
-                "Course {} visits not processed due to {}".format(course_id, e), exc_info=True)
-            continue
+        recovered_blocks = load_course_blocks_from_LMS(
+            "{}+type@course+block@course".format(course_id.replace('course-v1', 'block-v1')))
+        course_blocks = read_json_course(recovered_blocks)
+        course_dataframe = flatten_course_as_verticals(course_blocks)
 
         # If no valid verticals were found abort
         count, _ = course_dataframe.shape
         if count == 0:
+            logger.warning(
+                "Course {} was either empty or an error ocurred".format(course_id))
             continue
 
         # Remove previous course info in the DB
@@ -142,7 +138,7 @@ def process_visit_count(end_date, day_window=None):
                 continue
             try:
                 # Parse and process time values
-                parser = LogParser(df=course_dataframe)
+                parser = LogParser(df=course_dataframe, run_code=run_code)
                 parser.load_logs(day_logs)
                 parsed_logs = parser.parse_and_get_logs()
 
@@ -158,14 +154,17 @@ def process_visit_count(end_date, day_window=None):
                 navigation_logs = parsed_logs[condition]
                 navigation_logs_cleaned = navigation_logs[
                     navigation_logs['event_type_vertical'] != 'NO_VERTICAL_FOUND']
+                del navigation_logs
                 user_vertical_visits = navigation_logs_cleaned \
                     .groupby(['username', 'event_type_vertical']) \
                     .event_type_vertical.agg('count') \
                     .to_frame('visits') \
                     .reset_index()
+                del navigation_logs_cleaned
                 merged_sequential_visits = user_vertical_visits \
                     .rename(columns={"event_type_vertical": "vertical"}) \
                     .merge(course_dataframe, on='vertical')
+                del user_vertical_visits
 
                 with transaction.atomic():
                     # Delete today's info to overwrite
@@ -189,7 +188,7 @@ def process_visit_count(end_date, day_window=None):
                     course_id, period, str(error)), exc_info=True)
 
 
-def compute_visit_batches(initial_date=None, time_delta=timedelta(days=3)):
+def compute_visit_batches(initial_date=None, time_delta=timedelta(days=3), final_date=None):
     """
     Process all visits by batches from initial_date to today
 
@@ -198,12 +197,17 @@ def compute_visit_batches(initial_date=None, time_delta=timedelta(days=3)):
 
     - time_delta timedelta object
     """
+    end = datetime.today()
+    if final_date is not None:
+        end = final_date
     times = pd.date_range(
-        start=initial_date, end=datetime.today(), freq=time_delta)
+        start=initial_date, end=end, freq=time_delta)
+    run_code = str(date.today())
+
     for i in range(1, len(times)):
         logger.info("Processing visit logs for time {} with offset {}".format(
             times[i], time_delta))
         # This is a pandas timestamp Timestamp class, it should be replaced with datetime for a more
         # standard module
-        process_visit_count(times[i], time_delta)
+        process_visit_count(times[i], time_delta, run_code=run_code)
     logger.info("Finished processing visits")

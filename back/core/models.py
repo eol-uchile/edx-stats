@@ -25,13 +25,18 @@ class Log(models.Model):
     event_type = models.TextField()
     course_id = models.TextField(blank=True)
     org_id = models.CharField(max_length=255, blank=True)
-    user_id = models.IntegerField(blank=True,)
+    user_id = models.IntegerField(blank=True)
     path = models.TextField()
+    def __str__(self):
+        return "User: {}, event type {}".format(self.username, self.event_type)
 
 
 class LogFile(models.Model):
     file_name = models.CharField(max_length=50)
     processed_on = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.file_name
 
 
 class CourseVertical(models.Model):
@@ -52,6 +57,11 @@ class CourseVertical(models.Model):
     student_view_url = models.TextField()
     lms_web_url = models.TextField()
 
+    def __str__(self):
+        return self.course+"."+self.vertical_name
+
 
 class StaffUserName(models.Model):
     username = models.CharField(max_length=150)
+    def __str__(self):
+        return self.username
