@@ -12,6 +12,7 @@ from edx_rest_api_client.client import OAuthAPIClient
 from django.conf import settings
 from django.core.cache import cache
 
+logger = logging.getLogger(__name__)
 
 def read_json_course_file(filename):
     """ Read API recovered JSON and get blocks
