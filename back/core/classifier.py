@@ -59,8 +59,9 @@ class LogParser:
         Store course structure and problematic id
         """
         try:
-            self.course.to_csv("Course-{}.csv".format(self.course.course_name.iloc[0],self.run_code), index=False)
-            with open("Error-ids-{}-{}.log".format(self.course.course_name.iloc[0],self.run_code), 'a') as f:
+            self.course.to_csv(
+                "Course-{}.csv".format(self.course.course_name.iloc[0], self.run_code), index=False)
+            with open("Error-ids-{}-{}.log".format(self.course.course_name.iloc[0], self.run_code), 'a') as f:
                 f.write(id+'\n')
         except Exception:
             logger.warning("!hola", exc_info=True)
@@ -215,7 +216,8 @@ class LogParser:
             cet = row['classification_event_type']
             if cet == 'page_view':
                 path = row['event_type'].split('courseware')[1]
-                path = path[:-1].split("/") if path[-1] == "/" else path.split("/")
+                path = path[:-
+                            1].split("/") if path[-1] == "/" else path.split("/")
                 chapter = sequential = vertical = ''
                 chapter = path[1]
                 sequential = path[2]
@@ -236,7 +238,7 @@ class LogParser:
                         1].split("/")[1]
 
                     tmp_course = self.course[self.course.discussion_id ==
-                                            discussion_id]
+                                             discussion_id]
 
                     return tmp_course['vertical'].iloc[0]
                     # si se quisiera ser mas especifico, cambiar el return por discussion_id
@@ -263,15 +265,17 @@ class LogParser:
 
             else:
                 # course_view has no classifications yet
-                return np.nan
+                return 'NOT_CLASSIFIED'
         except IndexError:
             event = json.loads(row['event'])['id']
             self.debug_course_id(event)
-            logger.warning("Pandas coundn't find index for event: {} - {}".format(cet, event))
-            return np.nan
+            logger.warning(
+                "Pandas coundn't find index for event: {} - {}".format(cet, event))
+            return 'NOT_CLASSIFIED'
         except Exception:
-            logger.warning("Unforseen exception, event: {}, skipping row".format(cet))
-            return np.nan
+            logger.warning(
+                "Unforseen exception, event: {}, skipping row".format(cet))
+            return 'NOT_CLASSIFIED'
 
     def __get_next_vertical(self, event):
         """Given an event from the logs, matches the sequential and next vertical number
@@ -290,7 +294,7 @@ class LogParser:
         actual_vertical_number = json_sequence['old']
         assert next_vertical_number == actual_vertical_number + \
             1, 'actual vertical number must be 1 lower than next_vertical_number'
-        
+
         try:
             row_next_vertical = self.course[((self.course.vertical_number == next_vertical_number) & (
                 self.course.sequential == sequential))].iloc[0]

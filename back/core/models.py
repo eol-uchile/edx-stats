@@ -7,7 +7,7 @@ class Log(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=["course_id", "time"]),
-            models.Index(fields=["time"]), # might be redundant over time
+            models.Index(fields=["time"]),  # might be redundant over time
         ]
 
     username = models.CharField(max_length=150)
@@ -27,6 +27,7 @@ class Log(models.Model):
     org_id = models.CharField(max_length=255, blank=True)
     user_id = models.IntegerField(blank=True)
     path = models.TextField()
+
     def __str__(self):
         return "User: {}, event type {}".format(self.username, self.event_type)
 
@@ -63,5 +64,6 @@ class CourseVertical(models.Model):
 
 class StaffUserName(models.Model):
     username = models.CharField(max_length=150)
+
     def __str__(self):
         return self.username

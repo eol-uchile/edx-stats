@@ -44,6 +44,7 @@ function dashboard(state = { selected: '' }, action) {
 
 /**
  * Merge course info and course roles to recover my courses
+ * TODO: Add reselect or useMemo
  */
 const selectMyCourses = (state) => {
   let my_courses = {};
@@ -53,10 +54,15 @@ const selectMyCourses = (state) => {
   let filtered_courses = state.course.courses_enrolled.data.filter(
     (course) => course.key in my_courses
   );
-  return filtered_courses.map((course) => ({
+  let merged_courses = filtered_courses.map((course) => ({
     ...course,
     roles: my_courses[course.key],
   }));
+  let today = new Date();
+  merged_courses.forEach((course) => {
+    course['end'] = course['end'] === null ? today : course['end'];
+  });
+  return merged_courses;
 };
 
 export { course, times, visits, dashboard, urls, auth, selectMyCourses };

@@ -40,13 +40,13 @@ def times_on_course(request):
         "course", "block") for r in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES]
 
     if "search" not in request.query_params:
-        return Response(status=status.HTTP_400_BAD_REQUEST, data="Search field required")
+        return Response(status=status.HTTP_400_BAD_REQUEST, data="Se requiere un curso válido.")
 
     if "llimit" not in request.query_params:
-        return Response(status=status.HTTP_400_BAD_REQUEST, data="Lower limit field required")
+        return Response(status=status.HTTP_400_BAD_REQUEST, data="Se requiere una fecha límite inferior")
 
     if "ulimit" not in request.query_params:
-        return Response(status=status.HTTP_400_BAD_REQUEST, data="Upper limit field required")
+        return Response(status=status.HTTP_400_BAD_REQUEST, data="Se requiere una fecha límite superior")
 
     tz = pytz.timezone(settings.TIME_ZONE)
     try:
@@ -55,10 +55,10 @@ def times_on_course(request):
         ulimit = tz.localize(datetime.fromisoformat(
             request.query_params["ulimit"].replace("Z", "")))
     except Exception as time_error:
-        return Response(status=status.HTTP_400_BAD_REQUEST, data="Error while formating time limits. Expects isoformat.")
+        return Response(status=status.HTTP_400_BAD_REQUEST, data="Error en el formato de las fechas. Se espera un formato ISO.")
 
     if llimit > ulimit:
-        return Response(status=status.HTTP_400_BAD_REQUEST, data="lower limit does not preceed upper limit")
+        return Response(status=status.HTTP_400_BAD_REQUEST, data="El límite inferior debe ser precedente al superior.")
 
     # Check that user has permissions
     if request.query_params["search"] not in allowed_list:

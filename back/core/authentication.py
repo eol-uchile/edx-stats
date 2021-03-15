@@ -21,7 +21,7 @@ def recoverUserCourseRoles(request):
             request, "{}/api/enrollment/v1/roles/".format(settings.BACKEND_LMS_BASE_URL))
         if courses.status_code == req_client.codes.ok:
             cache.set(user_email+'-'+settings.BACKEND_LMS_BASE_URL +
-                      "/api/enrollment/v1/roles/", courses.json(), 3600)
+                      "/api/enrollment/v1/roles/", courses.json(), 300)
             courses = courses.json()
         else:
             courses = {'roles': []}

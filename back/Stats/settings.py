@@ -118,10 +118,14 @@ LOGGING = {
         # information regarding filters
     },
     'formatters': {
-        'default': {
-            'format': '[{asctime}] ({levelname}@{module}:{lineno}) {message}',
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
             'style': '{',
-        }
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
     },
     'handlers': {
         'file': {
@@ -131,6 +135,7 @@ LOGGING = {
         },
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'simple',
         },
     },
     'loggers': {
@@ -246,14 +251,14 @@ BACKEND_LMS_BASE_URL = ENV_TOKENS.get('BACKEND_LMS_BASE_URL', "a.valid.url")
 BACKEND_CMS_BASE_URL = ENV_TOKENS.get('BACKEND_CMS_BASE_URL', "a.valid.url")
 BACKEND_ALLOWED_ROLES = [
     'staff',
-    'data researcher',
+    'data_researcher',
     'instructor',
     'administrator'
 ]
 # Should be an absolute path
 # DOT NOT INCLUDE TRAILING /
 BACKEND_LOGS_DIR = ENV_TOKENS.get(
-    'BACKEND_LOGS_DIR','/app/logs')
+    'BACKEND_LOGS_DIR', '/app/logs')
 
 # EDX OAUTH2
 SOCIAL_AUTH_EDX_OAUTH2_KEY = ENV_TOKENS.get(

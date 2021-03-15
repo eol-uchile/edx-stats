@@ -133,3 +133,6 @@ dmypy.json
 
 # Testing ground
 front-testing
+
+# Remote files
+remote
