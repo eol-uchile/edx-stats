@@ -249,12 +249,14 @@ BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL = ENV_TOKENS.get(
     'BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL', "a.valid.url")
 BACKEND_LMS_BASE_URL = ENV_TOKENS.get('BACKEND_LMS_BASE_URL', "a.valid.url")
 BACKEND_CMS_BASE_URL = ENV_TOKENS.get('BACKEND_CMS_BASE_URL', "a.valid.url")
-BACKEND_ALLOWED_ROLES = [
+
+BACKEND_ALLOWED_ROLES = ENV_TOKENS.get('BACKEND_ALLOWED_ROLES',[
     'staff',
     'data_researcher',
     'instructor',
     'administrator'
-]
+])
+
 # Should be an absolute path
 # DOT NOT INCLUDE TRAILING /
 BACKEND_LOGS_DIR = ENV_TOKENS.get(
