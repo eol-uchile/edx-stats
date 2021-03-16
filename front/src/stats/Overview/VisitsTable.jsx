@@ -16,12 +16,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { course, visits, actions } from './data/actions';
 import { selectMyCourses } from './data/reducers';
-import {
-  AsyncCSVButton,
-  TableChapter,
-  TableVertical,
-  ParallelBar,
-} from './components';
+import { AsyncCSVButton, StudentDetails, ParallelBar } from './components';
 import { useProcessSumData } from './hooks';
 import './TableandChart.css';
 
@@ -103,7 +98,7 @@ const VisitsTable = ({
       let thisCourse = myCourses.filter(
         (el) => el.key === match.params.course_id
       )[0];
-      setState({ ...state, courseName: thisCourse.title });
+      thisCourse && setState({ ...state, courseName: thisCourse.title });
     }
   }, [myCourses]);
 
@@ -122,14 +117,6 @@ const VisitsTable = ({
     let newErrors = errors.filter((el) => msg !== el);
     setErrors(newErrors);
   };
-
-  const rowDataVisits = useMemo(
-    () => ({
-      all: rowData.all,
-      chapters: rowData.chapters,
-    }),
-    [rowData]
-  );
 
   const rowDataChart = useMemo(
     () =>
@@ -164,8 +151,6 @@ const VisitsTable = ({
     ],
     [tableData.verticals, rowData.verticals]
   );
-
-  const tableCaption = 'Visitas por Módulo';
 
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2 data-view">
@@ -336,58 +321,11 @@ const VisitsTable = ({
               <Col>No hay datos</Col>
             </Row>
           )}
-          <Row style={{ marginTop: '1em' }}>
-            <Col>
-              <h5 id="DetallesPorEstudiante">Detalle por estudiante</h5>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <AsyncCSVButton
-                text="Descargar Datos"
-                headers={
-                  state.useChaptersTable
-                    ? [
-                        'Estudiantes',
-                        ...tableData.chapters.map((el) => el.name),
-                      ]
-                    : [
-                        'Estudiantes',
-                        ...tableData.verticals.map((el) => el.val),
-                      ]
-                }
-                filename="Visitas_por_estudiante.csv"
-                data={state.useChaptersTable ? rowData.chapters : rowData.all}
-              />
-            </Col>
-            <Col>
-              <CheckBox
-                name="checkbox"
-                label="Agrupar Módulos"
-                checked={state.useChaptersTable}
-                onClick={(e) => {
-                  toggleChapters(e.target.checked, 'useChaptersTable');
-                }}
-              />
-            </Col>
-          </Row>
-          {state.useChaptersTable ? (
-            <TableChapter
-              title={course.course[0].title}
-              headers={tableData}
-              data={rowDataVisits.chapters}
-              caption={tableCaption}
-              errors={errors}
-            />
-          ) : (
-            <TableVertical
-              title={course.course[0].title}
-              headers={tableData}
-              data={rowDataVisits.all}
-              caption={tableCaption}
-              errors={errors}
-            />
-          )}
+          <StudentDetails
+            tableData={tableData}
+            title={'Visitas'}
+            rowData={rowData}
+          />
         </Fragment>
       ) : (
         <Row>

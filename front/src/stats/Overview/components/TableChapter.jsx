@@ -7,21 +7,17 @@ import { parseToTableRows } from '../helpers';
 /**
  * Display course data by chapter
  * with pagination support
- *
- * @param {String} title
- * @param {Object} headers
- * @param {Array} data
- * @param {Array} errors
- * @param {String} caption
- * @param {Number} defaultPage
  */
 const TableChapter = ({
   title,
   headers,
   data,
-  errors,
+  errors = [],
   caption,
   defaultPage = 10,
+  doTotal = false,
+  parseFunction = (e) => e,
+  onHeader = (e, _) => e,
 }) => {
   const [pagination, setPagination] = useState({
     current: 1,
@@ -29,12 +25,25 @@ const TableChapter = ({
     size: defaultPage,
   });
 
+  const [state, setState] = useState({ column: 0, up: false });
+
   useEffect(() => setPagination({ ...pagination, total: data.length }), [data]);
 
   const subArray = data.slice(
     (pagination.current - 1) * pagination.size,
     pagination.current * pagination.size
   );
+
+  const onClickHeader = (index) => {
+    let up = index === state.column ? !state.up : false;
+    onHeader(index, up);
+    setState({
+      column: index,
+      up: up,
+    });
+  };
+
+  const arrow = state.up ? <span>&#x25B2;</span> : <span>&#x25BC;</span>;
 
   return (
     <Fragment>
@@ -52,14 +61,28 @@ const TableChapter = ({
             </caption>
             <thead>
               <tr>
-                <th>Estudiantes</th>
-                {headers.chapters.map((el) => (
-                  <th key={el.name}>{el.name}</th>
+                <th onClick={() => onClickHeader(0)}>
+                  Estudiantes {0 === state.column && arrow}
+                </th>
+                {headers.chapters.map((el, k) => (
+                  <th key={el.name} onClick={() => onClickHeader(k + 1)}>
+                    {el.name}
+                    {k + 1 === state.column && arrow}
+                  </th>
                 ))}
+                {doTotal && (
+                  <th
+                    onClick={() => onClickHeader(headers.chapters.length + 1)}
+                  >
+                    Total
+                    {headers.chapters.length + 1 === state.column && arrow}
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
-              {errors.length === 0 && subArray.map(parseToTableRows)}
+              {errors.length === 0 &&
+                subArray.map((e, k) => parseToTableRows(e, k, parseFunction))}
               <tr></tr>
             </tbody>
           </TableBT>
@@ -102,9 +125,10 @@ TableChapter.propTypes = {
   data: PropTypes.arrayOf(
     PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number]))
   ).isRequired,
-  errors: PropTypes.array.isRequired,
+  errors: PropTypes.array,
   caption: PropTypes.string.isRequired,
   defaultPage: PropTypes.number,
+  doTotal: PropTypes.bool,
 };
 
 export default TableChapter;

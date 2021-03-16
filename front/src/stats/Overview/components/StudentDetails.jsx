@@ -1,0 +1,235 @@
+import React, { Fragment, useMemo, useState } from 'react';
+import { Row, Col } from 'react-bootstrap';
+import { CheckBox, SearchField } from '@edx/paragon';
+import { AsyncCSVButton, TableChapter, TableVertical } from '.';
+import PropTypes from 'prop-types';
+
+/**
+ * Helper functions
+ */
+
+const sum = (agg, item) => agg + item;
+
+const addTotal = (list) => {
+  let copy = list.slice(1);
+  copy.push(copy.reduce(sum, 0));
+  return [list[0], ...copy];
+};
+
+const sortByColumn = (rows, column, reverse = false) => {
+  let mapping = {};
+  // Create groups by value
+  // hopefully they are all different
+  rows.forEach((r, k) => {
+    let key = column === 0 ? r[column].toLowerCase() : r[column];
+    if (mapping[key] !== undefined) {
+      mapping[key].push(k);
+    } else {
+      mapping[key] = [k];
+    }
+  });
+
+  let sortedKeys =
+    column !== 0
+      ? Object.keys(mapping).sort((a, b) => Number(a) - Number(b))
+      : Object.keys(mapping).sort(); // Sort strings
+
+  if (reverse) {
+    sortedKeys.reverse();
+  }
+
+  // For group insert into new array
+  let sorted = [];
+  sortedKeys.forEach((k) => {
+    mapping[k].forEach((key) => {
+      sorted.push(rows[key]);
+    });
+  });
+  return sorted;
+};
+
+const classNameRuling = (data, l0, l1, l2) => {
+  if (typeof data !== 'number') {
+    return '';
+  } else if (data === 0) {
+    return 'data-table-coloring-zeros';
+  } else if (data > l0 && data < l1) {
+    return 'data-table-coloring-l0';
+  } else if (data >= l1 && data < l2) {
+    return 'data-table-coloring-l1';
+  } else {
+    return 'data-table-coloring-l2';
+  }
+};
+
+/**
+ * StudentDetails table emulates a
+ * standard Datatable for JQuery.
+ *
+ * Allows a parsing function for the final displayed values.
+ * i.e. from seconds to minutes:seconds
+ *
+ * Returns Rows with toggles, inputs and tables
+ */
+const StudentDetails = ({
+  title,
+  rowData,
+  tableData,
+  caption = 'Detalle por estudiante',
+  parseFunction = (e) => e,
+  doTotal = false,
+}) => {
+  const [state, setState] = useState({
+    useChaptersTable: true,
+    student: '',
+    sort: 0,
+    reverse: false,
+    coloring: false,
+  });
+
+  const toggleChapters = (checked, key) => {
+    setState({ ...state, [key]: checked });
+  };
+
+  const searchStudent = (value) => {
+    setState({ ...state, student: value.toLowerCase() });
+  };
+
+  const sortHeader = (i, r) => setState({ ...state, sort: i, reverse: r });
+
+  const coloringFunction = useMemo(() => {
+    // Find max overall (without sums)
+    var maxAll = -1;
+    rowData.all.forEach((row) =>
+      row.slice(1).forEach((el) => {
+        maxAll = maxAll > el ? maxAll : el;
+      })
+    );
+    // Asume min is zero
+    // Split into 3
+    var step = maxAll / 3;
+    return (d) => classNameRuling(d, 0, step, step * 2);
+  }, [rowData]);
+
+  const dataSet = useMemo(() => {
+    if (!doTotal) {
+      return rowData;
+    }
+    return {
+      all: rowData.all.map(addTotal),
+      chapters: rowData.chapters.map(addTotal),
+    };
+  }, [doTotal, rowData]);
+
+  const subSets = useMemo(
+    () => ({
+      all: dataSet.all.filter((r) =>
+        r[0].toLowerCase().includes(state.student)
+      ),
+      chapters: dataSet.chapters.filter((r) =>
+        r[0].toLowerCase().includes(state.student)
+      ),
+    }),
+    [state.student, dataSet]
+  );
+
+  const sorted = useMemo(
+    () => ({
+      all: sortByColumn(subSets.all, state.sort, state.reverse),
+      chapters: sortByColumn(subSets.chapters, state.sort, state.reverse),
+    }),
+    [state.sort, state.reverse, subSets]
+  );
+
+  return (
+    <Fragment>
+      <Row style={{ marginTop: '1em' }}>
+        <Col>
+          <h5 id="DetallesPorEstudiante">Detalle por estudiante</h5>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <AsyncCSVButton
+            text="Descargar Datos"
+            filename="detalle_estudiantes.csv"
+            headers={
+              state.useChaptersTable
+                ? ['Estudiantes', ...tableData.chapters.map((el) => el.name)]
+                : ['Estudiantes', ...tableData.verticals.map((el) => el.val)]
+            }
+            data={state.useChaptersTable ? rowData.chapters : rowData.all}
+          />
+        </Col>
+        <Col>
+          <CheckBox
+            name="checkbox"
+            label="Agrupar Módulos"
+            checked={state.useChaptersTable}
+            onClick={(e) => {
+              toggleChapters(e.target.checked, 'useChaptersTable');
+            }}
+          />
+        </Col>
+        {!state.useChaptersTable && (
+          <Col>
+            <CheckBox
+              name="checkbox"
+              label="Colorear"
+              checked={state.coloring}
+              onClick={(e) => {
+                toggleChapters(e.target.checked, 'coloring');
+              }}
+            />
+          </Col>
+        )}
+        <Col>
+          <SearchField
+            onSubmit={(value) => searchStudent(value)}
+            onClear={() => searchStudent('')}
+            placeholder="Estudiante"
+          />
+        </Col>
+      </Row>
+      {state.useChaptersTable ? (
+        <TableChapter
+          title={title}
+          headers={tableData}
+          data={sorted.chapters}
+          caption={caption}
+          parseFunction={parseFunction}
+          doTotal={doTotal}
+          onHeader={sortHeader}
+        />
+      ) : (
+        <TableVertical
+          title={title}
+          headers={tableData}
+          data={sorted.all}
+          caption={caption}
+          parseFunction={parseFunction}
+          doTotal={doTotal}
+          onHeader={sortHeader}
+          coloring={state.coloring ? coloringFunction : undefined}
+        />
+      )}
+    </Fragment>
+  );
+};
+
+StudentDetails.propTypes = {
+  tableData: PropTypes.shape({
+    all: PropTypes.number.isRequired,
+    chapters: PropTypes.array.isRequired,
+    sequentials: PropTypes.array.isRequired,
+    verticals: PropTypes.array.isRequired,
+  }).isRequired,
+  rowData: PropTypes.shape({
+    all: PropTypes.array.isRequired,
+    chapters: PropTypes.array.isRequired,
+  }).isRequired,
+  title: PropTypes.string,
+  caption: PropTypes.string,
+};
+
+export default StudentDetails;

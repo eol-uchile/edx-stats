@@ -4,6 +4,7 @@ import TableVertical from './TableVertical';
 import ParallelBar from './ParallelBar';
 import MultiAxisBars from './MultiAxisBars';
 import ErrorBarChart from './ErrorBarChart';
+import StudentDetails from './StudentDetails';
 
 export {
   AsyncCSVButton,
@@ -12,4 +13,5 @@ export {
   ParallelBar,
   ErrorBarChart,
   MultiAxisBars,
+  StudentDetails,
 };

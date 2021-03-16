@@ -14,21 +14,18 @@ import { parseToTableRows } from '../helpers';
  * Display course data with sub headers
  * for chapter, sequential and verticals
  * with pagination support
- *
- * @param {String} title
- * @param {Object} headers
- * @param {Array} data
- * @param {Array} errors
- * @param {String} caption
- * @param {Number} defaultPage
  */
 const TableVertical = ({
   title,
   headers,
   data,
-  errors,
+  errors = [],
   caption,
   defaultPage = 10,
+  doTotal = false,
+  parseFunction = (e) => e,
+  onHeader = (e, _) => e,
+  coloring = (e) => e,
 }) => {
   const [pagination, setPagination] = useState({
     current: 1,
@@ -36,12 +33,25 @@ const TableVertical = ({
     size: defaultPage,
   });
 
+  const [state, setState] = useState({ column: 0, up: false });
+
   useEffect(() => setPagination({ ...pagination, total: data.length }), [data]);
 
   const subArray = data.slice(
     (pagination.current - 1) * pagination.size,
     pagination.current * pagination.size
   );
+
+  const onClickHeader = (index) => {
+    let up = index === state.column ? !state.up : false;
+    onHeader(index, up);
+    setState({
+      column: index,
+      up: up,
+    });
+  };
+
+  const arrow = state.up ? <span>&#x25B2;</span> : <span>&#x25BC;</span>;
 
   return (
     <Fragment>
@@ -63,17 +73,34 @@ const TableVertical = ({
             ))}
             <thead>
               <tr>
-                <th rowSpan="3">Estudiantes</th>
+                <th rowSpan="3" onClick={() => onClickHeader(0)}>
+                  Estudiantes{0 === state.column && arrow}
+                </th>
                 {headers.chapters.map((el) => (
                   <th colSpan={el.subtotal} key={el.name}>
                     {el.name}
                   </th>
                 ))}
+                {doTotal && (
+                  <th
+                    rowSpan="3"
+                    onClick={() => onClickHeader(headers.verticals.length + 1)}
+                  >
+                    Total
+                    {headers.verticals.length + 1 === state.column && arrow}
+                  </th>
+                )}
               </tr>
-              <tr>{headers.sequentials}</tr>
               <tr>
-                {headers.verticals.map((el) => (
-                  <th key={el.id}>
+                {headers.sequentials.map((seq) => (
+                  <th colSpan={seq.total_verticals} scope="col" key={seq.name}>
+                    {seq.val}
+                  </th>
+                ))}{' '}
+              </tr>
+              <tr>
+                {headers.verticals.map((el, k) => (
+                  <th key={el.id} onClick={() => onClickHeader(k + 1)}>
                     <OverlayTrigger
                       key={el.id}
                       placement={'bottom'}
@@ -83,14 +110,20 @@ const TableVertical = ({
                         </Tooltip>
                       )}
                     >
-                      <span>{el.val}</span>
+                      <span>
+                        {el.val}
+                        {k + 1 === state.column && arrow}
+                      </span>
                     </OverlayTrigger>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {errors.length === 0 && subArray.map(parseToTableRows)}
+              {errors.length === 0 &&
+                subArray.map((e, k) =>
+                  parseToTableRows(e, k, parseFunction, coloring)
+                )}
               <tr></tr>
             </tbody>
           </TableBT>
@@ -130,7 +163,7 @@ TableVertical.propTypes = {
         subtotal: PropTypes.number,
       })
     ),
-    sequentials: PropTypes.arrayOf(PropTypes.element),
+    sequentials: PropTypes.arrayOf(PropTypes.object),
     verticals: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.any,
@@ -142,7 +175,7 @@ TableVertical.propTypes = {
   data: PropTypes.arrayOf(
     PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number]))
   ).isRequired,
-  errors: PropTypes.array.isRequired,
+  errors: PropTypes.array,
   caption: PropTypes.string.isRequired,
   defaultPage: PropTypes.number,
 };

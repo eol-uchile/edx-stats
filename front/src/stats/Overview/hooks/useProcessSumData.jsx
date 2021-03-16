@@ -5,14 +5,6 @@ const add = (a, b) => a + b;
 
 /**
  * Compute and parse course data into headers, rows and plot information
- *
- * @param {*} course
- * @param {*} sum
- * @param {*} sum_key
- * @param {*} recoverSum
- * @param {*} setErrors
- * @param {*} upperDate
- * @param {*} lowerDate
  */
 function useProcessSumData(
   course,
@@ -40,7 +32,14 @@ function useProcessSumData(
     grouped_verticals: [],
   });
 
-  // Recover incoming data for table
+  /** Recover incoming data for table.
+   *
+   *  Compute indices like 1.1.2 using the structure from
+   *  the LMS. Use the indices and sizes to prepare columns
+   *  with colSpans on a table.
+   *
+   *  Finally ask for sums
+   */
   useEffect(() => {
     if (course.course.length !== 0) {
       let current = course.course[0];
@@ -64,11 +63,11 @@ function useProcessSumData(
             all += 1;
           });
           subtotal += seq.verticals.length;
-          sequentials.push(
-            <th colSpan={seq.verticals.length} scope="col" key={seq.name}>{`${
-              key_ch + 1
-            }.${key_seq + 1}`}</th>
-          );
+          sequentials.push({
+            total_verticals: seq.verticals.length,
+            name: seq.name,
+            val: `${key_ch + 1}.${key_seq + 1}`,
+          });
         });
         chapters.push({ name: ch.name, subtotal });
       });

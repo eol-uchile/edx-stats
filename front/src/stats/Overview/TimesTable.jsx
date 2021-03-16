@@ -18,15 +18,17 @@ import { course, times, actions } from './data/actions';
 import { selectMyCourses } from './data/reducers';
 import {
   AsyncCSVButton,
-  TableChapter,
-  TableVertical,
   MultiAxisBars,
   ErrorBarChart,
+  StudentDetails,
 } from './components';
 import { useProcessSumData } from './hooks';
 import './TableandChart.css';
 
 const parseFloatToTimeString = (seconds) => {
+  if (typeof seconds != 'number') {
+    return seconds;
+  }
   let secs = `${seconds % 60}`;
   let mins = `${Math.floor(seconds / 60) % 60}`;
   let hours = Math.floor(seconds / 3600);
@@ -119,7 +121,7 @@ const TimesTable = ({
       let thisCourse = myCourses.filter(
         (el) => el.key === match.params.course_id
       )[0];
-      setState({ ...state, courseName: thisCourse.title });
+      thisCourse && setState({ ...state, courseName: thisCourse.title });
     }
   }, [myCourses]);
 
@@ -138,20 +140,6 @@ const TimesTable = ({
     let newErrors = errors.filter((el) => msg !== el);
     setErrors(newErrors);
   };
-
-  const rowDataTimes = useMemo(
-    () => ({
-      all: rowData.all.map((r) => [
-        r[0],
-        ...r.slice(1).map((el) => parseFloatToTimeString(el)),
-      ]),
-      chapters: rowData.chapters.map((r) => [
-        r[0],
-        ...r.slice(1).map((el) => parseFloatToTimeString(el)),
-      ]),
-    }),
-    [rowData]
-  );
 
   const rowDataChart = useMemo(
     () =>
@@ -220,8 +208,6 @@ const TimesTable = ({
     ],
     [tableData.verticals, averageChart]
   );
-
-  const tableCaption = 'Tiempos de visita por unidad';
 
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2 data-view">
@@ -451,58 +437,13 @@ const TimesTable = ({
               <Col>No hay datos</Col>
             </Row>
           )}
-          <Row style={{ marginTop: '1em' }}>
-            <Col>
-              <h5 id="DetallesPorEstudiante">Detalle por estudiante</h5>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <AsyncCSVButton
-                text="Descargar Datos"
-                filename="tiempos_por_estudiantes.csv"
-                headers={
-                  state.useChaptersTable
-                    ? [
-                        'Estudiantes',
-                        ...tableData.chapters.map((el) => el.name),
-                      ]
-                    : [
-                        'Estudiantes',
-                        ...tableData.verticals.map((el) => el.val),
-                      ]
-                }
-                data={state.useChaptersTable ? rowData.chapters : rowData.all}
-              />
-            </Col>
-            <Col>
-              <CheckBox
-                name="checkbox"
-                label="Agrupar Módulos"
-                checked={state.useChaptersTable}
-                onClick={(e) => {
-                  toggleChapters(e.target.checked, 'useChaptersTable');
-                }}
-              />
-            </Col>
-          </Row>
-          {state.useChaptersTable ? (
-            <TableChapter
-              title={course.course[0].title}
-              headers={tableData}
-              data={rowDataTimes.chapters}
-              caption={tableCaption}
-              errors={errors}
-            />
-          ) : (
-            <TableVertical
-              title={course.course[0].title}
-              headers={tableData}
-              data={rowDataTimes.all}
-              caption={tableCaption}
-              errors={errors}
-            />
-          )}
+          <StudentDetails
+            title="Tiempos"
+            rowData={rowData}
+            tableData={tableData}
+            parseFunction={parseFloatToTimeString}
+            doTotal={true}
+          />
         </Fragment>
       ) : (
         <Row>

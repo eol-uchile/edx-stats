@@ -36,3 +36,16 @@
 .data-view h5{
   margin-top: 2rem;
 }
+
+.data-table-coloring-zeros {
+  color: gray;
+}
+.data-table-coloring-l0 {
+  background-color: rgb(173, 214, 230);
+}
+.data-table-coloring-l1 {
+  background-color: rgb(104, 190, 224);
+}
+.data-table-coloring-l2 {
+  background-color: rgb(32, 168, 221);
+}
