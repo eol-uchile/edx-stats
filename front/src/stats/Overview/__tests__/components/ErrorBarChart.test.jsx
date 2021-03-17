@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { render, screen } from '../../data/tests-utils';
-import ErrorBarChart from '../components/ErrorBarChart';
+import { render, screen } from '../../../data/tests-utils';
+import ErrorBarChart from '../../components/ErrorBarChart';
 
 const sample_data = [
   { area: 1, errorX: 0, val: 'val', id: 'id', tooltip: 'tt' },

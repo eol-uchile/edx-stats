@@ -1,7 +1,8 @@
 import React, { Fragment, useMemo, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { CheckBox, SearchField } from '@edx/paragon';
+import { Input, SearchField, ValidationFormGroup } from '@edx/paragon';
 import { AsyncCSVButton, TableChapter, TableVertical } from '.';
+import { classNameRuling } from '../helpers';
 import PropTypes from 'prop-types';
 
 /**
@@ -46,20 +47,6 @@ const sortByColumn = (rows, column, reverse = false) => {
     });
   });
   return sorted;
-};
-
-const classNameRuling = (data, l0, l1, l2) => {
-  if (typeof data !== 'number') {
-    return '';
-  } else if (data === 0) {
-    return 'data-table-coloring-zeros';
-  } else if (data > l0 && data < l1) {
-    return 'data-table-coloring-l0';
-  } else if (data >= l1 && data < l2) {
-    return 'data-table-coloring-l1';
-  } else {
-    return 'data-table-coloring-l2';
-  }
 };
 
 /**
@@ -162,25 +149,37 @@ const StudentDetails = ({
           />
         </Col>
         <Col>
-          <CheckBox
-            name="checkbox"
-            label="Agrupar Módulos"
-            checked={state.useChaptersTable}
-            onClick={(e) => {
-              toggleChapters(e.target.checked, 'useChaptersTable');
-            }}
-          />
+          <ValidationFormGroup for="group-modules">
+            <Input
+              type="checkbox"
+              id="group-modules"
+              name="groupmodules"
+              label="Agrupar Módulos"
+              checked={state.useChaptersTable}
+              data-testid="group-modules"
+              onChange={(e) => {
+                toggleChapters(e.target.checked, 'useChaptersTable');
+              }}
+            />
+            <label htmlFor="group-modules">Agrupar Módulos</label>
+          </ValidationFormGroup>
         </Col>
         {!state.useChaptersTable && (
           <Col>
-            <CheckBox
-              name="checkbox"
-              label="Colorear"
-              checked={state.coloring}
-              onClick={(e) => {
-                toggleChapters(e.target.checked, 'coloring');
-              }}
-            />
+            <ValidationFormGroup for="coloring-verticals">
+              <Input
+                type="checkbox"
+                id="coloring-verticals"
+                name="colorme"
+                label="Colorear"
+                checked={state.coloring}
+                data-testid="coloring-verticals"
+                onChange={(e) => {
+                  toggleChapters(e.target.checked, 'coloring');
+                }}
+              />
+              <label htmlFor="coloring-verticals">Colorear</label>
+            </ValidationFormGroup>
           </Col>
         )}
         <Col>

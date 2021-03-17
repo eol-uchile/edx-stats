@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
-import ExportCsv from '../components/ExportCsv';
+import ExportCsv from '../../components/ExportCsv';
 
 it('renders correctly', () => {
   render(<ExportCsv text="test" />);

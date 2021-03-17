@@ -27,4 +27,18 @@ const parseFloatToTimeString = (seconds) => {
   }`;
 };
 
-export { parseFloatToTimeString, parseToTableRows };
+const classNameRuling = (data, l0, l1, l2) => {
+  if (typeof data !== 'number') {
+    return '';
+  } else if (data === 0) {
+    return 'data-table-coloring-zeros';
+  } else if (data > l0 && data < l1) {
+    return 'data-table-coloring-l0';
+  } else if (data >= l1 && data < l2) {
+    return 'data-table-coloring-l1';
+  } else {
+    return 'data-table-coloring-l2';
+  }
+};
+
+export { parseFloatToTimeString, parseToTableRows, classNameRuling };

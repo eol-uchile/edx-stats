@@ -96,7 +96,7 @@ const TableVertical = ({
                   <th colSpan={seq.total_verticals} scope="col" key={seq.name}>
                     {seq.val}
                   </th>
-                ))}{' '}
+                ))}
               </tr>
               <tr>
                 {headers.verticals.map((el, k) => (
