@@ -72,7 +72,7 @@ const TableVertical = ({
               <colgroup span={el.subtotal} key={k}></colgroup>
             ))}
             <thead>
-              <tr>
+              <tr key="first-header-row">
                 <th rowSpan="3" onClick={() => onClickHeader(0)}>
                   Estudiantes{0 === state.column && arrow}
                 </th>
@@ -85,20 +85,21 @@ const TableVertical = ({
                   <th
                     rowSpan="3"
                     onClick={() => onClickHeader(headers.verticals.length + 1)}
+                    key="total-col"
                   >
                     Total
                     {headers.verticals.length + 1 === state.column && arrow}
                   </th>
                 )}
               </tr>
-              <tr>
+              <tr key="second-header-row">
                 {headers.sequentials.map((seq) => (
                   <th colSpan={seq.total_verticals} scope="col" key={seq.name}>
                     {seq.val}
                   </th>
                 ))}
               </tr>
-              <tr>
+              <tr key="third-header-row">
                 {headers.verticals.map((el, k) => (
                   <th key={el.id} onClick={() => onClickHeader(k + 1)}>
                     <OverlayTrigger

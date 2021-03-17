@@ -69,7 +69,6 @@ const TimesTable = ({
     lowerDate: match.params.start ? match.params.start : '',
     upperDate: match.params.end ? match.params.end : '',
     courseName: '',
-    useChaptersTable: true,
     useChaptersChart: false,
     useChaptersAverage: false,
   });
@@ -124,6 +123,10 @@ const TimesTable = ({
       thisCourse && setState({ ...state, courseName: thisCourse.title });
     }
   }, [myCourses]);
+
+  useEffect(() => {
+    state.courseName !== '' && submit();
+  }, [state.courseName]);
 
   // Copy errors to local state
   useEffect(() => {
@@ -442,7 +445,8 @@ const TimesTable = ({
             rowData={rowData}
             tableData={tableData}
             parseFunction={parseFloatToTimeString}
-            doTotal={true}
+            doTotal
+            doAnimation
           />
         </Fragment>
       ) : (

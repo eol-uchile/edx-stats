@@ -102,6 +102,10 @@ const VisitsTable = ({
     }
   }, [myCourses]);
 
+  useEffect(() => {
+    state.courseName !== '' && submit();
+  }, [state.courseName]);
+
   // Copy errors to local state
   useEffect(() => {
     if (course.errors.length > 0 || visits.errors.length > 0) {
@@ -325,6 +329,7 @@ const VisitsTable = ({
             tableData={tableData}
             title={'Visitas'}
             rowData={rowData}
+            doAnimation
           />
         </Fragment>
       ) : (

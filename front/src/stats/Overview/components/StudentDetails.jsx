@@ -1,6 +1,11 @@
 import React, { Fragment, useMemo, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { Input, SearchField, ValidationFormGroup } from '@edx/paragon';
+import {
+  Input,
+  SearchField,
+  ValidationFormGroup,
+  TransitionReplace,
+} from '@edx/paragon';
 import { AsyncCSVButton, TableChapter, TableVertical } from '.';
 import { classNameRuling } from '../helpers';
 import PropTypes from 'prop-types';
@@ -57,6 +62,9 @@ const sortByColumn = (rows, column, reverse = false) => {
  * i.e. from seconds to minutes:seconds
  *
  * Returns Rows with toggles, inputs and tables
+ *
+ * Developper NOTE: Testing using the animations for table switching
+ * was not working so it is disabled by default.
  */
 const StudentDetails = ({
   title,
@@ -65,6 +73,7 @@ const StudentDetails = ({
   caption = 'Detalle por estudiante',
   parseFunction = (e) => e,
   doTotal = false,
+  doAnimation = false,
 }) => {
   const [state, setState] = useState({
     useChaptersTable: true,
@@ -128,6 +137,31 @@ const StudentDetails = ({
     [state.sort, state.reverse, subSets]
   );
 
+  const table = state.useChaptersTable ? (
+    <TableChapter
+      title={title}
+      headers={tableData}
+      data={sorted.chapters}
+      caption={caption}
+      parseFunction={parseFunction}
+      doTotal={doTotal}
+      onHeader={sortHeader}
+      key="table-chapters"
+    />
+  ) : (
+    <TableVertical
+      title={title}
+      headers={tableData}
+      data={sorted.all}
+      caption={caption}
+      parseFunction={parseFunction}
+      doTotal={doTotal}
+      onHeader={sortHeader}
+      coloring={state.coloring ? coloringFunction : undefined}
+      key="table-verticals"
+    />
+  );
+
   return (
     <Fragment>
       <Row style={{ marginTop: '1em' }}>
@@ -164,8 +198,9 @@ const StudentDetails = ({
             <label htmlFor="group-modules">Agrupar Módulos</label>
           </ValidationFormGroup>
         </Col>
+
         {!state.useChaptersTable && (
-          <Col>
+          <Col key="coloring-transition">
             <ValidationFormGroup for="coloring-verticals">
               <Input
                 type="checkbox"
@@ -190,28 +225,7 @@ const StudentDetails = ({
           />
         </Col>
       </Row>
-      {state.useChaptersTable ? (
-        <TableChapter
-          title={title}
-          headers={tableData}
-          data={sorted.chapters}
-          caption={caption}
-          parseFunction={parseFunction}
-          doTotal={doTotal}
-          onHeader={sortHeader}
-        />
-      ) : (
-        <TableVertical
-          title={title}
-          headers={tableData}
-          data={sorted.all}
-          caption={caption}
-          parseFunction={parseFunction}
-          doTotal={doTotal}
-          onHeader={sortHeader}
-          coloring={state.coloring ? coloringFunction : undefined}
-        />
-      )}
+      {doAnimation ? <TransitionReplace>{table}</TransitionReplace> : table}
     </Fragment>
   );
 };
@@ -229,6 +243,8 @@ StudentDetails.propTypes = {
   }).isRequired,
   title: PropTypes.string,
   caption: PropTypes.string,
+  doTotal: PropTypes.bool,
+  doAnimation: PropTypes.bool,
 };
 
 export default StudentDetails;

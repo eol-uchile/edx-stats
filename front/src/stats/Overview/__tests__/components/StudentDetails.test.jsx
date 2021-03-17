@@ -13,12 +13,12 @@ const tableData = {
 
 const rowData = {
   all: [
-    ['foo student', 'foo data'],
-    ['bar student', 'bar data'],
+    ['foo student', '0'],
+    ['bar student', '10'],
   ],
   chapters: [
-    ['foo student', 'foo data'],
-    ['bar student', 'bar data'],
+    ['foo student', '0'],
+    ['bar student', '10'],
   ],
 };
 
