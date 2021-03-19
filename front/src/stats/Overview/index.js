@@ -6,7 +6,7 @@ import {
   times,
   auth,
   urls,
-  selectMyCourses,
+  getMyCourses,
   visits,
   dashboard,
 } from './data/reducers';
@@ -19,7 +19,7 @@ export {
   times,
   auth,
   urls,
-  selectMyCourses,
+  getMyCourses,
   visits,
   dashboard,
 };

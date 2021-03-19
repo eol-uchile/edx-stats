@@ -13,13 +13,36 @@ const mock_empty_resolve = {
       return Promise.resolve({
         status: 200,
         request: { responseURL: '' },
-        data: { roles: [] },
+        data: { roles: [{ course_id: 'foo_id', role: 'foo' }] },
       });
     } else if (
       url.includes('/api/v1/course_runs/?format=json&limit=200&offset=0')
     ) {
       return Promise.resolve({
         status: 200,
+        request: { responseURL: '' },
+        data: {
+          results: [],
+          count: 1,
+        },
+      });
+    }
+  }),
+};
+
+const mock_error_resposne = {
+  get: jest.fn((url) => {
+    if (url.includes('/api/enrollment/v1/roles')) {
+      return Promise.resolve({
+        status: 200,
+        request: { responseURL: '' },
+        data: { roles: [] },
+      });
+    } else if (
+      url.includes('/api/v1/course_runs/?format=json&limit=200&offset=0')
+    ) {
+      return Promise.resolve({
+        status: 400,
         request: { responseURL: '' },
         data: {
           results: [],
@@ -74,6 +97,7 @@ const mock_foo_course = {
               course_id: 'foo_id',
             },
           ],
+          count: 1,
         },
       });
     }
@@ -89,7 +113,22 @@ it('renders without crashing', () => {
     .spyOn(frontenAuth, 'getAuthenticatedHttpClient')
     .mockReturnValue(mock_empty_resolve);
   render(<Landing />);
-  expect(screen.getByText('Cargando cursos'));
+  expect(screen.getByText('Cargando cursos ...'));
+});
+
+it('renders errors on API failure', async () => {
+  jest
+    .spyOn(frontenAuth, 'getAuthenticatedHttpClient')
+    .mockReturnValue(mock_error_resposne);
+  render(<Landing />);
+  await waitFor(() =>
+    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(2)
+  );
+  expect(
+    screen.getByText(
+      'Hubo un error al obtener la información de los cursos. Por favor intente más tarde.'
+    )
+  );
 });
 
 it('displays default option', async () => {
@@ -115,23 +154,5 @@ it('displays multiple options', async () => {
   );
   expect(screen.getByText('Mis cursos'));
   const optionInput = await screen.findByText('foo (foo_id)');
-  expect(optionInput).toHaveValue('1');
-});
-
-it.skip('displays dates and search on select', async () => {
-  jest
-    .spyOn(frontenAuth, 'getAuthenticatedHttpClient')
-    .mockReturnValue(mock_foo_course);
-  render(<Landing />);
-  await waitFor(() =>
-    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(2)
-  );
-  expect(screen.getByText('Mis cursos'));
-  const optionInput = await screen.findByText('foo (foo_id)');
-  userEvent.selectOptions(
-    screen.getByTestId('courses-select'),
-    screen.getByText('foo (foo_id)')
-  );
-  expect(screen.getByTestId('times-lDate')).toHaveValue('2019-02-01');
-  expect(screen.getByTestId('times-uDate')).toHaveValue('2019-02-02');
+  expect(optionInput).toHaveValue('0');
 });

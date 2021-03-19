@@ -7,13 +7,15 @@ import {
   ListGroup,
   ListGroupItem,
   Breadcrumb,
+  Alert,
 } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { course, actions } from './data/actions';
-import { selectMyCourses } from './data/reducers';
+import { getMyCourses } from './data/reducers';
 import { ValidationFormGroup, Button, Card } from '@edx/paragon';
 import { Link } from 'react-router-dom';
+import { sortByColumn } from './helpers';
 import PropTypes from 'prop-types';
 
 const getDate = (d) => {
@@ -32,6 +34,7 @@ const getDate = (d) => {
 const Landing = ({
   loadingCourses,
   loadingEnrolled,
+  loadingCoursesErrors,
   myCourses,
   selectedCache,
   getUserCourseRoles,
@@ -44,6 +47,7 @@ const Landing = ({
     selected: -1,
     filtered: [{ label: '- Seleccionar curso -', value: -1 }],
     interacted: false,
+    options: [['- Seleccionar curso -', -1]],
   });
 
   // Load course info only when necessary
@@ -85,21 +89,19 @@ const Landing = ({
         .filter((el) => !('student' in el.roles))
         .map((el, k) => ({
           label: `${el.title} (${el.key})`,
-          value: k + 1,
+          value: k,
           data: el,
         }));
-      let saved_choice = availableCourses.filter(
-        (el) => el.data.key === selectedCache
+      let options = sortByColumn(
+        availableCourses.map((el) => [el.label, el.value]),
+        0,
+        false,
+        true
       );
       setState({
         ...state,
-        filtered: [
-          {
-            label: '- Seleccionar curso -',
-            value: -1,
-          },
-          ...availableCourses,
-        ],
+        filtered: availableCourses,
+        options: [['- Seleccionar curso -', -1], ...options],
       });
     }
   }, [myCourses]);
@@ -143,14 +145,22 @@ const Landing = ({
         <Col>
           <p>
             Ver estad&iacute;sticas para cursos con acceso de <b>staff</b>,{' '}
-            <b>instructor</b> o <b>administrador</b>.
+            <b>instructor</b>, <b>investigador</b>, o <b>administrador</b>.
           </p>
         </Col>
       </Row>
       <Row>
-        {loadingCourses || loadingEnrolled ? (
+        {loadingCourses && loadingEnrolled ? (
           <Col style={{ textAlign: 'center', lineHeight: '200px' }}>
             Cargando cursos <Spinner animation="border" variant="primary" />
+          </Col>
+        ) : loadingCoursesErrors.length !== 0 ? (
+          <Col style={{ textAlign: 'center' }}>
+            {loadingCoursesErrors.map((err, k) => (
+              <Alert key={k} variant="warning">
+                {err}
+              </Alert>
+            ))}
           </Col>
         ) : (
           <Col>
@@ -174,17 +184,23 @@ const Landing = ({
                   });
                 }}
               >
-                {state.filtered.map((el) => (
-                  <option key={el.value} value={el.value}>
-                    {el.label}
+                {state.options.map((el) => (
+                  <option key={el[1]} value={el[1]}>
+                    {el[0]}
                   </option>
                 ))}
               </select>
             </ValidationFormGroup>
+            {state.options.length == 1 && (
+              <p style={{ textAlign: 'center', lineHeight: '200px' }}>
+                Cargando cursos ...{' '}
+                <Spinner animation="border" variant="primary" />
+              </p>
+            )}
           </Col>
         )}
       </Row>
-      {state.selected !== -1 && state.filtered.length > 1 && (
+      {state.selected !== -1 && data !== null && (
         <Row style={{ marginBottom: '1rem' }}>
           <Col md={4}>
             <Card>
@@ -227,6 +243,7 @@ const Landing = ({
 Landing.propTypes = {
   loadingCourses: PropTypes.bool.isRequired,
   loadingEnrolled: PropTypes.bool.isRequired,
+  loadingCoursesErrors: PropTypes.array.isRequired,
   myCourses: PropTypes.array.isRequired,
   lms: PropTypes.string,
   selectedCache: PropTypes.string,
@@ -239,7 +256,8 @@ Landing.propTypes = {
 const mapStateToProps = (state) => ({
   loadingCourses: state.course.course_roles.loading,
   loadingEnrolled: state.course.courses_enrolled.loading,
-  myCourses: selectMyCourses(state),
+  loadingCoursesErrors: state.course.errors,
+  myCourses: getMyCourses(state),
   selectedCache: state.dashboard.selected,
   lms: state.urls.lms,
 });

@@ -11,11 +11,11 @@ import {
   Container,
   Breadcrumb,
 } from 'react-bootstrap';
-import { Button, CheckBox, Input } from '@edx/paragon';
+import { Button, Input, ValidationFormGroup } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { course, times, actions } from './data/actions';
-import { selectMyCourses } from './data/reducers';
+import { getMyCourses } from './data/reducers';
 import {
   AsyncCSVButton,
   MultiAxisBars,
@@ -331,6 +331,10 @@ const TimesTable = ({
                 <li>
                   <a href="#DetallesPorEstudiante">Detalle por estudiante</a>
                 </li>
+
+                <li>
+                  <a href="#DatosUtilizados">Datos utilizados</a>
+                </li>
               </ul>
             </Col>
           </Row>
@@ -351,14 +355,21 @@ const TimesTable = ({
                   />
                 </Col>
                 <Col>
-                  <CheckBox
-                    name="checkbox"
-                    label="Agrupar Módulos"
-                    checked={state.useChaptersChart}
-                    onClick={(e) => {
-                      toggleChapters(e.target.checked, 'useChaptersChart');
-                    }}
-                  />
+                  <ValidationFormGroup for="group-mod-chapters-ch">
+                    <Input
+                      id="group-mod-chapters-ch"
+                      type="checkbox"
+                      name="group-mod-chapters-ch"
+                      label="Agrupar Módulos"
+                      checked={state.useChaptersChart}
+                      onClick={(e) => {
+                        toggleChapters(e.target.checked, 'useChaptersChart');
+                      }}
+                    />
+                    <label htmlFor="group-mod-chapters-ch">
+                      Agrupar Módulos
+                    </label>
+                  </ValidationFormGroup>
                 </Col>
               </Row>
               <Row>
@@ -404,14 +415,21 @@ const TimesTable = ({
                   />
                 </Col>
                 <Col>
-                  <CheckBox
-                    name="checkbox"
-                    label="Agrupar Módulos"
-                    checked={state.useChaptersAverage}
-                    onClick={(e) => {
-                      toggleChapters(e.target.checked, 'useChaptersAverage');
-                    }}
-                  />
+                  <ValidationFormGroup for="group-mod-chapters-ch-av">
+                    <Input
+                      id="group-mod-chapters-ch-av"
+                      name="group-mod-chapters-ch-av"
+                      type="checkbox"
+                      label="Agrupar Módulos"
+                      checked={state.useChaptersAverage}
+                      onClick={(e) => {
+                        toggleChapters(e.target.checked, 'useChaptersAverage');
+                      }}
+                    />
+                    <label htmlFor="group-mod-chapters-ch-av">
+                      Agrupar Módulos
+                    </label>
+                  </ValidationFormGroup>
                 </Col>
               </Row>
               <Row>
@@ -448,6 +466,18 @@ const TimesTable = ({
             doTotal
             doAnimation
           />
+          <Row>
+            <Col>
+              <h4 id="DatosUtilizados">Datos utilizados</h4>
+              <h5>¿Qué se contabiliza?</h5>
+              <p>
+                Se estiman primero visitas, se leen eventos como la navegación
+                del usuario entre páginas para contar el tiempo entre ellos, se
+                identifica módulo del curso, para finalmente descartar sesiones
+                con inactividad muy prolongada.
+              </p>
+            </Col>
+          </Row>
         </Fragment>
       ) : (
         <Row>
@@ -489,7 +519,7 @@ TimesTable.propTypes = {
 const mapStateToProps = (state) => ({
   course: state.course,
   times: state.times,
-  myCourses: selectMyCourses(state),
+  myCourses: getMyCourses(state),
 });
 
 const mapDispatchToProps = (dispatch) =>

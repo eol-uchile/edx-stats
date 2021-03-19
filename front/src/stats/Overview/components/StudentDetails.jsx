@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo, useState } from 'react';
+import React, { Fragment, useMemo, useCallback, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import {
   Input,
@@ -7,7 +7,7 @@ import {
   TransitionReplace,
 } from '@edx/paragon';
 import { AsyncCSVButton, TableChapter, TableVertical } from '.';
-import { classNameRuling } from '../helpers';
+import { classNameRuling, sortByColumn } from '../helpers';
 import PropTypes from 'prop-types';
 
 /**
@@ -20,38 +20,6 @@ const addTotal = (list) => {
   let copy = list.slice(1);
   copy.push(copy.reduce(sum, 0));
   return [list[0], ...copy];
-};
-
-const sortByColumn = (rows, column, reverse = false) => {
-  let mapping = {};
-  // Create groups by value
-  // hopefully they are all different
-  rows.forEach((r, k) => {
-    let key = column === 0 ? r[column].toLowerCase() : r[column];
-    if (mapping[key] !== undefined) {
-      mapping[key].push(k);
-    } else {
-      mapping[key] = [k];
-    }
-  });
-
-  let sortedKeys =
-    column !== 0
-      ? Object.keys(mapping).sort((a, b) => Number(a) - Number(b))
-      : Object.keys(mapping).sort(); // Sort strings
-
-  if (reverse) {
-    sortedKeys.reverse();
-  }
-
-  // For group insert into new array
-  let sorted = [];
-  sortedKeys.forEach((k) => {
-    mapping[k].forEach((key) => {
-      sorted.push(rows[key]);
-    });
-  });
-  return sorted;
 };
 
 /**
@@ -93,7 +61,7 @@ const StudentDetails = ({
 
   const sortHeader = (i, r) => setState({ ...state, sort: i, reverse: r });
 
-  const coloringFunction = useMemo(() => {
+  const coloringFunction = useCallback(() => {
     // Find max overall (without sums)
     var maxAll = -1;
     rowData.all.forEach((row) =>
@@ -105,7 +73,7 @@ const StudentDetails = ({
     // Split into 3
     var step = maxAll / 3;
     return (d) => classNameRuling(d, 0, step, step * 2);
-  }, [rowData]);
+  }, [rowData, classNameRuling]);
 
   const dataSet = useMemo(() => {
     if (!doTotal) {
@@ -115,7 +83,7 @@ const StudentDetails = ({
       all: rowData.all.map(addTotal),
       chapters: rowData.chapters.map(addTotal),
     };
-  }, [doTotal, rowData]);
+  }, [doTotal, rowData, addTotal]);
 
   const subSets = useMemo(
     () => ({
@@ -134,7 +102,7 @@ const StudentDetails = ({
       all: sortByColumn(subSets.all, state.sort, state.reverse),
       chapters: sortByColumn(subSets.chapters, state.sort, state.reverse),
     }),
-    [state.sort, state.reverse, subSets]
+    [state.sort, state.reverse, subSets, sortByColumn]
   );
 
   const table = state.useChaptersTable ? (

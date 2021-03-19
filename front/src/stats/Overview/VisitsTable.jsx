@@ -11,11 +11,11 @@ import {
   Container,
   Breadcrumb,
 } from 'react-bootstrap';
-import { Button, CheckBox, Input } from '@edx/paragon';
+import { Button, Input, ValidationFormGroup } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { course, visits, actions } from './data/actions';
-import { selectMyCourses } from './data/reducers';
+import { getMyCourses } from './data/reducers';
 import { AsyncCSVButton, StudentDetails, ParallelBar } from './components';
 import { useProcessSumData } from './hooks';
 import './TableandChart.css';
@@ -270,6 +270,9 @@ const VisitsTable = ({
                 <li>
                   <a href="#DetallesPorEstudiante">Detalle por estudiante</a>
                 </li>
+                <li>
+                  <a href="#DatosUtilizados">Datos utilizados</a>
+                </li>
               </ul>
             </Col>
           </Row>
@@ -290,14 +293,21 @@ const VisitsTable = ({
                   />
                 </Col>
                 <Col>
-                  <CheckBox
-                    name="checkbox"
-                    label="Agrupar Módulos"
-                    checked={state.useChaptersChart}
-                    onClick={(e) => {
-                      toggleChapters(e.target.checked, 'useChaptersChart');
-                    }}
-                  />
+                  <ValidationFormGroup for="group-mod-chapters-ch">
+                    <Input
+                      type="checkbox"
+                      name="group-mod-chapters-ch"
+                      id="group-mod-chapters-ch"
+                      label="Agrupar Módulos"
+                      checked={state.useChaptersChart}
+                      onChange={(e) => {
+                        toggleChapters(e.target.checked, 'useChaptersChart');
+                      }}
+                    />
+                    <label htmlFor="group-mod-chapters-ch">
+                      Agrupar Módulos
+                    </label>
+                  </ValidationFormGroup>
                 </Col>
               </Row>
               <Row>
@@ -331,6 +341,19 @@ const VisitsTable = ({
             rowData={rowData}
             doAnimation
           />
+          <Row>
+            <Col>
+              <h4 id="DatosUtilizados">Datos utilizados</h4>
+              <h5>¿Qué se contabiliza?</h5>
+              <p>
+                Las visitas presentadas corresponden a información sobre la{' '}
+                <strong>navegación</strong> del usuario, principalmente
+                utilizando los botones de avanzar y retroceder. Esto no
+                representa toda las visitas del usuario, ya que excluye
+                refrescos de página por ejemplo.
+              </p>
+            </Col>
+          </Row>
         </Fragment>
       ) : (
         <Row>
@@ -372,7 +395,7 @@ VisitsTable.propTypes = {
 const mapStateToProps = (state) => ({
   course: state.course,
   visits: state.visits,
-  myCourses: selectMyCourses(state),
+  myCourses: getMyCourses(state),
 });
 
 const mapDispatchToProps = (dispatch) =>
