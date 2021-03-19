@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo, useCallback, useState } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import {
   Input,
@@ -61,7 +61,7 @@ const StudentDetails = ({
 
   const sortHeader = (i, r) => setState({ ...state, sort: i, reverse: r });
 
-  const coloringFunction = useCallback(() => {
+  const coloringFunction = useMemo(() => {
     // Find max overall (without sums)
     var maxAll = -1;
     rowData.all.forEach((row) =>

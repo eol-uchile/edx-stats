@@ -59,7 +59,6 @@ const TableVertical = ({
         <Col>
           Mostrando {subArray.length} de {pagination.total}
         </Col>
-        <Col></Col>
       </Row>
       <Row>
         <Col className="times-table-column">
