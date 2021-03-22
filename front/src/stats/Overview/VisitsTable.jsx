@@ -364,7 +364,7 @@ const VisitsTable = ({
                   variant="warning"
                   key={k}
                   dismissible
-                  onClick={() => removeErrors(e)}
+                  onClose={() => removeErrors(e)}
                 >
                   {e}
                 </Alert>

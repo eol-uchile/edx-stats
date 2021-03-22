@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'core',
     'times',
     'visits',
+    'webadmin',
     'django_celery_results',
     'django_celery_beat',
     'django_filters',
@@ -154,7 +155,11 @@ LOGGING = {
         'times': {
             'handlers': ['console'],
             'level': 'INFO',
-        }
+        },
+        'webadmin': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
     },
 }
 
@@ -250,7 +255,7 @@ BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL = ENV_TOKENS.get(
 BACKEND_LMS_BASE_URL = ENV_TOKENS.get('BACKEND_LMS_BASE_URL', "a.valid.url")
 BACKEND_CMS_BASE_URL = ENV_TOKENS.get('BACKEND_CMS_BASE_URL', "a.valid.url")
 
-BACKEND_ALLOWED_ROLES = ENV_TOKENS.get('BACKEND_ALLOWED_ROLES',[
+BACKEND_ALLOWED_ROLES = ENV_TOKENS.get('BACKEND_ALLOWED_ROLES', [
     'staff',
     'data_researcher',
     'instructor',

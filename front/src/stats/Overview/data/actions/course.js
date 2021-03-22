@@ -73,7 +73,7 @@ export const recoverCourseStructure = (course_id = 'nan') => (
       let msg = error.customAttributes
         ? error.customAttributes.httpErrorResponseData
         : undefined;
-      if (msg === undefined) {
+      if (msg === undefined || error.customAttributes.httpErrorStatus === 502) {
         msg = 'Hubo un error en el servidor';
       }
       dispatch({
@@ -110,7 +110,7 @@ export const recoverCourseStructureFromCMS = (course_id = 'nan') => (
       let msg = error.customAttributes
         ? error.customAttributes.httpErrorResponseData
         : undefined;
-      if (msg === undefined) {
+      if (msg === undefined || error.customAttributes.httpErrorStatus === 502) {
         msg = 'Hubo un error en el servidor';
       }
       dispatch({

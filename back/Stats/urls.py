@@ -10,6 +10,7 @@ urlpatterns = [
     path('api/core/', include('core.urls')),
     path('api/times/', include('times.urls')),
     path('api/visits/', include('visits.urls')),
+    path('api/webadmin/', include('webadmin.urls')),
     path('api/admin/', admin.site.urls),
     path('api/rest/', include('rest_framework.urls', namespace='rest_framework'))
 ]

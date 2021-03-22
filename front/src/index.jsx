@@ -22,7 +22,7 @@ import appMessages from './i18n';
 import 'font-awesome/css/font-awesome.min.css';
 import './index.scss';
 import './assets/favicon.ico';
-import { Routes, configureStore } from './stats';
+import { Routes, configureStore, Message } from './stats';
 
 import footerLogo from './assets/0vti.ef83f16aa682.jpg';
 
@@ -47,6 +47,7 @@ subscribe(APP_READY, () => {
     <AppProvider store={store}>
       <Header />
       <Routes />
+      <Message />
       <Footer logo={footerLogo} />
     </AppProvider>,
     document.getElementById('root')

@@ -40,7 +40,7 @@ export const recoverCourseStudentVisitSum = (
       let msg = error.customAttributes
         ? error.customAttributes.httpErrorResponseData
         : undefined;
-      if (msg === undefined) {
+      if (msg === undefined || error.customAttributes.httpErrorStatus === 502) {
         msg = 'Hubo un error en el servidor';
       }
       dispatch({ type: LOADING_VISITS_ERROR, data: [msg] });
