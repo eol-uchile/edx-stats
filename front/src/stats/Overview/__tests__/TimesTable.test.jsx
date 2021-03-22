@@ -170,7 +170,7 @@ it('dismisses error messages', async () => {
   );
   expect(screen.getByText('Hubo un error en el servidor'));
 
-  screen.getAllByRole('alert').forEach((element) => {
+  screen.getAllByText('×').forEach((element) => {
     userEvent.click(element);
   });
   expect(

@@ -170,7 +170,8 @@ it('dismisses error messages', async () => {
   );
   expect(screen.getByText('Hubo un error en el servidor'));
 
-  userEvent.click(screen.getByRole('alert'));
+  const button = screen.getByText('×');
+  userEvent.click(button);
   expect(
     screen.queryByText('Hubo un error en el servidor')
   ).not.toBeInTheDocument();
