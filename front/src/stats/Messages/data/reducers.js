@@ -13,7 +13,6 @@ export default function messages(state = initialState, action) {
     case LOADED_MESSAGES:
       // Check if read
       let messages = action.data.filter((el) => !state.read.includes(el.id));
-      console.log(messages, state.read, action.data);
       return {
         ...state,
         messages,

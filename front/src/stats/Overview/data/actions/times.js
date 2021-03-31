@@ -55,9 +55,9 @@ export const recoverCourseStudentTimesSum = (
 
   getAuthenticatedHttpClient()
     .get(
-      `${base}/api/times/timeoncourse/?search=${encodeURIComponent(
+      `${base}/api/times/timeoncourse/?course=${encodeURIComponent(
         course_id
-      )}&llimit=${lower_date.toISOString()}&ulimit=${upper_date.toISOString()}`
+      )}&time__gte=${lower_date.toISOString()}&time__lte=${upper_date.toISOString()}`
     )
     .then((res) => {
       if (res.request.responseURL.includes('login/?next=')) {

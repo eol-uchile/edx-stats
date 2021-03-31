@@ -15,8 +15,8 @@ import { course, actions } from './data/actions';
 import { getMyCourses } from './data/reducers';
 import { ValidationFormGroup, Button, Card } from '@edx/paragon';
 import { Link } from 'react-router-dom';
-import { sortByColumn } from './helpers';
 import PropTypes from 'prop-types';
+import { useLanding } from './hooks/useLanding';
 
 const getDate = (d) => {
   let date = new Date(d);
@@ -29,7 +29,7 @@ const getDate = (d) => {
 /**
  * Landing Page
  *
- * @param {*} param0
+ * Display courses and links to their stats
  */
 const Landing = ({
   loadingCourses,
@@ -43,68 +43,14 @@ const Landing = ({
   setSelectedCourse,
   lms,
 }) => {
-  const [state, setState] = useState({
-    selected: -1,
-    filtered: [{ label: '- Seleccionar curso -', value: -1 }],
-    interacted: false,
-    options: [['- Seleccionar curso -', -1]],
-  });
-
-  // Load course info only when necessary
-  useEffect(() => {
-    if (myCourses.length === 0) {
-      setLoadingCourse('course_roles');
-      getUserCourseRoles();
-      getEnrolledCourses();
-    }
-  }, []);
-
-  // Cache the selected course
-  useEffect(() => {
-    if (state.filtered.length > 1 && state.selected !== -1) {
-      // Removing the final condition triggers an infinite loop WTF
-      let key = state.filtered[state.selected].data.key;
-      if (selectedCache !== key) {
-        setSelectedCourse(key);
-      }
-    }
-  }, [state.filtered, state.selected]);
-
-  // Set default choice only if no user interaction has ocurred
-  useEffect(() => {
-    if (myCourses.length > 0 && state.filtered.length > 1) {
-      let selected = state.filtered
-        .slice(1)
-        .filter((l) => l.data.key === selectedCache)[0];
-      if (selected && !state.interacted) {
-        setState({ ...state, selected: selected.value });
-      }
-    }
-  }, [myCourses, selectedCache, state.filtered]);
-
-  // Update choices
-  useEffect(() => {
-    if (myCourses.length !== 0) {
-      let availableCourses = myCourses
-        .filter((el) => !('student' in el.roles))
-        .map((el, k) => ({
-          label: `${el.title} (${el.key})`,
-          value: k,
-          data: el,
-        }));
-      let options = sortByColumn(
-        availableCourses.map((el) => [el.label, el.value]),
-        0,
-        false,
-        true
-      );
-      setState({
-        ...state,
-        filtered: availableCourses,
-        options: [['- Seleccionar curso -', -1], ...options],
-      });
-    }
-  }, [myCourses]);
+  const [state, setState] = useLanding(
+    myCourses,
+    selectedCache,
+    setLoadingCourse,
+    getUserCourseRoles,
+    getEnrolledCourses,
+    setSelectedCourse
+  );
 
   const start = state.filtered[state.selected]
     ? getDate(state.filtered[state.selected].data.start)
@@ -115,7 +61,6 @@ const Landing = ({
   const key = state.filtered[state.selected]
     ? state.filtered[state.selected].data.key
     : null;
-
   const data = state.filtered[state.selected]
     ? state.filtered[state.selected].data
     : null;

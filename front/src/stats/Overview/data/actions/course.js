@@ -120,29 +120,66 @@ export const recoverCourseStructureFromCMS = (course_id = 'nan') => (
     });
 };
 
+/**
+ * Recover recursively all course_runs
+ * @param {*} offset
+ * @returns Thunk
+ */
 export const getEnrolledCourses = (offset = 0) => (dispatch, getState) => {
   let discovery = getState().urls.discovery;
-  getAuthenticatedHttpClient()
-    .get(
-      `${discovery}/api/v1/course_runs/?format=json&limit=200&offset=${offset}`
-    )
-    .then((res) => {
-      if (res.status === 200) {
-        return dispatch({ type: LOADED_COURSES_INFO, data: res.data });
-      }
-      return dispatch({
-        type: LOADED_COURSES_INFO_ERROR,
-        data: [
-          'Hubo un error al obtener la información de los cursos. Por favor intente más tarde.',
-        ],
-      });
-    })
-    .catch((error) =>
-      dispatch({
-        type: LOADED_COURSES_INFO_ERROR,
-        data: [
-          'Hubo un error al obtener la información de los cursos. Por favor intente más tarde.',
-        ],
+
+  const baserequest = `${discovery}/api/v1/course_runs/?format=json&limit=200&offset=`;
+
+  let reduceAPIResponse = (prev, dispatch, off_set, base_request) =>
+    getAuthenticatedHttpClient()
+      .get(`${base_request}${off_set}`)
+      .then((res) => {
+        if (res.status === 200) {
+          // Check count
+          if (res.data.count > prev.results.length) {
+            // Merge both
+            let reduced = {
+              count: res.data.count,
+              results: [...res.data.results, ...prev.results],
+            };
+            return reduceAPIResponse(
+              reduced,
+              dispatch,
+              off_set + res.data.results.length,
+              base_request
+            );
+          } else {
+            // We are done
+            let merged =
+              prev === null
+                ? res.data
+                : {
+                    count: res.data.count,
+                    results: [...res.data.results, ...prev.results],
+                  };
+            return dispatch({ type: LOADED_COURSES_INFO, data: merged });
+          }
+        }
+        return dispatch({
+          type: LOADED_COURSES_INFO_ERROR,
+          data: [
+            'Hubo un error al obtener la información de los cursos. Por favor intente más tarde.',
+          ],
+        });
       })
-    );
+      .catch((error) =>
+        dispatch({
+          type: LOADED_COURSES_INFO_ERROR,
+          data: [
+            'Hubo un error al obtener la información de los cursos. Por favor intente más tarde.',
+          ],
+        })
+      );
+
+  return reduceAPIResponse(
+    { results: [], count: 0 },
+    dispatch,
+    offset,
+    baserequest
+  );
 };

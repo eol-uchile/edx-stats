@@ -1,3 +1,5 @@
+import pytz
+from datetime import datetime
 from django.db.models import Q
 from django.conf import settings
 from django.views.decorators.cache import cache_page
@@ -25,6 +27,44 @@ class VerticalViewSet(viewsets.ModelViewSet):
     serializer_class = CourseVerticalSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['course']
+
+
+def verify_time_range_course_params(request):
+    """
+    Parse the default query params for a time ranged
+    request for a course
+
+    Parameters:
+        request - standard django-rest request wrapper
+    Returns:
+        course_id, ISO lower date, ISO upper date
+    Raises:
+        Exception with error message
+    """
+    if "course" not in request.query_params:
+        raise Exception("Se requiere un curso válido.")
+
+    if "time__lte" not in request.query_params:
+        raise Exception("Se requiere una fecha límite inferior")
+
+    if "time__gte" not in request.query_params:
+        raise Exception("Se requiere una fecha límite superior")
+
+    tz = pytz.timezone(settings.TIME_ZONE)
+    try:
+        time__gte = tz.localize(datetime.fromisoformat(
+            request.query_params["time__gte"].replace("Z", "")))
+        time__lte = tz.localize(datetime.fromisoformat(
+            request.query_params["time__lte"].replace("Z", "")))
+    except Exception as time_error:
+        raise Exception(
+            "Error en el formato de las fechas. Se espera un formato ISO.")
+
+    if time__gte > time__lte:
+        raise Exception("El límite inferior debe ser precedente al superior.")
+
+    course = request.query_params["course"]
+    return course, time__gte, time__lte
 
 
 @api_view()

@@ -12,4 +12,4 @@ class TimeOnPage(models.Model):
     time = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return "{} {} count: {}".format(self.time, self.vertical, self.count)
+        return "{} {} count: {}".format(self.time, self.event_type_vertical, self.count)
