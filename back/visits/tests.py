@@ -37,7 +37,7 @@ class TestVisitsOnCourse(UserMixin, JwtMixin, APITestCase):
     def test_no_llimit_field_fails(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "Test-Eol-Fail", "role": ""}]}
-        response = self.client.get(self.url+"?search=Test-EOL_T1")
+        response = self.client.get(self.url+"?course=Test-EOL_T1")
         self.assertEqual(response.status_code, 400)
     
     @patch('visits.views.recoverUserCourseRoles')
@@ -45,7 +45,7 @@ class TestVisitsOnCourse(UserMixin, JwtMixin, APITestCase):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "Test-Eol-Fail", "role": ""}]}
         response = self.client.get(
-            self.url+"?search=Test-EOL_T1&llimit=2019-09-04T00:00:00.000000")
+            self.url+"?course=Test-EOL_T1&time__gte=2019-09-04T00:00:00.000000")
         self.assertEqual(response.status_code, 400)
     
     @patch('visits.views.recoverUserCourseRoles')
@@ -53,7 +53,7 @@ class TestVisitsOnCourse(UserMixin, JwtMixin, APITestCase):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "Test-Eol-Fail", "role": ""}]}
         response = self.client.get(
-            self.url+"?search=Test-EOL_T1&llimit=2019-09-04T00:00:00.000000&ulimit=2019-09-05T00:00:00.000000")
+            self.url+"?course=Test-EOL_T1&time__gte=2019-09-04T00:00:00.000000&time__lte=2019-09-05T00:00:00.000000")
         self.assertEqual(response.status_code, 403)
 
     @patch('visits.views.recoverUserCourseRoles')
@@ -62,7 +62,7 @@ class TestVisitsOnCourse(UserMixin, JwtMixin, APITestCase):
         mock_recoverUserCourseRoles.return_value = {
             'roles': [{'course_id': 'Test-EOL_T1', 'role': 'staff'}]}
         response = self.client.get(
-            self.url+"?search=Test-EOL_T1&llimit=2019-09-04T00:00:00.000000&ulimit=2019-09-05T00:00:00.000000")
+            self.url+"?course=Test-EOL_T1&time__gte=2019-09-04T00:00:00.000000&time__lte=2019-09-05T00:00:00.000000")
         self.assertEqual(response.status_code, 204)
 
     @patch('visits.views.recoverUserCourseRoles')
@@ -71,7 +71,7 @@ class TestVisitsOnCourse(UserMixin, JwtMixin, APITestCase):
         mock_recoverUserCourseRoles.return_value = {
             'roles': [{'course_id': 'Test-EOL_T2', 'role': 'staff'}]}
         response = self.client.get(
-            self.url+"?search=Test-EOL_T2&llimit=2019-09-04T00:00:00.000000&ulimit=2019-09-05T00:00:00.000000")
+            self.url+"?course=Test-EOL_T2&time__gte=2019-09-04T00:00:00.000000&time__lte=2019-09-05T00:00:00.000000")
         self.assertEqual(response.status_code, 200)
 
 
