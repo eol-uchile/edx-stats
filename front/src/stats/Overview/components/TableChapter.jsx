@@ -1,6 +1,12 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Table as TableBT, Row, Col } from 'react-bootstrap';
 import { Pagination } from '@edx/paragon';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faSort,
+  faSortDown,
+  faSortUp,
+} from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
 import { parseToTableRows } from '../helpers';
 
@@ -43,7 +49,15 @@ const TableChapter = ({
     });
   };
 
-  const arrow = state.up ? <span>&#x25B2;</span> : <span>&#x25BC;</span>;
+  const arrow = state.up ? (
+    <FontAwesomeIcon icon={faSortUp} />
+  ) : (
+    <FontAwesomeIcon icon={faSortDown} />
+  );
+
+  const gray_sort = (
+    <FontAwesomeIcon icon={faSort} style={{ color: 'lightgray' }} />
+  );
 
   return (
     <Fragment>
@@ -62,12 +76,12 @@ const TableChapter = ({
             <thead>
               <tr>
                 <th onClick={() => onClickHeader(0)}>
-                  Estudiantes {0 === state.column && arrow}
+                  Estudiantes {0 === state.column ? arrow : gray_sort}
                 </th>
                 {headers.chapters.map((el, k) => (
                   <th key={el.name} onClick={() => onClickHeader(k + 1)}>
                     {el.name}
-                    {k + 1 === state.column && arrow}
+                    {k + 1 === state.column ? arrow : gray_sort}
                   </th>
                 ))}
                 {doTotal && (
@@ -75,7 +89,9 @@ const TableChapter = ({
                     onClick={() => onClickHeader(headers.chapters.length + 1)}
                   >
                     Total
-                    {headers.chapters.length + 1 === state.column && arrow}
+                    {headers.chapters.length + 1 === state.column
+                      ? arrow
+                      : gray_sort}
                   </th>
                 )}
               </tr>

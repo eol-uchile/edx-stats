@@ -7,6 +7,12 @@ import {
   Col,
 } from 'react-bootstrap';
 import { Pagination } from '@edx/paragon';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faSort,
+  faSortDown,
+  faSortUp,
+} from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
 import { parseToTableRows } from '../helpers';
 
@@ -51,13 +57,21 @@ const TableVertical = ({
     });
   };
 
-  const arrow = state.up ? <span>&#x25B2;</span> : <span>&#x25BC;</span>;
+  const arrow = state.up ? (
+    <FontAwesomeIcon icon={faSortUp} />
+  ) : (
+    <FontAwesomeIcon icon={faSortDown} />
+  );
+
+  const gray_sort = (
+    <FontAwesomeIcon icon={faSort} style={{ color: 'lightgray' }} />
+  );
 
   return (
     <Fragment>
       <Row>
         <Col>
-          Mostrando {subArray.length} de {pagination.total}
+          Mostrando {subArray.length} de {pagination.total}{' '}
         </Col>
       </Row>
       <Row>
@@ -73,7 +87,8 @@ const TableVertical = ({
             <thead>
               <tr key="first-header-row">
                 <th rowSpan="3" onClick={() => onClickHeader(0)}>
-                  Estudiantes{0 === state.column && arrow}
+                  Estudiantes
+                  {0 === state.column ? arrow : gray_sort}
                 </th>
                 {headers.chapters.map((el) => (
                   <th colSpan={el.subtotal} key={el.name}>
@@ -87,7 +102,9 @@ const TableVertical = ({
                     key="total-col"
                   >
                     Total
-                    {headers.verticals.length + 1 === state.column && arrow}
+                    {headers.verticals.length + 1 === state.column
+                      ? arrow
+                      : gray_sort}
                   </th>
                 )}
               </tr>
@@ -112,7 +129,7 @@ const TableVertical = ({
                     >
                       <span>
                         {el.val}
-                        {k + 1 === state.column && arrow}
+                        {k + 1 === state.column ? arrow : gray_sort}
                       </span>
                     </OverlayTrigger>
                   </th>

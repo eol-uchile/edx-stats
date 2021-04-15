@@ -51,7 +51,6 @@ const VisitsTable = ({
     lowerDate: match.params.start ? match.params.start : '',
     upperDate: match.params.end ? match.params.end : '',
     courseName: '',
-    useChaptersTable: true,
     useChaptersChart: false,
   });
 
@@ -280,6 +279,9 @@ const VisitsTable = ({
               <ul>
                 <li>
                   <a href="#VisitasTotales">Visitas totales</a>
+                </li>
+                <li>
+                  <a href="#date-browser">Visitas diarias</a>
                 </li>
                 <li>
                   <a href="#DetallesPorEstudiante">Detalle por estudiante</a>

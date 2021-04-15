@@ -1,1 +1,9 @@
-{}
+{
+  "header.links.courses": "Cursos",
+  "header.user.menu.dashboard": "Dashboard",
+  "header.user.menu.profile": "Perfil",
+  "header.user.menu.account.settings": "Configuración",
+  "header.user.menu.logout": "Salir",
+  "header.user.menu.login": "Ingresar",
+  "header.user.menu.register": "Registrarse"
+}

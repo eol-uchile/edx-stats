@@ -190,7 +190,7 @@ it('gets table values', async () => {
   userEvent.type(screen.getByTestId('visits-uDate'), '2019-09-05');
   userEvent.click(screen.getByRole('button'));
   await waitFor(() =>
-    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(4)
+    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(6)
   );
   expect(screen.getByText('Ch1'));
   expect(screen.getByText('Custom error message'));
@@ -209,7 +209,7 @@ it('has a second view mode', async () => {
   userEvent.type(screen.getByTestId('visits-uDate'), '2019-09-05');
   userEvent.click(screen.getByRole('button'));
   await waitFor(() =>
-    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(4)
+    expect(frontenAuth.getAuthenticatedHttpClient).toHaveBeenCalledTimes(6)
   );
   expect(screen.getByText('Ch1'));
   expect(screen.getByText('Custom error message'));

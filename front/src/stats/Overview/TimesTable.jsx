@@ -224,7 +224,7 @@ const TimesTable = ({
       </Helmet>
       <Row>
         <Col>
-          <Breadcrumb>
+          <Breadcrumb className="eol-breadcrumb">
             <Link className="breadcrumb-item" to="/modules">
               General
             </Link>

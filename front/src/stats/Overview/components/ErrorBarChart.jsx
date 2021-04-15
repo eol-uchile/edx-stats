@@ -67,11 +67,9 @@ const ErrorBarChart = ({
       <Legend
         wrapperStyle={{
           bottom: '0px',
-          backgroundColor: '#f5f5f5',
-          border: '1px solid #d5d5d5',
-          borderRadius: 3,
           lineHeight: '40px',
         }}
+        iconType="square"
       />
       <Bar
         type="monotone"

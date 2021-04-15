@@ -13,7 +13,6 @@ function useProcessDailyData(
     chapterKeys: [],
   });
 
-  const dateToYearMonth = (d) => `${d.getFullYear()}-${d.getMonth()}`;
   const clean_hash = (text) => text.slice(text.indexOf('@chapter+block@') + 15);
 
   const getChapterMapping = (chapter) => {
@@ -25,7 +24,7 @@ function useProcessDailyData(
   };
 
   useEffect(() => {
-    if (course.course.length > 0) {
+    if (course.course.length > 0 && lowerDate !== '' && upperDate !== '') {
       loadFunction(
         course.course[0].id,
         new Date(lowerDate),
@@ -48,7 +47,7 @@ function useProcessDailyData(
       // Variables to iterate over dailySum
       let current_year = first.getFullYear();
       let current_month = first.getMonth();
-      let groupByMonths = [{ date: dateToYearMonth(first), data: [] }];
+      let groupByMonths = [{ date: first.toISOString(), data: [] }];
 
       // Create an array of possible dates
       let available_dates = [];
@@ -61,7 +60,6 @@ function useProcessDailyData(
 
       // Consolidate daily sums
       let dailySumConsolidated = {};
-      console.log(dailySum);
       dailySum.forEach((sum) => {
         let key = new Date(sum.date).toLocaleDateString('en-US');
         if (dailySumConsolidated[key]) {
@@ -90,13 +88,15 @@ function useProcessDailyData(
           current_date.getFullYear() == current_year &&
           current_date.getMonth() == current_month
         ) {
+          current.date = new Date(current_date).toLocaleDateString('es-CL');
           groupByMonths[count].data.push(current);
         } else {
           groupByMonths.push({
-            date: dateToYearMonth(current_date),
+            date: current_date.toISOString(),
             data: [],
           });
           count += 1;
+          current.date = new Date(current_date).toLocaleDateString('es-CL');
           groupByMonths[count].data.push(current);
           current_year = current_date.getFullYear();
           current_month = current_date.getMonth();

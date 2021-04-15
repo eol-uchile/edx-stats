@@ -55,11 +55,9 @@ const ParallelBar = ({
       <Legend
         wrapperStyle={{
           bottom: '0px',
-          backgroundColor: '#f5f5f5',
-          border: '1px solid #d5d5d5',
-          borderRadius: 3,
           lineHeight: '40px',
         }}
+        iconType="square"
       />
       <Bar dataKey={bar1_key} fill="#82ca9d" barSize={30} />
       <Bar type="monotone" dataKey={bar2_key} fill="#8884d8" barSize={30} />

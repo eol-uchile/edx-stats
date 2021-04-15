@@ -9,19 +9,28 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import { interpolateHsl, interpolate } from 'd3-interpolate';
+import { interpolateHsl } from 'd3-interpolate';
 import PropTypes from 'prop-types';
+
+const MAX_TOOLTIP = 4;
 
 const CustomTooltip = ({ payload, label, active }, mapping) => {
   if (active) {
+    let compareNumbers = (a, b) => b.value - a.value; // reversed
+    let sorted = payload.sort(compareNumbers).slice(0, MAX_TOOLTIP);
+
     return (
       <div className="custom-tooltip">
         <p className="label">Fecha {label}</p>
-        {payload.map((el) => (
-          <p>
-            {mapping[el.dataKey]}: {el.value}
-          </p>
-        ))}
+        {sorted.map(
+          (el) =>
+            el.value > 0 && (
+              <p key={el.dataKey}>
+                {mapping[el.dataKey]}: {el.value}
+              </p>
+            )
+        )}
+        {payload.length > MAX_TOOLTIP && <p>...</p>}
       </div>
     );
   }
@@ -30,8 +39,6 @@ const CustomTooltip = ({ payload, label, active }, mapping) => {
 };
 
 const renderLegend = (value, entry, mapping) => {
-  const { color } = entry;
-
   return <span>{mapping[value]}</span>;
 };
 
@@ -78,7 +85,7 @@ const TimeLineArea = ({ data, keys, mapping }) => {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
+        <XAxis dataKey="date" angle={-10} />
         <YAxis />
         <Tooltip content={(arg) => CustomTooltip(arg, mapping)} />
         {keys.map((data_k, k) => (
@@ -91,14 +98,12 @@ const TimeLineArea = ({ data, keys, mapping }) => {
           />
         ))}
         <Legend
+          formatter={(v, e) => renderLegend(v, e, mapping)}
           wrapperStyle={{
             bottom: '0px',
-            backgroundColor: '#f5f5f5',
-            border: '1px solid #d5d5d5',
-            borderRadius: 3,
             lineHeight: '40px',
           }}
-          formatter={(v, e) => renderLegend(v, e, mapping)}
+          iconType="square"
         />
       </AreaChart>
     </ResponsiveContainer>
