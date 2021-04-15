@@ -10,6 +10,11 @@ COPY package-lock.json ./
 RUN npm install --silent
  # Submodule with header is assumed to be copied beforehand 
 COPY . ./
+# WIP work around for i18n
+RUN mv /app/src/frontend-component-header /app/frontend-component-header
+RUN make i18n.extract
+RUN mv /app/frontend-component-header /app/src/frontend-component-header
+
 EXPOSE 3000
 CMD ["npm", "start"]
 
