@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { sortByColumn } from '../helpers';
 
-export const useLanding = (
+function useLanding(
   myCourses,
   selectedCache,
   setLoadingCourse,
   getUserCourseRoles,
   getEnrolledCourses,
   setSelectedCourse
-) => {
+) {
   const [state, setState] = useState({
     selected: -1,
     filtered: [{ label: '- Seleccionar curso -', value: -1 }],
@@ -73,4 +73,6 @@ export const useLanding = (
   }, [myCourses]);
 
   return [state, setState];
-};
+}
+
+export default useLanding;

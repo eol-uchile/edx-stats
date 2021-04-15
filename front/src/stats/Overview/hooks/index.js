@@ -1,3 +1,5 @@
+import useLanding from './useLanding';
 import useProcessSumData from './useProcessSumData';
+import useProcessDailyData from './useProcessDailyData';
 
-export { useProcessSumData };
+export { useLanding, useProcessSumData, useProcessDailyData };

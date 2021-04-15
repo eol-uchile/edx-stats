@@ -97,7 +97,7 @@ def get_course_structure(request):
         chapter = courses[v.course]["chapters"]
         # Check that sections exists
         if v.chapter_number not in chapter:
-            chapter[v.chapter_number] = dict({"name": v.chapter_name})
+            chapter[v.chapter_number] = dict({"name": v.chapter_name, "id": v.chapter})
         if v.sequential_number not in chapter[v.chapter_number]:
             chapter[v.chapter_number][v.sequential_number] = dict(
                 {"name": v.sequential_name})
@@ -119,7 +119,7 @@ def get_course_structure(request):
             current_chapter = current_course["chapters"][chapter]
             sequential_list = []
             sequential_indexes = [
-                int(k) for k in current_chapter.keys() if k != 'name']
+                int(k) for k in current_chapter.keys() if k != 'name' and k != 'id']
             sequential_indexes.sort()
             for seq in sequential_indexes:
                 current_seq = current_chapter[seq]
@@ -135,7 +135,7 @@ def get_course_structure(request):
                     {"name": current_seq["name"], "verticals": vertical_list})
             # Save chapter with sequentials
             chapter_list.append(
-                {"name": current_chapter["name"], "sequentials": sequential_list})
+                {"name": current_chapter["name"], "sequentials": sequential_list, "id": current_chapter["id"]})
         mapped_courses.append(
             {"name": current_course["name"], "id": current_course["course_id"], "chapters": chapter_list})
     # If values where filtered then the user has no permissions

@@ -340,7 +340,7 @@ const TimesTable = ({
           </Row>
           <Row>
             <Col>
-              <h5 id="Tiempototal">Tiempo total</h5>
+              <h4 id="Tiempototal">Tiempo total</h4>
             </Col>
           </Row>
           {rowData.verticals.length > 0 ? (
@@ -400,7 +400,7 @@ const TimesTable = ({
           )}
           <Row>
             <Col>
-              <h5 id="TiempoPromedio">Tiempo promedio</h5>
+              <h4 id="TiempoPromedio">Tiempo promedio</h4>
             </Col>
           </Row>
           {rowData.verticals.length > 0 ? (
@@ -469,7 +469,7 @@ const TimesTable = ({
           <Row>
             <Col>
               <h4 id="DatosUtilizados">Datos utilizados</h4>
-              <h5>¿Qué se contabiliza?</h5>
+              <h4>¿Qué se contabiliza?</h4>
               <p>
                 Se estiman primero visitas, se leen eventos como la navegación
                 del usuario entre páginas para contar el tiempo entre ellos, se

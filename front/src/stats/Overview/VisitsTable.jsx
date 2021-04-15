@@ -2,22 +2,25 @@ import React, { useEffect, useState, useMemo, Fragment } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Row, Col, Breadcrumb, InputGroup, Container } from 'react-bootstrap';
 import {
-  Row,
-  Col,
+  Button,
+  Input,
   Spinner,
   Alert,
-  InputGroup,
-  Container,
-  Breadcrumb,
-} from 'react-bootstrap';
-import { Button, Input, ValidationFormGroup } from '@edx/paragon';
-import { Link } from 'react-router-dom';
+  ValidationFormGroup,
+} from '@edx/paragon';
 import { Helmet } from 'react-helmet';
+import { Link } from 'react-router-dom';
 import { course, visits, actions } from './data/actions';
 import { getMyCourses } from './data/reducers';
-import { AsyncCSVButton, StudentDetails, ParallelBar } from './components';
-import { useProcessSumData } from './hooks';
+import {
+  AsyncCSVButton,
+  StudentDetails,
+  ParallelBar,
+  DateBrowser,
+} from './components';
+import { useProcessSumData, useProcessDailyData } from './hooks';
 import './TableandChart.css';
 
 /**
@@ -32,6 +35,7 @@ const VisitsTable = ({
   visits,
   recoverCourseStructure,
   recoverCourseStudentVisitSum,
+  recoverDailyVisits,
   setLoadingCourse,
   getEnrolledCourses,
   getUserCourseRoles,
@@ -61,6 +65,14 @@ const VisitsTable = ({
     setErrors,
     state.upperDate,
     state.lowerDate
+  );
+
+  const [dailyState, setDailyState] = useProcessDailyData(
+    visits.added_chapter_visits,
+    course,
+    recoverDailyVisits,
+    state.lowerDate,
+    state.upperDate
   );
 
   // Load data when the button trigers
@@ -93,6 +105,7 @@ const VisitsTable = ({
     };
   }, []);
 
+  // Update courseName when data arrives
   useEffect(() => {
     if (myCourses.length !== 0) {
       let thisCourse = myCourses.filter(
@@ -102,6 +115,7 @@ const VisitsTable = ({
     }
   }, [myCourses]);
 
+  // Load chart info right away
   useEffect(() => {
     state.courseName !== '' && submit();
   }, [state.courseName]);
@@ -168,7 +182,7 @@ const VisitsTable = ({
       </Helmet>
       <Row>
         <Col>
-          <Breadcrumb>
+          <Breadcrumb className="eol-breadcrumb">
             <Link className="breadcrumb-item" to="/modules">
               General
             </Link>
@@ -278,7 +292,7 @@ const VisitsTable = ({
           </Row>
           <Row>
             <Col>
-              <h5 id="VisitasTotales">Visitas totales</h5>
+              <h4 id="VisitasTotales">Visitas totales</h4>
             </Col>
           </Row>
           {rowData.verticals.length > 0 ? (
@@ -329,6 +343,11 @@ const VisitsTable = ({
                   />
                 </Col>
               </Row>
+              <DateBrowser
+                title="Visitas diarias"
+                data={dailyState.sumByMonths}
+                mapping={dailyState.chapterKeys}
+              />
             </Fragment>
           ) : (
             <Row>
@@ -344,7 +363,7 @@ const VisitsTable = ({
           <Row>
             <Col>
               <h4 id="DatosUtilizados">Datos utilizados</h4>
-              <h5>¿Qué se contabiliza?</h5>
+              <h4>¿Qué se contabiliza?</h4>
               <p>
                 Las visitas presentadas corresponden a información sobre la{' '}
                 <strong>navegación</strong> del usuario, principalmente
@@ -386,6 +405,7 @@ VisitsTable.propTypes = {
   getEnrolledCourses: PropTypes.func.isRequired,
   resetCourseStructure: PropTypes.func.isRequired,
   recoverCourseStudentVisitSum: PropTypes.func.isRequired,
+  recoverDailyVisits: PropTypes.func.isRequired,
   resetVisits: PropTypes.func.isRequired,
   setSelectedCourse: PropTypes.func.isRequired,
   cleanErrors: PropTypes.func.isRequired,
@@ -407,6 +427,7 @@ const mapDispatchToProps = (dispatch) =>
       getEnrolledCourses: course.getEnrolledCourses,
       resetCourseStructure: course.resetCourseStructure,
       recoverCourseStudentVisitSum: visits.recoverCourseStudentVisitSum,
+      recoverDailyVisits: visits.recoverDailyChapterVisits,
       resetVisits: visits.resetVisits,
       setSelectedCourse: actions.setSelectedCourse,
       cleanErrors: actions.cleanErrors,

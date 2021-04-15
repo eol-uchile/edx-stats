@@ -134,7 +134,7 @@ const StudentDetails = ({
     <Fragment>
       <Row style={{ marginTop: '1em' }}>
         <Col>
-          <h5 id="DetallesPorEstudiante">Detalle por estudiante</h5>
+          <h4 id="DetallesPorEstudiante">Detalle por estudiante</h4>
         </Col>
       </Row>
       <Row>

@@ -1,22 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   Container,
   Row,
   Col,
-  Spinner,
+  Breadcrumb,
   ListGroup,
   ListGroupItem,
-  Breadcrumb,
-  Alert,
 } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { course, actions } from './data/actions';
 import { getMyCourses } from './data/reducers';
-import { ValidationFormGroup, Button, Card } from '@edx/paragon';
+import { Spinner, Form, Button, Alert, Card } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { useLanding } from './hooks/useLanding';
+import { useLanding } from './hooks';
 
 const getDate = (d) => {
   let date = new Date(d);
@@ -69,7 +67,7 @@ const Landing = ({
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2">
       <Row>
         <Col>
-          <Breadcrumb>
+          <Breadcrumb className="eol-breadcrumb">
             <Breadcrumb.Item href="#" active>
               General
             </Breadcrumb.Item>
@@ -78,7 +76,7 @@ const Landing = ({
       </Row>
       <Row>
         <Col>
-          <h5>Sistema de estad&iacute;stica y an&aacute;lisis</h5>
+          <h4>Sistema de estad&iacute;stica y an&aacute;lisis</h4>
         </Col>
       </Row>
       <Row>
@@ -109,17 +107,12 @@ const Landing = ({
           </Col>
         ) : (
           <Col>
-            <ValidationFormGroup
-              for="my_courses"
-              helpText="Seleccione un curso."
-              valid={state.selected !== -1}
-            >
-              <label htmlFor="my_courses">Mis cursos</label>
-              <select
-                className="form-control"
-                id="my_courses"
+            <Form.Group isValid={state.selected !== -1}>
+              <Form.Label>Mis cursos</Form.Label>
+              <Form.Control
+                as="select"
+                floatingLabel="Seleccione un curso"
                 data-testid="courses-select"
-                name="cursos"
                 value={state.selected}
                 onChange={(e) => {
                   setState({
@@ -134,8 +127,8 @@ const Landing = ({
                     {el[0]}
                   </option>
                 ))}
-              </select>
-            </ValidationFormGroup>
+              </Form.Control>
+            </Form.Group>
             {state.options.length == 1 && (
               <p style={{ textAlign: 'center', lineHeight: '200px' }}>
                 Cargando cursos ...{' '}
@@ -165,7 +158,7 @@ const Landing = ({
           <Col md={8}>
             <ListGroup>
               <ListGroupItem>
-                <h5>Consultar</h5>
+                <h4>Consultar</h4>
               </ListGroupItem>
               <ListGroupItem>
                 <Link to={`/modules/times/${key}/${start}/${end}`}>

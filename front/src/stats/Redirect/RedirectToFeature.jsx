@@ -19,7 +19,7 @@ const RedirectToFeature = ({ path, message }) => {
     <Container>
       <Row>
         <Col>
-          <h5>Sistema de estad&iacute;stica y an&aacute;lisis</h5>
+          <h4>Sistema de estad&iacute;stica y an&aacute;lisis</h4>
         </Col>
       </Row>
       <Row>
