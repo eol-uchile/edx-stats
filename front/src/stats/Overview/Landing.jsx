@@ -10,7 +10,7 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { course, actions } from './data/actions';
-import { getMyCourses } from './data/reducers';
+import { getMyCourses, getHasCourses } from './data/selectors';
 import { Spinner, Form, Button, Alert, Card } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -30,23 +30,20 @@ const getDate = (d) => {
  * Display courses and links to their stats
  */
 const Landing = ({
-  loadingCourses,
-  loadingEnrolled,
+  coursesState,
   loadingCoursesErrors,
+  hasCourses,
   myCourses,
-  selectedCache,
-  getUserCourseRoles,
-  getEnrolledCourses,
-  setLoadingCourse,
-  setSelectedCourse,
   lms,
+  selectedCache,
+  initCourses,
+  setSelectedCourse,
 }) => {
   const [state, setState] = useLanding(
+    coursesState,
     myCourses,
     selectedCache,
-    setLoadingCourse,
-    getUserCourseRoles,
-    getEnrolledCourses,
+    initCourses,
     setSelectedCourse
   );
 
@@ -81,29 +78,30 @@ const Landing = ({
       </Row>
       <Row>
         <Col>
-          <h2>Estad&iacute;sticas por m&oacute;dulos</h2>
+          <h2>Estad&iacute;sticas por curso</h2>
         </Col>
       </Row>
       <Row>
         <Col>
-          <p>
-            Ver estad&iacute;sticas para cursos con acceso de <b>staff</b>,{' '}
-            <b>instructor</b>, <b>investigador</b>, o <b>administrador</b>.
-          </p>
+          <p>Ver estad&iacute;sticas para tus cursos.</p>
         </Col>
       </Row>
       <Row>
-        {loadingCourses && loadingEnrolled ? (
+        {coursesState === 'loading' ? (
           <Col style={{ textAlign: 'center', lineHeight: '200px' }}>
             Cargando cursos <Spinner animation="border" variant="primary" />
           </Col>
-        ) : loadingCoursesErrors.length !== 0 ? (
+        ) : coursesState === 'failed' ? (
           <Col style={{ textAlign: 'center' }}>
             {loadingCoursesErrors.map((err, k) => (
               <Alert key={k} variant="warning">
                 {err}
               </Alert>
             ))}
+          </Col>
+        ) : !hasCourses ? (
+          <Col>
+            <Alert variant="warning">No hay cursos disponibles</Alert>
           </Col>
         ) : (
           <Col>
@@ -179,22 +177,20 @@ const Landing = ({
 };
 
 Landing.propTypes = {
-  loadingCourses: PropTypes.bool.isRequired,
-  loadingEnrolled: PropTypes.bool.isRequired,
+  coursesState: PropTypes.string.isRequired,
   loadingCoursesErrors: PropTypes.array.isRequired,
+  hasCourses: PropTypes.bool.isRequired,
   myCourses: PropTypes.array.isRequired,
   lms: PropTypes.string,
   selectedCache: PropTypes.string,
-  getUserCourseRoles: PropTypes.func.isRequired,
-  getEnrolledCourses: PropTypes.func.isRequired,
-  setLoadingCourse: PropTypes.func.isRequired,
+  initCourses: PropTypes.func.isRequired,
   setSelectedCourse: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  loadingCourses: state.course.course_roles.loading,
-  loadingEnrolled: state.course.courses_enrolled.loading,
+  coursesState: state.course.status,
   loadingCoursesErrors: state.course.errors,
+  hasCourses: getHasCourses(state),
   myCourses: getMyCourses(state),
   selectedCache: state.dashboard.selected,
   lms: state.urls.lms,
@@ -203,9 +199,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      getUserCourseRoles: course.getUserCourseRoles,
-      getEnrolledCourses: course.getEnrolledCourses,
-      setLoadingCourse: course.setLoadingCourse,
+      initCourses: course.initCourseRolesInfo,
       setSelectedCourse: actions.setSelectedCourse,
     },
     dispatch

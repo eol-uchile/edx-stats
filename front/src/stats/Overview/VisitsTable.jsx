@@ -13,127 +13,22 @@ import {
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { course, visits, actions } from './data/actions';
-import { getMyCourses } from './data/reducers';
+import { getMyCourses, getHasCourses } from './data/selectors';
 import {
   AsyncCSVButton,
   StudentDetails,
   ParallelBar,
   DateBrowser,
 } from './components';
-import { useProcessSumData, useProcessDailyData } from './hooks';
+import {
+  useProcessSumData,
+  useProcessDailyData,
+  useLoadCourseInfo,
+} from './hooks';
 import './TableandChart.css';
 
-/**
- * VisitsTable
- *
- * Search and display the visits on a course.
- * The course is provided by the URL
- *
- */
-const VisitsTable = ({
-  course,
-  visits,
-  recoverCourseStructure,
-  recoverCourseStudentVisitSum,
-  recoverDailyVisits,
-  setLoadingCourse,
-  getEnrolledCourses,
-  getUserCourseRoles,
-  resetCourseStructure,
-  setSelectedCourse,
-  resetVisits,
-  cleanErrors,
-  myCourses,
-  match,
-}) => {
-  const [state, setState] = useState({
-    current: match.params.course_id ? match.params.course_id : '',
-    lowerDate: match.params.start ? match.params.start : '',
-    upperDate: match.params.end ? match.params.end : '',
-    courseName: '',
-    useChaptersChart: false,
-  });
-
-  const [errors, setErrors] = useState([]);
-
-  const [tableData, setTableData, rowData, setRowData] = useProcessSumData(
-    course,
-    visits.added_visits,
-    'vertical',
-    recoverCourseStudentVisitSum,
-    setErrors,
-    state.upperDate,
-    state.lowerDate
-  );
-
-  const [dailyState, setDailyState] = useProcessDailyData(
-    visits.added_chapter_visits,
-    course,
-    recoverDailyVisits,
-    state.lowerDate,
-    state.upperDate
-  );
-
-  // Load data when the button trigers
-  const submit = () => {
-    if (state.current !== '') {
-      if (state.lowerDate === '' && state.upperDate === '') {
-        setErrors([...errors, 'Por favor ingrese fechas válidas']);
-      } else {
-        setLoadingCourse();
-        setTableData({ ...tableData, loaded: false });
-        recoverCourseStructure(state.current);
-        setErrors([]);
-      }
-    }
-  };
-
-  // Load course info only when necessary
-  // Add clean up functions
-  useEffect(() => {
-    if (myCourses.length === 0) {
-      setLoadingCourse('course_roles');
-      getUserCourseRoles();
-      getEnrolledCourses();
-    }
-    setSelectedCourse(match.params.course_id);
-    return () => {
-      resetVisits();
-      resetCourseStructure();
-      cleanErrors();
-    };
-  }, []);
-
-  // Update courseName when data arrives
-  useEffect(() => {
-    if (myCourses.length !== 0) {
-      let thisCourse = myCourses.filter(
-        (el) => el.key === match.params.course_id
-      )[0];
-      thisCourse && setState({ ...state, courseName: thisCourse.title });
-    }
-  }, [myCourses]);
-
-  // Load chart info right away
-  useEffect(() => {
-    state.courseName !== '' && submit();
-  }, [state.courseName]);
-
-  // Copy errors to local state
-  useEffect(() => {
-    if (course.errors.length > 0 || visits.errors.length > 0) {
-      setErrors([...course.errors, ...visits.errors]);
-    }
-  }, [course.errors, visits.errors]);
-
-  const toggleChapters = (checked, key) => {
-    setState({ ...state, [key]: checked });
-  };
-
-  const removeErrors = (msg) => {
-    let newErrors = errors.filter((el) => msg !== el);
-    setErrors(newErrors);
-  };
+const VisitTotals = ({ rowData, tableData }) => {
+  const [state, setState] = useState(true);
 
   const rowDataChart = useMemo(
     () =>
@@ -170,11 +65,129 @@ const VisitsTable = ({
   );
 
   return (
+    <Fragment>
+      <Row>
+        <Col>
+          <AsyncCSVButton
+            text="Descargar Datos"
+            filename="visitas_totales.csv"
+            headers={csvHeaders}
+            data={csvData}
+          />
+        </Col>
+        <Col>
+          <ValidationFormGroup for="group-mod-chapters-ch">
+            <Input
+              type="checkbox"
+              name="group-mod-chapters-ch"
+              id="group-mod-chapters-ch"
+              label="Agrupar Módulos"
+              checked={state}
+              onChange={(e) => {
+                setState(e.target.checked);
+              }}
+            />
+            <label htmlFor="group-mod-chapters-ch">Agrupar Módulos</label>
+          </ValidationFormGroup>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <ParallelBar
+            data={state ? rowDataChaptersChart : rowDataChart}
+            bar1_key="Visitas Únicas usuarios"
+            bar2_key="Visitas totales"
+            name_key="val"
+            x_label={state ? 'Módulos' : 'Unidades del curso'}
+            y_label="Visitas"
+            tooltipLabel={!state} // modules already have labels
+          />
+        </Col>
+      </Row>
+    </Fragment>
+  );
+};
+
+/**
+ * VisitsTable
+ *
+ * Search and display the visits on a course.
+ * The course is provided by the URL
+ *
+ */
+const VisitsTable = ({
+  course,
+  visits,
+  recoverCourseStructure,
+  recoverCourseStudentVisitSum,
+  recoverDailyVisits,
+  hasCourses,
+  initCourses,
+  resetCourseStructure,
+  setSelectedCourse,
+  resetVisits,
+  cleanErrors,
+  myCourses,
+  match,
+}) => {
+  const [state, setState, errors, setErrors, removeErrors] = useLoadCourseInfo(
+    match,
+    initCourses,
+    resetVisits,
+    resetCourseStructure,
+    cleanErrors,
+    course.status,
+    course.errors,
+    visits.errors,
+    myCourses,
+    hasCourses,
+    setSelectedCourse
+  );
+
+  const [tableData, setTableData, rowData, setRowData] = useProcessSumData(
+    course,
+    visits.added_visits,
+    'vertical',
+    recoverCourseStudentVisitSum,
+    setErrors,
+    state.upperDate,
+    state.lowerDate
+  );
+
+  const [dailyState, setDailyState] = useProcessDailyData(
+    visits.added_chapter_visits,
+    course,
+    recoverDailyVisits,
+    state.lowerDate,
+    state.upperDate
+  );
+
+  // Load data when the button trigers
+  const submit = () => {
+    if (state.current !== '') {
+      if (state.lowerDate === '' && state.upperDate === '') {
+        setErrors([...errors, 'Por favor ingrese fechas válidas']);
+      } else if (!state.allowed) {
+        setErrors([...errors, 'No tienes permisos para consultar estos datos']);
+      } else {
+        setTableData({ ...tableData, loaded: false });
+        recoverCourseStructure(state.current);
+        setErrors([]);
+      }
+    }
+  };
+
+  // Load chart info right away
+  useEffect(() => {
+    state.courseName !== '' && submit();
+  }, [state.courseName]);
+
+  return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2 data-view">
       <Helmet>
         <title>
           Visitas por Módulo
-          {!course.loading & tableData.loaded
+          {(course.status === 'successs') & tableData.loaded
             ? `: ${course.course[0].name}`
             : ''}
         </title>
@@ -196,10 +209,17 @@ const VisitsTable = ({
         <Col>
           <h2>
             Curso:{' '}
-            {state.courseName === '' ? (
-              <Spinner animation="border" variant="primary" />
+            {state.allowed ? (
+              state.courseName === '' ? (
+                <Fragment>
+                  {state.current}{' '}
+                  <Spinner animation="border" variant="primary" />
+                </Fragment>
+              ) : (
+                state.courseName
+              )
             ) : (
-              state.courseName
+              <Fragment>Sin información</Fragment>
             )}
           </h2>
           <p>
@@ -249,7 +269,7 @@ const VisitsTable = ({
           </Button>
         </Col>
       </Row>
-      {course.loading && !tableData.loaded ? (
+      {course.status === 'loading' && !tableData.loaded ? (
         <Row>
           <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />
@@ -298,64 +318,17 @@ const VisitsTable = ({
             </Col>
           </Row>
           {rowData.verticals.length > 0 ? (
-            <Fragment>
-              <Row>
-                <Col>
-                  <AsyncCSVButton
-                    text="Descargar Datos"
-                    filename="visitas_totales.csv"
-                    headers={csvHeaders}
-                    data={csvData}
-                  />
-                </Col>
-                <Col>
-                  <ValidationFormGroup for="group-mod-chapters-ch">
-                    <Input
-                      type="checkbox"
-                      name="group-mod-chapters-ch"
-                      id="group-mod-chapters-ch"
-                      label="Agrupar Módulos"
-                      checked={state.useChaptersChart}
-                      onChange={(e) => {
-                        toggleChapters(e.target.checked, 'useChaptersChart');
-                      }}
-                    />
-                    <label htmlFor="group-mod-chapters-ch">
-                      Agrupar Módulos
-                    </label>
-                  </ValidationFormGroup>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <ParallelBar
-                    data={
-                      state.useChaptersChart
-                        ? rowDataChaptersChart
-                        : rowDataChart
-                    }
-                    bar1_key="Visitas Únicas usuarios"
-                    bar2_key="Visitas totales"
-                    name_key="val"
-                    x_label={
-                      state.useChaptersChart ? 'Módulos' : 'Unidades del curso'
-                    }
-                    y_label="Visitas"
-                    tooltipLabel={!state.useChaptersChart} // modules already have labels
-                  />
-                </Col>
-              </Row>
-              <DateBrowser
-                title="Visitas diarias"
-                data={dailyState.sumByMonths}
-                mapping={dailyState.chapterKeys}
-              />
-            </Fragment>
+            <VisitTotals rowData={rowData} tableData={tableData} />
           ) : (
             <Row>
               <Col>No hay datos</Col>
             </Row>
           )}
+          <DateBrowser
+            title="Visitas diarias"
+            data={dailyState.sumByMonths}
+            mapping={dailyState.chapterKeys}
+          />
           <StudentDetails
             tableData={tableData}
             title={'Visitas'}
@@ -402,9 +375,8 @@ VisitsTable.propTypes = {
   visits: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   myCourses: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
   recoverCourseStructure: PropTypes.func.isRequired,
-  setLoadingCourse: PropTypes.func.isRequired,
-  getUserCourseRoles: PropTypes.func.isRequired,
-  getEnrolledCourses: PropTypes.func.isRequired,
+  initCourses: PropTypes.func.isRequired,
+  hasCourses: PropTypes.bool.isRequired,
   resetCourseStructure: PropTypes.func.isRequired,
   recoverCourseStudentVisitSum: PropTypes.func.isRequired,
   recoverDailyVisits: PropTypes.func.isRequired,
@@ -417,6 +389,7 @@ VisitsTable.propTypes = {
 const mapStateToProps = (state) => ({
   course: state.course,
   visits: state.visits,
+  hasCourses: getHasCourses(state),
   myCourses: getMyCourses(state),
 });
 
@@ -424,9 +397,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       recoverCourseStructure: course.recoverCourseStructure,
-      setLoadingCourse: course.setLoadingCourse,
-      getUserCourseRoles: course.getUserCourseRoles,
-      getEnrolledCourses: course.getEnrolledCourses,
+      initCourses: course.initCourseRolesInfo,
       resetCourseStructure: course.resetCourseStructure,
       recoverCourseStudentVisitSum: visits.recoverCourseStudentVisitSum,
       recoverDailyVisits: visits.recoverDailyChapterVisits,

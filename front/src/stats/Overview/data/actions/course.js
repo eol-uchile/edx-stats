@@ -20,27 +20,76 @@ export const resetCourseStructure = () => (dispatch) =>
 export const setLoadingCourse = (prop) => (dispatch) =>
   dispatch({ type: LOADING_COURSE, data: prop });
 
-export const getUserCourseRoles = () => (dispatch, getState) => {
+/**
+ * Recover role info and from it each individual course's data
+ * @returns Thunk
+ */
+export const initCourseRolesInfo = () => (dispatch, getState) => {
   let lms = getState().urls.lms;
-  getAuthenticatedHttpClient()
+  let discovery = getState().urls.discovery;
+
+  const course_request = `${discovery}/api/v1/course_runs/`;
+
+  // Set loading for general info
+  dispatch({ type: LOADING_COURSE, data: 'status' });
+
+  return getAuthenticatedHttpClient()
     .get(`${lms}/api/enrollment/v1/roles/`)
     .then((res) => {
       if (res.request.responseURL.includes('login/?next=')) {
         return dispatch({ type: DO_LOGIN });
       }
       if (res.status === 200) {
-        return dispatch({ type: LOADED_COURSE_ROLES, data: res.data.roles });
+        // Merge course roles on redudant data
+        let courses = {};
+        res.data.roles.forEach((element) => {
+          if (element.course_id in courses) {
+            courses[element.course_id].push(element.role);
+          } else {
+            courses[element.course_id] = [element.role];
+          }
+        });
+        let course_roles = Object.keys(courses).map((k) => ({
+          course_id: k,
+          roles: courses[k],
+        }));
+
+        dispatch({ type: LOADED_COURSE_ROLES, data: course_roles });
+        if (course_roles.length > 0) {
+          return getAuthenticatedHttpClient()
+            .get(
+              `${course_request}?keys=${encodeURIComponent(
+                course_roles.map((el) => el.course_id).join(',')
+              )}`
+            )
+            .then((res) => {
+              if (res.status === 200) {
+                // We are done
+                return dispatch({
+                  type: LOADED_COURSES_INFO,
+                  data: [...res.data.results],
+                });
+              }
+              throw Error(LOADED_COURSES_INFO_ERROR);
+            });
+        } else {
+          return dispatch({ type: LOADED_COURSES_INFO, data: [] });
+        }
       }
-      return dispatch({ type: LOADED_COURSE_ROLES_ERROR, data: [res.status] });
+      throw Error;
     })
-    .catch((error) =>
+    .catch((e) => {
+      console.error(e);
       dispatch({
-        type: LOADED_COURSE_ROLES_ERROR,
+        type:
+          e === LOADED_COURSES_INFO_ERROR
+            ? LOADED_COURSES_INFO_ERROR
+            : LOADED_COURSE_ROLES_ERROR,
         data: [
           'Hubo un error al obtener sus cursos. Por favor intente más tarde.',
         ],
-      })
-    );
+      });
+    });
 };
 
 export const recoverCourseStructure = (course_id = 'nan') => (
@@ -49,7 +98,9 @@ export const recoverCourseStructure = (course_id = 'nan') => (
 ) => {
   let base = getState().urls.base;
 
-  getAuthenticatedHttpClient()
+  dispatch({ type: LOADING_COURSE, data: 'course_status' });
+
+  return getAuthenticatedHttpClient()
     .get(
       `${base}/api/core/course-structure/?search=${encodeURIComponent(
         course_id
@@ -126,8 +177,6 @@ export const recoverCourseStructureFromCMS = (course_id = 'nan') => (
  * @returns Thunk
  */
 export const getEnrolledCourses = (offset = 0) => (dispatch, getState) => {
-  let discovery = getState().urls.discovery;
-
   const baserequest = `${discovery}/api/v1/course_runs/?format=json&limit=200&offset=`;
 
   let reduceAPIResponse = (prev, dispatch, off_set, base_request) =>
@@ -136,7 +185,7 @@ export const getEnrolledCourses = (offset = 0) => (dispatch, getState) => {
       .then((res) => {
         if (res.status === 200) {
           // Check count
-          if (res.data.count > prev.results.length) {
+          if (res.data.next !== null) {
             // Merge both
             let reduced = {
               count: res.data.count,

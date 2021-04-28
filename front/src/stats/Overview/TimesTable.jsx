@@ -15,14 +15,14 @@ import { Button, Input, ValidationFormGroup } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { course, times, actions } from './data/actions';
-import { getMyCourses } from './data/reducers';
+import { getHasCourses, getMyCourses } from './data/selectors';
 import {
   AsyncCSVButton,
   MultiAxisBars,
   ErrorBarChart,
   StudentDetails,
 } from './components';
-import { useProcessSumData } from './hooks';
+import { useProcessSumData, useLoadCourseInfo } from './hooks';
 import './TableandChart.css';
 
 const parseFloatToTimeString = (seconds) => {
@@ -42,107 +42,21 @@ const parseFloatToTimeString = (seconds) => {
   }`;
 };
 
-/**
- * TimesTable
- *
- * Search and display the student spent time on a course.
- * The course can be provided by the URL, the
- *
- */
-const TimesTable = ({
-  course,
-  times,
-  myCourses,
-  recoverCourseStructure,
-  setLoadingCourse,
-  getUserCourseRoles,
-  getEnrolledCourses,
-  resetCourseStructure,
-  recoverCourseStudentTimesSum,
-  resetTimes,
-  setSelectedCourse,
-  cleanErrors,
-  match,
-}) => {
-  const [state, setState] = useState({
-    current: match.params.course_id ? match.params.course_id : '',
-    lowerDate: match.params.start ? match.params.start : '',
-    upperDate: match.params.end ? match.params.end : '',
-    courseName: '',
-    useChaptersChart: false,
-    useChaptersAverage: false,
-  });
+const TimeVsVisits = ({ tableData, rowData }) => {
+  const [state, setState] = useState(false);
 
-  const [errors, setErrors] = useState([]);
-
-  const [tableData, setTableData, rowData, setRowData] = useProcessSumData(
-    course,
-    times.added_times,
-    'event_type_vertical',
-    recoverCourseStudentTimesSum,
-    setErrors,
-    state.upperDate,
-    state.lowerDate
+  const csvHeaders = useMemo(
+    () => ['Título', ...tableData.verticals.map((el) => el.tooltip)],
+    [tableData.verticals]
   );
 
-  // Load data when the button trigers
-  const submit = () => {
-    if (state.current !== '') {
-      if (state.lowerDate === '' && state.upperDate === '') {
-        setErrors([...errors, 'Por favor ingrese fechas válidas']);
-      } else {
-        setLoadingCourse();
-        setTableData({ ...tableData, loaded: false });
-        recoverCourseStructure(state.current);
-        setErrors([]);
-      }
-    }
-  };
-
-  // Load course info only when necessary
-  // Add clean up functions
-  useEffect(() => {
-    if (myCourses.length === 0) {
-      setLoadingCourse('course_roles');
-      getUserCourseRoles();
-      getEnrolledCourses();
-    }
-    setSelectedCourse(match.params.course_id);
-    return () => {
-      resetTimes();
-      resetCourseStructure();
-      cleanErrors();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (myCourses.length !== 0) {
-      let thisCourse = myCourses.filter(
-        (el) => el.key === match.params.course_id
-      )[0];
-      thisCourse && setState({ ...state, courseName: thisCourse.title });
-    }
-  }, [myCourses]);
-
-  useEffect(() => {
-    state.courseName !== '' && submit();
-  }, [state.courseName]);
-
-  // Copy errors to local state
-  useEffect(() => {
-    if (course.errors.length > 0 || times.errors.length > 0) {
-      setErrors([...errors, ...course.errors, ...times.errors]);
-    }
-  }, [course.errors, times.errors]);
-
-  const toggleChapters = (checked, key) => {
-    setState({ ...state, [key]: checked });
-  };
-
-  const removeErrors = (msg) => {
-    let newErrors = errors.filter((el) => msg !== el);
-    setErrors(newErrors);
-  };
+  const csvData = useMemo(
+    () => [
+      ['Sección', ...tableData.verticals.map((el) => el.val)],
+      ['Tiempo total (s)', ...rowData.verticals.map((el) => el.visits)],
+    ],
+    [tableData.verticals, rowData.verticals]
+  );
 
   const rowDataChart = useMemo(
     () =>
@@ -164,6 +78,54 @@ const TimesTable = ({
       })),
     [rowData.grouped_verticals]
   );
+
+  return (
+    <Fragment>
+      <Row>
+        <Col>
+          <AsyncCSVButton
+            text="Descargar Datos"
+            filename="tiempos_totales.csv"
+            headers={csvHeaders}
+            data={csvData}
+          />
+        </Col>
+        <Col>
+          <ValidationFormGroup for="group-mod-chapters-ch">
+            <Input
+              id="group-mod-chapters-ch"
+              type="checkbox"
+              name="group-mod-chapters-ch"
+              label="Agrupar Módulos"
+              checked={state}
+              onClick={(e) => {
+                setState(e.target.checked);
+              }}
+            />
+            <label htmlFor="group-mod-chapters-ch">Agrupar Módulos</label>
+          </ValidationFormGroup>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <MultiAxisBars
+            data={state ? rowDataChaptersChart : rowDataChart}
+            bar1_key="Tiempo de visualización"
+            bar2_key="Visitas Únicas usuarios"
+            name_key="val"
+            x_label={state ? 'Módulos' : 'Unidades del curso'}
+            y1_label="Tiempo"
+            y2_label="Visitas"
+            tooltipLabel={!state} // modules already have labels
+          />
+        </Col>
+      </Row>
+    </Fragment>
+  );
+};
+
+const TimesAvg = ({ tableData, rowData }) => {
+  const [state, setState] = useState(false);
 
   const averageChart = useMemo(
     () =>
@@ -192,14 +154,6 @@ const TimesTable = ({
     [tableData.verticals]
   );
 
-  const csvData = useMemo(
-    () => [
-      ['Sección', ...tableData.verticals.map((el) => el.val)],
-      ['Tiempo total (s)', ...rowData.verticals.map((el) => el.visits)],
-    ],
-    [tableData.verticals, rowData.verticals]
-  );
-
   const csvAvData = useMemo(
     () => [
       ['Sección', ...tableData.verticals.map((el) => el.val)],
@@ -213,11 +167,119 @@ const TimesTable = ({
   );
 
   return (
+    <Fragment>
+      <Row>
+        <Col>
+          <AsyncCSVButton
+            text="Descargar Datos"
+            filename="tiempos_promedio.csv"
+            headers={csvHeaders}
+            data={csvAvData}
+          />
+        </Col>
+        <Col>
+          <ValidationFormGroup for="group-mod-chapters-ch-av">
+            <Input
+              id="group-mod-chapters-ch-av"
+              name="group-mod-chapters-ch-av"
+              type="checkbox"
+              label="Agrupar Módulos"
+              checked={state}
+              onClick={(e) => {
+                setState(e.target.checked);
+              }}
+            />
+            <label htmlFor="group-mod-chapters-ch-av">Agrupar Módulos</label>
+          </ValidationFormGroup>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <ErrorBarChart
+            data={state ? averageChapterChart : averageChart}
+            area_key="Tiempo promedio visto"
+            name_key="val"
+            x_label={state ? 'Módulos' : 'Unidades del curso'}
+            y_label="Tiempo"
+            tooltipLabel={!state} // modules already have labels
+          />
+        </Col>
+      </Row>
+    </Fragment>
+  );
+};
+
+/**
+ * TimesTable
+ *
+ * Search and display the student spent time on a course.
+ * The course can be provided by the URL, the
+ *
+ */
+const TimesTable = ({
+  course,
+  times,
+  myCourses,
+  recoverCourseStructure,
+  hasCourses,
+  initCourses,
+  resetCourseStructure,
+  recoverCourseStudentTimesSum,
+  resetTimes,
+  setSelectedCourse,
+  cleanErrors,
+  match,
+}) => {
+  const [state, setState, errors, setErrors, removeErrors] = useLoadCourseInfo(
+    match,
+    initCourses,
+    resetTimes,
+    resetCourseStructure,
+    cleanErrors,
+    course.status,
+    course.errors,
+    times.errors,
+    myCourses,
+    hasCourses,
+    setSelectedCourse
+  );
+
+  const [tableData, setTableData, rowData, setRowData] = useProcessSumData(
+    course,
+    times.added_times,
+    'event_type_vertical',
+    recoverCourseStudentTimesSum,
+    setErrors,
+    state.upperDate,
+    state.lowerDate
+  );
+
+  // Load data when the button trigers
+  const submit = () => {
+    if (state.current !== '') {
+      if (state.lowerDate === '' && state.upperDate === '') {
+        setErrors([...errors, 'Por favor ingrese fechas válidas']);
+      } else if (!state.allowed) {
+        setErrors([...errors, 'No tienes permisos para consultar estos datos']);
+      } else {
+        setTableData({ ...tableData, loaded: false });
+        recoverCourseStructure(state.current);
+        setErrors([]);
+      }
+    }
+  };
+
+  // Refresh course info and load
+  useEffect(() => {
+    state.courseName !== '' && submit();
+  }, [state.courseName]);
+
+  return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2 data-view">
       <Helmet>
         <title>
           Tiempos por módulos
-          {!course.loading & tableData.loaded
+          {(course.status === 'success') & tableData.loaded
             ? `: ${course.course[0].name}`
             : ''}
         </title>
@@ -239,10 +301,17 @@ const TimesTable = ({
         <Col>
           <h2>
             Curso:{' '}
-            {state.courseName === '' ? (
-              <Spinner animation="border" variant="primary" />
+            {state.allowed ? (
+              state.courseName === '' ? (
+                <Fragment>
+                  {state.current}{' '}
+                  <Spinner animation="border" variant="primary" />
+                </Fragment>
+              ) : (
+                state.courseName
+              )
             ) : (
-              state.courseName
+              <Fragment>Sin información</Fragment>
             )}
           </h2>
           Tiempo de visita de estudiantes por Módulo
@@ -255,7 +324,7 @@ const TimesTable = ({
         </Col>
       </Row>
       <Row style={{ marginBottom: '1rem' }}>
-        <Col className="col-xs-12 col-sm-12 col-md-4">
+        <Col className="col-xs-12 col-sm-12 col-lg-4">
           <InputGroup>
             <InputGroup.Prepend>
               <InputGroup.Text>Fecha de Inicio</InputGroup.Text>
@@ -271,7 +340,7 @@ const TimesTable = ({
             />
           </InputGroup>
         </Col>
-        <Col className="col-xs-12 col-sm-12 col-md-4">
+        <Col className="col-xs-12 col-sm-12 col-lg-4">
           <InputGroup>
             <InputGroup.Prepend>
               <InputGroup.Text>Fecha de Fin</InputGroup.Text>
@@ -287,13 +356,13 @@ const TimesTable = ({
             />
           </InputGroup>
         </Col>
-        <Col className="col-xs-12 col-sm-12 col-md-4">
+        <Col className="col-xs-12 col-sm-12 col-lg-4">
           <Button variant="success" onClick={submit} block>
             Buscar
           </Button>
         </Col>
       </Row>
-      {course.loading && !tableData.loaded ? (
+      {course.status === 'loading' && !tableData.loaded ? (
         <Row>
           <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />
@@ -344,55 +413,7 @@ const TimesTable = ({
             </Col>
           </Row>
           {rowData.verticals.length > 0 ? (
-            <Fragment>
-              <Row>
-                <Col>
-                  <AsyncCSVButton
-                    text="Descargar Datos"
-                    filename="tiempos_totales.csv"
-                    headers={csvHeaders}
-                    data={csvData}
-                  />
-                </Col>
-                <Col>
-                  <ValidationFormGroup for="group-mod-chapters-ch">
-                    <Input
-                      id="group-mod-chapters-ch"
-                      type="checkbox"
-                      name="group-mod-chapters-ch"
-                      label="Agrupar Módulos"
-                      checked={state.useChaptersChart}
-                      onClick={(e) => {
-                        toggleChapters(e.target.checked, 'useChaptersChart');
-                      }}
-                    />
-                    <label htmlFor="group-mod-chapters-ch">
-                      Agrupar Módulos
-                    </label>
-                  </ValidationFormGroup>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <MultiAxisBars
-                    data={
-                      state.useChaptersChart
-                        ? rowDataChaptersChart
-                        : rowDataChart
-                    }
-                    bar1_key="Tiempo de visualización"
-                    bar2_key="Visitas Únicas usuarios"
-                    name_key="val"
-                    x_label={
-                      state.useChaptersChart ? 'Módulos' : 'Unidades del curso'
-                    }
-                    y1_label="Tiempo"
-                    y2_label="Visitas"
-                    tooltipLabel={!state.useChaptersChart} // modules already have labels
-                  />
-                </Col>
-              </Row>
-            </Fragment>
+            <TimeVsVisits rowData={rowData} tableData={tableData} />
           ) : (
             <Row>
               <Col>No hay datos</Col>
@@ -404,55 +425,7 @@ const TimesTable = ({
             </Col>
           </Row>
           {rowData.verticals.length > 0 ? (
-            <Fragment>
-              <Row>
-                <Col>
-                  <AsyncCSVButton
-                    text="Descargar Datos"
-                    filename="tiempos_promedio.csv"
-                    headers={csvHeaders}
-                    data={csvAvData}
-                  />
-                </Col>
-                <Col>
-                  <ValidationFormGroup for="group-mod-chapters-ch-av">
-                    <Input
-                      id="group-mod-chapters-ch-av"
-                      name="group-mod-chapters-ch-av"
-                      type="checkbox"
-                      label="Agrupar Módulos"
-                      checked={state.useChaptersAverage}
-                      onClick={(e) => {
-                        toggleChapters(e.target.checked, 'useChaptersAverage');
-                      }}
-                    />
-                    <label htmlFor="group-mod-chapters-ch-av">
-                      Agrupar Módulos
-                    </label>
-                  </ValidationFormGroup>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <ErrorBarChart
-                    data={
-                      state.useChaptersAverage
-                        ? averageChapterChart
-                        : averageChart
-                    }
-                    area_key="Tiempo promedio visto"
-                    name_key="val"
-                    x_label={
-                      state.useChaptersAverage
-                        ? 'Módulos'
-                        : 'Unidades del curso'
-                    }
-                    y_label="Tiempo"
-                    tooltipLabel={!state.useChaptersAverage} // modules already have labels
-                  />
-                </Col>
-              </Row>
-            </Fragment>
+            <TimesAvg rowData={rowData} tableData={tableData} />
           ) : (
             <Row>
               <Col>No hay datos</Col>
@@ -505,9 +478,8 @@ TimesTable.propTypes = {
   times: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   myCourses: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types,
   recoverCourseStructure: PropTypes.func.isRequired,
-  setLoadingCourse: PropTypes.func.isRequired,
-  getUserCourseRoles: PropTypes.func.isRequired,
-  getEnrolledCourses: PropTypes.func.isRequired,
+  initCourses: PropTypes.func.isRequired,
+  hasCourses: PropTypes.bool.isRequired,
   resetCourseStructure: PropTypes.func.isRequired,
   recoverCourseStudentTimesSum: PropTypes.func.isRequired,
   resetTimes: PropTypes.func.isRequired,
@@ -519,6 +491,7 @@ TimesTable.propTypes = {
 const mapStateToProps = (state) => ({
   course: state.course,
   times: state.times,
+  hasCourses: getHasCourses(state),
   myCourses: getMyCourses(state),
 });
 
@@ -526,9 +499,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       recoverCourseStructure: course.recoverCourseStructure,
-      setLoadingCourse: course.setLoadingCourse,
-      getUserCourseRoles: course.getUserCourseRoles,
-      getEnrolledCourses: course.getEnrolledCourses,
+      initCourses: course.initCourseRolesInfo,
       resetCourseStructure: course.resetCourseStructure,
       recoverCourseStudentTimesSum: times.recoverCourseStudentTimesSum,
       resetTimes: times.resetTimes,

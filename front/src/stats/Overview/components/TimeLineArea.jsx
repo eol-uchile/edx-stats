@@ -8,6 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  Label,
 } from 'recharts';
 import { interpolateHsl } from 'd3-interpolate';
 import PropTypes from 'prop-types';
@@ -72,10 +73,8 @@ const TimeLineArea = ({ data, keys, mapping }) => {
     return interpolated;
   }, [keys]);
   return (
-    <ResponsiveContainer width="100%" height={400}>
+    <ResponsiveContainer width="100%" height="60%" minHeight={400}>
       <AreaChart
-        width={500}
-        height={400}
         data={data}
         margin={{
           top: 10,
@@ -86,7 +85,13 @@ const TimeLineArea = ({ data, keys, mapping }) => {
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" angle={-10} />
-        <YAxis />
+        <YAxis
+          label={{
+            value: 'Visitas',
+            angle: -90,
+            position: 'insideLeft',
+          }}
+        />
         <Tooltip content={(arg) => CustomTooltip(arg, mapping)} />
         {keys.map((data_k, k) => (
           <Area

@@ -1,12 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { sortByColumn } from '../helpers';
 
+const ROLE_WHITELIST = new Set([
+  'staff',
+  'data_researcher',
+  'instructor',
+  'administrator',
+]);
+
+const containsAtLeastOne = (list) => {
+  for (let index = 0; index < list.length; index++) {
+    if (ROLE_WHITELIST.has(list[index])) {
+      return true;
+    }
+  }
+  return false;
+};
+
 function useLanding(
+  coursesState,
   myCourses,
   selectedCache,
-  setLoadingCourse,
-  getUserCourseRoles,
-  getEnrolledCourses,
+  initCourses,
   setSelectedCourse
 ) {
   const [state, setState] = useState({
@@ -18,10 +33,8 @@ function useLanding(
 
   // Load course info only when necessary
   useEffect(() => {
-    if (myCourses.length === 0) {
-      setLoadingCourse('course_roles');
-      getUserCourseRoles();
-      getEnrolledCourses();
+    if (coursesState === 'idle') {
+      initCourses();
     }
   }, []);
 
@@ -52,7 +65,7 @@ function useLanding(
   useEffect(() => {
     if (myCourses.length !== 0) {
       let availableCourses = myCourses
-        .filter((el) => !('student' in el.roles))
+        .filter((el) => containsAtLeastOne(el.roles))
         .map((el, k) => ({
           label: `${el.title} (${el.key})`,
           value: k,
