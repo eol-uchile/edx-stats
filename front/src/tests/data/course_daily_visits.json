@@ -1,0 +1,542 @@
+[
+  {
+    "date": "2019-08-06",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 24
+  },
+  {
+    "date": "2019-08-06",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@cd7b3137eaf04ea8a4c4744245d429b8",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 36
+  },
+  {
+    "date": "2019-08-07",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 20
+  },
+  {
+    "date": "2019-08-08",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 45
+  },
+  {
+    "date": "2019-08-08",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@cd7b3137eaf04ea8a4c4744245d429b8",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 8
+  },
+  {
+    "date": "2019-08-09",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 152
+  },
+  {
+    "date": "2019-08-09",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@cd7b3137eaf04ea8a4c4744245d429b8",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-08-10",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 27
+  },
+  {
+    "date": "2019-08-11",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 17
+  },
+  {
+    "date": "2019-08-12",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 5
+  },
+  {
+    "date": "2019-08-13",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 12
+  },
+  {
+    "date": "2019-08-13",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@cd7b3137eaf04ea8a4c4744245d429b8",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-08-14",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 5
+  },
+  {
+    "date": "2019-08-16",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 2
+  },
+  {
+    "date": "2019-08-16",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@cd7b3137eaf04ea8a4c4744245d429b8",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-08-17",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-08-18",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 2
+  },
+  {
+    "date": "2019-08-18",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@cd7b3137eaf04ea8a4c4744245d429b8",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-08-19",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 3
+  },
+  {
+    "date": "2019-08-20",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 30
+  },
+  {
+    "date": "2019-08-21",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 24
+  },
+  {
+    "date": "2019-08-22",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 39
+  },
+  {
+    "date": "2019-08-23",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 24
+  },
+  {
+    "date": "2019-08-24",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 6
+  },
+  {
+    "date": "2019-08-25",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-08-25",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 6
+  },
+  {
+    "date": "2019-08-26",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-08-26",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 63
+  },
+  {
+    "date": "2019-08-27",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-08-27",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 50
+  },
+  {
+    "date": "2019-08-28",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 12
+  },
+  {
+    "date": "2019-08-29",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 9
+  },
+  {
+    "date": "2019-08-29",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 136
+  },
+  {
+    "date": "2019-08-29",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@cd7b3137eaf04ea8a4c4744245d429b8",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 4
+  },
+  {
+    "date": "2019-08-30",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 7
+  },
+  {
+    "date": "2019-08-30",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 101
+  },
+  {
+    "date": "2019-08-30",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@cd7b3137eaf04ea8a4c4744245d429b8",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 8
+  },
+  {
+    "date": "2019-09-02",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-09-02",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 13
+  },
+  {
+    "date": "2019-09-03",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-09-04",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-09-04",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 2
+  },
+  {
+    "date": "2019-09-05",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 31
+  },
+  {
+    "date": "2019-09-05",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 17
+  },
+  {
+    "date": "2019-09-05",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 3
+  },
+  {
+    "date": "2019-09-06",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 8
+  },
+  {
+    "date": "2019-09-06",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-09-07",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-09-07",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 3
+  },
+  {
+    "date": "2019-09-07",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-09-09",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 6
+  },
+  {
+    "date": "2019-09-09",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-09-10",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 28
+  },
+  {
+    "date": "2019-09-10",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 2
+  },
+  {
+    "date": "2019-09-10",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 2
+  },
+  {
+    "date": "2019-09-11",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 9
+  },
+  {
+    "date": "2019-09-12",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 26
+  },
+  {
+    "date": "2019-09-12",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-09-13",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 3
+  },
+  {
+    "date": "2019-09-19",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 4
+  },
+  {
+    "date": "2019-09-20",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 3
+  },
+  {
+    "date": "2019-09-21",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 5
+  },
+  {
+    "date": "2019-09-21",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-09-24",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 11
+  },
+  {
+    "date": "2019-09-25",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 5
+  },
+  {
+    "date": "2019-09-26",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 24
+  },
+  {
+    "date": "2019-09-26",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 8
+  },
+  {
+    "date": "2019-09-26",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 2
+  },
+  {
+    "date": "2019-09-26",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@cd7b3137eaf04ea8a4c4744245d429b8",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 3
+  },
+  {
+    "date": "2019-09-27",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 18
+  },
+  {
+    "date": "2019-09-28",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-09-29",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 23
+  },
+  {
+    "date": "2019-09-29",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 3
+  },
+  {
+    "date": "2019-09-30",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 4
+  },
+  {
+    "date": "2019-10-01",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 28
+  },
+  {
+    "date": "2019-10-01",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-10-02",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 34
+  },
+  {
+    "date": "2019-10-02",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-10-02",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 4
+  },
+  {
+    "date": "2019-10-02",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@cd7b3137eaf04ea8a4c4744245d429b8",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 3
+  },
+  {
+    "date": "2019-10-03",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 130
+  },
+  {
+    "date": "2019-10-03",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 8
+  },
+  {
+    "date": "2019-10-03",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 7
+  },
+  {
+    "date": "2019-10-04",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 48
+  },
+  {
+    "date": "2019-10-04",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 2
+  },
+  {
+    "date": "2019-10-08",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 1
+  },
+  {
+    "date": "2019-10-10",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 3
+  },
+  {
+    "date": "2019-10-10",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 35
+  },
+  {
+    "date": "2019-10-11",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 11
+  },
+  {
+    "date": "2019-10-14",
+    "chapter": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c",
+    "course": "block-v1:UChile+LEIT01+2020_T3+type@course+block@course",
+    "total": 4
+  }
+]

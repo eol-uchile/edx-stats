@@ -1,0 +1,115 @@
+{
+  "is_staff": true,
+  "roles": [
+    {
+      "course_id": "course-v1:UChile+LEIT01+2020_T3",
+      "role": "staff",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+LEIT01+2020_T2",
+      "role": "staff",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+Ecom+2020_T2",
+      "role": "instructor",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+0006+2021_S1",
+      "role": "staff",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+KUBER1+2020_T2",
+      "role": "instructor",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+BOL+2020_D",
+      "role": "staff",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+CCMarzo+2021_T1",
+      "role": "instructor",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+PAGO1+2020_T4",
+      "role": "instructor",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+PROD101+2020_T4",
+      "role": "staff",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+0006+S2",
+      "role": "staff",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+VER01+2020_T2",
+      "role": "staff",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+LEIT01+2020_T3",
+      "role": "instructor",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+Ecom+2020_T2",
+      "role": "staff",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+KUBER1+2020_T2",
+      "role": "staff",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+0006+2021_S1",
+      "role": "instructor",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+CCMarzo+2021_T1",
+      "role": "staff",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+LEIT01+2020_T2",
+      "role": "instructor",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+0006+S2",
+      "role": "instructor",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+BOL+2020_D",
+      "role": "instructor",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+PAGO1+2020_T4",
+      "role": "staff",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+PROD101+2020_T4",
+      "role": "instructor",
+      "org": "UChile"
+    },
+    {
+      "course_id": "course-v1:UChile+VER01+2020_T2",
+      "role": "instructor",
+      "org": "UChile"
+    }
+  ]
+}

@@ -15,7 +15,14 @@ function render(
     initialState,
     store = createStore(
       rootReducer,
-      initialState,
+      (initialState = {
+        urls: {
+          lms: process.env.LMS_BASE_URL,
+          base: process.env.BASE_URL,
+          cms: process.env.CMS_BASE_URL,
+          discovery: process.env.DISCOVERY_API_BASE_URL,
+        },
+      }),
       composeWithDevTools(applyMiddleware(thunk))
     ),
     ...renderOptions

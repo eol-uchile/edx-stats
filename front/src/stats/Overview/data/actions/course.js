@@ -79,7 +79,6 @@ export const initCourseRolesInfo = () => (dispatch, getState) => {
       throw Error;
     })
     .catch((e) => {
-      console.error(e);
       dispatch({
         type:
           e === LOADED_COURSES_INFO_ERROR

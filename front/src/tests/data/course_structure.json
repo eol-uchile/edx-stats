@@ -1,0 +1,460 @@
+{
+  "courses": [
+    {
+      "name": "Course",
+      "id": "block-v1:UChile+LEIT01+2020_T3",
+      "chapters": [
+        {
+          "name": "Módulo 1",
+          "sequentials": [
+            {
+              "name": "Bienvenida",
+              "verticals": [
+                {
+                  "name": "Vídeo de bienvenida",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@b45e9e0c078341beb03d2b0abca9e577",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@b45e9e0c078341beb03d2b0abca9e577",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@aec52a1a67d346e1bd169bf37db52249"
+                }
+              ]
+            },
+            {
+              "name": "Programa del curso",
+              "verticals": [
+                {
+                  "name": "PDF: Programa",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@html+block@746bd5bfeb1642d580be5f64c289519c",
+                  "block_type": "html",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@html+block@746bd5bfeb1642d580be5f64c289519c",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@df47509007b84563931f1527641bd180"
+                }
+              ]
+            },
+            {
+              "name": "Introducción A",
+              "verticals": [
+                {
+                  "name": "Vídeo: Introducción. Internet. Infraestructura crítica",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@fc4e4d3504dc4e908a6b6beafa8cbf2a",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@fc4e4d3504dc4e908a6b6beafa8cbf2a",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@00b59e8cfaac4b5088af188e85318163"
+                }
+              ]
+            },
+            {
+              "name": "Material Docente",
+              "verticals": [
+                {
+                  "name": "Slides",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@google-document+block@b4fab91b289d41fb99548d7e75d0140e",
+                  "block_type": "google-document",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@google-document+block@b4fab91b289d41fb99548d7e75d0140e",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@50d943fade514884a1c6859a429a4334"
+                }
+              ]
+            }
+          ],
+          "id": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@cd7b3137eaf04ea8a4c4744245d429b8"
+        },
+        {
+          "name": "Módulo 2",
+          "sequentials": [
+            {
+              "name": "Semana 2",
+              "verticals": [
+                {
+                  "name": "Material de Apoyo",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@google-document+block@78cb5beda8aa418781b3ba0e62176903",
+                  "block_type": "google-document",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@google-document+block@78cb5beda8aa418781b3ba0e62176903",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@58757fca448b4337a4b86b64ca7713cf"
+                },
+                {
+                  "name": "Clase Online",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@80d7f49761d04e619ce8315e82058b9e",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@80d7f49761d04e619ce8315e82058b9e",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@ec97aeeb8406470c898333fb7c592408"
+                },
+                {
+                  "name": "Quiz",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@problem+block@f43c8cc3444647208fcdefac0603b40e",
+                  "block_type": "problem",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@problem+block@f43c8cc3444647208fcdefac0603b40e",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@bc8d3ce398964c399c008065fd53687e"
+                },
+                {
+                  "name": "Taller",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@html+block@3e15515f2c924061824c0ae9247f3d1f",
+                  "block_type": "html",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@html+block@3e15515f2c924061824c0ae9247f3d1f",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@b637970e5ebe448890a3081c63fbb091"
+                },
+                {
+                  "name": "Evaluación",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@problem+block@39d5cb15d74e41f29b42b7bfe2095c46",
+                  "block_type": "problem",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@problem+block@39d5cb15d74e41f29b42b7bfe2095c46",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@e8618c8121d441ef93bdcbe6f0db1e34"
+                }
+              ]
+            },
+            {
+              "name": "Semana 3",
+              "verticals": [
+                {
+                  "name": "Material de apoyo",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@google-document+block@698f02f416144338b37bf7be595f816f",
+                  "block_type": "google-document",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@google-document+block@698f02f416144338b37bf7be595f816f",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@51e2691c4ee54d09ac859362c25a4012"
+                },
+                {
+                  "name": "Clase Online",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@f55db346fd5a4c7995a3e699bb58182c",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@f55db346fd5a4c7995a3e699bb58182c",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@d9ce102506b642d8a2b3e8750ccee7be"
+                },
+                {
+                  "name": "Vídeo: Servicio de nombres",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@787897abe2784a388c3cec8aaa54455b",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@787897abe2784a388c3cec8aaa54455b",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@839cc77df56249208d09d5e474f5cf94"
+                },
+                {
+                  "name": "Vídeo: Delegación de autoridad",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@b1c7e0b2d3154889b97d1ff8a9ecab47",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@b1c7e0b2d3154889b97d1ff8a9ecab47",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@f59feea352b94383911a76d354ac326b"
+                },
+                {
+                  "name": "Vídeo: Resolución",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@a5bc3c4320ad428598bed9e8ddc3da28",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@a5bc3c4320ad428598bed9e8ddc3da28",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@311a18d350c94f6d8ace4ca7a6506b55"
+                }
+              ]
+            },
+            {
+              "name": "Semana 4-5",
+              "verticals": [
+                {
+                  "name": "Actividad",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@html+block@420e0700b995457e994268769ef20cf8",
+                  "block_type": "html",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@html+block@420e0700b995457e994268769ef20cf8",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@231fd26ff2704d5a8f2a7ef08a891277"
+                },
+                {
+                  "name": "Foro de dudas y consultas",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@discussion+block@9ed5afe0948a4e65a839028b64980dfb",
+                  "block_type": "discussion",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@discussion+block@9ed5afe0948a4e65a839028b64980dfb",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@45bca211e00a4084b413016806185a8f"
+                },
+                {
+                  "name": "Probemos",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@problem+block@9433255c073b43fe93e0b18d4dd36266",
+                  "block_type": "problem",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@problem+block@9433255c073b43fe93e0b18d4dd36266",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@e25330267a8f43c6b03cb904507b21d6"
+                }
+              ]
+            },
+            {
+              "name": "Repaso",
+              "verticals": [
+                {
+                  "name": "Auxiliar",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@google-document+block@c4df0b0f8e9f470196748f3b6e1dc46f",
+                  "block_type": "google-document",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@google-document+block@c4df0b0f8e9f470196748f3b6e1dc46f",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@284ac6b579da4694beae01f859e27192"
+                }
+              ]
+            }
+          ],
+          "id": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@41c12541729b4f8a806273a264a5d91f"
+        },
+        {
+          "name": "Módulo 3",
+          "sequentials": [
+            {
+              "name": "Semana 6",
+              "verticals": [
+                {
+                  "name": "Clase en Video",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@0262f0ffeebd492b88a88b8b0ad23029",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@0262f0ffeebd492b88a88b8b0ad23029",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@82cc3b5b7e5842eea593c94ba5f36077"
+                },
+                {
+                  "name": "Slides",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@google-document+block@b1e2a004e31f43509ef669c7d2f47897",
+                  "block_type": "google-document",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@google-document+block@b1e2a004e31f43509ef669c7d2f47897",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@c54ba8e09fe5426c830c70999439b282"
+                },
+                {
+                  "name": "Actividad",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@html+block@39f3943c5590451ebb6e6213ce22da70",
+                  "block_type": "html",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@html+block@39f3943c5590451ebb6e6213ce22da70",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@f8eacc98da1745b9a26918fbe5608328"
+                },
+                {
+                  "name": "Foro",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@discussion+block@c446425303a044e4a6237a6ee019bb41",
+                  "block_type": "discussion",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@discussion+block@c446425303a044e4a6237a6ee019bb41",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@8442d83e53954ed8994036bb463c3823"
+                }
+              ]
+            },
+            {
+              "name": "Semana 7",
+              "verticals": [
+                {
+                  "name": "Slides",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@google-document+block@aa9bde4b766847dd9bbde14e7b170d9c",
+                  "block_type": "google-document",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@google-document+block@aa9bde4b766847dd9bbde14e7b170d9c",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@117def145895447ab1929e37a002a288"
+                },
+                {
+                  "name": "Video: Transmisión",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@effeb6ee267d48498fb322fb30cc9242",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@effeb6ee267d48498fb322fb30cc9242",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@4e7afa55ca384cb4977dac3f015c6c53"
+                },
+                {
+                  "name": "Video: window I",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@f5d88f493f3a44f18f4ced6943115072",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@f5d88f493f3a44f18f4ced6943115072",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@bfd2faa21fb24af9987ebd66f0829111"
+                },
+                {
+                  "name": "Video: window II",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@af5e841551f5420c93ee38fcaf7e49e7",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@af5e841551f5420c93ee38fcaf7e49e7",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@9888cb2a95bf49a18d4b7b341a002873"
+                },
+                {
+                  "name": "Video: secuencia",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@d396b328891c4fcb9ab5a5c22624d538",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@d396b328891c4fcb9ab5a5c22624d538",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@128fbb2deea04949be011b4e46714ea5"
+                },
+                {
+                  "name": "Quiz",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@problem+block@f07e679dc0764a8dbfdc77623624c30e",
+                  "block_type": "problem",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@problem+block@f07e679dc0764a8dbfdc77623624c30e",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@413563c635404cef83eda8c32fca0f25"
+                },
+                {
+                  "name": "Actividad",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@html+block@ebdcfb273ee74534888afc7e9e94d92c",
+                  "block_type": "html",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@html+block@ebdcfb273ee74534888afc7e9e94d92c",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@ae6a1687588644fdab2ae80f7257c179"
+                }
+              ]
+            },
+            {
+              "name": "Semana 8",
+              "verticals": [
+                {
+                  "name": "Slides",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@google-document+block@f0513e3adfe34c6ba6a611964a20bcd4",
+                  "block_type": "google-document",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@google-document+block@f0513e3adfe34c6ba6a611964a20bcd4",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@7335f24ec9cd4c9099facd57e9025b1c"
+                },
+                {
+                  "name": "Video: A",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@cd7a728f581049e88e518f6ac918dc24",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@cd7a728f581049e88e518f6ac918dc24",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@34cab5d8306e40818c2d84cb0c17ad43"
+                },
+                {
+                  "name": "Video: Ventana",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@2fd1124c079b451ea4afc470da0eb6af",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@2fd1124c079b451ea4afc470da0eb6af",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@4912535d831d48a4a95dea20e5e61c28"
+                },
+                {
+                  "name": "Video: Formato",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@3605d7fd03e74f8780562b2ccbab1f41",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@3605d7fd03e74f8780562b2ccbab1f41",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@175fb93967eb4079aeba912aa7d32a12"
+                },
+                {
+                  "name": "Video: Control",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@bd117da1350046fe84fa30359c69c7f7",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@bd117da1350046fe84fa30359c69c7f7",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@35edd9bff3354bfeb80e9f3dc62db26d"
+                },
+                {
+                  "name": "Video: segmentos",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@de9bbb8d23dc4df083779c9ffb535d70",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@de9bbb8d23dc4df083779c9ffb535d70",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@903ed9ce2a72456aba9fb0d3a25a77fb"
+                },
+                {
+                  "name": "Quiz",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@problem+block@f053a3a50d924f0a90eeecb1dfa2f1c9",
+                  "block_type": "problem",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@problem+block@f053a3a50d924f0a90eeecb1dfa2f1c9",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@9b75e119125048a684b337722827cee5"
+                },
+                {
+                  "name": "Actividad",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@html+block@dd794f0421964b298c399ec0248806c1",
+                  "block_type": "html",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@html+block@dd794f0421964b298c399ec0248806c1",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@f1b12531f1a14c1b9f676667a8a4de63"
+                },
+                {
+                  "name": "Foro",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@discussion+block@fabc4e300a7640af8107c854c499fd06",
+                  "block_type": "discussion",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@discussion+block@fabc4e300a7640af8107c854c499fd06",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@64bf27ab2a204af9b6d4529c1c83e330"
+                }
+              ]
+            }
+          ],
+          "id": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@148f44fe9b2d4e4bb61f2f504fec1947"
+        },
+        {
+          "name": "Módulo 4",
+          "sequentials": [
+            {
+              "name": "Semana 9-10",
+              "verticals": [
+                {
+                  "name": "Video: Capas",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@c1c589f468e443fdb3455cef9d4124ea",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@c1c589f468e443fdb3455cef9d4124ea",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@31a92eb6cce64a40aa85d8f6140d7e4d"
+                },
+                {
+                  "name": "Video: Direcciones",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@d74c749930614de98590f833ab88be72",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@d74c749930614de98590f833ab88be72",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@bd8c6574c3de4542b18d094533355053"
+                },
+                {
+                  "name": "Slides Circuitos",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@google-document+block@f3695b35910543db9f56a45040c8c1b1",
+                  "block_type": "google-document",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@google-document+block@f3695b35910543db9f56a45040c8c1b1",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@e52e8655b1f44e3287c8009f2d8a1c4a"
+                },
+                {
+                  "name": "Definición Fragmentación",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@google-document+block@8c9d8720668049bbaa138b825947f227",
+                  "block_type": "google-document",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@google-document+block@8c9d8720668049bbaa138b825947f227",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@2a3a5563483e4fafa3be0cefa1879c29"
+                },
+                {
+                  "name": "Slides Máscaras",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@google-document+block@3e13de7796064656ba9faaba8128a7db",
+                  "block_type": "google-document",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@google-document+block@3e13de7796064656ba9faaba8128a7db",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@b0617468d4fa492d80e98305a7e3ce9c"
+                },
+                {
+                  "name": "Quiz",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@problem+block@b759ea35564f42f9a0c9f3cf9b9ec283",
+                  "block_type": "problem",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@problem+block@b759ea35564f42f9a0c9f3cf9b9ec283",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@6b57acf303034eda95757011eddbf3c0"
+                },
+                {
+                  "name": "Actividad",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@html+block@2a19d8eb3ce947a88d4414e45d43f239",
+                  "block_type": "html",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@html+block@2a19d8eb3ce947a88d4414e45d43f239",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@fe5288e08105431fb548df3f224916b4"
+                },
+                {
+                  "name": "Actividad",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@html+block@cc794dd45f29420ab2e983431fa0f339",
+                  "block_type": "html",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@html+block@cc794dd45f29420ab2e983431fa0f339",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@82c6f96fc4e346deae2c28c00d85bda3"
+                },
+                {
+                  "name": "Actividad",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@html+block@495cd90bbc6b4940882039e46ffae6af",
+                  "block_type": "html",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@html+block@495cd90bbc6b4940882039e46ffae6af",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@b35d2f71de35414fb3b6023743974783"
+                },
+                {
+                  "name": "Actividad",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@html+block@95985e305f9243f5a32b2bc5375c88be",
+                  "block_type": "html",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@html+block@95985e305f9243f5a32b2bc5375c88be",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@1606d312cba1497e8ed6908f970726d1"
+                }
+              ]
+            },
+            {
+              "name": "Semana 11-12",
+              "verticals": [
+                {
+                  "name": "Video: Ruteo Externo (BGP)",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@e250826417da4a11b74b3b22bef6e802",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@e250826417da4a11b74b3b22bef6e802",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@5022dded00784bdfa290fcc0ec498c6d"
+                }
+              ]
+            }
+          ],
+          "id": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@992f66028ad14b68aa017f7ed510a15c"
+        },
+        {
+          "name": "Módulo 5",
+          "sequentials": [
+            {
+              "name": "Semana 13",
+              "verticals": [
+                {
+                  "name": "Video: Seguridad",
+                  "block_id": "block-v1:UChile+LEIT01+2020_T3+type@video+block@2f1e8e32b91046908c1bad5e53d35dfa",
+                  "block_type": "video",
+                  "block_url": "http://eol.andhael.cl/xblock/block-v1:UChile+LEIT01+2020_T3+type@video+block@2f1e8e32b91046908c1bad5e53d35dfa",
+                  "vertical_id": "block-v1:UChile+LEIT01+2020_T3+type@vertical+block@a3cb14148b714c5892fd4c0fdda8c58e"
+                }
+              ]
+            }
+          ],
+          "id": "block-v1:UChile+LEIT01+2020_T3+type@chapter+block@51d04ca57a9b4f7e85f28965da934e48"
+        }
+      ]
+    }
+  ]
+}
