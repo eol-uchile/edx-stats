@@ -62,7 +62,7 @@ function rgbToHex(rgb) {
 /**
  * Reference 'https://codesandbox.io/s/stacked-area-chart-ix341'
  */
-const TimeLineArea = ({ data, keys, mapping }) => {
+const TimeLineArea = ({ data, keys, mapping, height = '60%' }) => {
   const colors = useMemo(() => {
     let len = keys.length;
     let fun = interpolateHsl('red', 'blue');
@@ -73,7 +73,7 @@ const TimeLineArea = ({ data, keys, mapping }) => {
     return interpolated;
   }, [keys]);
   return (
-    <ResponsiveContainer width="100%" height="60%" minHeight={400}>
+    <ResponsiveContainer width="100%" height={height} minHeight={400}>
       <AreaChart
         data={data}
         margin={{
@@ -100,6 +100,7 @@ const TimeLineArea = ({ data, keys, mapping }) => {
             stackId="1"
             stroke={colors[k]}
             fill={colors[k]}
+            key={data_k}
           />
         ))}
         <Legend
@@ -115,6 +116,10 @@ const TimeLineArea = ({ data, keys, mapping }) => {
   );
 };
 
-TimeLineArea.propTypes = {};
+TimeLineArea.propTypes = {
+  data: PropTypes.array.isRequired, // {hash1: count, hash2: count .... date: date}
+  keys: PropTypes.arrayOf(PropTypes.string).isRequired,
+  mapping: PropTypes.objectOf(PropTypes.string).isRequired,
+};
 
 export default TimeLineArea;
