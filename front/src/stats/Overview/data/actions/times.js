@@ -20,7 +20,7 @@ export const recoverCourseStudentTimes = (
   extra = ''
 ) => (dispatch, getState) => {
   let base = getState().urls.base;
-  getAuthenticatedHttpClient()
+  return getAuthenticatedHttpClient()
     .get(
       `${base}/api/times/timeonpage/?course=${encodeURIComponent(
         course_id
@@ -53,7 +53,7 @@ export const recoverCourseStudentTimesSum = (
 ) => (dispatch, getState) => {
   let base = getState().urls.base;
 
-  getAuthenticatedHttpClient()
+  return getAuthenticatedHttpClient()
     .get(
       `${base}/api/times/timeoncourse/?course=${encodeURIComponent(
         course_id
@@ -74,9 +74,11 @@ export const recoverCourseStudentTimesSum = (
       });
     })
     .catch((error) => {
-      let msg = error.customAttributes
-        ? error.customAttributes.httpErrorResponseData
-        : 'Hubo un error en el servidor';
+      let msg =
+        error.customAttributes &&
+        error.customAttributes.httpErrorResponseData !== null
+          ? error.customAttributes.httpErrorResponseData
+          : 'Hubo un error en el servidor';
       dispatch({ type: LOADING_TIMES_ERROR, data: [msg] });
     });
 };

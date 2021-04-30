@@ -11,7 +11,7 @@ import {
   Container,
   Breadcrumb,
 } from 'react-bootstrap';
-import { Button, Input, ValidationFormGroup } from '@edx/paragon';
+import { Button, Input, Form } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { course, times, actions } from './data/actions';
@@ -91,19 +91,25 @@ const TimeVsVisits = ({ tableData, rowData }) => {
           />
         </Col>
         <Col>
-          <ValidationFormGroup for="group-mod-chapters-ch">
-            <Input
+          <Form.Group
+            controlId="group-mod-chapters-ch"
+            style={{
+              justifyContent: 'end',
+              display: 'flex',
+              paddingRight: '1.5rem',
+            }}
+          >
+            <Form.Check
+              type="switch"
               id="group-mod-chapters-ch"
-              type="checkbox"
               name="group-mod-chapters-ch"
               label="Agrupar Módulos"
               checked={state}
-              onClick={(e) => {
+              onChange={(e) => {
                 setState(e.target.checked);
               }}
             />
-            <label htmlFor="group-mod-chapters-ch">Agrupar Módulos</label>
-          </ValidationFormGroup>
+          </Form.Group>
         </Col>
       </Row>
       <Row>
@@ -178,19 +184,24 @@ const TimesAvg = ({ tableData, rowData }) => {
           />
         </Col>
         <Col>
-          <ValidationFormGroup for="group-mod-chapters-ch-av">
-            <Input
+          <Form.Group
+            controlId="group-mod-chapters-ch-av"
+            style={{
+              justifyContent: 'end',
+              display: 'flex',
+              paddingRight: '1.5rem',
+            }}
+          >
+            <Form.Check
+              type="switch"
               id="group-mod-chapters-ch-av"
-              name="group-mod-chapters-ch-av"
-              type="checkbox"
               label="Agrupar Módulos"
               checked={state}
-              onClick={(e) => {
+              onChange={(e) => {
                 setState(e.target.checked);
               }}
             />
-            <label htmlFor="group-mod-chapters-ch-av">Agrupar Módulos</label>
-          </ValidationFormGroup>
+          </Form.Group>
         </Col>
       </Row>
       <Row>
@@ -412,8 +423,14 @@ const TimesTable = ({
               <h4 id="Tiempototal">Tiempo total</h4>
             </Col>
           </Row>
-          {rowData.verticals.length > 0 ? (
+          {rowData.loaded && rowData.verticals.length > 0 ? (
             <TimeVsVisits rowData={rowData} tableData={tableData} />
+          ) : errors.length !== 0 ? (
+            <Row>
+              <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
+                <Spinner animation="border" variant="primary" />
+              </Col>
+            </Row>
           ) : (
             <Row>
               <Col>No hay datos</Col>
@@ -424,8 +441,14 @@ const TimesTable = ({
               <h4 id="TiempoPromedio">Tiempo promedio</h4>
             </Col>
           </Row>
-          {rowData.verticals.length > 0 ? (
+          {rowData.loaded && rowData.verticals.length > 0 ? (
             <TimesAvg rowData={rowData} tableData={tableData} />
+          ) : errors.length !== 0 ? (
+            <Row>
+              <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
+                <Spinner animation="border" variant="primary" />
+              </Col>
+            </Row>
           ) : (
             <Row>
               <Col>No hay datos</Col>

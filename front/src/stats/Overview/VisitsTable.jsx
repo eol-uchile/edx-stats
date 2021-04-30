@@ -3,13 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Row, Col, Breadcrumb, InputGroup, Container } from 'react-bootstrap';
-import {
-  Button,
-  Input,
-  Spinner,
-  Alert,
-  ValidationFormGroup,
-} from '@edx/paragon';
+import { Button, Input, Spinner, Alert, Form } from '@edx/paragon';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { course, visits, actions } from './data/actions';
@@ -76,9 +70,16 @@ const VisitTotals = ({ rowData, tableData }) => {
           />
         </Col>
         <Col>
-          <ValidationFormGroup for="group-mod-chapters-ch">
-            <Input
-              type="checkbox"
+          <Form.Group
+            controlId="group-mod-chapters-ch"
+            style={{
+              justifyContent: 'end',
+              display: 'flex',
+              paddingRight: '1.5rem',
+            }}
+          >
+            <Form.Check
+              type="switch"
               name="group-mod-chapters-ch"
               id="group-mod-chapters-ch"
               label="Agrupar Módulos"
@@ -87,8 +88,7 @@ const VisitTotals = ({ rowData, tableData }) => {
                 setState(e.target.checked);
               }}
             />
-            <label htmlFor="group-mod-chapters-ch">Agrupar Módulos</label>
-          </ValidationFormGroup>
+          </Form.Group>
         </Col>
       </Row>
       <Row>
@@ -317,8 +317,14 @@ const VisitsTable = ({
               <h4 id="VisitasTotales">Visitas totales</h4>
             </Col>
           </Row>
-          {rowData.verticals.length > 0 ? (
+          {rowData.loaded && rowData.verticals.length > 0 ? (
             <VisitTotals rowData={rowData} tableData={tableData} />
+          ) : errors.length === 0 ? (
+            <Row>
+              <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
+                <Spinner animation="border" variant="primary" />
+              </Col>
+            </Row>
           ) : (
             <Row>
               <Col>No hay datos</Col>
@@ -328,6 +334,8 @@ const VisitsTable = ({
             title="Visitas diarias"
             data={dailyState.sumByMonths}
             mapping={dailyState.chapterKeys}
+            loading={dailyState.computing}
+            haveErrors={errors.length !== 0}
           />
           <StudentDetails
             tableData={tableData}

@@ -15,6 +15,7 @@ function useProcessSumData(
   upperDate,
   lowerDate
 ) {
+  // Courses info parsed
   const [tableData, setTableData] = useState({
     loaded: false,
     chapters: [],
@@ -25,11 +26,13 @@ function useProcessSumData(
     course_info: {},
   });
 
+  // Course Sum data
   const [rowData, setRowData] = useState({
     all: [],
     chapters: [],
     verticals: [],
     grouped_verticals: [],
+    loaded: false,
   });
 
   /** Recover incoming data for table.
@@ -206,6 +209,7 @@ function useProcessSumData(
         grouped_verticals: grouped_verticals,
         vertical_errors,
         grouped_verticals_errors,
+        loaded: true,
       });
       setErrors([]);
     }

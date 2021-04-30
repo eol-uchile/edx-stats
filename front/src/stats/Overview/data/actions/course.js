@@ -138,7 +138,7 @@ export const recoverCourseStructureFromCMS = (course_id = 'nan') => (
   getState
 ) => {
   let cms = getState().urls.cms;
-  getAuthenticatedHttpClient()
+  return getAuthenticatedHttpClient()
     .get(`${cms}/course/${encodeURIComponent(course_id)}?format=concise`, {
       headers: { Accept: 'application/json, text/plain, */*' },
     })

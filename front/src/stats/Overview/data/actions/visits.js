@@ -17,7 +17,7 @@ export const recoverCourseStudentVisitSum = (
 ) => (dispatch, getState) => {
   let base = getState().urls.base;
 
-  getAuthenticatedHttpClient()
+  return getAuthenticatedHttpClient()
     .get(
       `${base}/api/visits/visitsoncourse/?course=${encodeURIComponent(
         course_id
@@ -60,7 +60,7 @@ export const recoverDailyChapterVisits = (
     parsed_course = course_id.replace('course-v1', 'block-v1');
   }
 
-  getAuthenticatedHttpClient()
+  return getAuthenticatedHttpClient()
     .get(
       `${base}/api/visits/daily-visitsoncourse/?course=${encodeURIComponent(
         parsed_course

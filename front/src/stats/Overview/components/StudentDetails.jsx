@@ -1,11 +1,6 @@
 import React, { Fragment, useMemo, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import {
-  Input,
-  SearchField,
-  ValidationFormGroup,
-  TransitionReplace,
-} from '@edx/paragon';
+import { SearchField, Form, TransitionReplace } from '@edx/paragon';
 import { AsyncCSVButton, TableChapter, TableVertical } from '.';
 import { classNameRuling, sortByColumn } from '../helpers';
 import PropTypes from 'prop-types';
@@ -151,9 +146,9 @@ const StudentDetails = ({
           />
         </Col>
         <Col>
-          <ValidationFormGroup for="group-modules">
-            <Input
-              type="checkbox"
+          <Form.Group controlId="group-modules">
+            <Form.Check
+              type="switch"
               id="group-modules"
               name="groupmodules"
               label="Agrupar Módulos"
@@ -163,15 +158,14 @@ const StudentDetails = ({
                 toggleChapters(e.target.checked, 'useChaptersTable');
               }}
             />
-            <label htmlFor="group-modules">Agrupar Módulos</label>
-          </ValidationFormGroup>
+          </Form.Group>
         </Col>
 
-        {!state.useChaptersTable && (
-          <Col key="coloring-transition">
-            <ValidationFormGroup for="coloring-verticals">
-              <Input
-                type="checkbox"
+        <Col key="coloring-transition">
+          {!state.useChaptersTable && (
+            <Form.Group controlId="coloring-verticals">
+              <Form.Check
+                type="switch"
                 id="coloring-verticals"
                 name="colorme"
                 label="Colorear"
@@ -181,10 +175,9 @@ const StudentDetails = ({
                   toggleChapters(e.target.checked, 'coloring');
                 }}
               />
-              <label htmlFor="coloring-verticals">Colorear</label>
-            </ValidationFormGroup>
-          </Col>
-        )}
+            </Form.Group>
+          )}
+        </Col>
         <Col>
           <SearchField
             onSubmit={(value) => searchStudent(value)}
