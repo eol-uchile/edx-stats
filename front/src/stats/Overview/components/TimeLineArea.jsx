@@ -87,7 +87,7 @@ const TimeLineArea = ({ data, keys, mapping, height = '60%' }) => {
         <XAxis dataKey="date" angle={-10} />
         <YAxis
           label={{
-            value: 'Visitas',
+            value: 'Visitas Totales',
             angle: -90,
             position: 'insideLeft',
           }}

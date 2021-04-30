@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, InputGroup } from 'react-bootstrap';
 import { TimeLineArea, AsyncCSVButton } from '.';
-import { Form } from '@edx/paragon';
 import PropTypes from 'prop-types';
 
 const DateBrowser = ({ title, data, mapping }) => {
@@ -62,10 +61,14 @@ const DateBrowser = ({ title, data, mapping }) => {
           />
         </Col>
         <Col>
-          <Form.Group>
-            <Form.Control
-              as="select"
+          <InputGroup style={{ justifyContent: 'end' }}>
+            <InputGroup.Prepend>
+              <InputGroup.Text>Periodo de Visualización</InputGroup.Text>
+            </InputGroup.Prepend>
+            <select
+              id="month-select"
               data-testid="month-select"
+              type="date"
               value={state.selected}
               onChange={(e) => {
                 setState({
@@ -79,8 +82,8 @@ const DateBrowser = ({ title, data, mapping }) => {
                   {el.value}
                 </option>
               ))}
-            </Form.Control>
-          </Form.Group>
+            </select>
+          </InputGroup>
         </Col>
       </Row>
       <Row>
