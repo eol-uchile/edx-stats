@@ -65,7 +65,11 @@ const DateBrowser = ({ title, data, mapping, loading, haveErrors }) => {
             </Col>
             <Col>
               <InputGroup
-                style={{ justifyContent: 'end', paddingRight: '1.5rem' }}
+                style={{
+                  justifyContent: 'end',
+                  paddingRight: '1.5rem',
+                  flexWrap: 'nowrap',
+                }}
               >
                 <InputGroup.Prepend>
                   <InputGroup.Text>Periodo de Visualización</InputGroup.Text>

@@ -68,7 +68,7 @@ def verify_time_range_course_params(request):
 
 
 @api_view()
-@cache_page(settings.CACHE_TTL)
+@cache_page(settings.CACHE_TTL, key_prefix="v1")
 def get_course_structure(request):
     """
     Map a course structure using the recovered Verticals from the Edx API
