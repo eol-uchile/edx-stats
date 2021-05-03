@@ -160,7 +160,7 @@ const Landing = ({
               </ListGroupItem>
               <ListGroupItem>
                 <Link to={`/modules/times/${key}/${start}/${end}`}>
-                  Ver tiempo de visita por contenido
+                  Ver tiempo de vizualización general
                 </Link>
               </ListGroupItem>
               <ListGroupItem>

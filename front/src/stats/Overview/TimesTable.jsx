@@ -425,7 +425,7 @@ const TimesTable = ({
           </Row>
           {rowData.loaded && rowData.verticals.length > 0 ? (
             <TimeVsVisits rowData={rowData} tableData={tableData} />
-          ) : errors.length !== 0 ? (
+          ) : errors.length === 0 ? (
             <Row>
               <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
                 <Spinner animation="border" variant="primary" />
@@ -443,7 +443,7 @@ const TimesTable = ({
           </Row>
           {rowData.loaded && rowData.verticals.length > 0 ? (
             <TimesAvg rowData={rowData} tableData={tableData} />
-          ) : errors.length !== 0 ? (
+          ) : errors.length === 0 ? (
             <Row>
               <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
                 <Spinner animation="border" variant="primary" />
