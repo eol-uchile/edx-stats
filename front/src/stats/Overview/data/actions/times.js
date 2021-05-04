@@ -6,6 +6,7 @@ import {
   LOADED_TIMES_RESET,
 } from '../types';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { manageError } from './actions';
 
 export const resetTimes = () => (dispatch) =>
   dispatch({ type: LOADED_TIMES_RESET });
@@ -17,7 +18,8 @@ export const recoverCourseStudentTimes = (
   course_id = 'nan',
   offset = 0,
   limit = 25,
-  extra = ''
+  extra = '',
+  retry = 1
 ) => (dispatch, getState) => {
   let base = getState().urls.base;
   return getAuthenticatedHttpClient()
@@ -33,23 +35,25 @@ export const recoverCourseStudentTimes = (
       if (res.status === 200) {
         return dispatch({ type: LOADED_TIMES, data: res.data.results });
       }
-      return dispatch({
-        type: LOADING_TIMES_ERROR,
-        data: ['No hay datos para el curso, por favor intente mas tarde.'],
-      });
+      throw Error('No hay datos para el curso, por favor intente mas tarde.');
     })
     .catch((error) =>
-      dispatch({
-        type: LOADING_TIMES_ERROR,
-        data: ['Ha ocurrido un error en los servidores de Eol.'],
-      })
+      manageError(
+        error,
+        recoverCourseStudentTimes,
+        LOADING_TIMES_ERROR,
+        dispatch,
+        getState,
+        retry
+      )(course_id, offset, limit, extra)
     );
 };
 
 export const recoverCourseStudentTimesSum = (
   course_id = 'nan',
   lower_date,
-  upper_date
+  upper_date,
+  retry = 1
 ) => (dispatch, getState) => {
   let base = getState().urls.base;
 
@@ -66,19 +70,17 @@ export const recoverCourseStudentTimesSum = (
       if (res.status === 200) {
         return dispatch({ type: LOADED_TIMES_SUM, data: res.data });
       }
-      return dispatch({
-        type: LOADING_TIMES_ERROR,
-        data: [
-          'No hay datos para el curso para estas fechas, por favor intente mas tarde.',
-        ],
-      });
+      throw Error(
+        'No hay datos para el curso para estas fechas, por favor intente mas tarde.'
+      );
     })
-    .catch((error) => {
-      let msg =
-        error.customAttributes &&
-        error.customAttributes.httpErrorResponseData !== null
-          ? error.customAttributes.httpErrorResponseData
-          : 'Hubo un error en el servidor';
-      dispatch({ type: LOADING_TIMES_ERROR, data: [msg] });
-    });
+    .catch((error) =>
+      manageError(
+        error,
+        recoverCourseStudentTimesSum,
+        LOADING_TIMES_ERROR,
+        dispatch,
+        getState
+      )(course_id, lower_date, upper_date)
+    );
 };

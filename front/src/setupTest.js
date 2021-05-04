@@ -1,13 +1,29 @@
 import 'babel-polyfill';
+import { server } from './tests/server';
+
+// Create a similar Axios Http Client to the one used by Edx
 import axios from 'axios';
 import * as frontenAuth from '@edx/frontend-platform/auth';
+import createProcessAxiosRequestErrorInterceptor from '@edx/frontend-platform/auth/interceptors/createProcessAxiosRequestErrorInterceptor';
 jest.mock('@edx/frontend-platform/auth');
 
-import { server } from './tests/server';
+const processAxiosRequestErrorInterceptor = createProcessAxiosRequestErrorInterceptor(
+  {
+    loggingService: { logInfo: () => {} },
+  }
+);
+
+const httpClient = axios;
+httpClient.interceptors.response.use(
+  (response) => response,
+  processAxiosRequestErrorInterceptor
+);
 
 beforeAll(() => {
   server.listen();
-  jest.spyOn(frontenAuth, 'getAuthenticatedHttpClient').mockReturnValue(axios);
+  jest
+    .spyOn(frontenAuth, 'getAuthenticatedHttpClient')
+    .mockReturnValue(httpClient);
 });
 
 // if you need to add a handler after calling setupServer for some specific test

@@ -149,6 +149,7 @@ const VisitsTable = ({
     visits.added_visits,
     'vertical',
     recoverCourseStudentVisitSum,
+    errors,
     setErrors,
     state.upperDate,
     state.lowerDate
@@ -158,6 +159,7 @@ const VisitsTable = ({
     visits.added_chapter_visits,
     course,
     recoverDailyVisits,
+    errors,
     state.lowerDate,
     state.upperDate
   );
@@ -173,6 +175,7 @@ const VisitsTable = ({
         setTableData({ ...tableData, loaded: false });
         recoverCourseStructure(state.current);
         setErrors([]);
+        cleanErrors();
       }
     }
   };
@@ -319,7 +322,7 @@ const VisitsTable = ({
           </Row>
           {rowData.loaded && rowData.verticals.length > 0 ? (
             <VisitTotals rowData={rowData} tableData={tableData} />
-          ) : errors.length === 0 ? (
+          ) : errors.length === 0 && !rowData.loaded ? (
             <Row>
               <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
                 <Spinner animation="border" variant="primary" />

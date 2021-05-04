@@ -10,6 +10,7 @@ import {
   RESET_COURSE_STRUCTURE,
 } from '../types';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { manageError } from './actions';
 
 export const resetCourses = () => (dispatch) =>
   dispatch({ type: LOADED_COURSE_RESET });
@@ -91,7 +92,7 @@ export const initCourseRolesInfo = () => (dispatch, getState) => {
     });
 };
 
-export const recoverCourseStructure = (course_id = 'nan') => (
+export const recoverCourseStructure = (course_id = 'nan', retry = 1) => (
   dispatch,
   getState
 ) => {
@@ -112,28 +113,22 @@ export const recoverCourseStructure = (course_id = 'nan') => (
       if (res.status === 200) {
         return dispatch({ type: LOADED_COURSE, data: [res.data.courses[0]] });
       }
-      return dispatch({
-        type: LOADING_COURSE_ERROR,
-        data: [
-          'El curso no ha sido ingresado al sistema de analítica, por favor intente mas tarde.',
-        ],
-      });
+      throw Error(
+        'El curso no ha sido ingresado al sistema de analítica, por favor intente mas tarde.'
+      );
     })
-    .catch((error) => {
-      let msg = error.customAttributes
-        ? error.customAttributes.httpErrorResponseData
-        : undefined;
-      if (msg === undefined || error.customAttributes.httpErrorStatus === 502) {
-        msg = 'Hubo un error en el servidor';
-      }
-      dispatch({
-        type: LOADING_COURSE_ERROR,
-        data: [msg],
-      });
-    });
+    .catch((error) =>
+      manageError(
+        error,
+        recoverCourseStructure,
+        LOADING_COURSE_ERROR,
+        dispatch,
+        getState
+      )(course_id)
+    );
 };
 
-export const recoverCourseStructureFromCMS = (course_id = 'nan') => (
+export const recoverCourseStructureFromCMS = (course_id = 'nan', retry = 1) => (
   dispatch,
   getState
 ) => {
@@ -149,25 +144,20 @@ export const recoverCourseStructureFromCMS = (course_id = 'nan') => (
       if (res.status === 200) {
         return dispatch({ type: LOADED_COURSE, data: [res.data.courses[0]] });
       }
-      return dispatch({
-        type: LOADING_COURSE_ERROR,
-        data: [
-          'El curso no ha sido ingresado al sistema de analítica, por favor intente mas tarde.',
-        ],
-      });
+      throw Error(
+        'El curso no ha sido ingresado al sistema de analítica, por favor intente mas tarde.'
+      );
     })
-    .catch((error) => {
-      let msg = error.customAttributes
-        ? error.customAttributes.httpErrorResponseData
-        : undefined;
-      if (msg === undefined || error.customAttributes.httpErrorStatus === 502) {
-        msg = 'Hubo un error en el servidor';
-      }
-      dispatch({
-        type: LOADING_COURSE_ERROR,
-        data: [msg],
-      });
-    });
+    .catch((error) =>
+      manageError(
+        error,
+        recoverCourseStructureFromCMS,
+        LOADING_COURSE_ERROR,
+        dispatch,
+        getState,
+        retry
+      )(course_id)
+    );
 };
 
 /**

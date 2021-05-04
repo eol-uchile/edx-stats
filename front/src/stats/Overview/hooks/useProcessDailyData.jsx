@@ -4,6 +4,7 @@ function useProcessDailyData(
   dailySum,
   course,
   loadFunction,
+  errors,
   lowerDate,
   upperDate
 ) {
@@ -110,6 +111,16 @@ function useProcessDailyData(
       });
     }
   }, [dailySum, course]);
+
+  useEffect(() => {
+    if (errors.length > 0) {
+      setState({
+        computing: false,
+        sumByMonths: [],
+        chapterKeys: [],
+      });
+    }
+  }, [errors]);
 
   return [state, setState];
 }

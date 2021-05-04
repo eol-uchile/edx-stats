@@ -42,6 +42,13 @@ const DateBrowser = ({ title, data, mapping, loading, haveErrors }) => {
         headers,
         csv,
       });
+    } else {
+      setState({
+        selected: '',
+        options: [],
+        csv: [],
+        headers: [],
+      });
     }
   }, [data]);
 
@@ -105,7 +112,7 @@ const DateBrowser = ({ title, data, mapping, loading, haveErrors }) => {
             </Col>
           </Row>
         </Fragment>
-      ) : !haveErrors ? (
+      ) : !haveErrors && loading ? (
         <Row>
           <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
             <Spinner animation="border" variant="primary" />
@@ -113,7 +120,7 @@ const DateBrowser = ({ title, data, mapping, loading, haveErrors }) => {
         </Row>
       ) : (
         <Row>
-          <Col>No hay datos disponibles</Col>
+          <Col>No hay datos</Col>
         </Row>
       )}
     </Fragment>

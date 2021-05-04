@@ -11,6 +11,7 @@ function useProcessSumData(
   sum,
   sum_key,
   recoverSum,
+  errors,
   setErrors,
   upperDate,
   lowerDate
@@ -92,7 +93,7 @@ function useProcessSumData(
 
   // Parse visits as rows
   useEffect(() => {
-    if (tableData.loaded && sum.length !== 0) {
+    if (tableData.loaded && sum.length !== 0 && errors.length === 0) {
       let rows = [];
       let users = {};
       let chapterRow = [];
@@ -214,6 +215,20 @@ function useProcessSumData(
       setErrors([]);
     }
   }, [tableData.loaded, sum]);
+
+  useEffect(() => {
+    if (errors.length > 0) {
+      // If errors then reset the state
+      setRowData({
+        ...rowData,
+        all: [],
+        chapters: [],
+        verticals: [],
+        grouped_verticals: [],
+        loaded: true,
+      });
+    }
+  }, [errors]);
 
   return [tableData, setTableData, rowData, setRowData];
 }

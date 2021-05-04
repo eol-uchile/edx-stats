@@ -260,6 +260,7 @@ const TimesTable = ({
     times.added_times,
     'event_type_vertical',
     recoverCourseStudentTimesSum,
+    errors,
     setErrors,
     state.upperDate,
     state.lowerDate
@@ -276,6 +277,7 @@ const TimesTable = ({
         setTableData({ ...tableData, loaded: false });
         recoverCourseStructure(state.current);
         setErrors([]);
+        cleanErrors();
       }
     }
   };
@@ -325,7 +327,7 @@ const TimesTable = ({
               <Fragment>Sin información</Fragment>
             )}
           </h2>
-          Tiempo de visita de estudiantes por Módulo
+          Tiempo de visualización general por Módulo
           <p>
             Este curso tiene fechas de inicio{' '}
             {new Date(match.params.start).toLocaleDateString('es-ES')} y de
@@ -425,7 +427,7 @@ const TimesTable = ({
           </Row>
           {rowData.loaded && rowData.verticals.length > 0 ? (
             <TimeVsVisits rowData={rowData} tableData={tableData} />
-          ) : errors.length === 0 ? (
+          ) : errors.length === 0 && !rowData.loaded ? (
             <Row>
               <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
                 <Spinner animation="border" variant="primary" />
@@ -443,7 +445,7 @@ const TimesTable = ({
           </Row>
           {rowData.loaded && rowData.verticals.length > 0 ? (
             <TimesAvg rowData={rowData} tableData={tableData} />
-          ) : errors.length === 0 ? (
+          ) : errors.length === 0 && !rowData.loaded ? (
             <Row>
               <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
                 <Spinner animation="border" variant="primary" />

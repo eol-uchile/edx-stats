@@ -6,6 +6,7 @@ import {
   LOADED_VISITS_CHAPTER_SUM,
 } from '../types';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { manageError } from './actions';
 
 export const resetVisits = () => (dispatch) =>
   dispatch({ type: LOADED_VISITS_RESET });
@@ -13,7 +14,8 @@ export const resetVisits = () => (dispatch) =>
 export const recoverCourseStudentVisitSum = (
   course_id = 'nan',
   lower_date,
-  upper_date
+  upper_date,
+  retry = 1
 ) => (dispatch, getState) => {
   let base = getState().urls.base;
 
@@ -30,28 +32,27 @@ export const recoverCourseStudentVisitSum = (
       if (res.status === 200) {
         return dispatch({ type: LOADED_VISITS_SUM, data: res.data });
       }
-      return dispatch({
-        type: LOADING_VISITS_ERROR,
-        data: [
-          'No hay datos para el curso para estas fechas, por favor intente mas tarde.',
-        ],
-      });
+      throw Error(
+        'No hay datos para el curso para estas fechas, por favor intente mas tarde.'
+      );
     })
-    .catch((error) => {
-      let msg = error.customAttributes
-        ? error.customAttributes.httpErrorResponseData
-        : undefined;
-      if (msg === undefined || error.customAttributes.httpErrorStatus === 502) {
-        msg = 'Hubo un error en el servidor';
-      }
-      dispatch({ type: LOADING_VISITS_ERROR, data: [msg] });
-    });
+    .catch((error) =>
+      manageError(
+        error,
+        recoverCourseStudentVisitSum,
+        LOADING_VISITS_ERROR,
+        dispatch,
+        getState,
+        retry
+      )(course_id, lower_date, upper_date)
+    );
 };
 
 export const recoverDailyChapterVisits = (
   course_id,
   lower_date,
-  upper_date
+  upper_date,
+  retry = 1
 ) => (dispatch, getState) => {
   let base = getState().urls.base;
 
@@ -73,20 +74,18 @@ export const recoverDailyChapterVisits = (
       if (res.status === 200) {
         return dispatch({ type: LOADED_VISITS_CHAPTER_SUM, data: res.data });
       }
-      return dispatch({
-        type: LOADING_VISITS_ERROR,
-        data: [
-          'No hay datos para el curso para estas fechas, por favor intente mas tarde.',
-        ],
-      });
+      throw Error(
+        'No hay datos para el curso para estas fechas, por favor intente mas tarde.'
+      );
     })
-    .catch((error) => {
-      let msg = error.customAttributes
-        ? error.customAttributes.httpErrorResponseData
-        : undefined;
-      if (msg === undefined || error.customAttributes.httpErrorStatus === 502) {
-        msg = 'Hubo un error en el servidor';
-      }
-      dispatch({ type: LOADING_VISITS_ERROR, data: [msg] });
-    });
+    .catch((error) =>
+      manageError(
+        error,
+        recoverDailyChapterVisits,
+        LOADING_VISITS_ERROR,
+        dispatch,
+        getState,
+        retry
+      )(course_id, lower_date, upper_date)
+    );
 };
