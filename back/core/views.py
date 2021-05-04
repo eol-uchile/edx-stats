@@ -1,3 +1,5 @@
+from django.http import JsonResponse
+from django.db import DatabaseError, connection, transaction
 import pytz
 from datetime import datetime
 from django.db.models import Q
@@ -97,7 +99,8 @@ def get_course_structure(request):
         chapter = courses[v.course]["chapters"]
         # Check that sections exists
         if v.chapter_number not in chapter:
-            chapter[v.chapter_number] = dict({"name": v.chapter_name, "id": v.chapter})
+            chapter[v.chapter_number] = dict(
+                {"name": v.chapter_name, "id": v.chapter})
         if v.sequential_number not in chapter[v.chapter_number]:
             chapter[v.chapter_number][v.sequential_number] = dict(
                 {"name": v.sequential_name})
@@ -142,3 +145,41 @@ def get_course_structure(request):
     if len(mapped_courses) == 0:
         return Response(status=status.HTTP_403_FORBIDDEN, data="No tiene permisos para ver los cursos solicitados")
     return Response({"courses": mapped_courses})
+
+
+@transaction.non_atomic_requests
+def health(_):
+    """Allows a load balancer to verify this service is up.
+    Checks the status of the database connection on which this service relies.
+    Returns:
+        HttpResponse: 200 if the service is available, with JSON data indicating the health of each required service
+        HttpResponse: 503 if the service is unavailable, with JSON data indicating the health of each required service
+    Example:
+        >>> response = requests.get('https://course-discovery.edx.org/health')
+        >>> response.status_code
+        200
+        >>> response.content
+        '{"overall_status": "OK", "detailed_status": {"database_status": "OK"}}'
+    """
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT 1")
+        cursor.fetchone()
+        cursor.close()
+        database_status = u"OK"
+    except DatabaseError:
+        database_status = u"UNAVAILABLE"
+
+    overall_status = u"OK" if (database_status == u"OK") else u"UNAVAILABLE"
+
+    data = {
+        'overall_status': overall_status,
+        'detailed_status': {
+            'database_status': database_status,
+        },
+    }
+
+    if overall_status == u"OK":
+        return JsonResponse(data)
+    else:
+        return JsonResponse(data, status=503)
