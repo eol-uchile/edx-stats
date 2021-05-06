@@ -7,7 +7,7 @@ class Log(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=["course_id", "time"]),
-            models.Index(fields=["time"]),  # might be redundant over time
+            models.Index(fields=["id"]),
         ]
 
     username = models.CharField(max_length=150)
