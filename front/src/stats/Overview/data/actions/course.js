@@ -61,7 +61,7 @@ export const initCourseRolesInfo = () => (dispatch, getState) => {
             .get(
               `${course_request}?keys=${encodeURIComponent(
                 course_roles.map((el) => el.course_id).join(',')
-              )}`
+              )}&limit=200`
             )
             .then((res) => {
               if (res.status === 200) {
