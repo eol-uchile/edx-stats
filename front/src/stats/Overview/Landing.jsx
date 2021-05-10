@@ -15,6 +15,7 @@ import { Spinner, Form, Button, Alert, Card } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useLanding } from './hooks';
+import Select from 'react-select';
 
 const getDate = (d) => {
   let date = new Date(d);
@@ -23,6 +24,34 @@ const getDate = (d) => {
   let yyyy = date.getFullYear();
   return `${yyyy}-${mm}-${dd}`;
 };
+
+const formatGroupLabel = (data) => (
+  <div
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    }}
+  >
+    <span>{data.label}</span>
+    <span
+      style={{
+        backgroundColor: '#EBECF0',
+        borderRadius: '2em',
+        color: '#172B4D',
+        display: 'inline-block',
+        fontSize: 12,
+        fontWeight: 'normal',
+        lineHeight: '1',
+        minWidth: 1,
+        padding: '0.16666666666667em 0.5em',
+        textAlign: 'center',
+      }}
+    >
+      {data.options.length}
+    </span>
+  </div>
+);
 
 /**
  * Landing Page
@@ -107,27 +136,25 @@ const Landing = ({
           <Col>
             <Form.Group isValid={state.selected !== -1}>
               <Form.Label>Mis cursos</Form.Label>
-              <Form.Control
-                as="select"
-                floatingLabel="Seleccione un curso"
+              <Select
+                placeholder="Seleccionar curso"
+                options={state.multiGroup}
+                value={
+                  // Sets default state when coming back to Landing
+                  state.selected !== -1
+                    ? state.filtered[state.selected]
+                    : undefined
+                }
+                formatGroupLabel={formatGroupLabel}
+                noOptionsMessage={() => 'No hay cursos'}
                 data-testid="courses-select"
-                value={state.selected}
-                onChange={(e) => {
-                  setState({
-                    ...state,
-                    selected: Number(e.target.value),
-                    interacted: true,
-                  });
-                }}
-              >
-                {state.options.map((el) => (
-                  <option key={el[1]} value={el[1]}>
-                    {el[0]}
-                  </option>
-                ))}
-              </Form.Control>
+                inputId="courses-select"
+                onChange={(e) =>
+                  setState({ ...state, selected: e.value, interacted: true })
+                }
+              />
             </Form.Group>
-            {state.options.length == 1 && (
+            {state.multiGroup.length == 0 && (
               <p style={{ textAlign: 'center', lineHeight: '200px' }}>
                 Cargando cursos ...{' '}
                 <Spinner animation="border" variant="primary" />
