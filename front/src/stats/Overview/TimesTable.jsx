@@ -94,10 +94,9 @@ const TimeVsVisits = ({ tableData, rowData }) => {
           <Form.Group
             controlId="group-mod-chapters-ch"
             style={{
-              justifyContent: 'end',
-              display: 'flex',
               paddingRight: '1.5rem',
             }}
+            className="float-right"
           >
             <Form.Check
               type="switch"
@@ -187,10 +186,9 @@ const TimesAvg = ({ tableData, rowData }) => {
           <Form.Group
             controlId="group-mod-chapters-ch-av"
             style={{
-              justifyContent: 'end',
-              display: 'flex',
               paddingRight: '1.5rem',
             }}
+            className="float-right"
           >
             <Form.Check
               type="switch"
