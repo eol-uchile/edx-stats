@@ -137,7 +137,7 @@ const Landing = ({
             <Form.Group isValid={state.selected !== -1}>
               <Form.Label>Mis cursos</Form.Label>
               <Select
-                placeholder="Seleccionar curso"
+                placeholder="Busca un curso..."
                 options={state.multiGroup}
                 value={
                   // Sets default state when coming back to Landing

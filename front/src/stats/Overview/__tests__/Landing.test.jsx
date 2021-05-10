@@ -85,15 +85,15 @@ it('displays a default option', async () => {
   );
   render(<Landing />);
   expect(screen.getByText('Cargando cursos'));
-  await waitFor(() => screen.findByText('Seleccionar curso'));
-  expect(screen.getByText('Seleccionar curso'));
+  await waitFor(() => screen.findByText('Busca un curso...'));
+  expect(screen.getByText('Busca un curso...'));
 });
 
 it('displays multiple options', async () => {
   render(<Landing />);
   expect(screen.getByText('Cargando cursos'));
-  await waitFor(() => screen.findByText('Seleccionar curso'));
-  const input = screen.getByText('Seleccionar curso');
+  await waitFor(() => screen.findByText('Busca un curso...'));
+  const input = screen.getByText('Busca un curso...');
   userEvent.type(input, 'Boletas');
   const optionInput = await screen.findByText(
     'Boletas para todos (course-v1:UChile+BOL+2020_D)'
@@ -117,8 +117,8 @@ it('renders no avaible courses message on LMS API empty response', async () => {
 it('displays next pages on select item', async () => {
   renderWithRouter(<Landing />);
   expect(screen.getByText('Cargando cursos'));
-  await waitFor(() => screen.findByText('Seleccionar curso'));
-  const input = screen.getByText('Seleccionar curso');
+  await waitFor(() => screen.findByText('Busca un curso...'));
+  const input = screen.getByText('Busca un curso...');
   userEvent.type(input, 'Boletas');
   userEvent.click(
     screen.getByText('Boletas para todos (course-v1:UChile+BOL+2020_D)')
