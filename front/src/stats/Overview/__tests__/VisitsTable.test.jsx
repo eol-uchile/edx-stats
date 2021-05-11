@@ -18,7 +18,7 @@ it('renders without crashing', () => {
   renderWithRouter(<VisitsTable match={mock_router_path} />);
   expect(screen.getByTestId('visits-lDate'));
   expect(screen.getByTestId('visits-uDate'));
-  expect(screen.getByText('Buscar'));
+  expect(screen.getByText('Explorar'));
 });
 
 it('renders prop dates without crashing', () => {

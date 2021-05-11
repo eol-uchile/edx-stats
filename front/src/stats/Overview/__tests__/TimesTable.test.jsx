@@ -18,14 +18,14 @@ it('renders without crashing', () => {
   renderWithRouter(<TimesTable match={mock_router_path} />);
   expect(screen.getByTestId('times-lDate'));
   expect(screen.getByTestId('times-uDate'));
-  expect(screen.getByText('Buscar'));
+  expect(screen.getByText('Explorar'));
 });
 
 it('renders prop dates without crashing', () => {
   renderWithRouter(<TimesTable match={mock_router_path} />);
   expect(screen.getByTestId('times-lDate')).toHaveValue('2019-07-27');
   expect(screen.getByTestId('times-uDate')).toHaveValue('2019-12-22');
-  expect(screen.getByText('Buscar'));
+  expect(screen.getByText('Explorar'));
 });
 
 it('shows error when fetch fails', async () => {
