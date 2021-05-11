@@ -169,7 +169,13 @@ const Landing = ({
             <Card>
               <Card.Body>
                 <Card.Title>{data.name}</Card.Title>
-                <Card.Text>{data.short_description}</Card.Text>
+                {data.short_description !== null && (
+                  <Card.Text>
+                    {data.short_description.length > 300
+                      ? data.short_description.slice(0, 300) + '...'
+                      : data.short_description}
+                  </Card.Text>
+                )}
                 <Button
                   variant="primary"
                   href={`${lms}/courses/${data.key}/course`}
