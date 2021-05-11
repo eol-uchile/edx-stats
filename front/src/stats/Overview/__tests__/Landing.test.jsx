@@ -11,7 +11,7 @@ import Landing from '../Landing';
 import userEvent from '@testing-library/user-event';
 
 it('renders without crashing', () => {
-  render(<Landing />);
+  render(<Landing match={{ params: 'course' }} />);
   expect(screen.getByText('Cargando cursos'));
 });
 
@@ -27,7 +27,7 @@ it('renders errors on LMS API failure', async () => {
       }
     )
   );
-  render(<Landing />);
+  render(<Landing match={{ params: 'course' }} />);
   expect(screen.getByText('Cargando cursos'));
   await waitFor(() =>
     screen.findByText(
@@ -53,7 +53,7 @@ it('renders errors on Discovery API failure', async () => {
       }
     )
   );
-  render(<Landing />);
+  render(<Landing match={{ params: 'course' }} />);
   expect(screen.getByText('Cargando cursos'));
   await waitFor(() =>
     screen.findByText(
@@ -83,14 +83,14 @@ it('displays a default option', async () => {
       }
     )
   );
-  render(<Landing />);
+  render(<Landing match={{ params: 'course' }} />);
   expect(screen.getByText('Cargando cursos'));
   await waitFor(() => screen.findByText('Busca un curso...'));
   expect(screen.getByText('Busca un curso...'));
 });
 
 it('displays multiple options', async () => {
-  render(<Landing />);
+  render(<Landing match={{ params: 'course' }} />);
   expect(screen.getByText('Cargando cursos'));
   await waitFor(() => screen.findByText('Busca un curso...'));
   const input = screen.getByText('Busca un curso...');
@@ -109,13 +109,13 @@ it('renders no avaible courses message on LMS API empty response', async () => {
       }
     )
   );
-  render(<Landing />);
+  render(<Landing match={{ params: 'course' }} />);
   expect(screen.getByText('Cargando cursos'));
   await waitFor(() => screen.findByText('No hay cursos disponibles'));
 });
 
 it('displays next pages on select item', async () => {
-  renderWithRouter(<Landing />);
+  renderWithRouter(<Landing match={{ params: 'course' }} />);
   expect(screen.getByText('Cargando cursos'));
   await waitFor(() => screen.findByText('Busca un curso...'));
   const input = screen.getByText('Busca un curso...');

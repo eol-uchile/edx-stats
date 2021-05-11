@@ -23,6 +23,8 @@ import {
   StudentDetails,
 } from './components';
 import { useProcessSumData, useLoadCourseInfo } from './hooks';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHome, faSearch } from '@fortawesome/free-solid-svg-icons';
 import './TableandChart.css';
 
 const parseFloatToTimeString = (seconds) => {
@@ -225,39 +227,26 @@ const TimesAvg = ({ tableData, rowData }) => {
  * The course can be provided by the URL, the
  *
  */
-const TimesTable = ({
-  course,
-  times,
-  myCourses,
-  recoverCourseStructure,
-  hasCourses,
-  initCourses,
-  resetCourseStructure,
-  recoverCourseStudentTimesSum,
-  resetTimes,
-  setSelectedCourse,
-  cleanErrors,
-  match,
-}) => {
+const TimesTable = (props) => {
   const [state, setState, errors, setErrors, removeErrors] = useLoadCourseInfo(
-    match,
-    initCourses,
-    resetTimes,
-    resetCourseStructure,
-    cleanErrors,
-    course.status,
-    course.errors,
-    times.errors,
-    myCourses,
-    hasCourses,
-    setSelectedCourse
+    props.match,
+    props.initCourses,
+    props.resetTimes,
+    props.resetCourseStructure,
+    props.cleanErrors,
+    props.course.status,
+    props.course.errors,
+    props.times.errors,
+    props.myCourses,
+    props.hasCourses,
+    props.setSelectedCourse
   );
 
   const [tableData, setTableData, rowData, setRowData] = useProcessSumData(
-    course,
-    times.added_times,
+    props.course,
+    props.times.added_times,
     'event_type_vertical',
-    recoverCourseStudentTimesSum,
+    props.recoverCourseStudentTimesSum,
     errors,
     setErrors,
     state.upperDate,
@@ -273,9 +262,9 @@ const TimesTable = ({
         setErrors([...errors, 'No tienes permisos para consultar estos datos']);
       } else {
         setTableData({ ...tableData, loaded: false });
-        recoverCourseStructure(state.current);
+        props.recoverCourseStructure(state.current);
         setErrors([]);
-        cleanErrors();
+        props.cleanErrors();
       }
     }
   };
@@ -286,20 +275,23 @@ const TimesTable = ({
   }, [state.courseName]);
 
   return (
-    <Container className="rounded-lg shadow-lg py-4 px-5 my-2 data-view">
+    <Container className="rounded-lg shadow-lg py-4 px-5 data-view">
       <Helmet>
         <title>
           Tiempos por módulos
-          {(course.status === 'success') & tableData.loaded
-            ? `: ${course.course[0].name}`
+          {(props.course.status === 'success') & tableData.loaded
+            ? `: ${props.course.course[0].name}`
             : ''}
         </title>
       </Helmet>
       <Row>
         <Col>
           <Breadcrumb className="eol-breadcrumb">
-            <Link className="breadcrumb-item" to="/modules">
-              General
+            <Link
+              className="breadcrumb-item"
+              to={`/courses/${props.match.params.course_id}`}
+            >
+              <FontAwesomeIcon icon={faHome} /> General
             </Link>
             <Breadcrumb.Item
               href="#"
@@ -328,8 +320,9 @@ const TimesTable = ({
           Tiempo de visualización general por Módulo
           <p>
             Este curso tiene fechas de inicio{' '}
-            {new Date(match.params.start).toLocaleDateString('es-ES')} y de
-            término {new Date(match.params.end).toLocaleDateString('es-ES')}.
+            {new Date(props.match.params.start).toLocaleDateString('es-ES')} y
+            de término{' '}
+            {new Date(props.match.params.end).toLocaleDateString('es-ES')}.
             También se puede buscar fuera de estos límites de tiempo.
           </p>
         </Col>
@@ -369,11 +362,11 @@ const TimesTable = ({
         </Col>
         <Col className="col-xs-12 col-sm-12 col-lg-4">
           <Button variant="success" onClick={submit} block>
-            Buscar
+            Explorar <FontAwesomeIcon icon={faSearch} />
           </Button>
         </Col>
       </Row>
-      {course.status === 'loading' && !tableData.loaded ? (
+      {props.course.status === 'loading' && !tableData.loaded ? (
         <Row>
           <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />

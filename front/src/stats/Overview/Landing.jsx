@@ -8,7 +8,10 @@ import {
   ListGroupItem,
 } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import { Helmet } from 'react-helmet';
 import { bindActionCreators } from 'redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHome } from '@fortawesome/free-solid-svg-icons';
 import { course, actions } from './data/actions';
 import { getMyCourses, getHasCourses } from './data/selectors';
 import { Spinner, Form, Button, Alert, Card } from '@edx/paragon';
@@ -58,22 +61,14 @@ const formatGroupLabel = (data) => (
  *
  * Display courses and links to their stats
  */
-const Landing = ({
-  coursesState,
-  loadingCoursesErrors,
-  hasCourses,
-  myCourses,
-  lms,
-  selectedCache,
-  initCourses,
-  setSelectedCourse,
-}) => {
+const Landing = (props) => {
   const [state, setState] = useLanding(
-    coursesState,
-    myCourses,
-    selectedCache,
-    initCourses,
-    setSelectedCourse
+    props.match,
+    props.coursesState,
+    props.myCourses,
+    props.selectedCache,
+    props.initCourses,
+    props.setSelectedCourse
   );
 
   const start = state.filtered[state.selected]
@@ -91,11 +86,14 @@ const Landing = ({
 
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2">
+      <Helmet>
+        <title>Analítica EOL</title>
+      </Helmet>
       <Row>
         <Col>
           <Breadcrumb className="eol-breadcrumb">
             <Breadcrumb.Item href="#" active>
-              General
+              <FontAwesomeIcon icon={faHome} /> General
             </Breadcrumb.Item>
           </Breadcrumb>
         </Col>
@@ -112,30 +110,35 @@ const Landing = ({
       </Row>
       <Row>
         <Col>
-          <p>Ver estad&iacute;sticas para tus cursos.</p>
+          <p>
+            Para ver estad&iacute;sticas de tus cursos selecciona un curso en el
+            buscador.
+          </p>
         </Col>
       </Row>
       <Row>
-        {coursesState === 'loading' ? (
+        {props.coursesState === 'loading' ? (
           <Col style={{ textAlign: 'center', lineHeight: '200px' }}>
             Cargando cursos <Spinner animation="border" variant="primary" />
           </Col>
-        ) : coursesState === 'failed' ? (
+        ) : props.coursesState === 'failed' ? (
           <Col style={{ textAlign: 'center' }}>
-            {loadingCoursesErrors.map((err, k) => (
+            {props.loadingCoursesErrors.map((err, k) => (
               <Alert key={k} variant="warning">
                 {err}
               </Alert>
             ))}
           </Col>
-        ) : !hasCourses ? (
+        ) : !props.hasCourses ? (
           <Col>
             <Alert variant="warning">No hay cursos disponibles</Alert>
           </Col>
         ) : (
           <Col>
             <Form.Group isValid={state.selected !== -1}>
-              <Form.Label>Mis cursos</Form.Label>
+              <Form.Label>
+                <b>Mis cursos</b>
+              </Form.Label>
               <Select
                 placeholder="Busca un curso..."
                 options={state.multiGroup}
@@ -178,7 +181,7 @@ const Landing = ({
                 )}
                 <Button
                   variant="primary"
-                  href={`${lms}/courses/${data.key}/course`}
+                  href={`${props.lms}/courses/${data.key}/course`}
                 >
                   Ver Curso
                 </Button>
@@ -192,12 +195,12 @@ const Landing = ({
                 <h4>Consultar</h4>
               </ListGroupItem>
               <ListGroupItem>
-                <Link to={`/modules/times/${key}/${start}/${end}`}>
+                <Link to={`/courses/${key}/times/${start}/${end}`}>
                   Ver tiempo de vizualización general
                 </Link>
               </ListGroupItem>
               <ListGroupItem>
-                <Link to={`/modules/visits/${key}/${start}/${end}`}>
+                <Link to={`/courses/${key}/visits/${start}/${end}`}>
                   Ver visitas por contenido
                 </Link>
               </ListGroupItem>
@@ -218,6 +221,7 @@ Landing.propTypes = {
   selectedCache: PropTypes.string,
   initCourses: PropTypes.func.isRequired,
   setSelectedCourse: PropTypes.func.isRequired,
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const mapStateToProps = (state) => ({

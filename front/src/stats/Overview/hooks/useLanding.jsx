@@ -18,6 +18,7 @@ const containsAtLeastOne = (list) => {
 };
 
 function useLanding(
+  match,
   coursesState,
   myCourses,
   selectedCache,
@@ -52,9 +53,9 @@ function useLanding(
   // Set default choice only if no user interaction has ocurred
   useEffect(() => {
     if (myCourses.length > 0 && state.filtered.length > 1) {
-      let selected = state.filtered.filter(
-        (l) => l.data.key === selectedCache
-      )[0];
+      let url_param = match.params.course_id;
+
+      let selected = state.filtered.filter((l) => l.data.key === url_param)[0];
       if (selected && !state.interacted) {
         setState({ ...state, selected: selected.value });
       }

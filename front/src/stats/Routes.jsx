@@ -22,18 +22,19 @@ const Routes = ({ redirect }) => {
     <main>
       <Switch>
         <Route
-          path="/modules/times/:course_id/:start/:end"
+          path="/courses/:course_id/times/:start/:end"
           component={TimesTable}
         />
         <Route
-          path="/modules/visits/:course_id/:start/:end"
+          path="/courses/:course_id/visits/:start/:end"
           component={VisitsTable}
         />
-        <Route path="/modules" component={OverviewLanding} />
+        <Route path="/courses/:course_id" component={OverviewLanding} />
+        <Route path="/courses" component={OverviewLanding} />
         <Route
           render={(props) => (
             <RedirectToFeature
-              path="/modules"
+              path="/courses"
               message="Estadísticas generales"
             />
           )}

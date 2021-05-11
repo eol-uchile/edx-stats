@@ -19,6 +19,8 @@ import {
   useProcessDailyData,
   useLoadCourseInfo,
 } from './hooks';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHome, faSearch } from '@fortawesome/free-solid-svg-icons';
 import './TableandChart.css';
 
 const VisitTotals = ({ rowData, tableData }) => {
@@ -114,50 +116,36 @@ const VisitTotals = ({ rowData, tableData }) => {
  * The course is provided by the URL
  *
  */
-const VisitsTable = ({
-  course,
-  visits,
-  recoverCourseStructure,
-  recoverCourseStudentVisitSum,
-  recoverDailyVisits,
-  hasCourses,
-  initCourses,
-  resetCourseStructure,
-  setSelectedCourse,
-  resetVisits,
-  cleanErrors,
-  myCourses,
-  match,
-}) => {
+const VisitsTable = (props) => {
   const [state, setState, errors, setErrors, removeErrors] = useLoadCourseInfo(
-    match,
-    initCourses,
-    resetVisits,
-    resetCourseStructure,
-    cleanErrors,
-    course.status,
-    course.errors,
-    visits.errors,
-    myCourses,
-    hasCourses,
-    setSelectedCourse
+    props.match,
+    props.initCourses,
+    props.resetVisits,
+    props.resetCourseStructure,
+    props.cleanErrors,
+    props.course.status,
+    props.course.errors,
+    props.visits.errors,
+    props.myCourses,
+    props.hasCourses,
+    props.setSelectedCourse
   );
 
-  const [tableData, setTableData, rowData, setRowData] = useProcessSumData(
-    course,
-    visits.added_visits,
+  const [tableData, setTableData, rowData, _] = useProcessSumData(
+    props.course,
+    props.visits.added_visits,
     'vertical',
-    recoverCourseStudentVisitSum,
+    props.recoverCourseStudentVisitSum,
     errors,
     setErrors,
     state.upperDate,
     state.lowerDate
   );
 
-  const [dailyState, setDailyState] = useProcessDailyData(
-    visits.added_chapter_visits,
-    course,
-    recoverDailyVisits,
+  const [dailyState, __] = useProcessDailyData(
+    props.visits.added_chapter_visits,
+    props.course,
+    props.recoverDailyVisits,
     errors,
     state.lowerDate,
     state.upperDate
@@ -172,9 +160,9 @@ const VisitsTable = ({
         setErrors([...errors, 'No tienes permisos para consultar estos datos']);
       } else {
         setTableData({ ...tableData, loaded: false });
-        recoverCourseStructure(state.current);
+        props.recoverCourseStructure(state.current);
         setErrors([]);
-        cleanErrors();
+        props.cleanErrors();
       }
     }
   };
@@ -185,20 +173,23 @@ const VisitsTable = ({
   }, [state.courseName]);
 
   return (
-    <Container className="rounded-lg shadow-lg py-4 px-5 my-2 data-view">
+    <Container className="rounded-lg shadow-lg py-4 px-5 data-view">
       <Helmet>
         <title>
           Visitas por Módulo
-          {(course.status === 'successs') & tableData.loaded
-            ? `: ${course.course[0].name}`
+          {(props.course.status === 'successs') & tableData.loaded
+            ? `: ${props.course.course[0].name}`
             : ''}
         </title>
       </Helmet>
       <Row>
         <Col>
           <Breadcrumb className="eol-breadcrumb">
-            <Link className="breadcrumb-item" to="/modules">
-              General
+            <Link
+              className="breadcrumb-item"
+              to={`/courses/${props.match.params.course_id}`}
+            >
+              <FontAwesomeIcon icon={faHome} /> General
             </Link>
             <Breadcrumb.Item
               href="#"
@@ -226,8 +217,9 @@ const VisitsTable = ({
           </h2>
           <p>
             Este curso tiene fechas de inicio{' '}
-            {new Date(match.params.start).toLocaleDateString('es-ES')} y de
-            término {new Date(match.params.end).toLocaleDateString('es-ES')}.
+            {new Date(props.match.params.start).toLocaleDateString('es-ES')} y
+            de término{' '}
+            {new Date(props.match.params.end).toLocaleDateString('es-ES')}.
             También se puede buscar fuera de estos límites de tiempo.
           </p>
         </Col>
@@ -267,11 +259,11 @@ const VisitsTable = ({
         </Col>
         <Col className="col-xs-12 col-sm-12 col-md-4">
           <Button variant="success" onClick={submit} block>
-            Buscar
+            Explorar <FontAwesomeIcon icon={faSearch} />
           </Button>
         </Col>
       </Row>
-      {course.status === 'loading' && !tableData.loaded ? (
+      {props.course.status === 'loading' && !tableData.loaded ? (
         <Row>
           <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />
