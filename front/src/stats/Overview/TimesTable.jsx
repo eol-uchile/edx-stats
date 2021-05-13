@@ -398,9 +398,9 @@ const TimesTable = (props) => {
                 <li>
                   <a href="#Tiempototal">Tiempo total</a>
                 </li>
-                <li>
+                {/* <li>
                   <a href="#TiempoPromedio">Tiempo promedio</a>
-                </li>
+                </li> */}
                 <li>
                   <a href="#DetallesPorEstudiante">Detalle por estudiante</a>
                 </li>
@@ -429,12 +429,12 @@ const TimesTable = (props) => {
               <Col>No hay datos</Col>
             </Row>
           )}
-          <Row>
+          {/* <Row>
             <Col>
               <h4 id="TiempoPromedio">Tiempo promedio</h4>
             </Col>
-          </Row>
-          {rowData.loaded && rowData.verticals.length > 0 ? (
+          </Row> */}
+          {/* {rowData.loaded && rowData.verticals.length > 0 ? (
             <TimesAvg rowData={rowData} tableData={tableData} />
           ) : errors.length === 0 && !rowData.loaded ? (
             <Row>
@@ -446,7 +446,7 @@ const TimesTable = (props) => {
             <Row>
               <Col>No hay datos</Col>
             </Row>
-          )}
+          )} */}
           <StudentDetails
             title="Tiempos"
             rowData={rowData}
