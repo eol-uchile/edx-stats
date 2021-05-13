@@ -137,7 +137,8 @@ const TimesAvg = ({ tableData, rowData }) => {
   const averageChart = useMemo(
     () =>
       rowData.verticals.map((v, k) => ({
-        'Tiempo promedio visto': v.visits / (v.students === 0 ? 1 : v.students),
+        'Tiempo promedio visto':
+          v.visits / (rowData.all.length !== 0 ? rowData.all.length : 1),
         errorX: rowData.vertical_errors[k],
         ...v,
       })),
@@ -148,7 +149,7 @@ const TimesAvg = ({ tableData, rowData }) => {
     () =>
       rowData.grouped_verticals.map((el, k) => ({
         'Tiempo promedio visto':
-          el.visits / (el.students === 0 ? 1 : el.students),
+          el.visits / (rowData.all.length !== 0 ? rowData.all.length : 1),
         tooltip: tableData.chapters[k].name,
         errorX: rowData.grouped_verticals_errors[k],
         val: 'Módulo ' + (k + 1),
@@ -398,9 +399,9 @@ const TimesTable = (props) => {
                 <li>
                   <a href="#Tiempototal">Tiempo total</a>
                 </li>
-                {/* <li>
+                <li>
                   <a href="#TiempoPromedio">Tiempo promedio</a>
-                </li> */}
+                </li>
                 <li>
                   <a href="#DetallesPorEstudiante">Detalle por estudiante</a>
                 </li>
@@ -429,12 +430,12 @@ const TimesTable = (props) => {
               <Col>No hay datos</Col>
             </Row>
           )}
-          {/* <Row>
+          <Row>
             <Col>
               <h4 id="TiempoPromedio">Tiempo promedio</h4>
             </Col>
-          </Row> */}
-          {/* {rowData.loaded && rowData.verticals.length > 0 ? (
+          </Row>
+          {rowData.loaded && rowData.verticals.length > 0 ? (
             <TimesAvg rowData={rowData} tableData={tableData} />
           ) : errors.length === 0 && !rowData.loaded ? (
             <Row>
@@ -446,7 +447,7 @@ const TimesTable = (props) => {
             <Row>
               <Col>No hay datos</Col>
             </Row>
-          )} */}
+          )}
           <StudentDetails
             title="Tiempos"
             rowData={rowData}
