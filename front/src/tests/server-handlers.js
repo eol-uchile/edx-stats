@@ -11,7 +11,7 @@ import * as enrollment from './data/course_enrollment.json';
 import * as course_structure from './data/course_structure.json';
 import * as course_times from './data/course_times.json';
 import * as course_visits from './data/course_visits.json';
-import * as course_daily_visits from './data/course_daily_visits.json';
+import * as course_daily_chapter_visits from './data/course_daily_chapter_visits.json';
 
 const lms_url = process.env.LMS_BASE_URL;
 const base_url = process.env.BASE_URL;
@@ -64,13 +64,13 @@ const handlers = [
     return res(ctx.json(course_visits));
   }),
   rest.get(
-    `${base_url}/api/times/daily-visitsoncourse/*`,
+    `${base_url}/api/times/visitsoncourse/daily/chapter/*`,
     async (req, res, ctx) => {
       let course = req.url.searchParams.get('course');
       if (params === undefined) {
         return res(ctx.status(400));
       }
-      return res(ctx.json(course_daily_visits));
+      return res(ctx.json(course_daily_chapter_visits));
     }
   ),
   rest.get('', async (req, res, ctx) => {

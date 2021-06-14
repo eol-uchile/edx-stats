@@ -1,0 +1,103 @@
+import React, { useState, useMemo, Fragment } from 'react';
+import { Row, Col } from 'react-bootstrap';
+import { Form } from '@edx/paragon';
+import { useMediaQuery } from 'react-responsive';
+import { AsyncCSVButton, ErrorBarChart } from '../../common';
+
+const TimesAvg = ({ tableData, rowData }) => {
+  const [state, setState] = useState(false);
+
+  const isShort = useMediaQuery({ maxWidth: 418 });
+
+  const averageChart = useMemo(
+    () =>
+      rowData.verticals.map((v, k) => ({
+        'Tiempo promedio visto':
+          v.visits / (rowData.all.length !== 0 ? rowData.all.length : 1),
+        errorX: rowData.vertical_errors[k],
+        ...v,
+      })),
+    [rowData.verticals]
+  );
+
+  const averageChapterChart = useMemo(
+    () =>
+      rowData.grouped_verticals.map((el, k) => ({
+        'Tiempo promedio visto':
+          el.visits / (rowData.all.length !== 0 ? rowData.all.length : 1),
+        tooltip: tableData.chapters[k].name,
+        errorX: rowData.grouped_verticals_errors[k],
+        val: 'Módulo ' + (k + 1),
+      })),
+    [rowData.grouped_verticals]
+  );
+
+  const csvHeaders = useMemo(
+    () => ['Título', ...tableData.verticals.map((el) => el.tooltip)],
+    [tableData.verticals]
+  );
+
+  const csvAvData = useMemo(
+    () => [
+      ['Sección', ...tableData.verticals.map((el) => el.val)],
+      [
+        'Tiempo promedio visto',
+        ...averageChart.map((el) => el['Tiempo promedio visto']),
+      ],
+      ['Desviación estándar', ...averageChart.map((el) => el['errorX'])],
+    ],
+    [tableData.verticals, averageChart]
+  );
+
+  return (
+    <Fragment>
+      <Row>
+        <Col sm={6}>
+          <AsyncCSVButton
+            text="Descargar Datos"
+            filename="tiempos_promedio.csv"
+            headers={csvHeaders}
+            data={csvAvData}
+          />
+        </Col>
+        <Col sm={6}>
+          <Form.Group
+            controlId="group-mod-chapters-ch-av"
+            style={
+              isShort
+                ? { margin: '1rem 0' }
+                : {
+                    paddingRight: '1.5rem',
+                  }
+            }
+            className={isShort ? 'float-left' : 'float-right'}
+          >
+            <Form.Check
+              type="switch"
+              id="group-mod-chapters-ch-av"
+              label="Agrupar Módulos"
+              checked={state}
+              onChange={(e) => {
+                setState(e.target.checked);
+              }}
+            />
+          </Form.Group>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <ErrorBarChart
+            data={state ? averageChapterChart : averageChart}
+            area_key="Tiempo promedio visto"
+            name_key="val"
+            x_label={state ? 'Módulos' : 'Unidades del curso'}
+            y_label="Tiempo"
+            tooltipLabel={!state} // modules already have labels
+          />
+        </Col>
+      </Row>
+    </Fragment>
+  );
+};
+
+export default TimesAvg;

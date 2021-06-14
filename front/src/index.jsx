@@ -21,7 +21,7 @@ import appMessages from './i18n';
 
 import 'font-awesome/css/font-awesome.min.css';
 import './index.scss';
-import './assets/favicon.ico';
+import './assets/favicon.png';
 import { Routes, configureStore, Message } from './stats';
 
 import footerLogo from './assets/0vti.ef83f16aa682.jpg';

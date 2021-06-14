@@ -1,0 +1,59 @@
+.times-table-column thead tr:first-child th:first-child,
+.times-table-column td:first-child {
+  position: sticky;
+  left: 0px;
+  background-color: white;
+  border: solid 1px #b9babe;
+}
+
+.times-table-column table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.times-table-column table tr th,
+.times-table-column table tr td {
+  border-right: 1px solid  #b9babe;
+  border-left: none;
+}
+
+.custom-tooltip {
+  background-color: white;
+  border-radius: 0.3rem;
+  padding: 0.5rem;
+  border: 1px solid #b9babe;
+}
+
+.custom-tooltip .label{
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.custom-tooltip .views, .custom-tooltip .students{
+  font-size: 1rem;
+}
+
+.data-view{
+  margin-bottom: 2rem;
+}
+
+.data-view h4{
+  margin-top: 2rem;
+}
+
+.data-table-coloring-zeros {
+  color: gray;
+}
+.data-table-coloring-l0 {
+  background-color: rgb(173, 214, 230);
+}
+.data-table-coloring-l1 {
+  background-color: rgb(104, 190, 224);
+}
+.data-table-coloring-l2 {
+  background-color: rgb(32, 168, 221);
+}
+
+.date-table-selectors .input-group{
+  flex-wrap: nowrap;
+}
