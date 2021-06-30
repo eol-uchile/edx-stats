@@ -1,6 +1,5 @@
-import React, { useEffect, Fragment } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import React, { useEffect, useCallback, Fragment } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   Row,
@@ -15,8 +14,7 @@ import { Button, Input } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { timesActions } from '.';
-import { course, actions } from '../data/actions';
-import { getHasCourses, getMyCourses } from '../data/selectors';
+import { course as courseActions, actions } from '../data/actions';
 import { StudentDetails } from '../common';
 import { TimesAvg, TimeVsVisits } from './components';
 import { useLoadCourseInfo, useProcessSumData } from '../hooks';
@@ -49,23 +47,26 @@ const parseFloatToTimeString = (seconds) => {
  *
  */
 const TimesTable = (props) => {
+  const course = useSelector((state) => state.course);
+  const times = useSelector((state) => state.times);
+  const dispatch = useDispatch();
+
+  const resetTimes = useCallback(() => dispatch(timesActions.resetTimes()), []);
+  const recoverCourseStudentTimesSum = useCallback(
+    (i, l, u) => dispatch(timesActions.recoverCourseStudentTimesSum(i, l, u)),
+    []
+  );
+
   const [state, setState, errors, setErrors, removeErrors] = useLoadCourseInfo(
     props.match,
-    props.resetTimes,
-    props.resetCourseStructure,
-    props.cleanErrors,
-    props.course.status,
-    props.course.errors,
-    props.times.errors,
-    props.myCourses,
-    props.hasCourses
+    resetTimes,
+    times.errors
   );
 
   const [tableData, setTableData, rowData, setRowData] = useProcessSumData(
-    props.course,
-    props.times.added_times,
+    times.added_times,
     'event_type_vertical',
-    props.recoverCourseStudentTimesSum,
+    recoverCourseStudentTimesSum,
     errors,
     setErrors,
     state.upperDate,
@@ -81,9 +82,9 @@ const TimesTable = (props) => {
         setErrors([...errors, 'No tienes permisos para consultar estos datos']);
       } else {
         setTableData({ ...tableData, loaded: false });
-        props.recoverCourseStructure(state.current);
+        dispatch(courseActions.recoverCourseStructure(state.current));
         setErrors([]);
-        props.cleanErrors();
+        dispatch(actions.cleanErrors());
       }
     }
   };
@@ -98,8 +99,8 @@ const TimesTable = (props) => {
       <Helmet>
         <title>
           Tiempos por módulos
-          {(props.course.status === 'success') & tableData.loaded
-            ? `: ${props.course.course[0].name}`
+          {(course.status === 'success') & tableData.loaded
+            ? `: ${course.course[0].name}`
             : ''}
         </title>
       </Helmet>
@@ -180,12 +181,12 @@ const TimesTable = (props) => {
           </InputGroup>
         </Col>
         <Col sm={12} lg={4}>
-          <Button variant="success" onClick={submit} block>
+          <Button onClick={submit} block>
             Explorar <FontAwesomeIcon icon={faSearch} />
           </Button>
         </Col>
       </Row>
-      {props.course.status === 'loading' && !tableData.loaded ? (
+      {course.status === 'loading' && !tableData.loaded ? (
         <Row>
           <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />
@@ -309,35 +310,7 @@ const TimesTable = (props) => {
 };
 
 TimesTable.propTypes = {
-  course: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  times: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  myCourses: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types,
-  hasCourses: PropTypes.bool.isRequired,
-  recoverCourseStructure: PropTypes.func.isRequired,
-  resetCourseStructure: PropTypes.func.isRequired,
-  recoverCourseStudentTimesSum: PropTypes.func.isRequired,
-  resetTimes: PropTypes.func.isRequired,
-  cleanErrors: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-const mapStateToProps = (state) => ({
-  course: state.course,
-  times: state.times,
-  hasCourses: getHasCourses(state),
-  myCourses: getMyCourses(state),
-});
-
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-      recoverCourseStructure: course.recoverCourseStructure,
-      resetCourseStructure: course.resetCourseStructure,
-      recoverCourseStudentTimesSum: timesActions.recoverCourseStudentTimesSum,
-      resetTimes: timesActions.resetTimes,
-      cleanErrors: actions.cleanErrors,
-    },
-    dispatch
-  );
-
-export default connect(mapStateToProps, mapDispatchToProps)(TimesTable);
+export default TimesTable;

@@ -2,7 +2,8 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Row, Col, InputGroup } from 'react-bootstrap';
 import { Spinner } from '@edx/paragon';
 import { useMediaQuery } from 'react-responsive';
-import { TimeLineArea, AsyncCSVButton } from '../../common';
+import { AsyncCSVButton } from '../../common';
+import TimeLineArea from './TimeLineArea';
 import PropTypes from 'prop-types';
 
 const DateBrowser = ({ title, data, mapping, loading, haveErrors }) => {

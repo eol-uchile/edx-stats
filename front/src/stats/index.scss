@@ -77,3 +77,24 @@ section h2.content-header {
 .input-group input{
   border-color: hsl(0, 0%, 80%);
 }
+
+.pull-up-arrow{
+  font-size: 3rem;
+  right: 1rem;
+  bottom: 1rem;
+  position: fixed;
+  color: #00b3ff;
+  z-index: 2;
+  background-color: white;
+  border-radius: 1.5rem;
+  transition: 1s;
+}
+
+.pull-up-arrow:hover{
+  color: #527cf2;
+  font-size: 3.5rem;
+  border-radius: 1.75rem;
+  right: .75rem;
+  bottom: .75rem;
+  transition: 1s;
+}

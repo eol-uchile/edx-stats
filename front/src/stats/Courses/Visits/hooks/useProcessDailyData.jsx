@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 function useProcessDailyData(
   dailySum,
-  course,
   loadFunction,
   errors,
   lowerDate,
   upperDate
 ) {
+  const course = useSelector((state) => state.course);
+
   const [state, setState] = useState({
     computing: false,
     sumByMonths: [],

@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '../../../data/tests-utils';
-import TimeLineArea from '../../common/TimeLineArea';
+import TimeLineArea from '../components/TimeLineArea';
 
 const sample_data = [
   { hash1: 1, hash2: 2, date: '2021-03-24' },

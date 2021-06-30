@@ -2,7 +2,8 @@ import React, { Fragment, useMemo, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { SearchField, Form, TransitionReplace } from '@edx/paragon';
 import { useMediaQuery } from 'react-responsive';
-import { AsyncCSVButton, TableChapter, TableVertical } from '.';
+import { AsyncCSVButton } from '.';
+import { TableChapter, TableVertical } from './StudentDetails_common';
 import { classNameRuling, sortByColumn } from '../helpers';
 import PropTypes from 'prop-types';
 
@@ -136,7 +137,7 @@ const StudentDetails = ({
         </Col>
       </Row>
       <Row>
-        <Col sm={12}>
+        <Col sm={!isShort ? 3 : 12}>
           <AsyncCSVButton
             text="Descargar Datos"
             filename="detalle_estudiantes.csv"
@@ -148,7 +149,7 @@ const StudentDetails = ({
             data={state.useChaptersTable ? rowData.chapters : rowData.all}
           />
         </Col>
-        <Col sm={12}>
+        <Col sm={!isShort ? 3 : 12}>
           <Form.Group controlId="group-modules">
             <Form.Check
               type="switch"
@@ -164,7 +165,7 @@ const StudentDetails = ({
           </Form.Group>
         </Col>
 
-        <Col sm={12} key="coloring-transition">
+        <Col sm={!isShort ? 3 : 12} key="coloring-transition">
           {!state.useChaptersTable && (
             <Form.Group controlId="coloring-verticals">
               <Form.Check
@@ -181,7 +182,7 @@ const StudentDetails = ({
             </Form.Group>
           )}
         </Col>
-        <Col sm={12}>
+        <Col sm={!isShort ? 3 : 12}>
           <SearchField
             onSubmit={(value) => searchStudent(value)}
             onClear={() => searchStudent('')}

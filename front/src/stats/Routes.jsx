@@ -3,10 +3,8 @@ import { Route, Switch } from 'react-router';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Explorer, VisitsTable, TimesTable, Overview } from './Courses';
 import { RedirectToFeature } from './Redirect';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { courseActions } from './Courses';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { courseActions, PullUp } from './Courses';
 
 /**
  * Application routes for analytics
@@ -14,7 +12,11 @@ import PropTypes from 'prop-types';
  * Since most features require we have courses loaded and permissions too
  * we set the initial Effect at top level
  */
-const Routes = ({ redirect, coursesState, initCourses }) => {
+const Routes = () => {
+  const redirect = useSelector((state) => state.auth.doLogin);
+  const coursesState = useSelector((state) => state.course.status);
+  const dispatch = useDispatch();
+
   if (redirect) {
     return (
       <main>
@@ -29,9 +31,10 @@ const Routes = ({ redirect, coursesState, initCourses }) => {
   // Load courses globaly to store
   useEffect(() => {
     if (coursesState === 'idle') {
-      initCourses();
+      dispatch(courseActions.initCourseRolesInfo());
     }
   }, []);
+
   return (
     <main>
       <section>
@@ -44,37 +47,23 @@ const Routes = ({ redirect, coursesState, initCourses }) => {
             path="/courses/:course_id/visits/:start/:end"
             component={VisitsTable}
           />
-          <Route path="/courses/:course_id" component={Overview} />
-          <Route path="/explorer/:course_id" component={Explorer} />
-          <Route path="/explorer" component={Explorer} />
+          {/* <Route path="/courses/:course_id" component={Overview} /> */}
+          <Route path="/courses/:course_id" component={Explorer} />
+          <Route path="/courses" component={Explorer} />
           <Route
             render={(props) => (
               <RedirectToFeature
                 {...props}
-                path="/explorer"
+                path="/courses"
                 message="Explorador de cursos"
               />
             )}
           />
         </Switch>
+        <PullUp />
       </section>
     </main>
   );
 };
 
-Routes.propTypes = {
-  redirect: PropTypes.bool.isRequired,
-};
-
-const mapStateToProps = (state) => ({
-  redirect: state.auth.doLogin,
-  coursesState: state.course.status,
-});
-
-const mapActionsToProps = (dispatch) =>
-  bindActionCreators(
-    { initCourses: courseActions.initCourseRolesInfo },
-    dispatch
-  );
-
-export default connect(mapStateToProps, mapActionsToProps)(Routes);
+export default Routes;

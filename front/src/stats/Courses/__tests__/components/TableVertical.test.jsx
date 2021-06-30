@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '../../../data/tests-utils';
-import TableVertical from '../../common/TableVertical';
+import TableVertical from '../../common/StudentDetails_common/TableVertical';
 import { classNameRuling } from '../../helpers';
 
 const headers = {

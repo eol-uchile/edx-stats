@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Breadcrumb } from 'react-bootstrap';
-import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
+import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHome,
@@ -57,7 +57,13 @@ const formatGroupLabel = (data) => (
  * Display courses and links to their stats
  */
 const Explorer = (props) => {
-  const [state, setState] = useExplorer(props.match, props.myCourses);
+  const coursesState = useSelector((state) => state.course.status);
+  const loadingCoursesErrors = useSelector((state) => state.course.errors);
+  const hasCourses = useSelector((state) => getHasCourses(state));
+  const myCourses = useSelector((state) => getMyCourses(state));
+  const lms = useSelector((state) => state.urls.lms);
+
+  const [state, setState] = useExplorer(props.match, myCourses);
 
   const start = state.filtered[state.selected]
     ? getDate(state.filtered[state.selected].data.start)
@@ -105,19 +111,19 @@ const Explorer = (props) => {
         </Col>
       </Row>
       <Row>
-        {props.coursesState === 'loading' ? (
+        {coursesState === 'loading' ? (
           <Col style={{ textAlign: 'center', lineHeight: '200px' }}>
             Cargando cursos <Spinner animation="border" variant="primary" />
           </Col>
-        ) : props.coursesState === 'failed' ? (
+        ) : coursesState === 'failed' ? (
           <Col style={{ textAlign: 'center' }}>
-            {props.loadingCoursesErrors.map((err, k) => (
+            {loadingCoursesErrors.map((err, k) => (
               <Alert key={k} variant="warning">
                 {err}
               </Alert>
             ))}
           </Col>
-        ) : !props.hasCourses ? (
+        ) : !hasCourses ? (
           <Col>
             <Alert variant="warning">No hay cursos disponibles</Alert>
           </Col>
@@ -160,7 +166,7 @@ const Explorer = (props) => {
             <Col id="functionalities">
               <h4>Consultar Analítica</h4>
               <ul className="list-group-eol">
-                <li>
+                {/* <li>
                   <span className="toggle-arrow">
                     <FontAwesomeIcon icon={faChevronRight} />
                   </span>
@@ -171,7 +177,7 @@ const Explorer = (props) => {
                       className="float-right"
                     />
                   </Link>
-                </li>
+                </li> */}
                 <li>
                   <span className="toggle-arrow">
                     <FontAwesomeIcon icon={faChevronRight} />
@@ -213,7 +219,7 @@ const Explorer = (props) => {
                   )}
                   <Button
                     variant="primary"
-                    href={`${props.lms}/courses/${data.key}/course`}
+                    href={`${lms}/courses/${data.key}/course`}
                   >
                     Ver Curso en EOL
                   </Button>
@@ -229,20 +235,7 @@ const Explorer = (props) => {
 };
 
 Explorer.propTypes = {
-  coursesState: PropTypes.string.isRequired,
-  loadingCoursesErrors: PropTypes.array.isRequired,
-  hasCourses: PropTypes.bool.isRequired,
-  myCourses: PropTypes.array.isRequired,
-  lms: PropTypes.string,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-const mapStateToProps = (state) => ({
-  coursesState: state.course.status,
-  loadingCoursesErrors: state.course.errors,
-  hasCourses: getHasCourses(state),
-  myCourses: getMyCourses(state),
-  lms: state.urls.lms,
-});
-
-export default connect(mapStateToProps, null)(Explorer);
+export default Explorer;

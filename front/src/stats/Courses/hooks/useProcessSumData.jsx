@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { std, mean } from 'mathjs';
 
 const add = (a, b) => a + b;
@@ -7,7 +8,6 @@ const add = (a, b) => a + b;
  * Compute and parse course data into headers, rows and plot information
  */
 function useProcessSumData(
-  course,
   sum,
   sum_key,
   recoverSum,
@@ -16,6 +16,8 @@ function useProcessSumData(
   upperDate,
   lowerDate
 ) {
+  const course = useSelector((state) => state.course);
+
   // Courses info parsed
   const [tableData, setTableData] = useState({
     loaded: false,

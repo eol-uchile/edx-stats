@@ -8,4 +8,5 @@ router.register(r'timeonpage', views.TimeOnPageViewSet)
 urlpatterns = [
     path(r'', include(router.urls)),
     path(r'timeoncourse/', views.times_on_course, name="times"),
+    path(r'timeoncourse/overview/', views.general_times_overview_course, name="times-overview"),
 ]

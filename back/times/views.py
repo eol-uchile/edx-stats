@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.db.models import Sum
 from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
@@ -21,6 +22,26 @@ class TimeOnPageViewSet(generics.ListAPIView, viewsets.ModelViewSet):
     filterset_fields = ['course']
 
 
+def manage_standard_request(request, query):
+    roles = recoverUserCourseRoles(request)
+    allowed_list = [r['course_id'].replace(
+        "course", "block") for r in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES]
+
+    try:
+        course, time__gte, time__lte = verify_time_range_course_params(request)
+    except Exception as e:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=str(e))
+
+    # Check that user has permissions
+    if course not in allowed_list:
+        return Response(status=status.HTTP_403_FORBIDDEN, data="No tiene permisos para ver los datos en los cursos solicitados")
+
+    visits = query(course, time__lte, time__gte)
+    if len(visits) == 0:
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(visits)
+
+
 @api_view()
 def times_on_course(request):
     """
@@ -33,6 +54,22 @@ def times_on_course(request):
     both timestamps are included on the query.
 
     Timezone is added on runtime
+    """
+    # Course will arrive in format block-v1:COURSE without +type@course-block@course
+    # hence we do a icontains query
+    def query(x, y, z): return TimeOnPage.objects.filter(
+        course__icontains=x,
+        time__lte=y,
+        time__gte=z
+    ).values("username", "event_type_vertical").order_by("username", "event_type_vertical").annotate(total=Sum("delta_time_float"))
+
+    return manage_standard_request(request, query)
+
+
+@api_view()
+def general_times_overview_course(request):
+    """
+    Return total of seconds viewed on a course
     """
     roles = recoverUserCourseRoles(request)
     allowed_list = [r['course_id'].replace(
@@ -47,13 +84,17 @@ def times_on_course(request):
     if course not in allowed_list:
         return Response(status=status.HTTP_403_FORBIDDEN, data="No tiene permisos para ver los datos en los cursos solicitados")
 
-    # Course will arrive in format block-v1:COURSE without +type@course-block@course
-    # hence we do a icontains query
-    times = TimeOnPage.objects.filter(
+    total_course_time = TimeOnPage.objects.filter(
         course__icontains=course,
         time__lte=time__lte,
-        time__gte=time__gte
-    ).values("username", "event_type_vertical").order_by("username", "event_type_vertical").annotate(total=Sum("delta_time_float"))
-    if len(times) == 0:
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    return Response(times)
+        time__gte=time__gte,
+    ).values("course").annotate(total=Sum("delta_time_float"))
+    
+    if total_course_time.count() != 0:
+        total_course_time= total_course_time[0]['total']
+    else:
+        total_course_time = 0
+
+    return JsonResponse({
+        'total_time': total_course_time,
+    })

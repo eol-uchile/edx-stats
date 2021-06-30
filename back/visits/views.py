@@ -167,7 +167,11 @@ def general_visits_overview_course(request):
         course__icontains=course,
         time__lte=time__lte,
         time__gte=time__gte,
-    ).values("course").annotate(total=Sum("count")).first()['total']
+    ).values("course").annotate(total=Sum("count"))
+    if total_visits.count() != 0:
+        total_visits = total_visits[0]['total']
+    else:
+        total_visits = 0
 
     total_users = VisitOnPage.objects.filter(
         course__icontains=course,

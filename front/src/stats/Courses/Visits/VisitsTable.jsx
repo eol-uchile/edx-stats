@@ -1,14 +1,12 @@
-import React, { useEffect, Fragment } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import React, { useEffect, useCallback, Fragment } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Row, Col, Breadcrumb, InputGroup, Container } from 'react-bootstrap';
 import { Button, Input, Spinner, Alert } from '@edx/paragon';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { course, actions } from '../data/actions';
+import { course as courseActions, actions } from '../data/actions';
 import { visitActions } from '.';
-import { getMyCourses, getHasCourses } from '../data/selectors';
 import { StudentDetails } from '../common';
 import { VisitTotals, DateBrowser } from './components';
 import { useProcessDailyData } from './hooks';
@@ -25,23 +23,33 @@ import '../common/TableandChart.css';
  *
  */
 const VisitsTable = (props) => {
+  const course = useSelector((state) => state.course);
+  const visits = useSelector((state) => state.visits);
+  const dispatch = useDispatch();
+
+  const resetVisits = useCallback(
+    () => dispatch(visitActions.resetVisits()),
+    []
+  );
+  const recoverCourseStudentVisitSum = useCallback(
+    (i, l, u) => dispatch(visitActions.recoverCourseStudentVisitSum(i, l, u)),
+    []
+  );
+  const recoverDailyChapterVisits = useCallback(
+    (i, l, u) => dispatch(visitActions.recoverDailyChapterVisits(i, l, u)),
+    []
+  );
+
   const [state, setState, errors, setErrors, removeErrors] = useLoadCourseInfo(
     props.match,
-    props.resetVisits,
-    props.resetCourseStructure,
-    props.cleanErrors,
-    props.course.status,
-    props.course.errors,
-    props.visits.errors,
-    props.myCourses,
-    props.hasCourses
+    resetVisits,
+    visits.errors
   );
 
   const [tableData, setTableData, rowData, _] = useProcessSumData(
-    props.course,
-    props.visits.added_visits,
+    visits.added_visits,
     'vertical',
-    props.recoverCourseStudentVisitSum,
+    recoverCourseStudentVisitSum,
     errors,
     setErrors,
     state.upperDate,
@@ -49,9 +57,8 @@ const VisitsTable = (props) => {
   );
 
   const [dailyState, __] = useProcessDailyData(
-    props.visits.added_chapter_visits,
-    props.course,
-    props.recoverDailyVisits,
+    visits.added_chapter_visits,
+    recoverDailyChapterVisits,
     errors,
     state.lowerDate,
     state.upperDate
@@ -66,9 +73,9 @@ const VisitsTable = (props) => {
         setErrors([...errors, 'No tienes permisos para consultar estos datos']);
       } else {
         setTableData({ ...tableData, loaded: false });
-        props.recoverCourseStructure(state.current);
+        dispatch(courseActions.recoverCourseStructure(state.current));
         setErrors([]);
-        props.cleanErrors();
+        dispatch(actions.cleanErrors());
       }
     }
   };
@@ -83,8 +90,8 @@ const VisitsTable = (props) => {
       <Helmet>
         <title>
           Visitas por Módulo
-          {(props.course.status === 'successs') & tableData.loaded
-            ? `: ${props.course.course[0].name}`
+          {(course.status === 'successs') & tableData.loaded
+            ? `: ${course.course[0].name}`
             : ''}
         </title>
       </Helmet>
@@ -164,12 +171,12 @@ const VisitsTable = (props) => {
           </InputGroup>
         </Col>
         <Col sm={12} lg={4}>
-          <Button variant="success" onClick={submit} block>
+          <Button onClick={submit} block>
             Explorar <FontAwesomeIcon icon={faSearch} />
           </Button>
         </Col>
       </Row>
-      {props.course.status === 'loading' && !tableData.loaded ? (
+      {course.status === 'loading' && !tableData.loaded ? (
         <Row>
           <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />
@@ -279,37 +286,7 @@ const VisitsTable = (props) => {
 };
 
 VisitsTable.propTypes = {
-  course: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  visits: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  myCourses: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-  recoverCourseStructure: PropTypes.func.isRequired,
-  hasCourses: PropTypes.bool.isRequired,
-  resetCourseStructure: PropTypes.func.isRequired,
-  recoverCourseStudentVisitSum: PropTypes.func.isRequired,
-  recoverDailyVisits: PropTypes.func.isRequired,
-  resetVisits: PropTypes.func.isRequired,
-  cleanErrors: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-const mapStateToProps = (state) => ({
-  course: state.course,
-  visits: state.visits,
-  hasCourses: getHasCourses(state),
-  myCourses: getMyCourses(state),
-});
-
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-      recoverCourseStructure: course.recoverCourseStructure,
-      resetCourseStructure: course.resetCourseStructure,
-      recoverCourseStudentVisitSum: visitActions.recoverCourseStudentVisitSum,
-      recoverDailyVisits: visitActions.recoverDailyChapterVisits,
-      resetVisits: visitActions.resetVisits,
-      cleanErrors: actions.cleanErrors,
-    },
-    dispatch
-  );
-
-export default connect(mapStateToProps, mapDispatchToProps)(VisitsTable);
+export default VisitsTable;

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { getHasCourses, getMyCourses } from '../data/selectors';
+import { course as courseActions, actions } from '../data/actions';
 /**
  * Manage data recovery with form params
  * accounting for user permissions
@@ -11,26 +13,15 @@ import React, { useEffect, useState } from 'react';
  *
  * @param {Object} match
  * @param {Function} resetData
- * @param {Function} resetCourse
- * @param {Function} cleanErrors
- * @param {String} courseStatus
- * @param {Array} courseErrors
  * @param {Array} dataErrors
- * @param {Array} myCourses
- * @param {Boolean} hasCourses
  * @returns
  */
-function useLoadCourseInfo(
-  match,
-  resetData,
-  resetCourse,
-  cleanErrors,
-  courseStatus,
-  courseErrors,
-  dataErrors,
-  myCourses,
-  hasCourses
-) {
+function useLoadCourseInfo(match, resetData, dataErrors) {
+  const course = useSelector((state) => state.course);
+  const hasCourses = useSelector((state) => getHasCourses(state));
+  const myCourses = useSelector((state) => getMyCourses(state));
+  const dispatch = useDispatch();
+
   const [state, setState] = useState({
     current: match.params.course_id ? match.params.course_id : '',
     lowerDate: match.params.start ? match.params.start : '',
@@ -46,14 +37,14 @@ function useLoadCourseInfo(
   useEffect(() => {
     return () => {
       resetData();
-      resetCourse();
-      cleanErrors();
+      dispatch(courseActions.resetCourseStructure());
+      dispatch(actions.cleanErrors());
     };
   }, []);
 
   // Update courseName when data arrives
   useEffect(() => {
-    if (courseStatus === 'success' || courseStatus === 'failed') {
+    if (course.status === 'success' || course.status === 'failed') {
       if (hasCourses) {
         let thisCourse = myCourses.filter(
           (el) => el.key === match.params.course_id
@@ -67,14 +58,14 @@ function useLoadCourseInfo(
         setState({ ...state, allowed: false });
       }
     }
-  }, [hasCourses, myCourses, courseStatus]);
+  }, [hasCourses, myCourses, course.status]);
 
   // Copy errors to local state
   useEffect(() => {
-    if (courseErrors.length > 0 || dataErrors.length > 0) {
-      setErrors([...courseErrors, ...dataErrors]);
+    if (course.errors.length > 0 || dataErrors.length > 0) {
+      setErrors([...course.errors, ...dataErrors]);
     }
-  }, [courseErrors, dataErrors]);
+  }, [course.errors, dataErrors]);
 
   // If not allowed display error
   useEffect(() => {

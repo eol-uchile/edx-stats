@@ -1,5 +1,11 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Table as TableBT, Row, Col } from 'react-bootstrap';
+import {
+  Table as TableBT,
+  Tooltip,
+  OverlayTrigger,
+  Row,
+  Col,
+} from 'react-bootstrap';
 import { Pagination } from '@edx/paragon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -8,13 +14,14 @@ import {
   faSortUp,
 } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
-import { parseToTableRows } from '../helpers';
+import { parseToTableRows } from '../../helpers';
 
 /**
- * Display course data by chapter
+ * Display course data with sub headers
+ * for chapter, sequential and verticals
  * with pagination support
  */
-const TableChapter = ({
+const TableVertical = ({
   title,
   headers,
   data,
@@ -24,6 +31,7 @@ const TableChapter = ({
   doTotal = false,
   parseFunction = (e) => e,
   onHeader = (e, _) => e,
+  coloring = (e) => e,
 }) => {
   const [pagination, setPagination] = useState({
     current: 1,
@@ -63,9 +71,8 @@ const TableChapter = ({
     <Fragment>
       <Row>
         <Col>
-          Mostrando {subArray.length} de {pagination.total}
+          Mostrando {subArray.length} de {pagination.total}{' '}
         </Col>
-        <Col></Col>
       </Row>
       <Row>
         <Col className="times-table-column">
@@ -73,32 +80,67 @@ const TableChapter = ({
             <caption>
               {caption}: {title}
             </caption>
+            <colgroup />
+            {headers.chapters.map((el, k) => (
+              <colgroup span={el.subtotal} key={k}></colgroup>
+            ))}
             <thead>
-              <tr>
-                <th onClick={() => onClickHeader(0)}>
-                  Estudiantes {0 === state.column ? arrow : gray_sort}
+              <tr key="first-header-row">
+                <th rowSpan="3" onClick={() => onClickHeader(0)}>
+                  Estudiantes
+                  {0 === state.column ? arrow : gray_sort}
                 </th>
-                {headers.chapters.map((el, k) => (
-                  <th key={el.name} onClick={() => onClickHeader(k + 1)}>
+                {headers.chapters.map((el) => (
+                  <th colSpan={el.subtotal} key={el.name}>
                     {el.name}
-                    {k + 1 === state.column ? arrow : gray_sort}
                   </th>
                 ))}
                 {doTotal && (
                   <th
-                    onClick={() => onClickHeader(headers.chapters.length + 1)}
+                    rowSpan="3"
+                    onClick={() => onClickHeader(headers.verticals.length + 1)}
+                    key="total-col"
                   >
                     Total
-                    {headers.chapters.length + 1 === state.column
+                    {headers.verticals.length + 1 === state.column
                       ? arrow
                       : gray_sort}
                   </th>
                 )}
               </tr>
+              <tr key="second-header-row">
+                {headers.sequentials.map((seq) => (
+                  <th colSpan={seq.total_verticals} scope="col" key={seq.name}>
+                    {seq.val}
+                  </th>
+                ))}
+              </tr>
+              <tr key="third-header-row">
+                {headers.verticals.map((el, k) => (
+                  <th key={el.id} onClick={() => onClickHeader(k + 1)}>
+                    <OverlayTrigger
+                      key={el.id}
+                      placement={'bottom'}
+                      overlay={(props) => (
+                        <Tooltip id={`tooltip-${el.id}`} {...props}>
+                          {el.tooltip}.
+                        </Tooltip>
+                      )}
+                    >
+                      <span>
+                        {el.val}
+                        {k + 1 === state.column ? arrow : gray_sort}
+                      </span>
+                    </OverlayTrigger>
+                  </th>
+                ))}
+              </tr>
             </thead>
             <tbody>
               {errors.length === 0 &&
-                subArray.map((e, k) => parseToTableRows(e, k, parseFunction))}
+                subArray.map((e, k) =>
+                  parseToTableRows(e, k, parseFunction, coloring)
+                )}
               <tr></tr>
             </tbody>
           </TableBT>
@@ -111,9 +153,9 @@ const TableChapter = ({
               currentPage={pagination.current}
               paginationLabel="pagination navigation"
               pageCount={Math.ceil(pagination.total / pagination.size)}
-              onPageSelect={(page) =>
-                setPagination({ ...pagination, current: page })
-              }
+              onPageSelect={(page) => {
+                setPagination({ ...pagination, current: page });
+              }}
               buttonLabels={{
                 previous: 'Anterior',
                 next: 'Siguiente',
@@ -129,12 +171,21 @@ const TableChapter = ({
   );
 };
 
-TableChapter.propTypes = {
+TableVertical.propTypes = {
   title: PropTypes.string,
   headers: PropTypes.shape({
     chapters: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string,
+        subtotal: PropTypes.number,
+      })
+    ),
+    sequentials: PropTypes.arrayOf(PropTypes.object),
+    verticals: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.any,
+        tooltip: PropTypes.any,
+        val: PropTypes.string,
       })
     ),
   }).isRequired,
@@ -144,7 +195,6 @@ TableChapter.propTypes = {
   errors: PropTypes.array,
   caption: PropTypes.string.isRequired,
   defaultPage: PropTypes.number,
-  doTotal: PropTypes.bool,
 };
 
-export default TableChapter;
+export default TableVertical;

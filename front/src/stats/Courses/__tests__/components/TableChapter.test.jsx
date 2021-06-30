@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '../../../data/tests-utils';
-import TableChapter from '../../common/TableChapter';
+import TableChapter from '../../common/StudentDetails_common/TableChapter';
 
 it('renders without crashing', () => {
   render(
