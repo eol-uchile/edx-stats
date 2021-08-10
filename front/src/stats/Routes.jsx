@@ -47,7 +47,7 @@ const Routes = () => {
             path="/courses/:course_id/visits/:start/:end"
             component={VisitsTable}
           />
-          {/* <Route path="/courses/:course_id" component={Overview} /> */}
+          <Route path="/courses/:course_id" component={Overview} />
           <Route path="/courses/:course_id" component={Explorer} />
           <Route path="/courses" component={Explorer} />
           <Route

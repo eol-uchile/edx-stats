@@ -4,12 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import CountUp from 'react-countup';
 
-const CountBox = ({ end, duration, image, change, caption, countUpProps }) => {
+const CountBox = ({ image, change, caption, countUpProps }) => {
   const digitStyle = {
     fontWeight: 700,
     fontSize: '2.5em',
     fontFamily: 'mono',
   };
+
   return (
     <Container
       style={{
@@ -36,12 +37,7 @@ const CountBox = ({ end, duration, image, change, caption, countUpProps }) => {
         </Col>
         <Col style={{ textAlign: 'right' }}>
           <p style={{ marginBottom: '0', paddingTop: '.325rem' }}>{caption}</p>
-          <CountUp
-            end={end}
-            duration={duration}
-            style={digitStyle}
-            {...countUpProps}
-          />
+          <CountUp style={digitStyle} {...countUpProps} />
         </Col>
       </Row>
       {/* 

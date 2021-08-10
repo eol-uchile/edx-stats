@@ -21,23 +21,7 @@ import { useLoadCourseInfo, useProcessSumData } from '../hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faSearch } from '@fortawesome/free-solid-svg-icons';
 import '../common/TableandChart.css';
-
-const parseFloatToTimeString = (seconds) => {
-  if (typeof seconds != 'number') {
-    return seconds;
-  }
-  let secs = `${seconds % 60}`;
-  let mins = `${Math.floor(seconds / 60) % 60}`;
-  let hours = Math.floor(seconds / 3600);
-  if (hours > 0) {
-    return `${hours}:${mins.length === 1 ? '0' + mins : mins}:${
-      secs.length === 1 ? '0' + secs : secs
-    }`;
-  }
-  return `${mins.length === 1 ? '0' + mins : mins}:${
-    secs.length === 1 ? '0' + secs : secs
-  }`;
-};
+import { parseFloatToTimeString } from '../helpers';
 
 /**
  * TimesTable
@@ -97,26 +81,23 @@ const TimesTable = (props) => {
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 data-view">
       <Helmet>
-        <title>
-          Tiempos por módulos
-          {(course.status === 'success') & tableData.loaded
-            ? `: ${course.course[0].name}`
-            : ''}
-        </title>
+        <title>Tiempos por módulos</title>
       </Helmet>
       <Row>
         <Col>
           <Breadcrumb className="eol-breadcrumb">
-            <Link
-              className="breadcrumb-item"
-              to={`/courses/${props.match.params.course_id}`}
-            >
+            <Link className="breadcrumb-item" to={`/courses`}>
               <FontAwesomeIcon icon={faHome} /> General
             </Link>
-            <Breadcrumb.Item
-              href="#"
-              active
-            >{`Tiempos ${state.current}`}</Breadcrumb.Item>
+            <Breadcrumb.Item href="#">
+              <Link
+                className="breadcrumb-item"
+                to={`/courses/${props.match.params.course_id}`}
+              >
+                {`Resumen ${state.current}`}
+              </Link>
+            </Breadcrumb.Item>
+            <Breadcrumb.Item href="#" active>{`Tiempos`}</Breadcrumb.Item>
           </Breadcrumb>
         </Col>
       </Row>

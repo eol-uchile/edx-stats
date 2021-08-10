@@ -189,25 +189,43 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
     - run_code to save errors on a single file with the same code
 
     """
-    def save_vertical_row(row):
-        vertical = CourseVertical(
-            course=row["course"],
-            course_name=row["course_name"],
-            chapter=row["chapter"],
-            chapter_name=row["chapter_name"],
-            sequential=row["sequential"],
-            sequential_name=row["sequential_name"],
-            vertical=row["vertical"],
-            vertical_name=row["vertical_name"],
-            block_id=row["id"],
-            vertical_number=row["vertical_number"],
-            sequential_number=row["sequential_number"],
-            chapter_number=row["chapter_number"],
-            child_number=row["child_number"],
-            block_type=row["type"],
-            student_view_url=row["student_view_url"],
-            lms_web_url=row["lms_web_url"])
-        vertical.save()
+    def save_vertical_row(course_id, row):
+        previous = CourseVertical.objects.filter(course=course_id, vertical=row["vertical"])
+        if(previous.count() != 0):
+            vertical = previous.first()
+            vertical.chapter = row['chapter']
+            vertical.chapter_name = row['chapter_name']
+            vertical.sequential = row['sequential']
+            vertical.sequential_name = row['sequential_name']
+            vertical.vertical_name = row['vertical_name']
+            vertical.block_id = row['id']
+            vertical.vertical_number = row['vertical_number']
+            vertical.sequential_number = row['sequential_number']
+            vertical.chapter_number = row['chapter_number']
+            vertical.child_number = row['child_number']
+            vertical.block_type = row['type']
+            vertical.student_view_url = row['student_view_url']
+            vertical.lms_web_url = row['lms_web_url']
+            vertical.save()
+        else:
+            vertical = CourseVertical(
+                course=row["course"],
+                course_name=row["course_name"],
+                chapter=row["chapter"],
+                chapter_name=row["chapter_name"],
+                sequential=row["sequential"],
+                sequential_name=row["sequential_name"],
+                vertical=row["vertical"],
+                vertical_name=row["vertical_name"],
+                block_id=row["id"],
+                vertical_number=row["vertical_number"],
+                sequential_number=row["sequential_number"],
+                chapter_number=row["chapter_number"],
+                child_number=row["child_number"],
+                block_type=row["type"],
+                student_view_url=row["student_view_url"],
+                lms_web_url=row["lms_web_url"])
+            vertical.save()
 
     time_window = DAY_WINDOW if day_window is None else day_window
     tz = pytz.timezone(settings.TIME_ZONE)
@@ -236,11 +254,9 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
 
     # Remove previous course info in the DB
     course_id_df = course_dataframe['course'].iloc[0]
-    previous_values = CourseVertical.objects.filter(course=course_id_df)
-    if len(previous_values) != 0:
-        previous_values.delete()
+    
     # Update vertical information on DB
-    course_dataframe.apply(save_vertical_row, axis=1)
+    course_dataframe.apply(lambda row: save_vertical_row(course_id_df, row), axis=1)
 
     # This course
     if end_date is None:

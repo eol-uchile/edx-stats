@@ -65,12 +65,12 @@ const Explorer = (props) => {
 
   const [state, setState] = useExplorer(props.match, myCourses);
 
-  const start = state.filtered[state.selected]
-    ? getDate(state.filtered[state.selected].data.start)
-    : null;
-  const end = state.filtered[state.selected]
-    ? getDate(state.filtered[state.selected].data.end)
-    : null;
+  // const start = state.filtered[state.selected]
+  //   ? getDate(state.filtered[state.selected].data.start)
+  //   : null;
+  // const end = state.filtered[state.selected]
+  //   ? getDate(state.filtered[state.selected].data.end)
+  //   : null;
   const key = state.filtered[state.selected]
     ? state.filtered[state.selected].data.key
     : null;
@@ -166,24 +166,24 @@ const Explorer = (props) => {
             <Col id="functionalities">
               <h4>Consultar Analítica</h4>
               <ul className="list-group-eol">
-                {/* <li>
+                <li>
                   <span className="toggle-arrow">
                     <FontAwesomeIcon icon={faChevronRight} />
                   </span>
-                  <Link to={`/courses/${key}/times/${start}/${end}`}>
+                  <Link to={`/courses/${key}`}>
                     Ver estadísticas generales{' '}
                     <FontAwesomeIcon
                       icon={faExternalLinkAlt}
                       className="float-right"
                     />
                   </Link>
-                </li> */}
-                <li>
+                </li>
+                {/* <li>
                   <span className="toggle-arrow">
                     <FontAwesomeIcon icon={faChevronRight} />
                   </span>
                   <Link to={`/courses/${key}/times/${start}/${end}`}>
-                    Ver tiempo de vizualización general{' '}
+                    Ver tiempo de visualización general{' '}
                     <FontAwesomeIcon
                       icon={faExternalLinkAlt}
                       className="float-right"
@@ -201,7 +201,7 @@ const Explorer = (props) => {
                       className="float-right"
                     />
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </Col>
           </Row>

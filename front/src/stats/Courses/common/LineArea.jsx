@@ -27,7 +27,7 @@ const LineArea = ({ data, dataKey, height = '60%' }) => {
         <XAxis dataKey={dataKey} angle={-10} />
         <YAxis
           label={{
-            value: 'Visitas Diarias',
+            value: 'Cantidad Diaria',
             angle: -90,
             position: 'insideLeft',
           }}
@@ -37,6 +37,12 @@ const LineArea = ({ data, dataKey, height = '60%' }) => {
           type="monotone"
           dataKey="Tiempo"
           stroke="#8884d8"
+          activeDot={{ r: 8 }}
+        />
+        <Area
+          type="monotone"
+          dataKey="Visitas"
+          stroke="#82ca9d"
           activeDot={{ r: 8 }}
         />
         <Legend />
