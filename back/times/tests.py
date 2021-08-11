@@ -13,6 +13,7 @@ class TestTimesOnCourse(UserMixin, JwtMixin, APITestCase):
     def setUp(self):
         self.user = self.create_user()
         CourseVertical.objects.create(
+            is_active=True,
             course="Test-EOL_T2",
             course_name="Test EOL T2",
             chapter="Test-EOL_T2+type@chapter+block@a", 
@@ -21,14 +22,14 @@ class TestTimesOnCourse(UserMixin, JwtMixin, APITestCase):
             sequential_name="Introduction to testing",
             vertical="Test-EOL_T2+type@vertical+block@a",
             vertical_name="Resume",
-            block_id = "Test-EOL_T2+type@html+block@a"
-            vertical_number = 1
-            sequential_number = 1
-            chapter_number = 1
-            child_number = 1
-            block_type = "html"
-            student_view_url = "http://eol.andhael.cl/xblock/Test-EOL_T2+type@html+block@a"
-            lms_web_url = "http://eol.andhael.cl/courses/course-Test-EOL_T2/jump_to/Test-EOL_T2+type@html+block@a"
+            block_id = "Test-EOL_T2+type@html+block@a",
+            vertical_number = 1,
+            sequential_number = 1,
+            chapter_number = 1,
+            child_number = 1,
+            block_type = "html",
+            student_view_url = "http://eol.andhael.cl/xblock/Test-EOL_T2+type@html+block@a",
+            lms_web_url = "http://eol.andhael.cl/courses/course-Test-EOL_T2/jump_to/Test-EOL_T2+type@html+block@a",
         )
         TimeOnPage.objects.create(
             username="eol",
@@ -37,7 +38,7 @@ class TestTimesOnCourse(UserMixin, JwtMixin, APITestCase):
             vertical=CourseVertical.objects.filter(
                 sequential="Test-EOL_T2+type@sequential+block@0a",
                 course="Test-EOL_T2"
-            ).first()
+            ).first(),
             time=datetime(2019, 9, 4, 1, 1, 1)
         )
 

@@ -27,6 +27,7 @@ def load_course(filepath):
 
     def save_row(row):
         vertical = CourseVertical(
+            is_active=True,
             course=row["course"],
             course_name=row["course_name"],
             chapter=row["chapter"],
@@ -70,6 +71,7 @@ def load_course_from_api(course_code):
 
     def save_row(row):
         vertical = CourseVertical(
+            is_active=True,
             course=row["course"],
             course_name=row["course_name"],
             chapter=row["chapter"],
