@@ -37,12 +37,14 @@ const LineArea = ({ data, dataKey, height = '60%' }) => {
           type="monotone"
           dataKey="Tiempo"
           stroke="#8884d8"
+          fill="#8884d89e"
           activeDot={{ r: 8 }}
         />
         <Area
           type="monotone"
           dataKey="Visitas"
           stroke="#82ca9d"
+          fill="#82ca9da3"
           activeDot={{ r: 8 }}
         />
         <Legend />
