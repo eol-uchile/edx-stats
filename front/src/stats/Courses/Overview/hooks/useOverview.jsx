@@ -1,43 +1,27 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
-const useOverview = (data, recoverData, errors, setErrors) => {
+const useOverview = (
+  data,
+  recoverData,
+  errors,
+  setErrors,
+  upperDate,
+  lowerDate
+) => {
   const course = useSelector((state) => state.course);
 
-  const [generalData, setGeneralData] = useState({
-    loaded: false,
-    chapters: [],
-    sequentials: [],
-  });
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
-    if (course.course.length !== 0) {
+    if (course.course.length !== 0 && lowerDate != '' && upperDate != '') {
       let current = course.course[0];
-      let chaptersWithNames = [];
-      let sequentialsWithNames = [];
-      current.chapters.forEach((ch, key_ch) => {
-        chaptersWithNames.push({
-          id: ch.id,
-          name: ch.name,
-        });
-        ch.sequentials.forEach((seq, key_seq) => {
-          sequentialsWithNames.push({
-            name: seq.name,
-            val: `${key_ch + 1}.${key_seq + 1}`,
-          });
-        });
-      });
-      setGeneralData({
-        ...generalData,
-        loaded: true,
-        chapters: chaptersWithNames,
-        sequentials: sequentialsWithNames,
-      });
-      // Load data (llena reducer)
-      recoverData(current.id);
+      setDataLoaded(true);
+      // Load data
+      recoverData(current.id, new Date(lowerDate), new Date(upperDate));
     }
     // eslint-disable-next-line
-  }, [course.course]);
+  }, [course.course, lowerDate, upperDate]);
 
   const [countBox, setCountBox] = useState({
     loaded: false,
@@ -59,16 +43,16 @@ const useOverview = (data, recoverData, errors, setErrors) => {
   });
 
   useEffect(() => {
-    //se llamará varias veces
+    // Groups CountBox and ChartBox in one useEffect
+    // It calls himself at least twice
     if (
-      generalData.loaded &&
+      dataLoaded &&
       data.general_times !== '' &&
       data.general_visits !== '' &&
       data.general_users !== '' &&
       errors.length === 0
     ) {
-      // solo rellena datos cuando ambas peticiones,
-      // al endpoint times y visits, se completaron
+      // recoverCourseGeneralTimes and recoverCourseGeneralVisits
       setCountBox({
         ...countBox,
         values: {
@@ -78,18 +62,17 @@ const useOverview = (data, recoverData, errors, setErrors) => {
         },
         loaded: true,
       });
-      //setErrors([]);
+      setErrors([]);
     }
     if (
-      generalData.loaded &&
+      dataLoaded &&
       data.detailed_times !== '' &&
       data.detailed_visits.date !== '' &&
       data.detailed_visits.module !== '' &&
       data.detailed_visits.seq !== '' &&
       errors.length === 0
     ) {
-      // solo rellena datos cuando ambas peticiones,
-      // al endpoint times y visits, se completaron
+      // recoverCourseDetailedTimes and recoverCourseDetailedVisits
       setChartBox({
         ...chartBox,
         values: {
@@ -100,11 +83,36 @@ const useOverview = (data, recoverData, errors, setErrors) => {
         },
         loaded: true,
       });
-      //setErrors([]);
+      setErrors([]);
     }
-  }, [generalData.loaded, data]);
+  }, [dataLoaded, data]);
 
-  return [generalData, setGeneralData, countBox, chartBox];
+  useEffect(() => {
+    if (errors.length > 0) {
+      // If errors then reset the state
+      setCountBox({
+        ...countBox,
+        loaded: true,
+        values: {
+          times: 0,
+          visits: 0,
+          users: 0,
+        },
+      });
+      setChartBox({
+        ...chartBox,
+        loaded: true,
+        values: {
+          week_times: [],
+          week_visits: [],
+          module_visits: [],
+          seq_visits: [],
+        },
+      });
+    }
+  }, [errors]);
+
+  return [dataLoaded, setDataLoaded, countBox, chartBox];
 };
 
 export default useOverview;

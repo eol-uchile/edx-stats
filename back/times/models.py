@@ -9,11 +9,6 @@ class TimeOnPage(models.Model):
         null = True,
         blank = True,
     )
-    ### deprecated ###
-    event_type_vertical = models.TextField()
-    course = models.TextField()
-    sequential = models.TextField(blank=True)
-    ##################
     session = models.IntegerField()
     username = models.CharField(max_length=150)
     delta_time_float = models.FloatField()

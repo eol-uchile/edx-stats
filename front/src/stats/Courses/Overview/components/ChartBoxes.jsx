@@ -5,7 +5,7 @@ import { useMediaQuery } from 'react-responsive';
 import { ChartBox } from '.';
 import { PieChart, LineArea } from '../../common';
 
-const ChartBoxes = ({ data, tableData }) => {
+const ChartBoxes = ({ data }) => {
   const [state, setState] = useState(false);
 
   const isShort = useMediaQuery({ maxWidth: 418 });
@@ -15,60 +15,62 @@ const ChartBoxes = ({ data, tableData }) => {
 
   useEffect(() => {
     if (data.week_times.length !== 0 && data.week_visits.length !== 0) {
-      // transforms seconds to minutes
+      // removes ISO format in date and transforms seconds to minutes
       let timesLineArea = data.week_times.map((t, k) => ({
-        date: t.time,
+        date: t.time.slice(0, 10),
         Tiempo: Math.floor(t.total / 60),
       }));
-      // removes ISO format in date 
+      // removes ISO format in date
       let visitsLineArea = data.week_visits.map((v, k) => ({
         date: v.time.slice(0, 10),
         Visitas: v.total,
       }));
 
-      // [{date: '2019-01-01', Tiempo: 1}, ...] merge with
-      // [{date: '2019-01-01' Visitas: 1}, ...]
-      // NOTA: si el endpoint de times recibe una fecha distinta
-      // a las fechas del endpoint de visits entonces no podrian mezclarse
-      let dataPerDay = timesLineArea.map((t, k) => ({
-        ...t,
-        ...visitsLineArea[k],
-      }));
+      // [{date: '2019-01-01', Tiempo: 1}, ...] concat with
+      // [{date: '2019-01-01' Visitas: 0}, ...]
+      let concat = [...timesLineArea, ...visitsLineArea];
+      // [{date: '2019-01-01', Tiempo: 1} <- {date: '2019-01-01' Visitas: 0}]
+      let mixed = concat.reduce(function (output, cur) {
+        // Get the index of the key-value pair.
+        var occurs = output.reduce(function (n, item, i) {
+          return item.date === cur.date ? i : n;
+        }, -1);
+        // If the date is found,
+        if (occurs >= 0) {
+          // set the current value Visitas to its Visitas field
+          output[occurs].Visitas = cur.Visitas;
+          // Otherwise,
+        } else {
+          // add the current item to output
+          output = output.concat([cur]);
+        }
+        return output;
+      }, []);
+      // sort by date
+      let dataPerDay = mixed.sort(function (a, b) {
+        return new Date(a.date) - new Date(b.date)
+      });
       setDataline(dataPerDay);
     }
   }, [data.week_times, data.week_visits]);
 
   useEffect(() => {
     let statsUnnamed = state ? data.module_visits : data.seq_visits;
-    let arrayTitles = state ? tableData.chapters : tableData.sequentials;
-    if (statsUnnamed.length !== 0 && arrayTitles.length !== 0) {
+    if (statsUnnamed.length !== 0) {
       let dataCompleted = [];
       statsUnnamed.forEach((v, k) => {
-        if (k < tableData.sequentials.length) {
-          // la asignacion de nombre segun k sirve
-          // siempre que la cuenta de visitas por secuencia del backend
-          // este ordenada con la lista de nombres de secuencias
-          // esto no ocurre si se borra una secuencia intermedia
-          // mientras que las visitas de esta siguen registradas por el backend
-
-          //solucion: sequentials desde estructura de curso devuelva id
-          // y matchear con id de cuenta backend
-
-          //mejor solucion: desde cuenta backend vengan nombrados
-          // y con eso filtrados las cuentas cuyos cursos no siguen existiendo
-          let name = state
-            ? arrayTitles.find((ch) => ch.id === v.vertical__chapter).name
-            : `${tableData.sequentials[k].val} : ${tableData.sequentials[k].name}`;
-          let itemWithName = {
-            name: name,
-            value: v.total,
-          };
-          dataCompleted.push(itemWithName);
-        }
+        let name = state
+          ? v.name
+          : `${v.chap_number}.${v.seq_number} : ${v.name}`;
+        let itemWithName = {
+          name: name,
+          value: v.total,
+        };
+        dataCompleted.push(itemWithName);
       });
       setDataPie(dataCompleted);
     }
-  }, [state, data.module_visits, data.seq_visits, tableData]);
+  }, [state, data.module_visits, data.seq_visits]);
 
   return (
     <Fragment>

@@ -60,6 +60,7 @@ def visits_on_course(request):
     # Course will arrive in format block-v1:COURSE without +type@course-block@course
     # hence we do a icontains query
     query = lambda x,y,z: VisitOnPage.objects.filter(
+        vertical__is_active=True,
         vertical__course__icontains=x,
         time__lte=y,
         time__gte=z
@@ -67,7 +68,7 @@ def visits_on_course(request):
         sequential=F('vertical__sequential'), 
         chapter=F('vertical__chapter'), 
         course=F('vertical__course')
-    ).values("username", "vertical", "sequential", "chapter", "course").order_by("username", "vertical").annotate(total=Sum("count"))
+    ).values("username", "vertical__vertical", "sequential", "chapter", "course").order_by("username", "vertical__vertical").annotate(total=Sum("count"))
     
     return manage_standard_request(request,query)
 
@@ -89,6 +90,7 @@ def daily_visits_per_chapter_on_course(request):
     # Course will arrive in format block-v1:COURSE without +type@course-block@course
     # hence we do a icontains query
     query = lambda x,y,z: VisitOnPage.objects.filter(
+        vertical__is_active=True,
         vertical__course__icontains=x,
         time__lte=y,
         time__gte=z
@@ -116,6 +118,7 @@ def daily_visits_on_course(request):
     # Course will arrive in format block-v1:COURSE without +type@course-block@course
     # hence we do a icontains query
     query = lambda x,y,z: VisitOnPage.objects.filter(
+        vertical__is_active=True,
         vertical__course__icontains=x,
         time__lte=y,
         time__gte=z
@@ -143,6 +146,7 @@ def hourly_visits_overview_on_course(request):
     # Course will arrive in format block-v1:COURSE without +type@course-block@course
     # hence we do a icontains query
     query = lambda x,y,z: VisitOnPage.objects.filter(
+        vertical__is_active=True,
         vertical__course__icontains=x,
         time__lte=y,
         time__gte=z,
@@ -175,6 +179,7 @@ def general_visits_overview_course(request):
         return Response(status=status.HTTP_403_FORBIDDEN, data="No tiene permisos para ver los datos en los cursos solicitados")
 
     total_visits = VisitOnPage.objects.filter(
+        vertical__is_active=True,
         vertical__course__icontains=course,
         time__lte=time__lte,
         time__gte=time__gte,
@@ -186,6 +191,7 @@ def general_visits_overview_course(request):
         total_visits = 0
 
     total_users = VisitOnPage.objects.filter(
+        vertical__is_active=True,
         vertical__course__icontains=course,
         time__lte=time__lte,
         time__gte=time__gte,
@@ -216,6 +222,7 @@ def detailed_visits_overview_course(request):
         return Response(status=status.HTTP_403_FORBIDDEN, data="No tiene permisos para ver los datos en los cursos solicitados")
 
     total_visits = VisitOnPage.objects.filter(
+        vertical__is_active=True,
         vertical__course__icontains=course,
         time__lte=time__lte,
         time__gte=time__gte,
@@ -226,11 +233,19 @@ def detailed_visits_overview_course(request):
     detailed_visits['date'] = list(date_visits)
 
     #groupedBy modulo
-    module_visits = total_visits.values("vertical__chapter").annotate(total=Sum("count"))
+    module_visits = total_visits.values("vertical__chapter").annotate(
+        total=Sum("count"),
+        name=F("vertical__chapter_name")    
+    )
     detailed_visits['module'] = list(module_visits)
 
     #groupedBy unidad
-    seq_visits = total_visits.values("vertical__sequential").annotate(total=Sum("count"))
+    seq_visits = total_visits.values("vertical__sequential").annotate(
+        total=Sum("count"), 
+        name=F("vertical__sequential_name"),
+        chap_number=F("vertical__chapter_number"),
+        seq_number=F("vertical__sequential_number"),
+    )
     detailed_visits['seq'] = list(seq_visits)
 
     total_visits = detailed_visits

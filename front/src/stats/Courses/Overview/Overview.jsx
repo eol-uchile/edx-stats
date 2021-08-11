@@ -42,42 +42,24 @@ const Overview = (props) => {
     generalStats.errors
   );
 
-  const recoverCourseGeneralStats = useCallback((i) => {
+  const recoverCourseGeneralStats = useCallback((i, l, u) => {
+    dispatch(overviewActions.recoverCourseGeneralTimes(i, l, u));
+    dispatch(overviewActions.recoverCourseGeneralVisits(i, l, u));
     dispatch(
-      overviewActions.recoverCourseGeneralTimes(
-        i,
-        new Date('2019-07-26'),
-        new Date('2019-12-22')
-      )
+      overviewActions.recoverCourseDetailedTimes(i, getToday(-7), getToday())
     );
     dispatch(
-      overviewActions.recoverCourseGeneralVisits(
-        i,
-        new Date('2019-07-26'),
-        new Date('2019-12-22')
-      )
-    );
-    dispatch(
-      overviewActions.recoverCourseDetailedTimes(
-        i,
-        new Date('2019-08-20'),
-        new Date('2019-08-27'),
-      )
-    );
-    dispatch(
-      overviewActions.recoverCourseDetailedVisits(
-        i,
-        new Date('2019-08-20'),
-        new Date('2019-08-27'),
-      )
+      overviewActions.recoverCourseDetailedVisits(i, getToday(-7), getToday())
     );
   }, []);
 
-  const [generalData, setGeneralData, countBox, chartBox] = useOverview(
+  const [dataLoaded, setDataLoaded, countBox, chartBox] = useOverview(
     generalStats,
     recoverCourseGeneralStats,
     errors,
-    setErrors
+    setErrors,
+    state.upperDate,
+    state.lowerDate
   );
 
   // Load data when current course is matched
@@ -86,7 +68,7 @@ const Overview = (props) => {
       if (!state.allowed) {
         setErrors([...errors, 'No tienes permisos para consultar estos datos']);
       } else {
-        setGeneralData({ ...generalData, loaded: false });
+        setDataLoaded(false);
         dispatch(courseActions.recoverCourseStructure(state.current));
         setErrors([]);
         dispatch(actions.cleanErrors());
@@ -131,13 +113,13 @@ const Overview = (props) => {
           </h2>
         </Col>
       </Row>
-      {course.status === 'loading' && !generalData.loaded ? (
+      {course.status === 'loading' && !dataLoaded ? (
         <Row>
           <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />
           </Col>
         </Row>
-      ) : generalData.loaded ? (
+      ) : dataLoaded ? (
         <Fragment>
           <Row>
             <Col>
@@ -177,7 +159,7 @@ const Overview = (props) => {
           chartBox.values.week_visits.length !== 0 &&
           chartBox.values.module_visits.length !== 0 &&
           chartBox.values.seq_visits.length !== 0 ? (
-            <ChartBoxes data={chartBox.values} tableData={generalData} />
+            <ChartBoxes data={chartBox.values} />
           ) : !chartBox.loaded ? (
             <Row>
               <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>

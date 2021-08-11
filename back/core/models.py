@@ -41,6 +41,7 @@ class LogFile(models.Model):
 
 
 class CourseVertical(models.Model):
+    is_active = models.BooleanField(default=True)
     course = models.TextField()
     course_name = models.CharField(max_length=255)
     chapter = models.TextField()

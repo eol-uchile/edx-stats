@@ -193,6 +193,7 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
         previous = CourseVertical.objects.filter(course=course_id, vertical=row["vertical"])
         if(previous.count() != 0):
             vertical = previous.first()
+            vertical.is_active = True
             vertical.chapter = row['chapter']
             vertical.chapter_name = row['chapter_name']
             vertical.sequential = row['sequential']
@@ -209,6 +210,7 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
             vertical.save()
         else:
             vertical = CourseVertical(
+                is_active=True,
                 course=row["course"],
                 course_name=row["course_name"],
                 chapter=row["chapter"],
@@ -254,6 +256,9 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
 
     # Remove previous course info in the DB
     course_id_df = course_dataframe['course'].iloc[0]
+    previous_values = CourseVertical.objects.filter(course=course_id_df)
+    if len(previous_values) != 0:
+        previous_values.update(is_active=False)
     
     # Update vertical information on DB
     course_dataframe.apply(lambda row: save_vertical_row(course_id_df, row), axis=1)
