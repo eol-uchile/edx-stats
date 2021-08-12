@@ -4,6 +4,7 @@ import userIcon from '../../assets/user_original.png';
 import clockIcon from '../../assets/clock_original.png';
 import eyeIcon from '../../assets/eye(1)_original.png';
 import { CountBox } from '.';
+import PropTypes from 'prop-types';
 
 const CountBoxes = ({ stats }) => {
   const timeCountBox = useMemo(() => {
@@ -62,6 +63,14 @@ const CountBoxes = ({ stats }) => {
       </Row>
     </Fragment>
   );
+};
+
+CountBoxes.propTypes = {
+  stats: PropTypes.shape({
+    times: PropTypes.number.isRequired,
+    visits: PropTypes.number.isRequired,
+    users: PropTypes.number.isRequired,
+  }),
 };
 
 export default CountBoxes;

@@ -1,8 +1,7 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import CountUp from 'react-countup';
+import PropTypes from 'prop-types';
 
 const CountBox = ({ image, change, caption, countUpProps }) => {
   const digitStyle = {
@@ -57,6 +56,20 @@ const CountBox = ({ image, change, caption, countUpProps }) => {
       </Row> */}
     </Container>
   );
+};
+
+CountBox.propTypes = {
+  image: PropTypes.string.isRequired,
+  change: PropTypes.number.isRequired,
+  caption: PropTypes.string.isRequired,
+  countUpProps: PropTypes.shape({
+    start: PropTypes.number.isRequired,
+    end: PropTypes.number.isRequired,
+    duration: PropTypes.number.isRequired,
+    separator: PropTypes.string.isRequired,
+    decimals: PropTypes.number.isRequired,
+    decimal: PropTypes.string.isRequired,
+  }),
 };
 
 export default CountBox;

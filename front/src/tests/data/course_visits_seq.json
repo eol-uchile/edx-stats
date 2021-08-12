@@ -1,0 +1,23 @@
+[
+    {
+        "vertical__sequential": "LEIT01+2020_T3+type@sequential+block@a",
+        "total": 23,
+        "name": "Seq 1",
+        "chap_number": 1,
+        "seq_number": 1
+    },
+    {
+        "vertical__chapter": "LEIT01+2020_T3+type@sequential+block@b",
+        "total": 10,
+        "name": "Seq 2",
+        "chap_number": 1,
+        "seq_number": 2
+    },
+    {
+        "vertical__chapter": "LEIT01+2020_T3+type@sequential+block@c",
+        "total": 5,
+        "name": "Seq 1",
+        "chap_number": 2,
+        "seq_number": 1
+    }
+]

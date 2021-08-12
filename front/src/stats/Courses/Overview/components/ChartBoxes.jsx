@@ -1,9 +1,10 @@
-import React, { Fragment, useState, useEffect, useMemo } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { Form } from '@edx/paragon';
 import { useMediaQuery } from 'react-responsive';
 import { ChartBox } from '.';
 import { PieChart, LineArea } from '../../common';
+import PropTypes from 'prop-types';
 
 const ChartBoxes = ({ data }) => {
   const [state, setState] = useState(false);
@@ -48,7 +49,7 @@ const ChartBoxes = ({ data }) => {
       }, []);
       // sort by date
       let dataPerDay = mixed.sort(function (a, b) {
-        return new Date(a.date) - new Date(b.date)
+        return new Date(a.date) - new Date(b.date);
       });
       setDataline(dataPerDay);
     }
@@ -77,7 +78,26 @@ const ChartBoxes = ({ data }) => {
       <Row>
         <Col lg="6">
           <ChartBox title={'Actividad durante la semana'}>
-            <LineArea data={dataline} dataKey={'date'} />
+            <LineArea
+              data={dataline}
+              dataKey={['date', 'Cantidad diaria']}
+              areaProps={[
+                {
+                  type: 'monotone',
+                  dataKey: 'Tiempo',
+                  stroke: '#8884d8',
+                  fill: '#8884d89e',
+                  activeDot: { r: 8 },
+                },
+                {
+                  type: 'monotone',
+                  dataKey: 'Visitas',
+                  stroke: '#82ca9d',
+                  fill: '#82ca9da3',
+                  activeDot: { r: 8 },
+                },
+              ]}
+            />
           </ChartBox>
         </Col>
         <Col lg="6">
@@ -118,6 +138,31 @@ const ChartBoxes = ({ data }) => {
       </Row>
     </Fragment>
   );
+};
+
+ChartBoxes.propTypes = {
+  data: PropTypes.shape({
+    week_times: PropTypes.arrayOf({
+      time: PropTypes.string,
+      total: PropTypes.number,
+    }),
+    week_visits: PropTypes.arrayOf({
+      time: PropTypes.string,
+      total: PropTypes.number,
+    }),
+    module_visits: PropTypes.arrayOf({
+      vertical__chapter: PropTypes.string,
+      name: PropTypes.string,
+      total: PropTypes.number,
+    }),
+    seq_visits: PropTypes.arrayOf({
+      vertical__sequential: PropTypes.string,
+      name: PropTypes.string,
+      chap_number: PropTypes.number,
+      seq_number: PropTypes.number,
+      total: PropTypes.number,
+    }),
+  }),
 };
 
 export default ChartBoxes;

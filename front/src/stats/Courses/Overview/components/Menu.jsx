@@ -3,6 +3,7 @@ import { Row, Col, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 const getDate = (d) => {
   let date = new Date(d);
@@ -12,10 +13,10 @@ const getDate = (d) => {
   return `${yyyy}-${mm}-${dd}`;
 };
 
-const Menu = ({data}) => {
-  const key = data ? data.key : null;
-  const start = data ? getDate(data.start) : null;
-  const end = data ? getDate(data.end) : null;
+const Menu = ({ url }) => {
+  const key = url ? url.key : null;
+  const start = url ? getDate(url.start) : null;
+  const end = url ? getDate(url.end) : null;
 
   return (
     <Row>
@@ -25,7 +26,7 @@ const Menu = ({data}) => {
             <h4>Consultar Analítica</h4>
           </ListGroupItem>
           <ListGroupItem>
-            <Link to={`/courses/${key}/times/${start}/${end}`}>
+            <Link to={`/search/${key}/times/${start}/${end}`}>
               Ver tiempo de visualización general{' '}
               <FontAwesomeIcon
                 icon={faExternalLinkAlt}
@@ -35,7 +36,7 @@ const Menu = ({data}) => {
             <p>Revisa donde los usuarios pasaron más tiempo en tu curso</p>
           </ListGroupItem>
           <ListGroupItem>
-            <Link to={`/courses/${key}/visits/${start}/${end}`}>
+            <Link to={`/search/${key}/visits/${start}/${end}`}>
               Ver visitas por contenido{' '}
               <FontAwesomeIcon
                 icon={faExternalLinkAlt}
@@ -44,7 +45,7 @@ const Menu = ({data}) => {
             </Link>
             <p>Monitorea que se está viendo y cuando</p>
           </ListGroupItem>
-          <ListGroupItem>
+          <ListGroupItem disabled>
             <a href="">
               Ver actividad por videos (Próximamente){' '}
               <FontAwesomeIcon
@@ -58,6 +59,14 @@ const Menu = ({data}) => {
       </Col>
     </Row>
   );
+};
+
+Menu.propTypes = {
+  url: PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    start: PropTypes.string.isRequired,
+    end: PropTypes.string.isRequired,
+  }),
 };
 
 export default Menu;

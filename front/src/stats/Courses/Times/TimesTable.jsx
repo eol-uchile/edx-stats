@@ -86,13 +86,13 @@ const TimesTable = (props) => {
       <Row>
         <Col>
           <Breadcrumb className="eol-breadcrumb">
-            <Link className="breadcrumb-item" to={`/courses`}>
+            <Link className="breadcrumb-item" to={`/search`}>
               <FontAwesomeIcon icon={faHome} /> General
             </Link>
             <Breadcrumb.Item href="#">
               <Link
                 className="breadcrumb-item"
-                to={`/courses/${props.match.params.course_id}`}
+                to={`/search/${props.match.params.course_id}`}
               >
                 {`Resumen ${state.current}`}
               </Link>

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, Fragment, useMemo } from 'react';
+import React, { useEffect, useCallback, Fragment } from 'react';
 import {
   Container,
   Row,
@@ -7,7 +7,7 @@ import {
   Spinner,
   Alert,
 } from 'react-bootstrap';
-import { connect, useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
@@ -151,7 +151,7 @@ const Overview = (props) => {
             </Row>
           ) : (
             <Row>
-              <Col>No hay datos</Col>
+              <Col>No hay datos generales para resumir</Col>
             </Row>
           )}
           {chartBox.loaded &&
@@ -168,11 +168,11 @@ const Overview = (props) => {
             </Row>
           ) : (
             <Row>
-              <Col>No hay datos</Col>
+              <Col>No hay datos semanales para graficar</Col>
             </Row>
           )}
           <Menu
-            data={{
+            url={{
               key: state.current,
               start: state.lowerDate,
               end: state.upperDate,
@@ -180,7 +180,7 @@ const Overview = (props) => {
           />
           <Row>
             <Col>
-              <Collapsible styling="basic" title="Attribución de íconos">
+              <Collapsible styling="basic" title="Atribución de íconos">
                 <div>
                   Íconos atribuidos a{' '}
                   <a href="https://www.freepik.com" title="Freepik">
@@ -236,6 +236,8 @@ const Overview = (props) => {
   );
 };
 
-Overview.propTypes = {};
+Overview.propTypes = {
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+};
 
-export default connect()(Overview);
+export default Overview;

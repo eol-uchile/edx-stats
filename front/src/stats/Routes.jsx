@@ -40,21 +40,21 @@ const Routes = () => {
       <section>
         <Switch>
           <Route
-            path="/courses/:course_id/times/:start/:end"
+            path="/search/:course_id/times/:start/:end"
             component={TimesTable}
           />
           <Route
-            path="/courses/:course_id/visits/:start/:end"
+            path="/search/:course_id/visits/:start/:end"
             component={VisitsTable}
           />
-          <Route path="/courses/:course_id" component={Overview} />
-          <Route path="/courses/:course_id" component={Explorer} />
-          <Route path="/courses" component={Explorer} />
+
+          <Route path="/search/:course_id" component={Overview} />
+          <Route path="/search" component={Explorer} />
           <Route
             render={(props) => (
               <RedirectToFeature
                 {...props}
-                path="/courses"
+                path="/search"
                 message="Explorador de cursos"
               />
             )}
