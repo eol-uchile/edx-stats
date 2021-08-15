@@ -7,7 +7,7 @@ import { PieChart, LineArea } from '../../common';
 import PropTypes from 'prop-types';
 
 const ChartBoxes = ({ data }) => {
-  const [state, setState] = useState(false);
+  const [viewModules, setViewModules] = useState(false);
 
   const isShort = useMediaQuery({ maxWidth: 418 });
 
@@ -16,22 +16,17 @@ const ChartBoxes = ({ data }) => {
 
   useEffect(() => {
     if (data.week_times.length !== 0 && data.week_visits.length !== 0) {
-      // removes ISO format in date and transforms seconds to minutes
-      let timesLineArea = data.week_times.map((t, k) => ({
+      let dailyMinutes = data.week_times.map((t, k) => ({
         date: t.time.slice(0, 10),
         Tiempo: Math.floor(t.total / 60),
       }));
-      // removes ISO format in date
-      let visitsLineArea = data.week_visits.map((v, k) => ({
+      let dailyVisits = data.week_visits.map((v, k) => ({
         date: v.time.slice(0, 10),
         Visitas: v.total,
       }));
 
-      // [{date: '2019-01-01', Tiempo: 1}, ...] concat with
-      // [{date: '2019-01-01' Visitas: 0}, ...]
-      let concat = [...timesLineArea, ...visitsLineArea];
-      // [{date: '2019-01-01', Tiempo: 1} <- {date: '2019-01-01' Visitas: 0}]
-      let mixed = concat.reduce(function (output, cur) {
+      let concat = dailyMinutes.concat(dailyVisits);
+      let dailyStats = concat.reduce(function (output, cur) {
         // Get the index of the key-value pair.
         var occurs = output.reduce(function (n, item, i) {
           return item.date === cur.date ? i : n;
@@ -47,31 +42,30 @@ const ChartBoxes = ({ data }) => {
         }
         return output;
       }, []);
-      // sort by date
-      let dataPerDay = mixed.sort(function (a, b) {
+      let sortedAscending = dailyStats.sort(function (a, b) {
         return new Date(a.date) - new Date(b.date);
       });
-      setDataline(dataPerDay);
+      setDataline(sortedAscending);
     }
   }, [data.week_times, data.week_visits]);
 
   useEffect(() => {
-    let statsUnnamed = state ? data.module_visits : data.seq_visits;
-    if (statsUnnamed.length !== 0) {
-      let dataCompleted = [];
-      statsUnnamed.forEach((v, k) => {
-        let name = state
+    let unnamedPortions = viewModules ? data.module_visits : data.seq_visits;
+    if (unnamedPortions.length !== 0) {
+      let circularPortions = [];
+      unnamedPortions.forEach((v, k) => {
+        let name = viewModules
           ? v.name
           : `${v.chap_number}.${v.seq_number} : ${v.name}`;
-        let itemWithName = {
+        let namedPortion = {
           name: name,
           value: v.total,
         };
-        dataCompleted.push(itemWithName);
+        circularPortions.push(namedPortion);
       });
-      setDataPie(dataCompleted);
+      setDataPie(circularPortions);
     }
-  }, [state, data.module_visits, data.seq_visits]);
+  }, [viewModules, data.module_visits, data.seq_visits]);
 
   return (
     <Fragment>
@@ -120,9 +114,9 @@ const ChartBoxes = ({ data }) => {
                     id="group-mod-tableData.chapters-ch"
                     name="group-mod-tableData.chapters-ch"
                     label="Agrupar Módulos"
-                    checked={state}
+                    checked={viewModules}
                     onChange={(e) => {
-                      setState(e.target.checked);
+                      setViewModules(e.target.checked);
                     }}
                   />
                 </Form.Group>
