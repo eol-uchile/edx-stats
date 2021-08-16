@@ -15,15 +15,9 @@ import { Collapsible } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import { CountBoxes, ChartBoxes, Menu } from './components';
 import PropTypes from 'prop-types';
-import { useOverview } from './hooks';
 import { useLoadCourseInfo } from '../hooks';
 import { course as courseActions, actions } from '../../Courses/data/actions';
 import { overviewActions } from '.';
-
-const getToday = (d = 0) => {
-  let date = new Date(Date.now() + d * 24 * 60 * 60 * 1000);
-  return date;
-};
 
 const Overview = (props) => {
   const course = useSelector((state) => state.course);
@@ -42,33 +36,12 @@ const Overview = (props) => {
     generalStats.errors
   );
 
-  const recoverCourseGeneralStats = useCallback((i, l, u) => {
-    dispatch(overviewActions.recoverCourseGeneralTimes(i, l, u));
-    dispatch(overviewActions.recoverCourseGeneralVisits(i, l, u));
-    dispatch(
-      overviewActions.recoverCourseDetailedTimes(i, getToday(-7), getToday())
-    );
-    dispatch(
-      overviewActions.recoverCourseDetailedVisits(i, getToday(-7), getToday())
-    );
-  }, []);
-
-  const [dataLoaded, setDataLoaded, countBox, chartBox] = useOverview(
-    generalStats,
-    recoverCourseGeneralStats,
-    errors,
-    setErrors,
-    state.upperDate,
-    state.lowerDate
-  );
-
-  // Load data when current course is matched
   useEffect(() => {
     if (state.current !== '') {
       if (!state.allowed) {
         setErrors([...errors, 'No tienes permisos para consultar estos datos']);
       } else {
-        setDataLoaded(false);
+        //setDataLoaded(false);
         dispatch(courseActions.recoverCourseStructure(state.current));
         setErrors([]);
         dispatch(actions.cleanErrors());
@@ -84,7 +57,7 @@ const Overview = (props) => {
       <Row>
         <Col>
           <Breadcrumb className="eol-breadcrumb">
-            <Link className="breadcrumb-item" to={`/courses/`}>
+            <Link className="breadcrumb-item" to={`/search/`}>
               <FontAwesomeIcon icon={faHome} /> General
             </Link>
             <Breadcrumb.Item
@@ -113,13 +86,13 @@ const Overview = (props) => {
           </h2>
         </Col>
       </Row>
-      {course.status === 'loading' && !dataLoaded ? (
+      {course.status === 'loading' ? (
         <Row>
           <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />
           </Col>
         </Row>
-      ) : dataLoaded ? (
+      ) : state.allowed ? (
         <Fragment>
           <Row>
             <Col>
@@ -137,40 +110,16 @@ const Overview = (props) => {
                 : null}
             </Col>
           </Row>
-
-          {countBox.loaded &&
-          countBox.values.times !== 0 &&
-          countBox.values.visits !== 0 &&
-          countBox.values.users !== 0 ? (
-            <CountBoxes stats={countBox.values} />
-          ) : errors.length === 0 && !countBox.loaded ? (
-            <Row>
-              <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
-                <Spinner animation="border" variant="primary" />
-              </Col>
-            </Row>
-          ) : (
-            <Row>
-              <Col>No hay datos generales para resumir</Col>
-            </Row>
-          )}
-          {chartBox.loaded &&
-          chartBox.values.week_times.length !== 0 &&
-          chartBox.values.week_visits.length !== 0 &&
-          chartBox.values.module_visits.length !== 0 &&
-          chartBox.values.seq_visits.length !== 0 ? (
-            <ChartBoxes data={chartBox.values} />
-          ) : !chartBox.loaded ? (
-            <Row>
-              <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
-                <Spinner animation="border" variant="primary" />
-              </Col>
-            </Row>
-          ) : (
-            <Row>
-              <Col>No hay datos semanales para graficar</Col>
-            </Row>
-          )}
+          <CountBoxes
+            courseData={state}
+            errors={errors}
+            setErrors={setErrors}
+          />
+          <ChartBoxes
+            courseData={state}
+            errors={errors}
+            setErrors={setErrors}
+          />
           <Menu
             url={{
               key: state.current,

@@ -1,21 +1,85 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { renderWithRouter, screen } from '../../../data/tests-utils';
+import { render, screen, waitFor } from '../../../data/tests-utils';
+import { server, rest, urls } from '../../../../tests/server';
 import CoursesWrapper from '../../coursesWrapper';
 import { CountBoxes } from '../components';
 
-const defaultStats = {
-  visits: 0,
-  users: 0,
-  times: 0,
-};
+const flushPromises = () => new Promise(setImmediate);
 
-it('renders without crashing', () => {
-  renderWithRouter(
-    <CoursesWrapper render={(props) => <CountBoxes stats={defaultStats} />} />
+const courseData = {
+  allowed: true,
+  lowerDate: '2019-01-01',
+  upperDate: '2019-01-02',
+};
+const errors = [];
+const setErrors = () => {};
+
+it('renders no data message', async () => {
+  server.use(
+    rest.get(
+      `${urls.base_url}/api/times/timeoncourse/overview/*`,
+      async (req, res, ctx) => {
+        return res(ctx.json({ total_time: 0 }));
+      }
+    )
   );
-  expect(screen.getByText('Visitas totales'));
-  expect(screen.getByText('Usuarios registrados'));
-  expect(screen.getByText('Minutos vistos'));
-  expect(screen.getAllByText('0')).toHaveLength(3);
+  server.use(
+    rest.get(
+      `${urls.base_url}/api/visits/visitsoncourse/overview/*`,
+      async (req, res, ctx) => {
+        return res(
+          ctx.json({
+            total_visits: 0,
+            total_users: 0,
+          })
+        );
+      }
+    )
+  );
+  render(
+    <CoursesWrapper
+      render={(props) => <CountBoxes {...{ courseData, errors, setErrors }} />}
+    />
+  );
+  await flushPromises();
+  waitFor(() =>
+    expect(screen.getByText('No hay datos generales para resumir'))
+  );
+});
+
+it('renders correctly', async () => {
+  server.use(
+    rest.get(
+      `${urls.base_url}/api/times/timeoncourse/overview/*`,
+      async (req, res, ctx) => {
+        return res(ctx.json({ total_time: 532717 }));
+      }
+    )
+  );
+  server.use(
+    rest.get(
+      `${urls.base_url}/api/visits/visitsoncourse/overview/*`,
+      async (req, res, ctx) => {
+        return res(
+          ctx.json({
+            total_visits: 1481,
+            total_users: 32,
+          })
+        );
+      }
+    )
+  );
+
+  render(
+    <CoursesWrapper
+      render={(props) => <CountBoxes {...{ courseData, errors, setErrors }} />}
+    />
+  );
+  await flushPromises();
+  waitFor(() => {
+    expect(screen.getByText('1.481'));
+    expect(screen.getByText('32'));
+    expect(screen.getByText('8.878'));
+  });
 });

@@ -3,7 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import CountUp from 'react-countup';
 import PropTypes from 'prop-types';
 
-const CountBox = ({ image, change, caption, countUpProps }) => {
+const CountBox = ({ image, caption, countUpProps }) => {
   const digitStyle = {
     fontWeight: 700,
     fontSize: '2.5em',
@@ -39,28 +39,12 @@ const CountBox = ({ image, change, caption, countUpProps }) => {
           <CountUp style={digitStyle} {...countUpProps} />
         </Col>
       </Row>
-      {/* 
-      <Row>
-        <Col>
-          <p
-            style={{
-              fontSize: '1.2rem',
-              borderTop: '1px #dfd2d2 solid',
-              color: change > 0 ? 'green' : 'red',
-            }}
-          >
-            <FontAwesomeIcon icon={change > 0 ? faArrowUp : faArrowDown} />{' '}
-            {change}% semana pasada
-          </p>
-        </Col>
-      </Row> */}
     </Container>
   );
 };
 
 CountBox.propTypes = {
   image: PropTypes.string.isRequired,
-  change: PropTypes.number.isRequired,
   caption: PropTypes.string.isRequired,
   countUpProps: PropTypes.shape({
     start: PropTypes.number.isRequired,
