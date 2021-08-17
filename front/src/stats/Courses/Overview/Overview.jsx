@@ -229,7 +229,6 @@ const Overview = (props) => {
               prevLabel: 'Atrás',
               nextLabel: 'Siguiente',
               doneLabel: 'Finalizar',
-              skipLabel: 'Salir',
               keyboardNavigation: true,
             }}
           />
