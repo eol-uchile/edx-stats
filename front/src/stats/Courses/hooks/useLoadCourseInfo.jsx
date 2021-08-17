@@ -50,7 +50,18 @@ function useLoadCourseInfo(match, resetData, dataErrors) {
           (el) => el.key === match.params.course_id
         )[0];
         if (thisCourse) {
-          setState({ ...state, courseName: thisCourse.title });
+          if (state.lowerDate !== '' && state.upperDate !== '') {
+            // for TimesTable and VisitsTable
+            setState({ ...state, courseName: thisCourse.title });
+          } else {
+            // for Overview
+            setState({
+              ...state,
+              courseName: thisCourse.title,
+              lowerDate: thisCourse.start,
+              upperDate: thisCourse.end,
+            });
+          }
         } else {
           setState({ ...state, allowed: false });
         }

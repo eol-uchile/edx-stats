@@ -3,13 +3,16 @@ from django.utils import timezone
 
 
 class TimeOnPage(models.Model):
-    event_type_vertical = models.TextField()
-    sequential = models.TextField(blank=True)
-    username = models.CharField(max_length=150)
+    vertical = models.ForeignKey(
+        to = 'core.CourseVertical',
+        on_delete = models.SET_NULL,
+        null = True,
+        blank = True,
+    )
     session = models.IntegerField()
+    username = models.CharField(max_length=150)
     delta_time_float = models.FloatField()
-    course = models.TextField()
     time = models.DateTimeField(default=timezone.now)
-
+    
     def __str__(self):
-        return "{} {} count: {}".format(self.time, self.event_type_vertical, self.count)
+        return "{} {} delta_time_float: {}".format(self.time, self.vertical, self.delta_time_float)

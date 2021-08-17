@@ -16,4 +16,6 @@ urlpatterns = [
          views.daily_visits_per_chapter_on_course, name="daily-chapter-visits"),
     path(r'visitsoncourse/overview/',
          views.general_visits_overview_course, name="visits-overview"),
+     path(r'visitsoncourse/overview/detailed/',
+         views.detailed_visits_overview_course, name="visits-overview-detailed"),
 ]

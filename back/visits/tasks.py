@@ -38,11 +38,12 @@ def process_visit_count(end_date, day_window=None, run_code=None, course=None):
     """
 
     def make_row(row, date):
+        vertical_to_associate = CourseVertical.objects.filter(
+            vertical__icontains=row["vertical"],
+            course__icontains=row["course"],  
+        ).first()
         visit_on_page = VisitOnPage(
-            vertical=row["vertical"],
-            sequential=row["sequential"],
-            chapter=row["chapter"],
-            course=row["course"],
+            vertical= vertical_to_associate,
             username=row["username"],
             count=row["visits"],
             time=date)
@@ -80,7 +81,7 @@ def process_visit_count(end_date, day_window=None, run_code=None, course=None):
         with transaction.atomic():
             # Delete today's info to overwrite
             previous_visits = VisitOnPage.objects.filter(
-                time__date=date, course=course_df["course"][0])
+                time__date=date, vertical__course=course_df["course"][0])
             previous_visits.delete()
 
             # Upload bulks to DB

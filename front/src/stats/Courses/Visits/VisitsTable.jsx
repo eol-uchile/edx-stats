@@ -48,7 +48,7 @@ const VisitsTable = (props) => {
 
   const [tableData, setTableData, rowData, _] = useProcessSumData(
     visits.added_visits,
-    'vertical',
+    'vertical__vertical',
     recoverCourseStudentVisitSum,
     errors,
     setErrors,
@@ -88,26 +88,23 @@ const VisitsTable = (props) => {
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 data-view">
       <Helmet>
-        <title>
-          Visitas por Módulo
-          {(course.status === 'successs') & tableData.loaded
-            ? `: ${course.course[0].name}`
-            : ''}
-        </title>
+        <title>Visitas por Módulo</title>
       </Helmet>
       <Row>
         <Col>
           <Breadcrumb className="eol-breadcrumb">
-            <Link
-              className="breadcrumb-item"
-              to={`/courses/${props.match.params.course_id}`}
-            >
+            <Link className="breadcrumb-item" to={`/search`}>
               <FontAwesomeIcon icon={faHome} /> General
             </Link>
-            <Breadcrumb.Item
-              href="#"
-              active
-            >{`Visitas ${state.current}`}</Breadcrumb.Item>
+            <Breadcrumb.Item href="#">
+              <Link
+                className="breadcrumb-item"
+                to={`/search/${props.match.params.course_id}`}
+              >
+                {`Resumen ${state.current}`}
+              </Link>
+            </Breadcrumb.Item>
+            <Breadcrumb.Item href="#" active>{`Visitas`}</Breadcrumb.Item>
           </Breadcrumb>
         </Col>
       </Row>
