@@ -27,7 +27,7 @@ const Menu = ({ url }) => {
           </ListGroupItem>
           <ListGroupItem>
             <Link to={`/search/${key}/times/${start}/${end}`}>
-              Ver tiempo de visualización general{' '}
+              Ver tiempo de visualizaci&oacute;n general{' '}
               <FontAwesomeIcon
                 icon={faExternalLinkAlt}
                 className="float-right"
