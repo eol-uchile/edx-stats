@@ -220,7 +220,9 @@ const Overview = (props) => {
             enabled={showTutorial}
             steps={steps}
             initialStep={0}
-            onExit={() => {}}
+            onExit={() => {
+              setShowTutorial(!showTutorial);
+            }}
             options={{
               showBullets: false,
               showProgress: true,
