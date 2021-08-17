@@ -1,6 +1,6 @@
-import React, { Fragment, useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Container, Row, Col, Spinner } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import userIcon from '../../assets/user_original.png';
 import clockIcon from '../../assets/clock_original.png';
 import eyeIcon from '../../assets/eye(1)_original.png';
@@ -28,7 +28,7 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
   );
 
   return (
-    <Fragment>
+    <Container className="countboxes">
       <Row>
         <Col md={4}>
           <CountBox
@@ -76,7 +76,7 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
           />
         </Col>
       </Row>
-    </Fragment>
+    </Container>
   );
 };
 

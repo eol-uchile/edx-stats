@@ -113,13 +113,15 @@ const Overview = (props) => {
       </Row>
       <Row>
         <Col>
-          <span
-            title="Abrir tutorial"
-            className={'float-right'}
-            onClick={() => setShowTutorial(true)}
-          >
-            <FontAwesomeIcon icon={faQuestionCircle} />
-          </span>
+          {state.allowed && course.status === 'success' && (
+            <span
+              title="Abrir tutorial"
+              className={'float-right'}
+              onClick={() => setShowTutorial(true)}
+            >
+              <FontAwesomeIcon icon={faQuestionCircle} />
+            </span>
+          )}
           <h2 className="content-header">
             Curso:{' '}
             {state.allowed ? (
