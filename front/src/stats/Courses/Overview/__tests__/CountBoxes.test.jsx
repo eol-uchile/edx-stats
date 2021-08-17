@@ -8,14 +8,13 @@ import { CountBoxes } from '../components';
 const flushPromises = () => new Promise(setImmediate);
 
 const courseData = {
-  allowed: true,
   lowerDate: '2019-01-01',
   upperDate: '2019-01-02',
 };
 const errors = [];
 const setErrors = () => {};
 
-it('renders no data message', async () => {
+it('renders with no data', async () => {
   server.use(
     rest.get(
       `${urls.base_url}/api/times/timeoncourse/overview/*`,
@@ -43,9 +42,7 @@ it('renders no data message', async () => {
     />
   );
   await flushPromises();
-  waitFor(() =>
-    expect(screen.getByText('No hay datos generales para resumir'))
-  );
+  waitFor(() => expect(screen.getAllByText('0')).toHaveLength(3));
 });
 
 it('renders correctly', async () => {

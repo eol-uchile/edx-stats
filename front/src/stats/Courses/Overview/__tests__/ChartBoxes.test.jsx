@@ -9,7 +9,6 @@ import userEvent from '@testing-library/user-event';
 const flushPromises = () => new Promise(setImmediate);
 
 const courseData = {
-  allowed: true,
   lowerDate: '2019-01-01',
   upperDate: '2019-01-02',
 };

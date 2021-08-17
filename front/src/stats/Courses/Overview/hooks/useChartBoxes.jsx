@@ -10,21 +10,7 @@ const getDate = (dateISOString, d = 0) => {
   let finalDate = new Date(inMiliseconds + d * DAY_IN_MILISECS);
   return finalDate;
 };
-
-const isIntoCourse = (date, l, u) => {
-  let isStarted = date >= new Date(l);
-  let isFinished = date > new Date(u);
-  return isStarted && !isFinished;
-};
-
-const useChartBoxes = (
-  data,
-  recoverData,
-  errors,
-  setErrors,
-  isAllowed,
-  viewModules
-) => {
+const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
   const course = useSelector((state) => state.course);
 
   const [dataLoaded, setDataLoaded] = useState({
@@ -34,7 +20,7 @@ const useChartBoxes = (
   });
 
   useEffect(() => {
-    if (isAllowed && course.course.length !== 0) {
+    if (course.course.length !== 0) {
       let current = course.course[0];
       setDataLoaded({
         ...dataLoaded,
@@ -50,7 +36,7 @@ const useChartBoxes = (
     // eslint-disable-next-line
   }, [course.course, dataLoaded.upperDate, dataLoaded.lowerDate]);
 
-  const [dataLine, setDataLine] = useState([]);
+  const [dataLine, setDataLine] = useState({ loaded: false, values: [] });
 
   useEffect(() => {
     if (
@@ -88,12 +74,12 @@ const useChartBoxes = (
       let sortedAscending = dailyStats.sort(function (a, b) {
         return new Date(a.date) - new Date(b.date);
       });
-      setDataLine(sortedAscending);
+      setDataLine({ loaded: true, values: sortedAscending });
       setErrors([]);
     }
   }, [dataLoaded, data.detailed_times, data.detailed_visits.date]);
 
-  const [dataPie, setDataPie] = useState([]);
+  const [dataPie, setDataPie] = useState({ loaded: false, values: [] });
 
   useEffect(() => {
     if (
@@ -115,7 +101,7 @@ const useChartBoxes = (
         };
         circularPortions.push(namedPortion);
       });
-      setDataPie(circularPortions);
+      setDataPie({ loaded: true, values: circularPortions });
       setErrors([]);
     }
   }, [
@@ -128,9 +114,8 @@ const useChartBoxes = (
   useEffect(() => {
     if (errors.length > 0) {
       // If errors then reset the state
-      setDataLoaded({ ...dataLoaded, loaded: true });
-      setDataLine([]);
-      setDataPie([]);
+      setDataLine({ loaded: true, values: [] });
+      setDataPie({ loaded: true, values: [] });
     }
   }, [errors]);
 

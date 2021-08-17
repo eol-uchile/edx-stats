@@ -6,7 +6,6 @@ const useCountBoxes = (
   recoverData,
   errors,
   setErrors,
-  isAllowed,
   upperDate,
   lowerDate
 ) => {
@@ -15,12 +14,7 @@ const useCountBoxes = (
   const [dataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
-    if (
-      isAllowed &&
-      course.course.length !== 0 &&
-      lowerDate != '' &&
-      upperDate != ''
-    ) {
+    if (course.course.length !== 0 && lowerDate != '' && upperDate != '') {
       let current = course.course[0];
       setDataLoaded(true);
       // Load data
@@ -29,7 +23,10 @@ const useCountBoxes = (
     // eslint-disable-next-line
   }, [course.course, lowerDate, upperDate]);
 
-  const [countBox, setCountBox] = useState({ visits: 0, users: 0, times: 0 });
+  const [countBox, setCountBox] = useState({
+    loaded: false,
+    values: { visits: 0, users: 0, times: 0 },
+  });
 
   useEffect(() => {
     if (
@@ -41,9 +38,12 @@ const useCountBoxes = (
       let seconds = data.general_times;
       let minutes = Math.floor(seconds / 60);
       setCountBox({
-        visits: data.general_visits,
-        users: data.general_users,
-        times: minutes,
+        loaded: true,
+        values: {
+          visits: data.general_visits,
+          users: data.general_users,
+          times: minutes,
+        },
       });
       setErrors([]);
     }
@@ -52,8 +52,10 @@ const useCountBoxes = (
   useEffect(() => {
     if (errors.length > 0) {
       // If errors then reset the state
-      setDataLoaded(true);
-      setCountBox({ visits: 0, users: 0, times: 0 });
+      setCountBox({
+        loaded: false,
+        values: { visits: 0, users: 0, times: 0 },
+      });
     }
   }, [errors]);
 
