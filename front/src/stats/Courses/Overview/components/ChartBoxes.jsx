@@ -57,7 +57,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
   };
 
   return (
-    <ListGroup style={{ margin: '0.5rem 0' }}>
+    <ListGroup style={{ margin: '0.5rem 0' }} className="chartboxes">
       <ListGroupItem style={{ backgroundColor: '#f2f2f2' }}>
         <h4>Actividad Semanal</h4>
       </ListGroupItem>
@@ -117,7 +117,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
         </Row>
         {dataLoaded.loaded && dataLine.length !== 0 && dataPie.length !== 0 ? (
           <Row>
-            <Col lg="6">
+            <Col lg="6" className="week-line">
               <ChartBox title={'Total durante la semana'}>
                 <LineArea
                   data={dataLine}
@@ -141,7 +141,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                 />
               </ChartBox>
             </Col>
-            <Col lg="6">
+            <Col lg="6" className="week-pie">
               <ChartBox title={'Contenido visitado durante la semana'}>
                 <Row>
                   <Col>

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, Fragment } from 'react';
+import React, { useEffect, useCallback, Fragment, useState } from 'react';
 import {
   Container,
   Row,
@@ -10,7 +10,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import { Collapsible } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import { CountBoxes, ChartBoxes, Menu } from './components';
@@ -18,6 +18,41 @@ import PropTypes from 'prop-types';
 import { useLoadCourseInfo } from '../hooks';
 import { course as courseActions, actions } from '../../Courses/data/actions';
 import { overviewActions } from '.';
+import { Steps } from 'intro.js-react';
+
+const steps = [
+  {
+    element: '.h2',
+    title: 'Resumen del curso',
+    intro: 'Aquí podrá ver las estadisticas de su curso.',
+  },
+  {
+    element: '.countboxes',
+    title: 'Estadísticas generales',
+    intro: `En esta sección se cargarán las estadísticas generales, 
+      es decir, cuál es el registro de la totalidad del curso a la fecha.`,
+  },
+  {
+    element: '.chartboxes',
+    title: 'Estadísticas semanales',
+    intro: `En esta sección se cargarán las estadísticas semanales, 
+      gráficando las visitas diarias al curso junto a su duración 
+      y cuál fue el contenido más visto de la semana indicada.`,
+  },
+  {
+    element: '.chartboxes .btn-group',
+    title: 'Estadísticas semanales',
+    intro: `Si quiere ver las estadísticas de semanas anteriores, 
+      puede hacerlo moviéndose con los botones o seleccionando
+      la fecha del último día a buscar.`,
+  },
+  {
+    element: '.analitica-menu',
+    title: 'Estadísticas particulares',
+    intro: `Si desea ver estadísticas más detalladas, asi como descargarlas
+      en una planilla, puede hacerlo visitando los siguientes enlaces.`,
+  },
+];
 
 const Overview = (props) => {
   const course = useSelector((state) => state.course);
@@ -49,6 +84,15 @@ const Overview = (props) => {
     }
   }, [state.current]);
 
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem('tutorial-overview') === null) {
+      setShowTutorial(true);
+      localStorage.setItem('tutorial-overview', 'seen');
+    }
+  }, []);
+
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2">
       <Helmet>
@@ -69,6 +113,13 @@ const Overview = (props) => {
       </Row>
       <Row>
         <Col>
+          <span
+            title="Abrir tutorial"
+            className={'float-right'}
+            onClick={() => setShowTutorial(true)}
+          >
+            <FontAwesomeIcon icon={faQuestionCircle} />
+          </span>
           <h2 className="content-header">
             Curso:{' '}
             {state.allowed ? (
@@ -163,6 +214,21 @@ const Overview = (props) => {
               </Collapsible>
             </Col>
           </Row>
+          <Steps
+            enabled={showTutorial}
+            steps={steps}
+            initialStep={0}
+            onExit={() => {}}
+            options={{
+              showBullets: false,
+              showProgress: true,
+              prevLabel: 'Atrás',
+              nextLabel: 'Siguiente',
+              doneLabel: 'Finalizar',
+              skipLabel: 'Salir',
+              keyboardNavigation: true,
+            }}
+          />
         </Fragment>
       ) : (
         <Row>

@@ -19,7 +19,7 @@ const Menu = ({ url }) => {
   const end = url ? getDate(url.end) : null;
 
   return (
-    <Row>
+    <Row className="analitica-menu">
       <Col>
         <ListGroup style={{ margin: '0.5rem 0' }}>
           <ListGroupItem style={{ backgroundColor: '#f2f2f2' }}>

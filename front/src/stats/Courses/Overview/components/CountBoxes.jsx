@@ -1,6 +1,6 @@
-import React, { Fragment, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Row, Col, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import userIcon from '../../assets/user_original.png';
 import clockIcon from '../../assets/clock_original.png';
 import eyeIcon from '../../assets/eye(1)_original.png';
@@ -29,13 +29,13 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
   );
 
   return (
-    <Fragment>
+    <Container className="countboxes">
       {dataLoaded &&
       countBox.visits !== 0 &&
       countBox.users !== 0 &&
       countBox.times !== 0 ? (
         <Row>
-          <Col md={4}>
+          <Col md={4} className="visits">
             <CountBox
               image={eyeIcon}
               change={20}
@@ -50,7 +50,7 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
               }}
             />
           </Col>
-          <Col md={4}>
+          <Col md={4} className="users">
             <CountBox
               image={userIcon}
               change={20}
@@ -65,7 +65,7 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
               }}
             />
           </Col>
-          <Col md={4}>
+          <Col md={4} className="times">
             <CountBox
               image={clockIcon}
               change={20}
@@ -92,7 +92,7 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
           <Col>No hay datos generales para resumir</Col>
         </Row>
       )}
-    </Fragment>
+    </Container>
   );
 };
 
