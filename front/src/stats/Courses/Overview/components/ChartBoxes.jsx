@@ -40,7 +40,6 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
     recoverCourseDetailedStats,
     errors,
     setErrors,
-    courseData.allowed,
     viewModules
   );
 
@@ -115,12 +114,15 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
             </ButtonGroup>
           </Col>
         </Row>
-        {dataLoaded.loaded && dataLine.length !== 0 && dataPie.length !== 0 ? (
+        {dataLine.loaded &&
+        dataLine.values.length !== 0 &&
+        dataPie.loaded &&
+        dataPie.values.length !== 0 ? (
           <Row>
             <Col lg="6" className="week-line">
               <ChartBox title={'Total durante la semana'}>
                 <LineArea
-                  data={dataLine}
+                  data={dataLine.values}
                   dataKey={['date', 'Cantidad diaria']}
                   areaProps={[
                     {
@@ -171,13 +173,13 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                 </Row>
                 <Row>
                   <Col>
-                    <PieChart data={dataPie} />
+                    <PieChart data={dataPie.values} />
                   </Col>
                 </Row>
               </ChartBox>
             </Col>
           </Row>
-        ) : errors.length === 0 && !dataLoaded.loaded ? (
+        ) : errors.length === 0 && (!dataLine.loaded || !dataPie.loaded) ? (
           <Row>
             <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
               <Spinner animation="border" variant="primary" />
@@ -195,7 +197,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
 
 ChartBoxes.propTypes = {
   courseData: PropTypes.shape({
-    allowed: PropTypes.bool.isRequired,
+    allowed: PropTypes.bool,
     courseName: PropTypes.string,
     current: PropTypes.string,
     lowerDate: PropTypes.string.isRequired,
