@@ -40,15 +40,15 @@ const Routes = () => {
       <section>
         <Switch>
           <Route
-            path="/search/:course_id/times/:start/:end"
+            path="/courses/:course_id/times/:start/:end"
             component={TimesTable}
           />
           <Route
-            path="/search/:course_id/visits/:start/:end"
+            path="/courses/:course_id/visits/:start/:end"
             component={VisitsTable}
           />
 
-          <Route path="/search/:course_id" component={Overview} />
+          <Route path="/courses/:course_id" component={Overview} />
           <Route path="/search" component={Explorer} />
           <Route
             render={(props) => (

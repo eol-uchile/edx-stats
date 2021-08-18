@@ -156,7 +156,7 @@ const Explorer = (props) => {
                   <span className="toggle-arrow">
                     <FontAwesomeIcon icon={faChevronRight} />
                   </span>
-                  <Link to={`/search/${key}`}>
+                  <Link to={`/courses/${key}`}>
                     Ver estadísticas generales{' '}
                     <FontAwesomeIcon
                       icon={faExternalLinkAlt}

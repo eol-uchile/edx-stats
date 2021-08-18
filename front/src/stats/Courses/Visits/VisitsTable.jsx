@@ -99,7 +99,7 @@ const VisitsTable = (props) => {
             <Breadcrumb.Item href="#">
               <Link
                 className="breadcrumb-item"
-                to={`/search/${props.match.params.course_id}`}
+                to={`/courses/${props.match.params.course_id}`}
               >
                 {`Resumen ${state.current}`}
               </Link>
