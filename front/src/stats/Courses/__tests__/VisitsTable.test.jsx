@@ -118,6 +118,6 @@ it('has a second view mode', async () => {
     />
   );
   await waitFor(() => expect(screen.getByText('Módulo 1')));
-  userEvent.click(screen.getByLabelText('Agrupar Módulos'));
+  userEvent.click(screen.getByLabelText('Agrupar Secciones'));
   await waitFor(() => expect(screen.getByText('1.1')));
 });

@@ -28,7 +28,7 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
   );
 
   return (
-    <Container className="countboxes">
+    <Container id="countboxes">
       <Row>
         <Col md={4}>
           <CountBox

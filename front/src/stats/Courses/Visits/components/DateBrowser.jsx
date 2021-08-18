@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Row, Col, InputGroup } from 'react-bootstrap';
+import { Container, Row, Col, InputGroup } from 'react-bootstrap';
 import { Spinner } from '@edx/paragon';
 import { useMediaQuery } from 'react-responsive';
 import { AsyncCSVButton } from '../../common';
@@ -57,10 +57,10 @@ const DateBrowser = ({ title, data, mapping, loading, haveErrors }) => {
   }, [data]);
 
   return (
-    <Fragment>
+    <Container fluid id="date-browser">
       <Row>
         <Col>
-          <h4 id="date-browser">{title}</h4>
+          <h4>{title}</h4>
         </Col>
       </Row>
       {!loading && state.options.length > 0 ? (
@@ -132,7 +132,7 @@ const DateBrowser = ({ title, data, mapping, loading, haveErrors }) => {
           <Col>No hay datos</Col>
         </Row>
       )}
-    </Fragment>
+    </Container>
   );
 };
 

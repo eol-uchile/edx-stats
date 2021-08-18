@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, Fragment } from 'react';
+import React, { useEffect, useCallback, Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
@@ -19,9 +19,68 @@ import { StudentDetails } from '../common';
 import { TimesAvg, TimeVsVisits } from './components';
 import { useLoadCourseInfo, useProcessSumData } from '../hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faSearch } from '@fortawesome/free-solid-svg-icons';
+import {
+  faHome,
+  faSearch,
+  faQuestionCircle,
+} from '@fortawesome/free-solid-svg-icons';
 import '../common/TableandChart.css';
 import { parseFloatToTimeString } from '../helpers';
+import { Steps } from 'intro.js-react';
+
+const steps = [
+  {
+    title: 'Tiempo de visualización',
+    intro: 'Aquí podrá ver donde los usuarios pasaron más tiempo en su curso.',
+  },
+  {
+    element: '.date-table-selectors',
+    title: 'Tiempo de visualización',
+    intro: `Si quiere ver las estadísticas agrupadas de otro periodo de tiempo
+    seleccione las fechas deseadas y luego cárguelas con el botón Explorar.`,
+  },
+  {
+    element: '#Tiempototal',
+    title: 'Tiempo total',
+    intro: `En esta sección se cargará el tiempo visto de cada unidad, 
+    acompañado de la cantidad de estudiantes que
+    visitaron el contenido. Puede seleccionar la vista agrupada por sección
+    para una vista más general. También puede descargar esta información en una 
+    planilla de cálculos.`,
+  },
+  {
+    element: '#Tiempototal .pgn__form-group',
+    intro: `Puede seleccionar la vista agrupada por sección
+    para una vista más general.`,
+  },
+  {
+    element: '#Tiempototal a',
+    intro: `También puede descargar esta información en una 
+    planilla de cálculos.`,
+  },
+  {
+    element: '#TiempoPromedio',
+    title: 'Tiempo promedio',
+    intro: `En esta sección se cargará el tiempo promedio visto de cada unidad, 
+    acompañado de la desviación estándar asociada. Puede seleccionar la vista 
+    agrupada por sección para datos más generales. También puede descargar esta información en una planilla de cálculos
+    usando el botón.`,
+  },
+  {
+    element: '#DetallesPorEstudiante',
+    title: 'Detalle por estudiante',
+    intro: `En esta sección se cargará una tabla con el tiempo de cada usuario 
+    registrado en el curso. Puede seleccionar la vista desagrupada para datos más
+    particulares. También puede descargar esta información en una planilla de cálculos
+    usando el botón.`,
+  },
+  {
+    element: '#DetallesPorEstudiante nav',
+    title: 'Detalle por estudiante',
+    intro: `Para ver la información de cada estudiante, desplácese usando estos
+    botones.`,
+  },
+];
 
 /**
  * TimesTable
@@ -73,6 +132,8 @@ const TimesTable = (props) => {
     }
   };
 
+  const [showTutorial, setShowTutorial] = useState(false);
+
   // Refresh course info and load
   useEffect(() => {
     state.courseName !== '' && submit();
@@ -81,7 +142,7 @@ const TimesTable = (props) => {
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 data-view">
       <Helmet>
-        <title>Tiempos por módulos</title>
+        <title>Tiempos por secciones</title>
       </Helmet>
       <Row>
         <Col>
@@ -103,6 +164,15 @@ const TimesTable = (props) => {
       </Row>
       <Row>
         <Col>
+          {state.allowed && course.status === 'success' && (
+            <span
+              title="Abrir tutorial"
+              className={'float-right'}
+              onClick={() => setShowTutorial(true)}
+            >
+              Ayuda <FontAwesomeIcon icon={faQuestionCircle} />
+            </span>
+          )}
           <h2 className="content-header">
             Curso:{' '}
             {state.allowed ? (
@@ -212,42 +282,46 @@ const TimesTable = (props) => {
               </ul>
             </Col>
           </Row>
-          <Row>
-            <Col>
-              <h4 id="Tiempototal">Tiempo total</h4>
-            </Col>
-          </Row>
-          {rowData.loaded && rowData.verticals.length > 0 ? (
-            <TimeVsVisits rowData={rowData} tableData={tableData} />
-          ) : errors.length === 0 && !rowData.loaded ? (
+          <Container fluid id="Tiempototal">
             <Row>
-              <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
-                <Spinner animation="border" variant="primary" />
+              <Col>
+                <h4>Tiempo total</h4>
               </Col>
             </Row>
-          ) : (
+            {rowData.loaded && rowData.verticals.length > 0 ? (
+              <TimeVsVisits rowData={rowData} tableData={tableData} />
+            ) : errors.length === 0 && !rowData.loaded ? (
+              <Row>
+                <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
+                  <Spinner animation="border" variant="primary" />
+                </Col>
+              </Row>
+            ) : (
+              <Row>
+                <Col>No hay datos</Col>
+              </Row>
+            )}
+          </Container>
+          <Container fluid id="TiempoPromedio">
             <Row>
-              <Col>No hay datos</Col>
-            </Row>
-          )}
-          <Row>
-            <Col>
-              <h4 id="TiempoPromedio">Tiempo promedio</h4>
-            </Col>
-          </Row>
-          {rowData.loaded && rowData.verticals.length > 0 ? (
-            <TimesAvg rowData={rowData} tableData={tableData} />
-          ) : errors.length === 0 && !rowData.loaded ? (
-            <Row>
-              <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
-                <Spinner animation="border" variant="primary" />
+              <Col>
+                <h4>Tiempo promedio</h4>
               </Col>
             </Row>
-          ) : (
-            <Row>
-              <Col>No hay datos</Col>
-            </Row>
-          )}
+            {rowData.loaded && rowData.verticals.length > 0 ? (
+              <TimesAvg rowData={rowData} tableData={tableData} />
+            ) : errors.length === 0 && !rowData.loaded ? (
+              <Row>
+                <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
+                  <Spinner animation="border" variant="primary" />
+                </Col>
+              </Row>
+            ) : (
+              <Row>
+                <Col>No hay datos</Col>
+              </Row>
+            )}
+          </Container>
           <StudentDetails
             title="Tiempos"
             rowData={rowData}
@@ -268,6 +342,22 @@ const TimesTable = (props) => {
               </p>
             </Col>
           </Row>
+          <Steps
+            enabled={showTutorial}
+            steps={steps}
+            initialStep={0}
+            onExit={(stepIndex) => {
+              setShowTutorial(false);
+            }}
+            options={{
+              showBullets: false,
+              showProgress: true,
+              prevLabel: 'Atrás',
+              nextLabel: 'Siguiente',
+              doneLabel: 'Finalizar',
+              keyboardNavigation: true,
+            }}
+          />
         </Fragment>
       ) : (
         <Row>

@@ -121,7 +121,7 @@ it('has a second view mode', async () => {
   await flushPromises();
   waitFor(() => {
     expect(screen.getByText('1.1 : Auxiliar Video'));
-    userEvent.click(screen.getByLabelText('Agrupar Módulos'));
+    userEvent.click(screen.getByLabelText('Agrupar Secciones'));
     expect(screen.getByText('Module 1'));
   });
 });

@@ -56,7 +56,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
   };
 
   return (
-    <ListGroup style={{ margin: '0.5rem 0' }} className="chartboxes">
+    <ListGroup style={{ margin: '0.5rem 0' }} id="chartboxes">
       <ListGroupItem style={{ backgroundColor: '#f2f2f2' }}>
         <h4>Actividad Semanal</h4>
       </ListGroupItem>
@@ -162,7 +162,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                         type="switch"
                         id="group-mod-tableData.chapters-ch"
                         name="group-mod-tableData.chapters-ch"
-                        label="Agrupar Módulos"
+                        label="Agrupar Secciones"
                         checked={viewModules}
                         onChange={(e) => {
                           setViewModules(e.target.checked);

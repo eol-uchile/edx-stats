@@ -22,32 +22,32 @@ import { Steps } from 'intro.js-react';
 
 const steps = [
   {
-    element: '.h2',
     title: 'Resumen del curso',
     intro: 'Aquí podrá ver las estadisticas de su curso.',
   },
   {
-    element: '.countboxes',
+    element: '#countboxes',
     title: 'Estadísticas generales',
     intro: `En esta sección se cargarán las estadísticas generales, 
       es decir, cuál es el registro de la totalidad del curso a la fecha.`,
   },
   {
-    element: '.chartboxes',
+    element: '#chartboxes',
     title: 'Estadísticas semanales',
     intro: `En esta sección se cargarán las estadísticas semanales, 
       gráficando las visitas diarias al curso junto a su duración 
-      y cuál fue el contenido más visto de la semana indicada.`,
+      y cuál fue el contenido más visto de la semana indicada, agrupado
+      por Subsección o Sección.`,
   },
   {
-    element: '.chartboxes .btn-group',
+    element: '#chartboxes .btn-group',
     title: 'Estadísticas semanales',
     intro: `Si quiere ver las estadísticas de semanas anteriores, 
       puede hacerlo moviéndose con los botones o seleccionando
       la fecha del último día a buscar.`,
   },
   {
-    element: '.analitica-menu',
+    element: '#analitica-menu',
     title: 'Estadísticas particulares',
     intro: `Si desea ver estadísticas más detalladas, asi como descargarlas
       en una planilla, puede hacerlo visitando los siguientes enlaces.`,
@@ -86,13 +86,6 @@ const Overview = (props) => {
 
   const [showTutorial, setShowTutorial] = useState(false);
 
-  useEffect(() => {
-    if (localStorage.getItem('tutorial-overview') === null) {
-      setShowTutorial(true);
-      localStorage.setItem('tutorial-overview', 'seen');
-    }
-  }, []);
-
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2">
       <Helmet>
@@ -119,7 +112,7 @@ const Overview = (props) => {
               className={'float-right'}
               onClick={() => setShowTutorial(true)}
             >
-              <FontAwesomeIcon icon={faQuestionCircle} />
+              Ayuda <FontAwesomeIcon icon={faQuestionCircle} />
             </span>
           )}
           <h2 className="content-header">
@@ -145,7 +138,7 @@ const Overview = (props) => {
             <Spinner animation="border" variant="primary" />
           </Col>
         </Row>
-      ) : state.allowed ? (
+      ) : course.status === 'success' ? (
         <Fragment>
           <Row>
             <Col>
@@ -220,8 +213,8 @@ const Overview = (props) => {
             enabled={showTutorial}
             steps={steps}
             initialStep={0}
-            onExit={() => {
-              setShowTutorial(!showTutorial);
+            onExit={(stepIndex) => {
+              setShowTutorial(false);
             }}
             options={{
               showBullets: false,
