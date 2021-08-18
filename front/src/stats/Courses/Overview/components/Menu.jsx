@@ -26,7 +26,7 @@ const Menu = ({ url }) => {
             <h4>Consultar Analítica</h4>
           </ListGroupItem>
           <ListGroupItem>
-            <Link to={`/search/${key}/times/${start}/${end}`}>
+            <Link to={`/courses/${key}/times/${start}/${end}`}>
               Ver tiempo de visualizaci&oacute;n general{' '}
               <FontAwesomeIcon
                 icon={faExternalLinkAlt}
@@ -36,7 +36,7 @@ const Menu = ({ url }) => {
             <p>Revisa donde los usuarios pasaron más tiempo en tu curso</p>
           </ListGroupItem>
           <ListGroupItem>
-            <Link to={`/search/${key}/visits/${start}/${end}`}>
+            <Link to={`/courses/${key}/visits/${start}/${end}`}>
               Ver visitas por contenido{' '}
               <FontAwesomeIcon
                 icon={faExternalLinkAlt}
