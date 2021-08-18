@@ -18,7 +18,6 @@ import PropTypes from 'prop-types';
 import { useLoadCourseInfo } from '../hooks';
 import { course as courseActions, actions } from '../../Courses/data/actions';
 import { overviewActions } from '.';
-import { Steps } from 'intro.js-react';
 
 const steps = [
   {
@@ -84,7 +83,29 @@ const Overview = (props) => {
     }
   }, [state.current]);
 
-  const [showTutorial, setShowTutorial] = useState(false);
+  const showTutorial = () => {
+    introJs()
+      .setOptions({
+        steps: steps,
+        showBullets: false,
+        showProgress: true,
+        prevLabel: 'Atrás',
+        nextLabel: 'Siguiente',
+        doneLabel: 'Finalizar',
+        keyboardNavigation: true,
+      })
+      .start()
+      .onexit(() => window.scrollTo({ behavior: 'smooth', top: 0 }));
+  };
+  useEffect(() => {
+    if (
+      course.status === 'success' &&
+      localStorage.getItem('tutorial-overview') === null
+    ) {
+      showTutorial();
+      localStorage.setItem('tutorial-overview', 'seen');
+    }
+  }, [course.status]);
 
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2">
@@ -110,7 +131,7 @@ const Overview = (props) => {
             <span
               title="Abrir tutorial"
               className={'float-right'}
-              onClick={() => setShowTutorial(true)}
+              onClick={() => showTutorial()}
             >
               Ayuda <FontAwesomeIcon icon={faQuestionCircle} />
             </span>
@@ -209,22 +230,6 @@ const Overview = (props) => {
               </Collapsible>
             </Col>
           </Row>
-          <Steps
-            enabled={showTutorial}
-            steps={steps}
-            initialStep={0}
-            onExit={(stepIndex) => {
-              setShowTutorial(false);
-            }}
-            options={{
-              showBullets: false,
-              showProgress: true,
-              prevLabel: 'Atrás',
-              nextLabel: 'Siguiente',
-              doneLabel: 'Finalizar',
-              keyboardNavigation: true,
-            }}
-          />
         </Fragment>
       ) : (
         <Row>

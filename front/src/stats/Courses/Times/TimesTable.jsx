@@ -26,7 +26,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import '../common/TableandChart.css';
 import { parseFloatToTimeString } from '../helpers';
-import { Steps } from 'intro.js-react';
 
 const steps = [
   {
@@ -132,7 +131,29 @@ const TimesTable = (props) => {
     }
   };
 
-  const [showTutorial, setShowTutorial] = useState(false);
+  const showTutorial = () => {
+    introJs()
+      .setOptions({
+        steps: steps,
+        showBullets: false,
+        showProgress: true,
+        prevLabel: 'Atrás',
+        nextLabel: 'Siguiente',
+        doneLabel: 'Finalizar',
+        keyboardNavigation: true,
+      })
+      .start()
+      .onexit(() => window.scrollTo({ behavior: 'smooth', top: 0 }));
+  };
+  useEffect(() => {
+    if (
+      rowData.loaded &&
+      localStorage.getItem('tutorial-timestable') === null
+    ) {
+      showTutorial();
+      localStorage.setItem('tutorial-timestable', 'seen');
+    }
+  }, [rowData.loaded]);
 
   // Refresh course info and load
   useEffect(() => {
@@ -168,7 +189,7 @@ const TimesTable = (props) => {
             <span
               title="Abrir tutorial"
               className={'float-right'}
-              onClick={() => setShowTutorial(true)}
+              onClick={() => showTutorial()}
             >
               Ayuda <FontAwesomeIcon icon={faQuestionCircle} />
             </span>
@@ -342,22 +363,6 @@ const TimesTable = (props) => {
               </p>
             </Col>
           </Row>
-          <Steps
-            enabled={showTutorial}
-            steps={steps}
-            initialStep={0}
-            onExit={(stepIndex) => {
-              setShowTutorial(false);
-            }}
-            options={{
-              showBullets: false,
-              showProgress: true,
-              prevLabel: 'Atrás',
-              nextLabel: 'Siguiente',
-              doneLabel: 'Finalizar',
-              keyboardNavigation: true,
-            }}
-          />
         </Fragment>
       ) : (
         <Row>

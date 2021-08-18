@@ -1,19 +1,39 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en-us">
   <head>
-      <title>Eol analytics | <%= process.env.SITE_NAME %></title>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link rel="shortcut icon" href="/favicon.png" type="image/x-icon" />
+    <title>Eol analytics | <%= process.env.SITE_NAME %></title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon" />
+    <!-- CSS de intro.js -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/4.1.0/introjs.min.css"
+      integrity="sha512-631ugrjzlQYCOP9P8BOLEMFspr5ooQwY3rgt8SMUa+QqtVMbY/tniEUOcABHDGjK50VExB4CNc61g5oopGqCEw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
   </head>
   <body>
     <div id="root"></div>
   </body>
+  <!-- Bibliotecas javascript -->
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/4.1.0/intro.min.js"
+    integrity="sha512-vpRYyG0wwpTzFdMa1fWEV6GLWfJiiKG1W7dCPuIuvm2kbZMUA8jnokV84rdUft8AF6ih83/ItbmP/fDzNjVxsA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
   <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1JW6RT3FHJ"></script>
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=G-1JW6RT3FHJ"
+  ></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() {
+      dataLayer.push(arguments);
+    }
     gtag('js', new Date());
 
     gtag('config', 'G-1JW6RT3FHJ');

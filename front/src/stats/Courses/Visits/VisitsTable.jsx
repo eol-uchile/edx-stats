@@ -18,7 +18,6 @@ import {
   faQuestionCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import '../common/TableandChart.css';
-import { Steps } from 'intro.js-react';
 
 const steps = [
   {
@@ -52,13 +51,9 @@ const steps = [
     element: '#date-browser',
     title: 'Visitas diarias',
     intro: `En esta sección se cargará la cantidad de visitas diarias de cada sección.
+    Puede seleccionar distintos periodos de visualización.
     También puede descargar esta información en una planilla de cálculos
     usando el botón.`,
-  },
-  {
-    element: '#date-browser .input-group',
-    title: 'Visitas diarias',
-    intro: `Puede seleccionar distintos periodos de visualización.`,
   },
   {
     element: '#DetallesPorEstudiante',
@@ -141,7 +136,29 @@ const VisitsTable = (props) => {
     }
   };
 
-  const [showTutorial, setShowTutorial] = useState(false);
+  const showTutorial = () => {
+    introJs()
+      .setOptions({
+        steps: steps,
+        showBullets: false,
+        showProgress: true,
+        prevLabel: 'Atrás',
+        nextLabel: 'Siguiente',
+        doneLabel: 'Finalizar',
+        keyboardNavigation: true,
+      })
+      .start()
+      .onexit(() => window.scrollTo({ behavior: 'smooth', top: 0 }));
+  };
+  useEffect(() => {
+    if (
+      rowData.loaded &&
+      localStorage.getItem('tutorial-visitstable') === null
+    ) {
+      showTutorial();
+      localStorage.setItem('tutorial-visitstable', 'seen');
+    }
+  }, [rowData.loaded]);
 
   // Load chart info right away
   useEffect(() => {
@@ -177,7 +194,7 @@ const VisitsTable = (props) => {
             <span
               title="Abrir tutorial"
               className={'float-right'}
-              onClick={() => setShowTutorial(true)}
+              onClick={() => showTutorial()}
             >
               Ayuda <FontAwesomeIcon icon={faQuestionCircle} />
             </span>
@@ -334,22 +351,6 @@ const VisitsTable = (props) => {
               </p>
             </Col>
           </Row>
-          <Steps
-            enabled={showTutorial}
-            steps={steps}
-            initialStep={0}
-            onExit={(stepIndex) => {
-              setShowTutorial(false);
-            }}
-            options={{
-              showBullets: false,
-              showProgress: true,
-              prevLabel: 'Atrás',
-              nextLabel: 'Siguiente',
-              doneLabel: 'Finalizar',
-              keyboardNavigation: true,
-            }}
-          />
         </Fragment>
       ) : (
         <Row>

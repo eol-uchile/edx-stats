@@ -43,7 +43,6 @@
     "bootstrap": "^4.5.2",
     "d3-interpolate": "^2.0.1",
     "intro.js": "^4.1.0",
-    "intro.js-react": "^0.4.0",
     "mathjs": "^7.6.0",
     "prop-types": "15.7.2",
     "react": "16.12.0",
