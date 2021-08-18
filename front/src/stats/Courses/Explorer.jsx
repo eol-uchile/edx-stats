@@ -15,14 +15,6 @@ import PropTypes from 'prop-types';
 import { useExplorer } from './hooks';
 import Select from 'react-select';
 
-const getDate = (d) => {
-  let date = new Date(d);
-  let dd = String(date.getDate()).padStart(2, '0');
-  let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
-  let yyyy = date.getFullYear();
-  return `${yyyy}-${mm}-${dd}`;
-};
-
 const formatGroupLabel = (data) => (
   <div
     style={{
@@ -65,12 +57,6 @@ const Explorer = (props) => {
 
   const [state, setState] = useExplorer(props.match, myCourses);
 
-  const start = state.filtered[state.selected]
-    ? getDate(state.filtered[state.selected].data.start)
-    : null;
-  const end = state.filtered[state.selected]
-    ? getDate(state.filtered[state.selected].data.end)
-    : null;
   const key = state.filtered[state.selected]
     ? state.filtered[state.selected].data.key
     : null;
@@ -166,36 +152,12 @@ const Explorer = (props) => {
             <Col id="functionalities">
               <h4>Consultar Analítica</h4>
               <ul className="list-group-eol">
-                {/* <li>
+                <li>
                   <span className="toggle-arrow">
                     <FontAwesomeIcon icon={faChevronRight} />
                   </span>
-                  <Link to={`/courses/${key}/times/${start}/${end}`}>
+                  <Link to={`/courses/${key}`}>
                     Ver estadísticas generales{' '}
-                    <FontAwesomeIcon
-                      icon={faExternalLinkAlt}
-                      className="float-right"
-                    />
-                  </Link>
-                </li> */}
-                <li>
-                  <span className="toggle-arrow">
-                    <FontAwesomeIcon icon={faChevronRight} />
-                  </span>
-                  <Link to={`/courses/${key}/times/${start}/${end}`}>
-                    Ver tiempo de vizualización general{' '}
-                    <FontAwesomeIcon
-                      icon={faExternalLinkAlt}
-                      className="float-right"
-                    />
-                  </Link>
-                </li>
-                <li>
-                  <span className="toggle-arrow">
-                    <FontAwesomeIcon icon={faChevronRight} />
-                  </span>
-                  <Link to={`/courses/${key}/visits/${start}/${end}`}>
-                    Ver visitas por contenido{' '}
                     <FontAwesomeIcon
                       icon={faExternalLinkAlt}
                       className="float-right"

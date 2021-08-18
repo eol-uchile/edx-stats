@@ -11,6 +11,7 @@ class TestCourseStructure(UserMixin, JwtMixin, APITestCase):
     def setUp(self):
         self.user = self.create_user()
         CourseVertical.objects.create(
+            is_active=True,
             course_name="Eol",
             course="block-v1:Test-EOL_T2+type@course+block@course",
             chapter="block-v1:Test-EOL_T2+type@chapter+block@a",

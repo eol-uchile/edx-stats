@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.db.models.functions import Extract
 from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
@@ -60,10 +60,15 @@ def visits_on_course(request):
     # Course will arrive in format block-v1:COURSE without +type@course-block@course
     # hence we do a icontains query
     query = lambda x,y,z: VisitOnPage.objects.filter(
-        course__icontains=x,
+        vertical__is_active=True,
+        vertical__course__icontains=x,
         time__lte=y,
         time__gte=z
-    ).values("username", "vertical", "sequential", "chapter", "course").order_by("username", "vertical").annotate(total=Sum("count"))
+    ).annotate(
+        sequential=F('vertical__sequential'), 
+        chapter=F('vertical__chapter'), 
+        course=F('vertical__course')
+    ).values("username", "vertical__vertical", "sequential", "chapter", "course").order_by("username", "vertical__vertical").annotate(total=Sum("count"))
     
     return manage_standard_request(request,query)
 
@@ -85,9 +90,13 @@ def daily_visits_per_chapter_on_course(request):
     # Course will arrive in format block-v1:COURSE without +type@course-block@course
     # hence we do a icontains query
     query = lambda x,y,z: VisitOnPage.objects.filter(
-        course__icontains=x,
+        vertical__is_active=True,
+        vertical__course__icontains=x,
         time__lte=y,
         time__gte=z
+    ).annotate(
+        chapter=F('vertical__chapter'), 
+        course=F('vertical__course')
     ).extra({'date': "date(time)"}).values("chapter", "course", "date").order_by("date").annotate(total=Sum("count"))
     
     return manage_standard_request(request,query)
@@ -109,9 +118,12 @@ def daily_visits_on_course(request):
     # Course will arrive in format block-v1:COURSE without +type@course-block@course
     # hence we do a icontains query
     query = lambda x,y,z: VisitOnPage.objects.filter(
-        course__icontains=x,
+        vertical__is_active=True,
+        vertical__course__icontains=x,
         time__lte=y,
         time__gte=z
+    ).annotate(
+        course=F('vertical__course')
     ).extra({'date': "date(time)"}).values("course", "date").order_by("date").annotate(total=Sum("count"))
     
     return manage_standard_request(request, query)
@@ -134,9 +146,12 @@ def hourly_visits_overview_on_course(request):
     # Course will arrive in format block-v1:COURSE without +type@course-block@course
     # hence we do a icontains query
     query = lambda x,y,z: VisitOnPage.objects.filter(
-        course__icontains=x,
+        vertical__is_active=True,
+        vertical__course__icontains=x,
         time__lte=y,
-        time__gte=z
+        time__gte=z,
+    ).annotate(
+        course=F('vertical__course')
     ).annotate(day=Extract('time','week_day')).values("course","day").order_by("day").annotate(total=Sum("count"))
     # NOTE: the results given by week_day start on sunday. So Sunday is 1, Saturday is 7
     # https://docs.djangoproject.com/en/3.2/ref/models/database-functions/#extract
@@ -164,17 +179,20 @@ def general_visits_overview_course(request):
         return Response(status=status.HTTP_403_FORBIDDEN, data="No tiene permisos para ver los datos en los cursos solicitados")
 
     total_visits = VisitOnPage.objects.filter(
-        course__icontains=course,
+        vertical__is_active=True,
+        vertical__course__icontains=course,
         time__lte=time__lte,
         time__gte=time__gte,
-    ).values("course").annotate(total=Sum("count"))
+    )
+    total_visits = total_visits.values("vertical__course").annotate(total=Sum("count"))
     if total_visits.count() != 0:
         total_visits = total_visits[0]['total']
     else:
         total_visits = 0
 
     total_users = VisitOnPage.objects.filter(
-        course__icontains=course,
+        vertical__is_active=True,
+        vertical__course__icontains=course,
         time__lte=time__lte,
         time__gte=time__gte,
     ).values("username").distinct("username").count()
@@ -182,4 +200,56 @@ def general_visits_overview_course(request):
     return JsonResponse({
         'total_visits': total_visits,
         'total_users': total_users,
+    })
+
+@api_view()
+def detailed_visits_overview_course(request):
+    """
+    Compact visits on a course for date, chapter and sequential
+    within a date period.
+    """
+    roles = recoverUserCourseRoles(request)
+    allowed_list = [r['course_id'].replace(
+        "course", "block") for r in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES]
+
+    try:
+        course, time__gte, time__lte = verify_time_range_course_params(request)
+    except Exception as e:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=str(e))
+
+    # Check that user has permissions
+    if course not in allowed_list:
+        return Response(status=status.HTTP_403_FORBIDDEN, data="No tiene permisos para ver los datos en los cursos solicitados")
+
+    total_visits = VisitOnPage.objects.filter(
+        vertical__is_active=True,
+        vertical__course__icontains=course,
+        time__lte=time__lte,
+        time__gte=time__gte,
+    )
+    detailed_visits = {}
+    #groupedBy fecha
+    date_visits = total_visits.values("time").annotate(total=Sum("count"))
+    detailed_visits['date'] = list(date_visits)
+
+    #groupedBy modulo
+    module_visits = total_visits.values("vertical__chapter").annotate(
+        total=Sum("count"),
+        name=F("vertical__chapter_name")    
+    )
+    detailed_visits['module'] = list(module_visits)
+
+    #groupedBy unidad
+    seq_visits = total_visits.values("vertical__sequential").annotate(
+        total=Sum("count"), 
+        name=F("vertical__sequential_name"),
+        chap_number=F("vertical__chapter_number"),
+        seq_number=F("vertical__sequential_number"),
+    )
+    detailed_visits['seq'] = list(seq_visits)
+
+    total_visits = detailed_visits
+
+    return JsonResponse({
+        'total_visits': total_visits
     })

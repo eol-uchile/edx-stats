@@ -12,6 +12,10 @@ import * as course_structure from './data/course_structure.json';
 import * as course_times from './data/course_times.json';
 import * as course_visits from './data/course_visits.json';
 import * as course_daily_chapter_visits from './data/course_daily_chapter_visits.json';
+import * as course_times_week from './data/course_times_week.json';
+import * as course_visits_week from './data/course_visits_week.json';
+import * as course_visits_mod from './data/course_visits_mod.json';
+import * as course_visits_seq from './data/course_visits_seq.json';
 
 const lms_url = process.env.LMS_BASE_URL;
 const base_url = process.env.BASE_URL;
@@ -73,6 +77,41 @@ const handlers = [
       return res(ctx.json(course_daily_chapter_visits));
     }
   ),
+  rest.get(`${base_url}/api/times/timeoncourse/overview/*`, async (req, res, ctx) => {
+    let course = req.url.searchParams.get('course');
+    if (params === undefined) {
+      return res(ctx.status(400));
+    }
+    return res(ctx.json({ total_time: 532717 }));
+  }),
+  rest.get(`${base_url}/api/visits/visitsoncourse/overview/*`, async (req, res, ctx) => {
+    let course = req.url.searchParams.get('course');
+    if (params === undefined) {
+      return res(ctx.status(400));
+    }
+    return res(ctx.json({
+      total_visits: 1481,
+      total_users: 32,
+    }));
+  }),
+  rest.get(`${base_url}/api/times/timeoncourse/overview/detailed/*`, async (req, res, ctx) => {
+    let course = req.url.searchParams.get('course');
+    if (params === undefined) {
+      return res(ctx.status(400));
+    }
+    return res(ctx.json({total_time: course_times_week}));
+  }),
+  rest.get(`${base_url}/api/visits/visitsoncourse/overview/detailed/*`, async (req, res, ctx) => {
+    let course = req.url.searchParams.get('course');
+    if (params === undefined) {
+      return res(ctx.status(400));
+    }
+    return res(ctx.json({total_visits: {
+      date: course_visits_week,
+      module: course_visits_mod,
+      seq: course_visits_seq
+    }}));
+  }),
   rest.get('', async (req, res, ctx) => {
     return res();
   }),

@@ -1,15 +1,15 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import CountUp from 'react-countup';
+import PropTypes from 'prop-types';
 
-const CountBox = ({ end, duration, image, change, caption, countUpProps }) => {
+const CountBox = ({ image, caption, countUpProps }) => {
   const digitStyle = {
     fontWeight: 700,
     fontSize: '2.5em',
     fontFamily: 'mono',
   };
+
   return (
     <Container
       style={{
@@ -36,31 +36,24 @@ const CountBox = ({ end, duration, image, change, caption, countUpProps }) => {
         </Col>
         <Col style={{ textAlign: 'right' }}>
           <p style={{ marginBottom: '0', paddingTop: '.325rem' }}>{caption}</p>
-          <CountUp
-            end={end}
-            duration={duration}
-            style={digitStyle}
-            {...countUpProps}
-          />
+          <CountUp style={digitStyle} {...countUpProps} />
         </Col>
       </Row>
-      {/* 
-      <Row>
-        <Col>
-          <p
-            style={{
-              fontSize: '1.2rem',
-              borderTop: '1px #dfd2d2 solid',
-              color: change > 0 ? 'green' : 'red',
-            }}
-          >
-            <FontAwesomeIcon icon={change > 0 ? faArrowUp : faArrowDown} />{' '}
-            {change}% semana pasada
-          </p>
-        </Col>
-      </Row> */}
     </Container>
   );
+};
+
+CountBox.propTypes = {
+  image: PropTypes.string.isRequired,
+  caption: PropTypes.string.isRequired,
+  countUpProps: PropTypes.shape({
+    start: PropTypes.number.isRequired,
+    end: PropTypes.number.isRequired,
+    duration: PropTypes.number.isRequired,
+    separator: PropTypes.string.isRequired,
+    decimals: PropTypes.number.isRequired,
+    decimal: PropTypes.string.isRequired,
+  }),
 };
 
 export default CountBox;

@@ -42,12 +42,15 @@ def process_log_times(end_date=None, day_window=None, run_code=None, course=None
     """
     def make_row(row, date, course):
         delta = row["delta_time"].days*84600 + row["delta_time"].seconds
+        vertical_to_associate = CourseVertical.objects.filter(
+            vertical__icontains=row["vertical_id"], 
+            course__icontains=course  
+        ).first()
         time_on_page = TimeModel(
+            vertical = vertical_to_associate,
             session=row["session"],
             username=row["username"],
             delta_time_float=delta,
-            event_type_vertical=row["vertical_id"],
-            course=course,
             time=date)
         return time_on_page
 
@@ -76,7 +79,7 @@ def process_log_times(end_date=None, day_window=None, run_code=None, course=None
         # Delete today's info to overwrite
         with transaction.atomic():
             previous_times = TimeModel.objects.filter(
-                time__date=date, course=course_df["course"][0])
+                time__date=date, vertical__course=course_df["course"][0])
             previous_times.delete()
 
             # Upload bulks to DB
@@ -111,12 +114,16 @@ def process_log_times_from_dir(logpath, coursepath, zipped=True):
     """
     def save_row(row):
         delta = row["delta_time"].days*84600 + row["delta_time"].seconds
+        vertical_to_associate = CourseVertical.objects.filter(
+            vertical__icontains=row["event_type_vertical"], 
+            course__icontains=row["course"],  
+        ).first()
         time_on_page = TimeModel(
+            vertical=vertical_to_associate,
             session=row["session"],
             username=row["username"],
             delta_time_float=delta,
-            event_type_vertical=row["event_type_vertical"],
-            course=row["course"])
+        )
         time_on_page.save()
 
     logs_full = read_logs(logpath, zipped)

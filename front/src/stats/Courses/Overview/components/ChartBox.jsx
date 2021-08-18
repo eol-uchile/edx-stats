@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const ChartBox = ({ title, children }) => {
   const chartBox = {
@@ -22,6 +23,11 @@ const ChartBox = ({ title, children }) => {
       {children}
     </div>
   );
+};
+
+ChartBox.propTypes = {
+  title: PropTypes.string.isRequired,
+  children: PropTypes.element.isRequired
 };
 
 export default ChartBox;
