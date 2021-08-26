@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 DAY_WINDOW = timedelta(days=3)
 BULK_UPLOAD_SIZE = 500
 
+
 @shared_task
 def process_views_count(end_date, day_window=None, run_code=None, course=None):
     """Recovers logs from DB and computes views on videos per day for each video
@@ -52,38 +53,34 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
                             'video_show_cc_menu',
                             ]
         video_mobile_type = ['edx.video.transcript.hidden',
-                            'edx.video.loaded',
-                            'edx.video.paused',
-                            'edx.video.played',
-                            'edx.video.position.changed',
-                            'edx.video.transcript.shown',
-                            'edx.video.stopped',
-                            ]
+                             'edx.video.loaded',
+                             'edx.video.paused',
+                             'edx.video.played',
+                             'edx.video.position.changed',
+                             'edx.video.transcript.shown',
+                             'edx.video.stopped',
+                             ]
         raw_video_course_logs = only_students[only_students.event_type.isin(
             video_event_type + video_mobile_type)]
         return raw_video_course_logs
 
-    
-    def save_videos_row(row):
-        #TODO: Asignar Vertical donde está alojado este bloque
-        # para esto falta block-id en el dataFrame
-        #TODO: is_active, name->code
-        #previous = Video.objects.filter(vertical=None, name=row["id"])
-        previous = Video.objects.filter(name=row["id"])
+    def save_videos_row(row, course_id):
+        vertical_to_refer = CourseVertical.objects.filter(
+            course=course_id,
+            block_id__icontains=row["id"]
+        )
+        previous = Video.objects.filter(
+            block_id=row["id"]
+        )
         if(previous.count() != 0):
             video = previous.first()
-            video.duration=row["duration"]
+            video.vertical = vertical_to_refer.first()
+            video.duration = row["duration"]
             video.save()
         else:
-            # video = Video(
-            #     vertical= row["vertical"],
-            #     name=row["id"],
-            #     duration=row["duration"],
-            #     watch_time=0)
-            # video.save()
             video = Video(
-                vertical= None,
-                name=row["id"],
+                vertical=vertical_to_refer.first(),
+                block_id=row["id"],
                 duration=row["duration"],
                 watch_time=0)
             video.save()
@@ -94,8 +91,8 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
         malformed_pairs = 0
         for name, group in grouped:
             state = {'id': None,
-                    'init': None,
-                    'action': None}
+                     'init': None,
+                     'action': None}
             for index, row in group.iterrows():
                 etype = row.event_type
                 if etype == 'play_video':
@@ -104,12 +101,13 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
                     state['action'] = row.event_type
                 elif etype == 'seek_forward':
                     if state['id'] == row.id:
-                        #skip segment
-                        #add_segment((row.username, row.time, row.old, row.new), all_pairs)
+                        # skip segment
+                        # all_pairs.append
                         if state['action'] == 'play_video':
                             try:
                                 assert(row.old <= row.new)
-                                all_pairs.append((row.id, row.username, row.time, row.old, row.new))
+                                all_pairs.append(
+                                    (row.id, row.username, row.time, row.old, row.new))
                             except AssertionError:
                                 malformed_pairs += 1
 
@@ -120,7 +118,8 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
                     if state['id'] == row.id and state['action'] == 'play_video':
                         try:
                             assert(state['init'] <= row.old)
-                            all_pairs.append((row.id, row.username, row.time, state['init'], row.old))
+                            all_pairs.append(
+                                (row.id, row.username, row.time, state['init'], row.old))
                         except AssertionError:
                             malformed_pairs += 1
 
@@ -131,7 +130,8 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
                     if state['id'] == row.id and state['action'] == 'play_video':
                         try:
                             assert(state['init'] <= row.currenttime)
-                            all_pairs.append((row.id, row.username, row.time, state['init'], row.currenttime))
+                            all_pairs.append(
+                                (row.id, row.username, row.time, state['init'], row.currenttime))
                         except AssertionError:
                             malformed_pairs += 1
                     state['id'] = row.id
@@ -143,23 +143,24 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
         segments_df = pd.DataFrame(all_pairs, columns=df_cols)
         return segments_df
 
-    def save_views_row(row):
+    def save_views_row(row, course_df):
         video_to_refer = Video.objects.filter(
-            name=row['id']
+            block_id=row['id']
         ).first()
-        previous = ViewOnVideo.objects.filter(video=video_to_refer, username=row['username'])
+        previous = ViewOnVideo.objects.filter(
+            video=video_to_refer, username=row['username'])
         if(previous.count() != 0):
             pass
         else:
             view = ViewOnVideo(
-                video=video_to_refer, 
+                video=video_to_refer,
                 username=row['username']
             )
             view.save()
 
     def make_segment(row):
-        view_to_refer= ViewOnVideo.objects.filter(
-            video__name=row['id'],
+        view_to_refer = ViewOnVideo.objects.filter(
+            video__block_id=row['id'],
             username=row['username']
         ).first()
         segment = Segment(
@@ -168,44 +169,41 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
             start=row['start'],
             end=row['end']
         )
-        view_to_refer.video.watch_time += row['end']-row['start']
-        view_to_refer.video.save()
         return segment
 
     def compute_views(dataframe, course_df, date, course_id, code):
-        dataframe.to_csv('dataframe.csv')
-        # cuando crear Video? junto con CourseVertical en el core?
         cols_to_use = ['username', 'time', 'event_type', 'event']
         raw_video_course_logs = get_students_video_logs(dataframe[cols_to_use])
-        raw_video_course_logs.to_csv('raw_video.csv')
         videos_in_logs = generate_video_dataframe(raw_video_course_logs)
-        videos_in_logs.to_csv('videos_in_logs.csv')
+        # Remove previous course info in the DB
+        course_id_df = course_df["course"][0]
         with transaction.atomic():
             # Update information on DB
-            videos_in_logs.apply(lambda row: save_videos_row(row), axis=1)
+            videos_in_logs.apply(
+                lambda row: save_videos_row(row, course_id_df), axis=1)
             logger.info("Course {}, videos updated for {}".format(
                 course_id, date))
-        extend_video_logs = expand_event_info(raw_video_course_logs) #expands info into columns
-        extend_video_logs.to_csv('extend_video.csv')
-        sort_video_logs = extend_video_logs[extend_video_logs.event_type != 'load_video'].copy()
-        sort_video_logs['time'] = pd.to_datetime(sort_video_logs['time'], unit='ns')
+        extend_video_logs = expand_event_info(
+            raw_video_course_logs)  # expands info into columns
+        sort_video_logs = extend_video_logs[extend_video_logs.event_type != 'load_video'].copy(
+        )
+        sort_video_logs['time'] = pd.to_datetime(
+            sort_video_logs['time'], unit='ns')
         sort_video_logs.sort_values('time', inplace=True)
         grouped_logs = sort_video_logs.groupby('username')
         segments_df = make_segment_dataframe(grouped_logs)
         views_df = segments_df[['id', 'username']].drop_duplicates()
-        
+
         with transaction.atomic():
             # Update information on DB
-            views_df.apply(lambda row: save_views_row(row), axis=1)
+            views_df.apply(lambda row: save_views_row(row, course_df), axis=1)
             logger.info("Course {}, video viewers updated for {}".format(
                 course_id, date))
 
         with transaction.atomic():
             # Delete today's info to overwrite
-            #TODO: restar watch_time
-            #TODO: Agregar vertical para que previous_segments no sea queryset vacio
             previous_segments = Segment.objects.filter(
-                time__date=date, view__video__vertical__course=course_df["course"][0])
+                time__date=date, view__video__vertical__course=course_id_df)
             previous_segments.delete()
 
             # Upload bulks to DB
@@ -225,6 +223,7 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
     else:
         process_logs_standard_procedure(
             compute_views, "views", end_date, day_window, run_code)
+
 
 @shared_task
 def compute_view_batches(initial_date=None, time_delta=timedelta(days=1), final_date=None, course=None):

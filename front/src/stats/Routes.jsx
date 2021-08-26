@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Route, Switch } from 'react-router';
 import { Container, Row, Col } from 'react-bootstrap';
-import { Explorer, VisitsTable, TimesTable, Overview } from './Courses';
+import { Explorer, VisitsTable, TimesTable, VideosTable, Overview } from './Courses';
 import { RedirectToFeature } from './Redirect';
 import { useDispatch, useSelector } from 'react-redux';
 import { courseActions, PullUp } from './Courses';
@@ -47,7 +47,10 @@ const Routes = () => {
             path="/courses/:course_id/visits/:start/:end"
             component={VisitsTable}
           />
-
+          <Route
+            path="/courses/:course_id/videos/:start/:end"
+            component={VideosTable}
+          />
           <Route path="/courses/:course_id" component={Overview} />
           <Route path="/search" component={Explorer} />
           <Route

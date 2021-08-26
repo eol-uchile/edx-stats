@@ -8,7 +8,7 @@ class LogAdmin(admin.ModelAdmin):
 
 
 class CoursesAdmin(admin.ModelAdmin):
-    search_fields = ['block_type', ]
+    search_fields = ['block_id', 'block_type']
 
 
 class StaffUsernameAdmin(admin.ModelAdmin):
