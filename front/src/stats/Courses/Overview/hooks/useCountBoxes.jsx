@@ -53,7 +53,7 @@ const useCountBoxes = (
     if (errors.length > 0) {
       // If errors then reset the state
       setCountBox({
-        loaded: false,
+        loaded: true,
         values: { visits: 0, users: 0, times: 0 },
       });
     }

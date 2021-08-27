@@ -71,17 +71,17 @@ const Overview = (props) => {
   );
 
   useEffect(() => {
-    if (state.current !== '') {
-      if (!state.allowed) {
-        setErrors([...errors, 'No tienes permisos para consultar estos datos']);
-      } else {
-        //setDataLoaded(false);
-        dispatch(courseActions.recoverCourseStructure(state.current));
-        setErrors([]);
-        dispatch(actions.cleanErrors());
-      }
+    if (
+      state.current !== '' &&
+      state.lowerDate !== '' &&
+      state.upperDate !== '' &&
+      state.allowed
+    ) {
+      dispatch(courseActions.recoverCourseStructure(state.current));
+      setErrors([]);
+      dispatch(actions.cleanErrors());
     }
-  }, [state.current]);
+  }, [state.current, state.lowerDate, state.upperDate, state.allowed]);
 
   const showTutorial = () => {
     introJs()
@@ -99,13 +99,13 @@ const Overview = (props) => {
   };
   useEffect(() => {
     if (
-      course.status === 'success' &&
+      course.course_status === 'success' &&
       localStorage.getItem('tutorial-overview') === null
     ) {
       showTutorial();
       localStorage.setItem('tutorial-overview', 'seen');
     }
-  }, [course.status]);
+  }, [course.course_status]);
 
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2">
@@ -127,7 +127,7 @@ const Overview = (props) => {
       </Row>
       <Row>
         <Col>
-          {state.allowed && course.status === 'success' && (
+          {course.course_status === 'success' && (
             <span
               title="Abrir tutorial"
               className={'float-right'}
@@ -153,13 +153,13 @@ const Overview = (props) => {
           </h2>
         </Col>
       </Row>
-      {course.status === 'loading' ? (
+      {course.course_status === 'loading' ? (
         <Row>
           <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />
           </Col>
         </Row>
-      ) : course.status === 'success' ? (
+      ) : course.course_status === 'success' ? (
         <Fragment>
           <Row>
             <Col>

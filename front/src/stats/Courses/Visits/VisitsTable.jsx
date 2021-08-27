@@ -190,7 +190,7 @@ const VisitsTable = (props) => {
       </Row>
       <Row>
         <Col>
-          {state.allowed && course.status === 'success' && (
+          {course.course_status === 'success' && (
             <span
               title="Abrir tutorial"
               className={'float-right'}
@@ -262,7 +262,7 @@ const VisitsTable = (props) => {
           </Button>
         </Col>
       </Row>
-      {course.status === 'loading' && !tableData.loaded ? (
+      {course.course_status === 'loading' && !tableData.loaded ? (
         <Row>
           <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />
