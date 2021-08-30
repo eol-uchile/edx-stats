@@ -9,7 +9,7 @@ jest.mock('@edx/frontend-platform/auth');
 
 const processAxiosRequestErrorInterceptor = createProcessAxiosRequestErrorInterceptor(
   {
-    loggingService: { logInfo: () => {} },
+    loggingService: { logInfo: () => { } },
   }
 );
 
@@ -18,6 +18,17 @@ httpClient.interceptors.response.use(
   (response) => response,
   processAxiosRequestErrorInterceptor
 );
+
+const localStorageMock = {
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  clear: jest.fn()
+};
+
+global.localStorage = localStorageMock;
+global.localStorage.setItem('tutorial-overview', 'seen');
+global.localStorage.setItem('tutorial-visitstable', 'seen');
+global.localStorage.setItem('tutorial-timestable', 'seen');
 
 beforeAll(() => {
   server.listen();

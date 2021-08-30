@@ -1,5 +1,5 @@
-import React, { Fragment, useMemo, useState } from 'react';
-import { Row, Col } from 'react-bootstrap';
+import React, { useMemo, useState } from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
 import { SearchField, Form, TransitionReplace } from '@edx/paragon';
 import { useMediaQuery } from 'react-responsive';
 import { AsyncCSVButton } from '.';
@@ -130,10 +130,10 @@ const StudentDetails = ({
   );
 
   return (
-    <Fragment>
+    <Container fluid id="DetallesPorEstudiante">
       <Row style={{ marginTop: '1em' }}>
         <Col>
-          <h4 id="DetallesPorEstudiante">Detalle por estudiante</h4>
+          <h4>Detalle por estudiante</h4>
         </Col>
       </Row>
       <Row>
@@ -155,7 +155,7 @@ const StudentDetails = ({
               type="switch"
               id="group-modules"
               name="groupmodules"
-              label="Agrupar Módulos"
+              label="Agrupar Secciones"
               checked={state.useChaptersTable}
               data-testid="group-modules"
               onChange={(e) => {
@@ -191,7 +191,7 @@ const StudentDetails = ({
         </Col>
       </Row>
       {doAnimation ? <TransitionReplace>{table}</TransitionReplace> : table}
-    </Fragment>
+    </Container>
   );
 };
 

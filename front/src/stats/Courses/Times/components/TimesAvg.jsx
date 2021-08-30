@@ -75,7 +75,7 @@ const TimesAvg = ({ tableData, rowData }) => {
             <Form.Check
               type="switch"
               id="group-mod-chapters-ch-av"
-              label="Agrupar Módulos"
+              label="Agrupar Secciones"
               checked={state}
               onChange={(e) => {
                 setState(e.target.checked);
@@ -90,7 +90,7 @@ const TimesAvg = ({ tableData, rowData }) => {
             data={state ? averageChapterChart : averageChart}
             area_key="Tiempo promedio visto"
             name_key="val"
-            x_label={state ? 'Módulos' : 'Unidades del curso'}
+            x_label={state ? 'Secciones' : 'Unidades del curso'}
             y_label="Tiempo"
             tooltipLabel={!state} // modules already have labels
           />

@@ -56,7 +56,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
   };
 
   return (
-    <ListGroup style={{ margin: '0.5rem 0' }}>
+    <ListGroup style={{ margin: '0.5rem 0' }} id="chartboxes">
       <ListGroupItem style={{ backgroundColor: '#f2f2f2' }}>
         <h4>Actividad Semanal</h4>
       </ListGroupItem>
@@ -119,7 +119,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
         dataPie.loaded &&
         dataPie.values.length !== 0 ? (
           <Row>
-            <Col lg="6">
+            <Col lg="6" className="week-line">
               <ChartBox title={'Total durante la semana'}>
                 <LineArea
                   data={dataLine.values}
@@ -143,7 +143,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                 />
               </ChartBox>
             </Col>
-            <Col lg="6">
+            <Col lg="6" className="week-pie">
               <ChartBox title={'Contenido visitado durante la semana'}>
                 <Row>
                   <Col>
@@ -162,7 +162,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                         type="switch"
                         id="group-mod-tableData.chapters-ch"
                         name="group-mod-tableData.chapters-ch"
-                        label="Agrupar Módulos"
+                        label="Agrupar Secciones"
                         checked={viewModules}
                         onChange={(e) => {
                           setViewModules(e.target.checked);

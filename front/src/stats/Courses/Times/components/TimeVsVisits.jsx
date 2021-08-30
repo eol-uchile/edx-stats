@@ -70,7 +70,7 @@ const TimeVsVisits = ({ tableData, rowData }) => {
               type="switch"
               id="group-mod-chapters-ch"
               name="group-mod-chapters-ch"
-              label="Agrupar Módulos"
+              label="Agrupar Secciones"
               checked={state}
               onChange={(e) => {
                 setState(e.target.checked);
@@ -86,7 +86,7 @@ const TimeVsVisits = ({ tableData, rowData }) => {
             bar1_key="Tiempo de visualización"
             bar2_key="Visitas Únicas usuarios"
             name_key="val"
-            x_label={state ? 'Módulos' : 'Unidades del curso'}
+            x_label={state ? 'Secciones' : 'Unidades del curso'}
             y1_label="Tiempo"
             y2_label="Visitas"
             tooltipLabel={!state} // modules already have labels

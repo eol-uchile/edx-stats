@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, Fragment } from 'react';
+import React, { useEffect, useCallback, useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Row, Col, Breadcrumb, InputGroup, Container } from 'react-bootstrap';
@@ -12,8 +12,64 @@ import { VisitTotals, DateBrowser } from './components';
 import { useProcessDailyData } from './hooks';
 import { useProcessSumData, useLoadCourseInfo } from '../hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faSearch } from '@fortawesome/free-solid-svg-icons';
+import {
+  faHome,
+  faSearch,
+  faQuestionCircle,
+} from '@fortawesome/free-solid-svg-icons';
 import '../common/TableandChart.css';
+
+const steps = [
+  {
+    title: 'Visitas por contenido',
+    intro:
+      'Aquí podrá ver lo que los usuarios visitan con más regularidad en su curso.',
+  },
+  {
+    element: '.date-table-selectors',
+    title: 'Visitas por contenido',
+    intro: `Si quiere ver las estadísticas agrupadas de otro periodo de tiempo
+    seleccione las fechas deseadas y luego cárguelas con el botón Explorar.`,
+  },
+  {
+    element: '#VisitasTotales',
+    title: 'Visitas totales',
+    intro: `En esta sección se cargarán las visitas de cada sección, 
+    acompañado de la cantidad de estudiantes que
+    vieron el contenido.`,
+  },
+  {
+    element: '#VisitasTotales .pgn__form-group',
+    intro: `Puede seleccionar la vista desagrupada
+    para una vista más particular de cada unidad.`,
+  },
+  {
+    element: '#VisitasTotales a',
+    intro: `También puede descargar esta información en una planilla de cálculos.`,
+  },
+  {
+    element: '#date-browser',
+    title: 'Visitas diarias',
+    intro: `En esta sección se cargará la cantidad de visitas diarias de cada sección.
+    Puede seleccionar distintos periodos de visualización.
+    También puede descargar esta información en una planilla de cálculos
+    usando el botón.`,
+  },
+  {
+    element: '#DetallesPorEstudiante',
+    title: 'Detalle por estudiante',
+    intro: `En esta sección se cargará una tabla con las visitas de cada usuario 
+    registrado en el curso. Puede seleccionar la vista desagrupada para datos más
+    particulares. También puede descargar esta información en una planilla de cálculos
+    usando el botón.`,
+  },
+  {
+    element: '#DetallesPorEstudiante nav',
+    title: 'Detalle por estudiante',
+    intro: `Para ver la información de cada estudiante, desplácese usando estos
+    botones.`,
+  },
+];
 
 /**
  * VisitsTable
@@ -80,6 +136,30 @@ const VisitsTable = (props) => {
     }
   };
 
+  const showTutorial = () => {
+    introJs()
+      .setOptions({
+        steps: steps,
+        showBullets: false,
+        showProgress: true,
+        prevLabel: 'Atrás',
+        nextLabel: 'Siguiente',
+        doneLabel: 'Finalizar',
+        keyboardNavigation: true,
+      })
+      .start()
+      .onexit(() => window.scrollTo({ behavior: 'smooth', top: 0 }));
+  };
+  useEffect(() => {
+    if (
+      rowData.loaded &&
+      localStorage.getItem('tutorial-visitstable') === null
+    ) {
+      showTutorial();
+      localStorage.setItem('tutorial-visitstable', 'seen');
+    }
+  }, [rowData.loaded]);
+
   // Load chart info right away
   useEffect(() => {
     state.courseName !== '' && submit();
@@ -110,6 +190,15 @@ const VisitsTable = (props) => {
       </Row>
       <Row>
         <Col>
+          {course.course_status === 'success' && (
+            <span
+              title="Abrir tutorial"
+              className={'float-right'}
+              onClick={() => showTutorial()}
+            >
+              Ayuda <FontAwesomeIcon icon={faQuestionCircle} />
+            </span>
+          )}
           <h2 className="content-header">
             Curso:{' '}
             {state.allowed ? (
@@ -173,7 +262,7 @@ const VisitsTable = (props) => {
           </Button>
         </Col>
       </Row>
-      {course.status === 'loading' && !tableData.loaded ? (
+      {course.course_status === 'loading' && !tableData.loaded ? (
         <Row>
           <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />
@@ -216,24 +305,26 @@ const VisitsTable = (props) => {
               </ul>
             </Col>
           </Row>
-          <Row>
-            <Col>
-              <h4 id="VisitasTotales">Visitas totales</h4>
-            </Col>
-          </Row>
-          {rowData.loaded && rowData.verticals.length > 0 ? (
-            <VisitTotals rowData={rowData} tableData={tableData} />
-          ) : errors.length === 0 && !rowData.loaded ? (
+          <Container fluid id="VisitasTotales">
             <Row>
-              <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
-                <Spinner animation="border" variant="primary" />
+              <Col>
+                <h4>Visitas totales</h4>
               </Col>
             </Row>
-          ) : (
-            <Row>
-              <Col>No hay datos</Col>
-            </Row>
-          )}
+            {rowData.loaded && rowData.verticals.length > 0 ? (
+              <VisitTotals rowData={rowData} tableData={tableData} />
+            ) : errors.length === 0 && !rowData.loaded ? (
+              <Row>
+                <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
+                  <Spinner animation="border" variant="primary" />
+                </Col>
+              </Row>
+            ) : (
+              <Row>
+                <Col>No hay datos</Col>
+              </Row>
+            )}
+          </Container>
           <DateBrowser
             title="Visitas diarias"
             data={dailyState.sumByMonths}

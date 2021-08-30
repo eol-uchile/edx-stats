@@ -55,8 +55,7 @@ it('displays no permissions message for not allowed courses', async () => {
       )}
     />
   );
-  await flushPromises();
-  waitFor(() =>
+  await waitFor(() =>
     expect(
       screen.getByText('No tienes permiso para ver los datos de este curso.')
     )
