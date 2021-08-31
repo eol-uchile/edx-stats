@@ -48,7 +48,7 @@ const Routes = () => {
             component={VisitsTable}
           />
           <Route
-            path="/courses/:course_id/videos/:start/:end"
+            path="/courses/:course_id/videos"
             component={VideosTable}
           />
           <Route path="/courses/:course_id" component={Overview} />

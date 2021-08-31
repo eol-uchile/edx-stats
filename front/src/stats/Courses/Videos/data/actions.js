@@ -3,6 +3,7 @@ import {
   LOADED_VIDEOS,
   LOADED_VIEWS_SUM,
   LOADED_COVERAGE,
+  LOADED_VIDEO_DETAILS,
   LOADING_VIEWS_ERROR,
 } from './reducers';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
@@ -46,7 +47,7 @@ export const recoverVideos =
     };
 
 export const recoverViewSum =
-  (course_id = 'nan', lower_date, upper_date, retry = 1) =>
+  (course_id = 'nan', retry = 1) =>
     (dispatch, getState) => {
       let base = getState().urls.base;
 
@@ -54,7 +55,7 @@ export const recoverViewSum =
         .get(
           `${base}/api/videos/viewsonvideos/?course=${encodeURIComponent(
             course_id
-          )}&time__gte=${lower_date.toISOString()}&time__lte=${upper_date.toISOString()}`
+          )}`
         )
         .then((res) => {
           if (res.request.responseURL.includes('login/?next=')) {
@@ -79,7 +80,7 @@ export const recoverViewSum =
     };
 
 export const recoverCoverage =
-  (course_id = 'nan', lower_date, upper_date, retry = 1) =>
+  (course_id = 'nan', retry = 1) =>
     (dispatch, getState) => {
       let base = getState().urls.base;
 
@@ -87,7 +88,7 @@ export const recoverCoverage =
         .get(
           `${base}/api/videos/coverage/?course=${encodeURIComponent(
             course_id
-          )}&time__gte=${lower_date.toISOString()}&time__lte=${upper_date.toISOString()}`
+          )}`
         )
         .then((res) => {
           if (res.request.responseURL.includes('login/?next=')) {
@@ -108,5 +109,38 @@ export const recoverCoverage =
             dispatch,
             getState
           )(course_id, lower_date, upper_date)
+        );
+    };
+
+export const recoverVideoDetails =
+  (course_id = 'nan', video_id = 'nan', retry = 1) =>
+    (dispatch, getState) => {
+      let base = getState().urls.base;
+
+      return getAuthenticatedHttpClient()
+        .get(
+          `${base}/api/videos/details/?course=${encodeURIComponent(
+            course_id
+          )}&video=${video_id}`
+        )
+        .then((res) => {
+          if (res.request.responseURL.includes('login/?next=')) {
+            return dispatch({ type: DO_LOGIN });
+          }
+          if (res.status === 200) {
+            return dispatch({ type: LOADED_VIDEO_DETAILS, data: res.data })
+          }
+          throw Error(
+            'No hay datos para el curso para estas fechas, por favor intente mas tarde.'
+          );
+        })
+        .catch((error) =>
+          actions.manageError(
+            error,
+            recoverVideoDetails,
+            LOADING_VIEWS_ERROR,
+            dispatch,
+            getState
+          )(course_id, video_id, lower_date, upper_date)
         );
     };

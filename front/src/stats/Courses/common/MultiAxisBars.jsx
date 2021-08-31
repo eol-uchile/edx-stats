@@ -28,11 +28,11 @@ function CustomTooltip({ payload, label, active }, doLabel = false) {
             ? `${label} : ${payload[0] && payload[0].payload.tooltip}`
             : payload[0] && payload[0].payload.tooltip}
         </p>
-        <p className="views">
+        <p className="first">
           Tiempo total: {payload[0] && parseFloatToTimeString(payload[0].value)}
           .
         </p>
-        <p className="students">
+        <p className="second">
           {payload[1] && payload[1].value} estudiantes vieron el contenido.
         </p>
       </div>

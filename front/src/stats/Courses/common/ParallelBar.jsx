@@ -12,21 +12,13 @@ import {
 } from 'recharts';
 import PropTypes from 'prop-types';
 
-function CustomTooltip({ payload, label, active }, doLabel = false) {
+function CustomTooltip({ label, payload, active }) {
   if (active) {
     return (
       <div className="custom-tooltip">
-        <p className="label">
-          {doLabel
-            ? `${label} : ${payload[0] && payload[0].payload.tooltip}`
-            : payload[0] && payload[0].payload.tooltip}
-        </p>
-        <p className="views">
-          Visitas totales: {payload[1] && payload[1].value}.
-        </p>
-        <p className="students">
-          {payload[0] && payload[0].value} estudiantes vieron el contenido.
-        </p>
+        <p className="label">{`${label} : ${payload[0].payload.name} `}</p>
+        <p className="first">{`${payload[0].value} estudiantes vieron el contenido`}</p>
+        <p className="second">{`Equivalente a ${payload[1].value} minutos.`}</p>
       </div>
     );
   }
@@ -41,7 +33,6 @@ const ParallelBar = ({
   name_key,
   x_label,
   y_label,
-  tooltipLabel = false,
   width = '100%',
 }) => (
   <ResponsiveContainer width={width} height={450}>
@@ -50,7 +41,7 @@ const ParallelBar = ({
         <Label value={x_label} offset={-10} position="insideBottom" />
       </XAxis>
       <YAxis label={{ value: y_label, angle: -90, position: 'insideLeft' }} />
-      <Tooltip content={(arg) => CustomTooltip(arg, tooltipLabel)} />
+      <Tooltip content={(arg) => CustomTooltip(arg)} />
       <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
       <Legend
         wrapperStyle={{
@@ -59,8 +50,8 @@ const ParallelBar = ({
         }}
         iconType="square"
       />
-      <Bar dataKey={bar1_key} fill="#82ca9d" barSize={30} />
-      <Bar type="monotone" dataKey={bar2_key} fill="#8884d8" barSize={30} />
+      <Bar type="monotone" dataKey={bar1_key} fill="#ffc500" barSize={30} />
+      <Bar type="monotone" dataKey={bar2_key} fill="#00a9ff" barSize={30} />
     </BarChart>
   </ResponsiveContainer>
 );

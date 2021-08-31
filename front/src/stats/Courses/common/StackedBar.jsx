@@ -11,6 +11,20 @@ import {
   Label,
 } from 'recharts';
 
+function CustomTooltip({ label, payload, active }) {
+  if (active) {
+    return (
+      <div className="custom-tooltip">
+        <p className="label">{`${label} : ${payload[0].payload.name} `}</p>
+        <p className="first">{`${payload[1].value} estudiantes aún no terminan el video`}</p>
+        <p className="second">{`Mientras que ${payload[0].value} estudiantes ya lo hicieron.`}</p>
+      </div>
+    );
+  }
+
+  return null;
+}
+
 const StackedBar = ({
   data,
   bar1_key,
@@ -18,9 +32,10 @@ const StackedBar = ({
   name_key,
   x_label,
   y_label,
+  width = '100%',
 }) => {
   return (
-    <ResponsiveContainer width="100%" height={450}>
+    <ResponsiveContainer width={width} height={450}>
       <BarChart
         width={500}
         height={300}
@@ -36,7 +51,7 @@ const StackedBar = ({
           <Label value={x_label} offset={-10} position="insideBottom" />
         </XAxis>
         <YAxis label={{ value: y_label, angle: -90, position: 'insideLeft' }} />
-        <Tooltip />
+        <Tooltip content={(arg) => CustomTooltip(arg)} />
         <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
         <Legend
           wrapperStyle={{
@@ -45,7 +60,7 @@ const StackedBar = ({
           }}
           iconType="square"
         />
-        <Bar stackId="a" dataKey={bar1_key} fill="#0086d7" />
+        <Bar stackId="a" dataKey={bar1_key} fill="#1f73d4" />
         <Bar stackId="a" dataKey={bar2_key} fill="#b4b4b4" />
       </BarChart>
     </ResponsiveContainer>

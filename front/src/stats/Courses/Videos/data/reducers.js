@@ -5,13 +5,14 @@ export const LOADED_VIDEOS_RESET = 'LOADED_VIDEOS_RESET';
 export const LOADED_VIDEOS = 'LOADED_VIDEOS';
 export const LOADED_VIEWS_SUM = 'LOADED_VIEWS_SUM';
 export const LOADED_COVERAGE = 'LOADED_COVERAGE';
+export const LOADED_VIDEO_DETAILS = 'LOADED_VIDEO_DETAILS';
 export const LOADING_VIEWS_ERROR = 'LOADING_VIEWS_ERROR';
 
 const initialVisitsState = {
-    videos: [],
-    views: [],
-    coverage: [],
-    detailed: [],
+    video_list: '',
+    views: '',
+    coverage: '',
+    detailed: '',
     errors: [],
     loading: false,
 };
@@ -21,7 +22,7 @@ export function videos(state = initialVisitsState, action) {
         case LOADED_VIDEOS:
             return {
                 ...state,
-                videos: action.data,
+                video_list: action.data,
                 errors: [],
             };
         case LOADED_VIEWS_SUM:
@@ -36,13 +37,19 @@ export function videos(state = initialVisitsState, action) {
                 coverage: action.data,
                 errors: [],
             };
+        case LOADED_VIDEO_DETAILS:
+            return {
+                ...state,
+                detailed: action.data,
+                errors: [],
+            };
         case LOADING_VIEWS_ERROR:
             return {
                 ...state,
-                videos: [],
-                views: [],
-                coverage: [],
-                detailed: [],
+                video_list: '',
+                views: '',
+                coverage: '',
+                detailed: '',
                 errors: action.data,
                 loading: false,
             };

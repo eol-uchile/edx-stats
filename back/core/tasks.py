@@ -192,7 +192,7 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
 
     """
     def save_vertical_row(course_id, row):
-        previous = CourseVertical.objects.filter(course=course_id, vertical=row["vertical"])
+        previous = CourseVertical.objects.filter(course=course_id, block_id=row["id"])
         if(previous.count() != 0):
             vertical = previous.first()
             vertical.is_active = True
@@ -200,8 +200,8 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
             vertical.chapter_name = row['chapter_name']
             vertical.sequential = row['sequential']
             vertical.sequential_name = row['sequential_name']
+            vertical.vertical = row['vertical']
             vertical.vertical_name = row['vertical_name']
-            vertical.block_id = row['id']
             vertical.vertical_number = row['vertical_number']
             vertical.sequential_number = row['sequential_number']
             vertical.chapter_number = row['chapter_number']

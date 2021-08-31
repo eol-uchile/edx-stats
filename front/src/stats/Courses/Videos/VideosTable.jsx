@@ -16,17 +16,12 @@ import {
   faQuestionCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import '../common/TableandChart.css';
+import { useLoadVideos } from './hooks';
 
 const steps = [
   {
     title: 'Actividad por videos',
     intro: 'Aquí podrá ver la actividad de los videos del curso.',
-  },
-  {
-    element: '.date-table-selectors',
-    title: 'Actividad por videos',
-    intro: `Si quiere ver las estadísticas de otro periodo de tiempo
-    seleccione las fechas deseadas y luego cárguelas con el botón Explorar.`,
   },
   {
     element: '#VisualizacionesTotales',
@@ -37,13 +32,8 @@ const steps = [
     vieron el contenido.`,
   },
   {
-    element: '#VisualizacionesTotales .pgn__form-group',
-    intro: `Puede seleccionar la vista desagrupada
-    para una vista más particular de cada unidad.`,
-  },
-  {
     element: '#VisualizacionesTotales a',
-    intro: `También puede descargar esta información en una planilla de cálculos.`,
+    intro: `Puede descargar esta información en una planilla de cálculos.`,
   },
   {
     element: '#Cobertura',
@@ -64,7 +54,7 @@ const steps = [
     usando el botón.`,
   },
   {
-    element: '#DetallesPorVideo .pgn__form-group',
+    element: '#DetallesPorVideo .input-group',
     title: 'Detalle por video',
     intro: `Para ver la información de otro video, seleccionelo en la lista
     desplegable.`,
@@ -95,21 +85,23 @@ const VideosTable = (props) => {
     videos.errors
   );
 
-  // Load data when the button trigers
-  const submit = () => {
+  const recoverVideos = useCallback((i) => {
+    dispatch(videosActions.recoverVideos(i));
+  }, []);
+
+  const [rowData, setRowData] = useLoadVideos(videos, recoverVideos);
+
+  useEffect(() => {
     if (state.current !== '') {
-      if (state.lowerDate === '' && state.upperDate === '') {
-        setErrors([...errors, 'Por favor ingrese fechas válidas']);
-      } else if (!state.allowed) {
+      if (!state.allowed) {
         setErrors([...errors, 'No tienes permisos para consultar estos datos']);
       } else {
-        //setTableData({ ...tableData, loaded: false });
         dispatch(courseActions.recoverCourseStructure(state.current));
         setErrors([]);
         dispatch(actions.cleanErrors());
       }
     }
-  };
+  }, [state.current]);
 
   const showTutorial = () => {
     introJs()
@@ -127,18 +119,13 @@ const VideosTable = (props) => {
   };
   useEffect(() => {
     if (
-      course.status === 'success' &&
+      course.course_status === 'success' &&
       localStorage.getItem('tutorial-videostable') === null
     ) {
       showTutorial();
       localStorage.setItem('tutorial-videostable', 'seen');
     }
   }, [course.status]);
-
-  // Load chart info right away
-  useEffect(() => {
-    state.courseName !== '' && submit();
-  }, [state.courseName]);
 
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2">
@@ -165,7 +152,7 @@ const VideosTable = (props) => {
       </Row>
       <Row>
         <Col>
-          {state.allowed && course.status === 'success' && (
+          {course.course_status === 'success' && (
             <span
               title="Abrir tutorial"
               className={'float-right'}
@@ -189,61 +176,15 @@ const VideosTable = (props) => {
               <Fragment>Sin información</Fragment>
             )}{' '}
           </h2>
-          <p>
-            Este curso tiene fechas de inicio{' '}
-            {new Date(props.match.params.start).toLocaleDateString('es-ES')} y
-            de término{' '}
-            {new Date(props.match.params.end).toLocaleDateString('es-ES')}.
-            También se puede buscar fuera de estos límites de tiempo.
-          </p>
         </Col>
       </Row>
-      <Row style={{ marginBottom: '1rem' }} className="date-table-selectors">
-        <Col sm={12} lg={4}>
-          <InputGroup>
-            <InputGroup.Prepend>
-              <InputGroup.Text>Fecha de Inicio</InputGroup.Text>
-            </InputGroup.Prepend>
-            <Input
-              id="videos-lDate"
-              data-testid="videos-lDate"
-              type="date"
-              value={state.lowerDate}
-              onChange={(e) =>
-                setState({ ...state, lowerDate: e.target.value })
-              }
-            />
-          </InputGroup>
-        </Col>
-        <Col sm={12} lg={4}>
-          <InputGroup>
-            <InputGroup.Prepend>
-              <InputGroup.Text>Fecha de Fin</InputGroup.Text>
-            </InputGroup.Prepend>
-            <Input
-              id="videos-uDate"
-              data-testid="videos-uDate"
-              type="date"
-              value={state.upperDate}
-              onChange={(e) =>
-                setState({ ...state, upperDate: e.target.value })
-              }
-            />
-          </InputGroup>
-        </Col>
-        <Col sm={12} lg={4}>
-          <Button onClick={submit} block>
-            Explorar <FontAwesomeIcon icon={faSearch} />
-          </Button>
-        </Col>
-      </Row>
-      {course.status === 'loading' ? (
+      {course.course_status === 'loading' ? (
         <Row>
           <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />
           </Col>
         </Row>
-      ) : course.status === 'success' ? (
+      ) : course.course_status === 'success' ? (
         <Fragment>
           <Row>
             <Col>
@@ -280,9 +221,17 @@ const VideosTable = (props) => {
               </ul>
             </Col>
           </Row>
-          <TotalViews state={state} errors={errors} setErrors={setErrors} />
-          <VideoCoverage state={state} errors={errors} setErrors={setErrors} />
-          {/* <VideoDetailed state={state} errors={errors} setErrors={setErrors} /> */}
+          <TotalViews barData={rowData} errors={errors} setErrors={setErrors} />
+          <VideoCoverage
+            barData={rowData}
+            errors={errors}
+            setErrors={setErrors}
+          />
+          <VideoDetailed
+            videoDict={rowData}
+            errors={errors}
+            setErrors={setErrors}
+          />
           <Row>
             <Col>
               <h4 id="DatosUtilizados">Datos utilizados</h4>

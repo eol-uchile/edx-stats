@@ -2,10 +2,10 @@ def klee_distance(segment_list):
     """
     Klee's Algorithm for 1D segments.
     Input:
-        segment_list : Queryset of segments (x, y) with x < y
+        segment_list : Queryset of Segment objects with start field < end field
     Output
         length : Total length covered by segments
-        segments : Non overlapping segments that contain original segments
+        segments : Non overlapping partitions that contain original start-end segments
     """
     points = [(x.start, False) for x in segment_list] + \
              [(x.end, True) for x in segment_list]
@@ -30,20 +30,26 @@ def klee_distance(segment_list):
 
 def make_partition_with_repetition(segment_list):
     """
-    Algorithm that given a list of segments calculates the full partition of
-    the union of segments given in the segment_list and counts the repeated
-    segments in the partition.
+    Algorithm that given a queryset of Segment objects calculates the full partition of
+    the union of start-end segments given in the queryset and counts the repeated
+    partitions.
     Input:
-        segment_list: list of tuples representing segments (x, y) with x < y
+        segment_list: Queryset of Segment objects with start field < end field
     Output:
-        segment_dict: dictionary containing all the segments that make the
-                      partition as keys with the number of segments as values.
+        segment_dict: dictionary containing as keys the seconds and as values 
+                    the number of times it has been played
     Example:
-        Input: [(1, 5), (2, 6)]
-        Output: {(1, 2) : 1, (2, 5) : 2, (5, 6): 1}
+        Input: [Segment(1, 5), Segment(2, 6)]
+        Output: {'1' : 1, 
+                '2' : 2, 
+                '2' : 2, 
+                '...' : 2,
+                '4': 2, 
+                '5' : 1, 
+                '6' : 1}
     """
-    points = [(x[0], False) for x in segment_list] + \
-             [(x[1], True) for x in segment_list]
+    points = [(x.start, False) for x in segment_list] + \
+             [(x.end, True) for x in segment_list]
     points.sort()
     counter = 0
     segment_dict = {}
@@ -57,9 +63,11 @@ def make_partition_with_repetition(segment_list):
             x = points[i][0]
             y = points[i+1][0]
             if x != y:
-                segment_dict[(x, y)] = counter
+                #segment_dict[(x, y)] = counter
+                #segment_dict[str((x, y))] = counter
+                for n in range(x,y+1):
+                    segment_dict[n] = counter
     return segment_dict
-
 
 def calculate_repeated_distance(segment_dict):
     """

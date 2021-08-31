@@ -1,28 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-const useProcessViewSum = (
-  data,
-  recoverData,
-  errors,
-  setErrors,
-  viewModules,
-  lowerDate,
-  upperDate
-) => {
+const useProcessViewSum = (data, recoverData, errors, setErrors, barData) => {
   const course = useSelector((state) => state.course);
 
   const [dataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
-    if (course.course.length !== 0 && lowerDate != '' && upperDate != '') {
+    if (course.course.length > 0) {
       let current = course.course[0];
       setDataLoaded(true);
       // Load data
-      recoverData(current.id, new Date(lowerDate), new Date(upperDate));
+      recoverData(current.id);
     }
     // eslint-disable-next-line
-  }, [course.course, lowerDate, upperDate]);
+  }, [course.course]);
 
   const [rowData, setRowData] = useState({
     loaded: false,
@@ -30,10 +22,14 @@ const useProcessViewSum = (
   });
 
   useEffect(() => {
-    if (dataLoaded && data.views.length !== 0) {
+    if (barData.loaded && dataLoaded && data.views != '') {
       let bar = data.views.map((v) => ({
-        position: v.position,
-        name: v.name,
+        position: barData.videos[v.block_id].position
+          ? barData.videos[v.block_id].position
+          : '',
+        name: barData.videos[v.block_id].name
+          ? barData.videos[v.block_id].name
+          : '',
         Minutos: Math.floor(v.watch_time / 60),
         Usuarios: v.viewers,
       }));
@@ -43,13 +39,13 @@ const useProcessViewSum = (
       });
       setErrors([]);
     }
-  }, [dataLoaded, data.views]);
+  }, [barData, dataLoaded, data.views]);
 
   useEffect(() => {
     if (errors.length > 0) {
       // If errors then reset the state
       setRowData({
-        loaded: false,
+        loaded: true,
         values: [],
       });
     }

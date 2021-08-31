@@ -73,10 +73,7 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
             block_id=row["id"]
         )
         if(previous.count() != 0):
-            video = previous.first()
-            video.vertical = vertical_to_refer.first()
-            video.duration = row["duration"]
-            video.save()
+            pass
         else:
             video = Video(
                 vertical=vertical_to_refer.first(),
@@ -166,8 +163,8 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
         segment = Segment(
             view=view_to_refer,
             time=row['time'],
-            start=row['start'],
-            end=row['end']
+            start=int(row['start']),
+            end=int(row['end'])
         )
         return segment
 

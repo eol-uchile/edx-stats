@@ -10,8 +10,8 @@ class Video(models.Model):
         blank=True,
     )
     block_id = models.CharField(max_length=100)
-    duration = models.FloatField()
-    watch_time = models.FloatField()
+    duration = models.IntegerField()
+    watch_time = models.IntegerField()
 
     def __str__(self):
         return self.block_id
@@ -69,8 +69,8 @@ class Segment(models.Model):
         blank=True,
     )
     time = models.DateTimeField(default=timezone.now)
-    start = models.FloatField()
-    end = models.FloatField()
+    start = models.IntegerField()
+    end = models.IntegerField()
 
     def save(self, *args, **kwargs):
         try:

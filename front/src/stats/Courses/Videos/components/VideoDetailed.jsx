@@ -1,69 +1,74 @@
-import React, { useMemo, useState, Fragment, useCallback } from 'react';
+import React, {
+  useMemo,
+  useState,
+  useEffect,
+  Fragment,
+  useCallback,
+} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Container, Row, Col, InputGroup } from 'react-bootstrap';
-import { Form, Spinner } from '@edx/paragon';
+import { Spinner } from '@edx/paragon';
 import { useMediaQuery } from 'react-responsive';
 import { AsyncCSVButton, StackedArea } from '../../common';
 import { videosActions } from '../';
-import { useLoadVideos, useProcessDetailed } from '../hooks';
+import { useProcessDetailed } from '../hooks';
 
-const VideoDetailed = ({ state, errors, setErrors }) => {
+const VideoDetailed = ({ videoDict, errors, setErrors }) => {
   const videos = useSelector((state) => state.videos);
   const dispatch = useDispatch();
 
-  // const recoverVideos = useCallback((i) => {
-  //   dispatch(videosActions.recoverVideos(i));
-  // }, []);
+  const [videoSelector, setVideoSelector] = useState({
+    selected: 0,
+    options: [{ block_id: '', value: '', key: 0 }],
+  });
 
-  // const recoverViewSum = useCallback((i, l, u) => {
-  //   dispatch(videosActions.recoverViewSum(i, l, u));
-  // }, []);
+  useEffect(() => {
+    if (videoDict.loaded) {
+      let options = [];
+      Object.keys(videoDict.videos).forEach((b, k) => {
+        options.push({
+          block_id: b,
+          duration: videoDict.videos[b].duration,
+          value: `${videoDict.videos[b].position} ${videoDict.videos[b].name}`,
+          key: k,
+        });
+      });
+      setVideoSelector({
+        options: options,
+        selected: 0,
+      });
+    }
+  }, [videoDict]);
+
+  const recoverVideoDetails = useCallback((i, v) => {
+    dispatch(videosActions.recoverVideoDetails(i, v));
+  }, []);
+
+  const [dataLoaded, setDataLoaded, rowData] = useProcessDetailed(
+    videos,
+    recoverVideoDetails,
+    errors,
+    setErrors,
+    videoSelector.options[videoSelector.selected]
+  );
 
   const isShort = useMediaQuery({ maxWidth: 418 });
 
-  const [videoSelector, setVideoSelector] = useLoadVideos(videos, () => {});
-  const [dataLoaded, setDataLoaded, rowData] = useProcessDetailed(
-    videos,
-    () => {},
-    errors,
-    setErrors,
-    state.lowerDate,
-    state.upperDate
+  const csvHeaders = useMemo(
+    () => ['Segundo', ...rowData.values.map((el) => el.second)],
+    [rowData.values]
   );
 
-  // const rowDataChart = useMemo(
-  //   () =>
-  //     rowData.detailed.map((v) => ({
-  //       'Visualizaciones únicas': v.reproduction,
-  //       Repeticiones: v.repetition,
-  //       ...v,
-  //     })),
-  //   [rowData.detailed]
-  // );
-
-  // const rowDataChaptersChart = useMemo(
-  //   () =>
-  //     rowData.detailed.map((el, k) => ({
-  //       'Minutos totales': el.visits,
-  //       'Visitas Únicas usuarios': el.students,
-  //       tooltip: tableData.chapters[k].name,
-  //       val: 'Módulo ' + (k + 1),
-  //     })),
-  //   [rowData.grouped_verticals]
-  // );
-
-  // const csvHeaders = useMemo(
-  //   () => ['Título', ...tableData.verticals.map((el) => el.tooltip)],
-  //   [tableData.verticals]
-  // );
-
-  // const csvData = useMemo(
-  //   () => [
-  //     ['Sección', ...tableData.verticals.map((el) => el.val)],
-  //     ['Tiempo total (s)', ...rowData.verticals.map((el) => el.visits)],
-  //   ],
-  //   [tableData.verticals, rowData.verticals]
-  // );
+  const csvData = useMemo(
+    () => [
+      [
+        'Visualizaciones únicas',
+        ...rowData.values.map((el) => el.Visualizaciones),
+      ],
+      ['Repeticiones', ...rowData.values.map((el) => el.Repeticiones)],
+    ],
+    [rowData.values]
+  );
 
   return (
     <Container fluid id="DetallesPorVideo">
@@ -72,13 +77,17 @@ const VideoDetailed = ({ state, errors, setErrors }) => {
           <h4>Detalles por video</h4>
         </Col>
       </Row>
-      {rowData.loaded && rowData.detailed.length !== 0 ? (
+      {rowData.loaded && rowData.values.length > 0 ? (
         <Fragment>
           <Row>
             <Col sm={6}>
               <AsyncCSVButton
                 text="Descargar Datos"
-                filename="visitas_totales.csv"
+                filename={`${
+                  videoSelector.options[videoSelector.selected].value
+                }.csv`}
+                headers={csvHeaders}
+                data={csvData}
               />
             </Col>
             <Col sm={6}>
@@ -95,7 +104,7 @@ const VideoDetailed = ({ state, errors, setErrors }) => {
                 className={isShort ? 'float-left' : 'float-right'}
               >
                 <InputGroup.Prepend>
-                  <InputGroup.Text>Periodo de Visualización</InputGroup.Text>
+                  <InputGroup.Text>Video</InputGroup.Text>
                 </InputGroup.Prepend>
                 <select
                   id="video-select"
@@ -105,28 +114,27 @@ const VideoDetailed = ({ state, errors, setErrors }) => {
                   onChange={(e) => {
                     setVideoSelector({
                       ...videoSelector,
-                      selected: Number(e.target.key),
+                      selected: Number(e.target.value),
                     });
                   }}
                 >
                   {videoSelector.options.map((el) => (
-                    <option key={el.key}>{el.value}</option>
+                    <option value={el.key}>{el.value}</option>
                   ))}
                 </select>
               </InputGroup>
             </Col>
           </Row>
           <Row>
-            {/* <Col>
+            <Col>
               <StackedArea
-                data={rowDataChart}
-                bar1_key="Visualizaciones únicas"
+                data={rowData.values}
+                bar1_key="Visualizaciones"
                 bar2_key="Repeticiones"
-                name_key={"seconds"}
-                x_label="name"
+                name_key="second"
                 y_label="Visualizaciones totales"
               />
-            </Col> */}
+            </Col>
           </Row>
         </Fragment>
       ) : errors.length === 0 && !rowData.loaded ? (
