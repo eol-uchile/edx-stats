@@ -12,7 +12,7 @@ const useProcessDetailed = (data, recoverData, errors, setErrors, video) => {
   const [dataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
-    if (course.course.length > 0 && video.block_id != '') {
+    if (course.course.length > 0 && video.block_id !== '') {
       let current = course.course[0];
       setDataLoaded(true);
       // Load data
@@ -27,7 +27,7 @@ const useProcessDetailed = (data, recoverData, errors, setErrors, video) => {
   });
 
   useEffect(() => {
-    if (dataLoaded && data.detailed != '') {
+    if (dataLoaded && data.detailed !== '') {
       let partitionsPerUser = data.detailed;
       let videoPartitions = {};
       partitionsPerUser.forEach((st_p) => {

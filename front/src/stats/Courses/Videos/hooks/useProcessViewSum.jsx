@@ -22,7 +22,7 @@ const useProcessViewSum = (data, recoverData, errors, setErrors, barData) => {
   });
 
   useEffect(() => {
-    if (barData.loaded && dataLoaded && data.views != '') {
+    if (barData.loaded && dataLoaded && data.views !== '') {
       let bar = data.views.map((v) => ({
         position: barData.videos[v.block_id].position
           ? barData.videos[v.block_id].position

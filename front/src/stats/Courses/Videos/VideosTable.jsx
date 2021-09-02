@@ -10,11 +10,7 @@ import { videosActions } from '.';
 import { TotalViews, VideoCoverage, VideoDetailed } from './components';
 import { useLoadCourseInfo } from '../hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faHome,
-  faSearch,
-  faQuestionCircle,
-} from '@fortawesome/free-solid-svg-icons';
+import { faHome, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import '../common/TableandChart.css';
 import { useLoadVideos } from './hooks';
 
@@ -92,16 +88,12 @@ const VideosTable = (props) => {
   const [rowData, setRowData] = useLoadVideos(videos, recoverVideos);
 
   useEffect(() => {
-    if (state.current !== '') {
-      if (!state.allowed) {
-        setErrors([...errors, 'No tienes permisos para consultar estos datos']);
-      } else {
-        dispatch(courseActions.recoverCourseStructure(state.current));
-        setErrors([]);
-        dispatch(actions.cleanErrors());
-      }
+    if (state.current !== '' && state.allowed) {
+      dispatch(courseActions.recoverCourseStructure(state.current));
+      setErrors([]);
+      dispatch(actions.cleanErrors());
     }
-  }, [state.current]);
+  }, [state.current, state.allowed]);
 
   const showTutorial = () => {
     introJs()
@@ -125,7 +117,7 @@ const VideosTable = (props) => {
       showTutorial();
       localStorage.setItem('tutorial-videostable', 'seen');
     }
-  }, [course.status]);
+  }, [course.course_status]);
 
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2">

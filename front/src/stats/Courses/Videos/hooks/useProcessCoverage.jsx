@@ -22,7 +22,7 @@ const useProcessCoverage = (data, recoverData, errors, setErrors, barData) => {
   });
 
   useEffect(() => {
-    if (barData.loaded && dataLoaded && data.coverage != '') {
+    if (barData.loaded && dataLoaded && data.coverage !== '') {
       let videos = data.coverage.reduce((acc, obj) => {
         const key = obj['block_id'];
         if (!acc[key]) {

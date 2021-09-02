@@ -2,7 +2,6 @@ import React, { useMemo, useState, Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Spinner } from '@edx/paragon';
-import { useMediaQuery } from 'react-responsive';
 import { AsyncCSVButton, ParallelBar } from '../../common';
 import { videosActions } from '../';
 import { useProcessViewSum } from '../hooks';
