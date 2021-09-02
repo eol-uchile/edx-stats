@@ -88,12 +88,12 @@ const VideosTable = (props) => {
   const [rowData, setRowData] = useLoadVideos(videos, recoverVideos);
 
   useEffect(() => {
-    if (state.current !== '' && state.allowed) {
+    if (state.current !== '' && state.courseName !== '' && state.allowed) {
       dispatch(courseActions.recoverCourseStructure(state.current));
       setErrors([]);
       dispatch(actions.cleanErrors());
     }
-  }, [state.current, state.allowed]);
+  }, [state.current, state.courseName, state.allowed]);
 
   const showTutorial = () => {
     introJs()

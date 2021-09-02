@@ -54,7 +54,7 @@ function useLoadCourseInfo(match, resetData, dataErrors) {
             // for TimesTable and VisitsTable
             setState({ ...state, courseName: thisCourse.title });
           } else {
-            // for Overview
+            // for Overview and VideosTable
             setState({
               ...state,
               courseName: thisCourse.title,
