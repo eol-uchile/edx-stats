@@ -57,15 +57,6 @@ const ParallelBar = ({
 );
 
 ParallelBar.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      students: PropTypes.number,
-      visits: PropTypes.number,
-      tooltip: PropTypes.string.isRequired,
-      val: PropTypes.string.isRequired,
-      id: PropTypes.string,
-    })
-  ),
   bar1_key: PropTypes.string.isRequired,
   bar2_key: PropTypes.string.isRequired,
   name_key: PropTypes.string.isRequired,

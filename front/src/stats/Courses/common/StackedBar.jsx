@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
   Label,
 } from 'recharts';
+import PropTypes from 'prop-types';
 
 function CustomTooltip({ label, payload, active }) {
   if (active) {
@@ -66,4 +67,22 @@ const StackedBar = ({
     </ResponsiveContainer>
   );
 };
+
+StackedBar.propTypes = {
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      block_id: PropTypes.string,
+      name: PropTypes.string,
+      position: PropTypes.number,
+      Completo: PropTypes.number,
+      Incompleto: PropTypes.number,
+    })
+  ),
+  bar1_key: PropTypes.string.isRequired,
+  bar2_key: PropTypes.string.isRequired,
+  name_key: PropTypes.string.isRequired,
+  y_label: PropTypes.string.isRequired,
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+};
+
 export default StackedBar;

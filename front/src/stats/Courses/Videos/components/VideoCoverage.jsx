@@ -89,4 +89,14 @@ const VideoCoverage = ({ barData, errors, setErrors }) => {
   );
 };
 
+VideoCoverage.propTypes = {
+  barData: PropTypes.shape({
+    duration: PropTypes.number.isRequired,
+    position: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+  }).isRequired,
+  errors: PropTypes.array.isRequired,
+  setErrors: PropTypes.func.isRequired,
+};
+
 export default VideoCoverage;

@@ -5,9 +5,9 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Label,
   ResponsiveContainer,
 } from 'recharts';
+import PropTypes from 'prop-types';
 
 function CustomTooltip({ label, payload, active }) {
   if (active) {
@@ -53,4 +53,20 @@ const StackedArea = ({
     </ResponsiveContainer>
   );
 };
+
+StackedArea.propTypes = {
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      second: PropTypes.string,
+      Visualizaciones: PropTypes.number,
+      Repeticiones: PropTypes.number,
+    })
+  ),
+  bar1_key: PropTypes.string.isRequired,
+  bar2_key: PropTypes.string.isRequired,
+  name_key: PropTypes.string.isRequired,
+  y_label: PropTypes.string.isRequired,
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+};
+
 export default StackedArea;

@@ -12,6 +12,7 @@ import { useMediaQuery } from 'react-responsive';
 import { AsyncCSVButton, StackedArea } from '../../common';
 import { videosActions } from '../';
 import { useProcessDetailed } from '../hooks';
+import PropTypes from 'prop-types';
 
 const VideoDetailed = ({ videoDict, errors, setErrors }) => {
   const videos = useSelector((state) => state.videos);
@@ -150,6 +151,16 @@ const VideoDetailed = ({ videoDict, errors, setErrors }) => {
       )}
     </Container>
   );
+};
+
+VideoDetailed.propTypes = {
+  videoDict: PropTypes.shape({
+    duration: PropTypes.number.isRequired,
+    position: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+  }).isRequired,
+  errors: PropTypes.array.isRequired,
+  setErrors: PropTypes.func.isRequired,
 };
 
 export default VideoDetailed;

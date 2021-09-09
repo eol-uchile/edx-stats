@@ -5,6 +5,7 @@ import { Spinner } from '@edx/paragon';
 import { AsyncCSVButton, ParallelBar } from '../../common';
 import { videosActions } from '../';
 import { useProcessViewSum } from '../hooks';
+import PropTypes from 'prop-types';
 
 const TotalViews = ({ barData, errors, setErrors }) => {
   const videos = useSelector((state) => state.videos);
@@ -81,6 +82,16 @@ const TotalViews = ({ barData, errors, setErrors }) => {
       )}
     </Container>
   );
+};
+
+TotalViews.propTypes = {
+  barData: PropTypes.shape({
+    duration: PropTypes.number.isRequired,
+    position: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+  }).isRequired,
+  errors: PropTypes.array.isRequired,
+  setErrors: PropTypes.func.isRequired,
 };
 
 export default TotalViews;
