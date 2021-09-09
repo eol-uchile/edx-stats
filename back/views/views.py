@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.db.models.functions import Concat
-from django.db.models import ExpressionWrapper, CharField, Value, F, Count
+from django.db.models import ExpressionWrapper, CharField, Value, F, Count, Q
 from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics, filters, status
@@ -126,49 +126,21 @@ def videos_coverage(request):
 
     Timezone is added on runtime
     """
-    # Course will arrive in format block-v1:COURSE without +type@course-block@course
-    # hence we do a icontains query
-    roles = recoverUserCourseRoles(request)
-    allowed_list = [r['course_id'].replace(
-        "course", "block") for r in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES]
-
-    if "course" not in request.query_params:
-        return Response(status=status.HTTP_400_BAD_REQUEST, data="Se requiere un curso válido.")
-    else:
-        course = request.query_params["course"]
-
-    # Check that user has permissions
-    if course not in allowed_list:
-        return Response(status=status.HTTP_403_FORBIDDEN, data="No tiene permisos para ver los datos en los cursos solicitados")
-
-    segments_user_video = ViewOnVideo.objects.filter(
-        video__vertical__is_active=True,
-        video__vertical__course__icontains=course,
+    def query(x): return Video.objects.filter(
+        vertical__is_active=True,
+        vertical__course__icontains=x,
+    ).values(
+        'block_id',
     ).order_by(
-        'video__vertical__chapter_number',
-        'video__vertical__sequential_number',
-        'video__vertical__vertical_number',
-        'video__vertical__child_number'
+        'vertical__chapter_number',
+        'vertical__sequential_number',
+        'vertical__vertical_number',
+        'vertical__child_number'
     ).annotate(
-        video_duration=F('video__duration'),
+        completed=Count('viewonvideo', filter=Q(viewonvideo__coverage >= 0.9)),
+        uncompleted=Count('viewonvideo', filter=Q(viewonvideo__coverage < 0.9)),
     )
-    videos = []
-    for viewer in segments_user_video:
-        segments = Segment.objects.filter(
-            view__id=viewer.id,
-        )
-        length, _ = ut.klee_distance(segments)
-        coverage = length/viewer.video_duration
-        #OPTION: Group in a dict {block_id: []}
-        videos.append({
-            'block_id': viewer.video.block_id,
-            'coverage': coverage
-        })
-        # if(videos[viewer.video.block_id]):
-        #     videos[viewer.video.block_id].append(coverage)
-        # else:
-        #     videos[viewer.video.block_id] = [coverage] 
-    return Response(videos)
+    return manage_standard_request(request, query)
 
 @api_view()
 def video_details(request):

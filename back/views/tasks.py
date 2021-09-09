@@ -37,10 +37,10 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
     - course if only one course is to be processed
 
     """
-    def get_students_video_logs(course_data):
-        instructors = course_data[course_data.event_type.str.contains(
-            r'instructor|studio')]['username'].unique()
-        only_students = course_data[~course_data.username.isin(instructors)]
+    def get_video_logs(course_data):
+        """
+        From course logs, returns video type logs like play_video or stop_video
+        """
         video_event_type = ['hide_transcript',
                             'load_video',
                             'pause_video',
@@ -60,11 +60,15 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
                              'edx.video.transcript.shown',
                              'edx.video.stopped',
                              ]
-        raw_video_course_logs = only_students[only_students.event_type.isin(
+        raw_video_course_logs = course_data[course_data.event_type.isin(
             video_event_type + video_mobile_type)]
         return raw_video_course_logs
 
     def save_videos_row(row, course_id):
+        """
+        Creates Video model instance if it does not already exist
+        referencing its CourseVertical by block_id
+        """
         vertical_to_refer = CourseVertical.objects.filter(
             course=course_id,
             block_id__icontains=row["id"]
@@ -83,6 +87,9 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
             video.save()
 
     def make_segment_dataframe(grouped):
+        """
+        Creates a dataframe with start-stop segment per user and video
+        """
         df_cols = ['id', 'username', 'time', 'start', 'end']
         all_pairs = []
         malformed_pairs = 0
@@ -141,6 +148,10 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
         return segments_df
 
     def save_views_row(row, course_df):
+        """
+        Creates ViewOnVideo model instance if it does not already exist
+        referencing the video watched by block_id
+        """
         video_to_refer = Video.objects.filter(
             block_id=row['id']
         ).first()
@@ -151,11 +162,16 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
         else:
             view = ViewOnVideo(
                 video=video_to_refer,
-                username=row['username']
+                username=row['username'],
+                coverage=0
             )
             view.save()
 
     def make_segment(row):
+        """
+        Creates Segment model instance
+        referencing the user who watched those seconds
+        """
         view_to_refer = ViewOnVideo.objects.filter(
             video__block_id=row['id'],
             username=row['username']
@@ -170,9 +186,8 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
 
     def compute_views(dataframe, course_df, date, course_id, code):
         cols_to_use = ['username', 'time', 'event_type', 'event']
-        raw_video_course_logs = get_students_video_logs(dataframe[cols_to_use])
+        raw_video_course_logs = get_video_logs(dataframe[cols_to_use])
         videos_in_logs = generate_video_dataframe(raw_video_course_logs)
-        # Remove previous course info in the DB
         course_id_df = course_df["course"][0]
         with transaction.atomic():
             # Update information on DB
@@ -181,7 +196,7 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
             logger.info("Course {}, videos updated for {}".format(
                 course_id, date))
         extend_video_logs = expand_event_info(
-            raw_video_course_logs)  # expands info into columns
+            raw_video_course_logs)
         sort_video_logs = extend_video_logs[extend_video_logs.event_type != 'load_video'].copy(
         )
         sort_video_logs['time'] = pd.to_datetime(
@@ -223,7 +238,7 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
 
 
 @shared_task
-def compute_view_batches(initial_date=None, time_delta=timedelta(days=1), final_date=None, course=None):
+def compute_view_batches(initial_date=None, time_delta=timedelta(days=3), final_date=None, course=None):
     """
     Process all views on videos by batches from initial_date to today
 
@@ -235,15 +250,66 @@ def compute_view_batches(initial_date=None, time_delta=timedelta(days=1), final_
     end = datetime.today()
     if final_date is not None:
         end = final_date
-    views = pd.date_range(
+    times = pd.date_range(
         start=initial_date, end=end, freq=time_delta)
     run_code = str(date.today())
 
-    for i in range(1, len(views)):
+    for i in range(1, len(times)):
         logger.info("Processing video views logs for time {} with offset {}".format(
-            views[i], time_delta))
+            times[i], time_delta))
         # This is a pandas timestamp Timestamp class, it should be replaced with datetime for a more
         # standard module
-        process_views_count(views[i], time_delta,
+        process_views_count(times[i], time_delta,
                             run_code=run_code, course=course)
     logger.info("Finished processing views")
+
+
+@shared_task       
+def calculate_coverage(course=None):
+    """
+    Using the segments created, calculates the percentage of coverage for each
+    user (ViewOnVideo) to the corresponding video.
+
+    Arguments
+    - course to be processed
+    """
+    
+    def compute_coverage(course_id):
+        segments_user_video = ViewOnVideo.objects.filter(
+            video__vertical__is_active=True,
+            video__vertical__course__icontains=course_id,
+        ).order_by(
+            'video__vertical__chapter_number',
+            'video__vertical__sequential_number',
+            'video__vertical__vertical_number',
+            'video__vertical__child_number'
+        ).annotate(
+            video_duration=F('video__duration'),
+        )
+        for viewer in segments_user_video:
+            segments = Segment.objects.filter(
+                view__id=viewer.id,
+            )
+            length, _ = ut.klee_distance(segments)
+            coverage = length/viewer.video_duration
+            viewer.coverage = coverage
+            viewer.save()
+
+    if course is not None:
+        compute_coverage(course)
+    else:
+        return
+
+
+@shared_task
+def compute_video_coverage(course=None):
+    """
+    Process user coverage for each video
+
+    Arguments
+    - course_code string as block-v1:course_name+type@course+block@course
+
+    """
+    logger.info("Processing user coverage")
+    calculate_coverage(course=course)
+    logger.info("Finished processing coverage")

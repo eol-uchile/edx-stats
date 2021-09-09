@@ -22,6 +22,10 @@ speedchange_videore = re.compile(
     r'{"current_time"\: ([0-9.]*), "old_speed"\: "([0-9.]*)", "code"\: "(.*)", "new_speed"\: "([0-9.]*)", "duration"\: ([0-9.]*), "id"\: "(.*)"}')
 
 def video_info_parser(row):
+    """
+    Returns video id and its duration tuple from event column,
+    using only play, pause and stop type events
+    """
         etype = row.event_type
         pps = ['play_video', 'pause_video', 'stop_video']
         if etype in pps:
@@ -40,6 +44,10 @@ def video_info_parser(row):
             return
 
 def generate_video_dataframe(raw_video_data):
+    """
+    From video type logs, catch videos into it and creates a dataframe 
+    with its id and duration
+    """
         video_cols = ['id', 'duration']
         video_tuples = []
         for index, row in raw_video_data.iterrows():
@@ -50,6 +58,11 @@ def generate_video_dataframe(raw_video_data):
         return all_video_df
 
 def video_event_expander(row):
+    """
+    Returns a tuple with video player info,
+    like where user started and stopped the video,
+    from event column using only play, pause and stop type events
+    """
     etype = row.event_type
     pps = ['play_video', 'pause_video', 'stop_video']
     if etype in pps:
@@ -96,6 +109,11 @@ def video_event_expander(row):
         return
 
 def expand_event_info(video_logs):
+    """
+    From video type logs, creates a dataframe 
+    with expanded video player info,
+    initially contained in the event column
+    """
     dframe_cols = ['username', 'time', 'event_type',
                 'id', 'duration', 'currenttime', 'old', 'new']
     extend_video_tuples = []

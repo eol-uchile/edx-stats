@@ -24,6 +24,7 @@ class ViewOnVideo(models.Model):
         blank=True,
     )
     username = models.CharField(max_length=150)
+    coverage = models.FloatField()
 
     def __str__(self):
         return "{} {}".format(self.video, self.username)
