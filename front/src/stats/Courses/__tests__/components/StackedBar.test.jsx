@@ -19,6 +19,6 @@ it('renders without crashing', () => {
       y_label="y"
     />
   );
-  expect(screen.getByText('x'));
-  expect(screen.getByText('y'));
+  expect(screen.findByText('x'));
+  expect(screen.findByText('y'));
 });

@@ -5,6 +5,7 @@ import { Spinner } from '@edx/paragon';
 import { AsyncCSVButton, StackedBar } from '../../common';
 import { videosActions } from '../';
 import { useProcessCoverage } from '../hooks';
+import PropTypes from 'prop-types';
 
 const VideoCoverage = ({ barData, errors, setErrors }) => {
   const videos = useSelector((state) => state.videos);
