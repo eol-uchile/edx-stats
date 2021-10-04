@@ -61,7 +61,7 @@ def load_course_from_api(course_code):
     - course_code String as block-v1:course_name+type@course+block@course
     """
     try:
-        json_text = load_course_blocks_from_LMS(course_code)
+        json_text, update = load_course_blocks_from_LMS(course_code)
     except Exception as e:
         # Abort processing
         logger.warning(e, exc_info=True)
@@ -191,8 +191,8 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
     - run_code to save errors on a single file with the same code
 
     """
-    def save_vertical_row(course_id, row):
-        previous = CourseVertical.objects.filter(course=course_id, vertical=row["vertical"])
+    def save_vertical_row(row, previous_verticals):
+        previous = previous_verticals.filter(block_id=row["id"])
         if(previous.count() != 0):
             vertical = previous.first()
             vertical.is_active = True
@@ -240,7 +240,7 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
         return
     try:
         # Do formating if necessary
-        recovered_blocks = load_course_blocks_from_LMS(
+        recovered_blocks, update = load_course_blocks_from_LMS(
             "{}+type@course+block@course".format(course_id.replace('course-v1', 'block-v1')))
     except Exception as e:
         logger.warning(
@@ -256,14 +256,15 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
             "Course {} was either empty or an error ocurred".format(course_id))
         return
 
-    # Remove previous course info in the DB
-    course_id_df = course_dataframe['course'].iloc[0]
-    previous_values = CourseVertical.objects.filter(course=course_id_df)
-    if len(previous_values) != 0:
-        previous_values.update(is_active=False)
-    
-    # Update vertical information on DB
-    course_dataframe.apply(lambda row: save_vertical_row(course_id_df, row), axis=1)
+    # Remove previous course info in the DB updating its field is_active
+    if update:
+        course_id_df = course_dataframe['course'].iloc[0]
+        previous_values = CourseVertical.objects.filter(course=course_id_df)
+        if len(previous_values) != 0:
+            previous_values.update(is_active=False)
+        
+        # Update vertical information on DB
+        course_dataframe.apply(lambda row: save_vertical_row(row, previous_values), axis=1)
 
     # This course
     if end_date is None:
