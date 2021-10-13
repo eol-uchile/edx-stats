@@ -59,7 +59,7 @@ def times_on_course(request):
     # hence we do a icontains query
     def query(x, y, z): return TimeOnPage.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=x,
+        vertical__course=x,
         time__lte=y,
         time__gte=z
     ).values("username", "vertical__vertical").order_by("username", "vertical__vertical").annotate(total=Sum("delta_time_float"))
@@ -122,7 +122,7 @@ def detailed_times_overview_course(request):
 
     total_course_time = TimeOnPage.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=course,
+        vertical__course=course,
         time__lte=time__lte,
         time__gte=time__gte,
     )

@@ -61,7 +61,7 @@ def visits_on_course(request):
     # hence we do a icontains query
     query = lambda x,y,z: VisitOnPage.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=x,
+        vertical__course=x,
         time__lte=y,
         time__gte=z
     ).annotate(
@@ -91,7 +91,7 @@ def daily_visits_per_chapter_on_course(request):
     # hence we do a icontains query
     query = lambda x,y,z: VisitOnPage.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=x,
+        vertical__course=x,
         time__lte=y,
         time__gte=z
     ).annotate(
@@ -119,7 +119,7 @@ def daily_visits_on_course(request):
     # hence we do a icontains query
     query = lambda x,y,z: VisitOnPage.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=x,
+        vertical__course=x,
         time__lte=y,
         time__gte=z
     ).annotate(
@@ -147,7 +147,7 @@ def hourly_visits_overview_on_course(request):
     # hence we do a icontains query
     query = lambda x,y,z: VisitOnPage.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=x,
+        vertical__course=x,
         time__lte=y,
         time__gte=z,
     ).annotate(
@@ -180,7 +180,7 @@ def general_visits_overview_course(request):
 
     total_visits = VisitOnPage.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=course,
+        vertical__course=course,
         time__lte=time__lte,
         time__gte=time__gte,
     )
@@ -192,7 +192,7 @@ def general_visits_overview_course(request):
 
     total_users = VisitOnPage.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=course,
+        vertical__course=course,
         time__lte=time__lte,
         time__gte=time__gte,
     ).values("username").distinct("username").count()
@@ -223,7 +223,7 @@ def detailed_visits_overview_course(request):
 
     total_visits = VisitOnPage.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=course,
+        vertical__course=course,
         time__lte=time__lte,
         time__gte=time__gte,
     )
