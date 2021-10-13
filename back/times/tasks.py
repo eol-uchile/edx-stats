@@ -82,7 +82,8 @@ def process_log_times(end_date=None, day_window=None, run_code=None, course=None
             # Upload bulks to DB
             verticals = list(CourseVertical.objects.filter(course=course_code))
             verticals_to_associate = {}
-            map(lambda b : verticals_to_associate[b.vertical] = b.pk , verticals)
+            for b in verticals:
+                verticals_to_associate[b.vertical] = b.pk
             count, _ = time_per_user_session.shape
             for i in range(0, count, BULK_UPLOAD_SIZE):
                 bulk = time_per_user_session[i:i+BULK_UPLOAD_SIZE]
