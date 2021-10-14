@@ -85,7 +85,7 @@ def process_visit_count(end_date, day_window=None, run_code=None, course=None):
             verticals = list(CourseVertical.objects.filter(course=course_code))
             verticals_to_associate = {}
             for b in verticals:
-                verticals_to_associate[b.vertical] = b.pk
+                verticals_to_associate[b.vertical] = b
             count, _ = merged_sequential_visits.shape
             for i in range(0, count, BULK_UPLOAD_SIZE):
                 bulk = merged_sequential_visits[i:i+BULK_UPLOAD_SIZE]

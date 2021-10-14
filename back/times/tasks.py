@@ -83,7 +83,7 @@ def process_log_times(end_date=None, day_window=None, run_code=None, course=None
             verticals = list(CourseVertical.objects.filter(course=course_code))
             verticals_to_associate = {}
             for b in verticals:
-                verticals_to_associate[b.vertical] = b.pk
+                verticals_to_associate[b.vertical] = b
             count, _ = time_per_user_session.shape
             for i in range(0, count, BULK_UPLOAD_SIZE):
                 bulk = time_per_user_session[i:i+BULK_UPLOAD_SIZE]
