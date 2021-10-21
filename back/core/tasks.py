@@ -191,25 +191,23 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
     - run_code to save errors on a single file with the same code
 
     """
-    def save_vertical_row(row, previous_verticals):
-        previous = previous_verticals.filter(block_id=row["id"])
-        if(previous.count() != 0):
-            vertical = previous.first()
-            vertical.is_active = True
-            vertical.chapter = row['chapter']
-            vertical.chapter_name = row['chapter_name']
-            vertical.sequential = row['sequential']
-            vertical.sequential_name = row['sequential_name']
-            vertical.vertical_name = row['vertical_name']
-            vertical.block_id = row['id']
-            vertical.vertical_number = row['vertical_number']
-            vertical.sequential_number = row['sequential_number']
-            vertical.chapter_number = row['chapter_number']
-            vertical.child_number = row['child_number']
-            vertical.block_type = row['type']
-            vertical.student_view_url = row['student_view_url']
-            vertical.lms_web_url = row['lms_web_url']
-            vertical.save()
+    def save_vertical_row(row, previous_vertical):
+        if(previous_vertical):
+            previous_vertical.is_active = True
+            previous_vertical.chapter = row['chapter']
+            previous_vertical.chapter_name = row['chapter_name']
+            previous_vertical.sequential = row['sequential']
+            previous_vertical.sequential_name = row['sequential_name']
+            previous_vertical.vertical_name = row['vertical_name']
+            previous_vertical.block_id = row['id']
+            previous_vertical.vertical_number = row['vertical_number']
+            previous_vertical.sequential_number = row['sequential_number']
+            previous_vertical.chapter_number = row['chapter_number']
+            previous_vertical.child_number = row['child_number']
+            previous_vertical.block_type = row['type']
+            previous_vertical.student_view_url = row['student_view_url']
+            previous_vertical.lms_web_url = row['lms_web_url']
+            previous_vertical.save()
         else:
             vertical = CourseVertical(
                 is_active=True,
@@ -259,12 +257,14 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
     # Remove previous course info in the DB updating its field is_active
     if update:
         course_id_df = course_dataframe['course'].iloc[0]
-        previous_values = CourseVertical.objects.filter(course=course_id_df)
-        if len(previous_values) != 0:
-            previous_values.update(is_active=False)
-        
+        previous_info = list(CourseVertical.objects.filter(course=course_id_df))
+        previous_verticals = {}
+            for v in previous_info:
+                v.is_active=False
+                v.save()
+                previous_verticals[v.vertical] = v
         # Update vertical information on DB
-        course_dataframe.apply(lambda row: save_vertical_row(row, previous_values), axis=1)
+        course_dataframe.apply(lambda row: save_vertical_row(row, previous_verticals.get(row["id"])), axis=1)
 
     # This course
     if end_date is None:
