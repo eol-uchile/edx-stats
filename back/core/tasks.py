@@ -213,8 +213,8 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
         previous_vertical.block_type = row['type']
         previous_vertical.student_view_url = row['student_view_url']
         previous_vertical.lms_web_url = row['lms_web_url']
-    
-    def create_vertical_row(row, previous_verticals):
+
+    def create_vertical_row(row):
         vertical = CourseVertical(
             is_active=True,
             course=row["course"],
@@ -272,13 +272,18 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
         # Split groups
         active_verticals_row = course_dataframe[course_dataframe.apply(lambda row: test_exists(row,previous_verticals), axis=1)]
         new_verticals_row = course_dataframe[course_dataframe.apply(lambda row: not test_exists(row,previous_verticals), axis=1)]
-        # Get new objects
-        new_course_verticals = list(new_verticals_row.apply(lambda row: create_vertical_row(row, previous_verticals), axis=1))
+        # Create new objects
+        count, _ = new_verticals_row.shape
+        if count != 0:
+            new_course_verticals = list(new_verticals_row.apply(create_vertical_row, axis=1))
+            CourseVertical.objects.bulk_create(new_course_verticals) # Single update
         # Update old
         active_verticals_row.apply(lambda row: update_vertical_row(row, previous_verticals), axis=1)
-        # Create and Update vertical information on DB
-        CourseVertical.objects.bulk_update(previous_info) # Single update
-        CourseVertical.objects.bulk_create(new_course_verticals) # Single update
+        CourseVertical.objects.bulk_update(previous_info, [
+            "is_active","chapter","chapter_name","sequential","sequential_name",
+            "vertical_name","block_id","vertical_number","sequential_number",
+            "chapter_number","child_number","block_type","student_view_url",
+            "lms_web_url"]) # Single update
 
     # This course
     if end_date is None:
