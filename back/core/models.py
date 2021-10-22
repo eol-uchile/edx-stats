@@ -41,6 +41,11 @@ class LogFile(models.Model):
 
 
 class CourseVertical(models.Model):
+    class Meta:
+        indexes = [
+            models.Index(fields=["course"]),
+        ]
+        
     is_active = models.BooleanField(default=True)
     course = models.TextField()
     course_name = models.CharField(max_length=255)
