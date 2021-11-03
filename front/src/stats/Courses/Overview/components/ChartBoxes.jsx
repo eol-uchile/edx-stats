@@ -93,14 +93,14 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                 <FontAwesomeIcon icon={faAngleDoubleLeft} />
               </Button>
               <Button
-                onClick={() => setWeek(dataLoaded.upperDate, -1)}
-                title="Retroceder un día"
+                onClick={() => setWeek(dataLoaded.upperDate, -7)}
+                title="Retroceder una semana"
               >
                 <FontAwesomeIcon icon={faAngleLeft} />
               </Button>
               <Button
-                onClick={() => setWeek(dataLoaded.upperDate, 1)}
-                title="Avanzar un día"
+                onClick={() => setWeek(dataLoaded.upperDate, 7)}
+                title="Avanzar una semana"
               >
                 <FontAwesomeIcon icon={faAngleRight} />
               </Button>
