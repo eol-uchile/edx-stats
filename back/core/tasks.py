@@ -61,7 +61,7 @@ def load_course_from_api(course_code):
     - course_code String as block-v1:course_name+type@course+block@course
     """
     try:
-        json_text = load_course_blocks_from_LMS(course_code)
+        json_text, update = load_course_blocks_from_LMS(course_code)
     except Exception as e:
         # Abort processing
         logger.warning(e, exc_info=True)
@@ -191,45 +191,50 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
     - run_code to save errors on a single file with the same code
 
     """
-    def save_vertical_row(course_id, row):
-        previous = CourseVertical.objects.filter(course=course_id, block_id=row["id"])
-        if(previous.count() != 0):
-            vertical = previous.first()
-            vertical.is_active = True
-            vertical.chapter = row['chapter']
-            vertical.chapter_name = row['chapter_name']
-            vertical.sequential = row['sequential']
-            vertical.sequential_name = row['sequential_name']
-            vertical.vertical = row['vertical']
-            vertical.vertical_name = row['vertical_name']
-            vertical.vertical_number = row['vertical_number']
-            vertical.sequential_number = row['sequential_number']
-            vertical.chapter_number = row['chapter_number']
-            vertical.child_number = row['child_number']
-            vertical.block_type = row['type']
-            vertical.student_view_url = row['student_view_url']
-            vertical.lms_web_url = row['lms_web_url']
-            vertical.save()
-        else:
-            vertical = CourseVertical(
-                is_active=True,
-                course=row["course"],
-                course_name=row["course_name"],
-                chapter=row["chapter"],
-                chapter_name=row["chapter_name"],
-                sequential=row["sequential"],
-                sequential_name=row["sequential_name"],
-                vertical=row["vertical"],
-                vertical_name=row["vertical_name"],
-                block_id=row["id"],
-                vertical_number=row["vertical_number"],
-                sequential_number=row["sequential_number"],
-                chapter_number=row["chapter_number"],
-                child_number=row["child_number"],
-                block_type=row["type"],
-                student_view_url=row["student_view_url"],
-                lms_web_url=row["lms_web_url"])
-            vertical.save()
+    
+    def test_exists(row, previous_verticals):
+        """
+        Returns true if vertical exists
+        """
+        return previous_verticals.get(row["id"], None) is not None
+
+    def update_vertical_row(row, previous_verticals):
+        previous_vertical = previous_verticals.get(row["id"])
+        previous_vertical.is_active = True
+        previous_vertical.chapter = row['chapter']
+        previous_vertical.chapter_name = row['chapter_name']
+        previous_vertical.sequential = row['sequential']
+        previous_vertical.sequential_name = row['sequential_name']
+        previous_vertical.vertical_name = row['vertical_name']
+        previous_vertical.block_id = row['id']
+        previous_vertical.vertical_number = row['vertical_number']
+        previous_vertical.sequential_number = row['sequential_number']
+        previous_vertical.chapter_number = row['chapter_number']
+        previous_vertical.child_number = row['child_number']
+        previous_vertical.block_type = row['type']
+        previous_vertical.student_view_url = row['student_view_url']
+        previous_vertical.lms_web_url = row['lms_web_url']
+
+    def create_vertical_row(row):
+        vertical = CourseVertical(
+            is_active=True,
+            course=row["course"],
+            course_name=row["course_name"],
+            chapter=row["chapter"],
+            chapter_name=row["chapter_name"],
+            sequential=row["sequential"],
+            sequential_name=row["sequential_name"],
+            vertical=row["vertical"],
+            vertical_name=row["vertical_name"],
+            block_id=row["id"],
+            vertical_number=row["vertical_number"],
+            sequential_number=row["sequential_number"],
+            chapter_number=row["chapter_number"],
+            child_number=row["child_number"],
+            block_type=row["type"],
+            student_view_url=row["student_view_url"],
+            lms_web_url=row["lms_web_url"])
+        return vertical
 
     time_window = DAY_WINDOW if day_window is None else day_window
     tz = pytz.timezone(settings.TIME_ZONE)
@@ -240,7 +245,7 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
         return
     try:
         # Do formating if necessary
-        recovered_blocks = load_course_blocks_from_LMS(
+        recovered_blocks, update = load_course_blocks_from_LMS(
             "{}+type@course+block@course".format(course_id.replace('course-v1', 'block-v1')))
     except Exception as e:
         logger.warning(
@@ -256,14 +261,30 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
             "Course {} was either empty or an error ocurred".format(course_id))
         return
 
-    # Remove previous course info in the DB
-    course_id_df = course_dataframe['course'].iloc[0]
-    previous_values = CourseVertical.objects.filter(course=course_id_df)
-    if len(previous_values) != 0:
-        previous_values.update(is_active=False)
-    
-    # Update vertical information on DB
-    course_dataframe.apply(lambda row: save_vertical_row(course_id_df, row), axis=1)
+    # Remove previous course info in the DB updating its field is_active
+    if update:
+        course_id_df = course_dataframe['course'].iloc[0]
+        previous_info = list(CourseVertical.objects.filter(course=course_id_df))
+        previous_verticals = {}
+        for v in previous_info:
+            # Deactivate on default
+            v.is_active=False
+            previous_verticals[v.block_id] = v
+        # Split groups
+        active_verticals_row = course_dataframe[course_dataframe.apply(lambda row: test_exists(row,previous_verticals), axis=1)]
+        new_verticals_row = course_dataframe[course_dataframe.apply(lambda row: not test_exists(row,previous_verticals), axis=1)]
+        # Create new objects
+        count, _ = new_verticals_row.shape
+        if count != 0:
+            new_course_verticals = list(new_verticals_row.apply(create_vertical_row, axis=1))
+            CourseVertical.objects.bulk_create(new_course_verticals) # Single update
+        # Update old
+        active_verticals_row.apply(lambda row: update_vertical_row(row, previous_verticals), axis=1)
+        CourseVertical.objects.bulk_update(previous_info, [
+            "is_active","chapter","chapter_name","sequential","sequential_name",
+            "vertical_name","block_id","vertical_number","sequential_number",
+            "chapter_number","child_number","block_type","student_view_url",
+            "lms_web_url"]) # Single update
 
     # This course
     if end_date is None:

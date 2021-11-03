@@ -40,12 +40,8 @@ def process_log_times(end_date=None, day_window=None, run_code=None, course=None
     - course if only one course is to be processed
 
     """
-    def make_row(row, date, course):
+    def make_row(row, date, vertical_to_associate):
         delta = row["delta_time"].days*84600 + row["delta_time"].seconds
-        vertical_to_associate = CourseVertical.objects.filter(
-            vertical__icontains=row["vertical_id"], 
-            course__icontains=course  
-        ).first()
         time_on_page = TimeModel(
             vertical = vertical_to_associate,
             session=row["session"],
@@ -55,6 +51,7 @@ def process_log_times(end_date=None, day_window=None, run_code=None, course=None
         return time_on_page
 
     def process_times(dataframe, course_df, date, course_id, code):
+        course_code = course_df["course"][0]
         # Parse and process time values
         parser = LogParser(df=course_df, run_code=run_code)
         parser.load_logs(dataframe)  # Create log copy and modify
@@ -79,15 +76,19 @@ def process_log_times(end_date=None, day_window=None, run_code=None, course=None
         # Delete today's info to overwrite
         with transaction.atomic():
             previous_times = TimeModel.objects.filter(
-                time__date=date, vertical__course=course_df["course"][0])
+                time__date=date, vertical__course=course_code)
             previous_times.delete()
 
             # Upload bulks to DB
+            verticals = list(CourseVertical.objects.filter(course=course_code))
+            verticals_to_associate = {}
+            for b in verticals:
+                verticals_to_associate[b.vertical] = b
             count, _ = time_per_user_session.shape
             for i in range(0, count, BULK_UPLOAD_SIZE):
                 bulk = time_per_user_session[i:i+BULK_UPLOAD_SIZE]
-                times = list(bulk.apply(lambda row: make_row(
-                    row, date, course_df["course"][0]), axis=1))
+                times = list(bulk.apply(
+                    lambda row: make_row(row, date, verticals_to_associate.get(row["vertical_id"])), axis=1))
                 TimeModel.objects.bulk_create(times)
 
             logger.info("Course {}, {} times processed for {}".format(

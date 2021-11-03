@@ -305,6 +305,7 @@ def load_course_blocks_from_LMS(course_code):
 
     Returns:
         JSON text response with course enumerated blocks
+        Boolean update to modify Course Verticals in the db
     """
     client = OAuthAPIClient(
         settings.BACKEND_LMS_BASE_URL,
@@ -315,8 +316,10 @@ def load_course_blocks_from_LMS(course_code):
     url = '{}/api/courses/v1/blocks/{}?depth=all&all_blocks=true&requested_fields=all,children'.format(
         settings.BACKEND_LMS_BASE_URL, course_code)
     blocks = cache.get(url, 'has_expired')
+    update = False
 
     if blocks == 'has_expired':
+        update = True
         response = client.get(url)
         if response.status_code != 200:
             raise Exception("Request to LMS failed for {}".format(
@@ -324,7 +327,7 @@ def load_course_blocks_from_LMS(course_code):
         else:
             cache.set(url, response.text, settings.CACHE_TTL)
             blocks = response.text
-    return blocks
+    return (blocks, update)
 
 
 def load_course_structure_from_CMS(course_code):

@@ -37,11 +37,7 @@ def process_visit_count(end_date, day_window=None, run_code=None, course=None):
 
     """
 
-    def make_row(row, date):
-        vertical_to_associate = CourseVertical.objects.filter(
-            vertical__icontains=row["vertical"],
-            course__icontains=row["course"],  
-        ).first()
+    def make_row(row, date, vertical_to_associate):
         visit_on_page = VisitOnPage(
             vertical= vertical_to_associate,
             username=row["username"],
@@ -50,6 +46,7 @@ def process_visit_count(end_date, day_window=None, run_code=None, course=None):
         return visit_on_page
 
     def compute_visits(dataframe, course_df, date, course_id, code):
+        course_code = course_df["course"][0]
         # Parse and process time values
         parser = LogParser(df=course_df, run_code=code)
         parser.load_logs(dataframe)
@@ -81,15 +78,19 @@ def process_visit_count(end_date, day_window=None, run_code=None, course=None):
         with transaction.atomic():
             # Delete today's info to overwrite
             previous_visits = VisitOnPage.objects.filter(
-                time__date=date, vertical__course=course_df["course"][0])
+                time__date=date, vertical__course=course_code)
             previous_visits.delete()
 
             # Upload bulks to DB
+            verticals = list(CourseVertical.objects.filter(course=course_code))
+            verticals_to_associate = {}
+            for b in verticals:
+                verticals_to_associate[b.vertical] = b
             count, _ = merged_sequential_visits.shape
             for i in range(0, count, BULK_UPLOAD_SIZE):
                 bulk = merged_sequential_visits[i:i+BULK_UPLOAD_SIZE]
                 visits = list(bulk.apply(
-                    lambda row: make_row(row, date), axis=1))
+                    lambda row: make_row(row, date, verticals_to_associate.get(row["vertical"])), axis=1))
                 VisitOnPage.objects.bulk_create(visits)
 
             logger.info("Course {}, {} visits processed for {}".format(
