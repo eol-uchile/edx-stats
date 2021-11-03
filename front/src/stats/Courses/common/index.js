@@ -7,6 +7,7 @@ import LineArea from './LineArea';
 import CalendarView from './CalendarView';
 import PieChart from './PieChart';
 import PullUp from './PullUp';
+import StudentInfoModal from './StudentInfoModal';
 
 export {
   AsyncCSVButton,
@@ -14,6 +15,7 @@ export {
   ErrorBarChart,
   MultiAxisBars,
   StudentDetails,
+  StudentInfoModal,
   LineArea,
   CalendarView,
   PieChart,
