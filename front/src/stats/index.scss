@@ -41,6 +41,11 @@ a{
   color: #00a4ff;
 }
 
+.disabled a{
+  color: #003755;
+  pointer-events: none;
+}
+
 .toggle-arrow{
   color: #00a4ff;
   background-color: #c1efff;

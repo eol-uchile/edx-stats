@@ -43,6 +43,7 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
               decimals: 0,
               decimal: ',',
             }}
+            isLoading={!countBox.loaded}
           />
         </Col>
         <Col md={4}>
@@ -58,6 +59,7 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
               decimals: 0,
               decimal: ',',
             }}
+            isLoading={!countBox.loaded}
           />
         </Col>
         <Col md={4}>
@@ -73,6 +75,7 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
               decimals: 0,
               decimal: ',',
             }}
+            isLoading={!countBox.loaded}
           />
         </Col>
       </Row>

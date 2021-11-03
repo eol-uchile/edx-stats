@@ -1,9 +1,9 @@
 import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import CountUp from 'react-countup';
 import PropTypes from 'prop-types';
 
-const CountBox = ({ image, caption, countUpProps }) => {
+const CountBox = ({ image, caption, countUpProps, isLoading }) => {
   const digitStyle = {
     fontWeight: 700,
     fontSize: '2.5em',
@@ -36,7 +36,15 @@ const CountBox = ({ image, caption, countUpProps }) => {
         </Col>
         <Col style={{ textAlign: 'right' }}>
           <p style={{ marginBottom: '0', paddingTop: '.325rem' }}>{caption}</p>
-          <CountUp style={digitStyle} {...countUpProps} />
+          {isLoading ? (
+            <Row>
+              <Col style={{ textAlign: 'right' }}>
+                <Spinner animation="border" variant="primary" />
+              </Col>
+            </Row>
+          ) : (
+            <CountUp style={digitStyle} {...countUpProps} />
+          )}
         </Col>
       </Row>
     </Container>

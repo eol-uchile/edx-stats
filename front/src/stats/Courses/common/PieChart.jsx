@@ -7,6 +7,7 @@ import {
   Cell,
 } from 'recharts';
 import { interpolateHsl } from 'd3-interpolate';
+import PropTypes from 'prop-types';
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({
@@ -51,7 +52,7 @@ function rgbToHex(rgb) {
   );
 }
 
-const PieChart = ({ data }) => {
+const PieChart = ({ data, height = '400' }) => {
   const colors = useMemo(() => {
     let len = data.length;
     let fun = interpolateHsl('red', 'blue');
@@ -62,8 +63,15 @@ const PieChart = ({ data }) => {
     return interpolated;
   }, [data]);
   return (
-    <ResponsiveContainer width="100%" height={400}>
-      <RePieChart width={400} height={400}>
+    <ResponsiveContainer width="100%" height={height} minHeight={400}>
+      <RePieChart
+        margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0,
+        }}
+      >
         <Pie
           data={data}
           cx="50%"
@@ -82,6 +90,11 @@ const PieChart = ({ data }) => {
       </RePieChart>
     </ResponsiveContainer>
   );
+};
+
+PieChart.propTypes = {
+  data: PropTypes.array.isRequired,
+  height: PropTypes.number,
 };
 
 export default PieChart;
