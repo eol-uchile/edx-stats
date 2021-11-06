@@ -32,7 +32,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
     dispatch(overviewActions.recoverCourseDetailedVisits(i, l, u));
   }, []);
 
-  const [viewModules, setViewModules] = useState(false);
+  const [viewModules, setViewModules] = useState(true);
   const isShort = useMediaQuery({ maxWidth: 418 });
 
   const [dataLoaded, setDataLoaded, dataLine, dataPie] = useChartBoxes(
