@@ -13,49 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import '../common/TableandChart.css';
 import { useLoadVideos } from './hooks';
-
-const steps = [
-  {
-    title: 'Actividad por videos',
-    intro: 'Aquí podrá ver la actividad de los videos del curso.',
-  },
-  {
-    element: '#VisualizacionesTotales',
-    title: 'Visualizaciones totales',
-    intro: `En esta sección se cargarán las visualizaciones de cada video, 
-    incluyendo repeticiones, 
-    acompañado de la cantidad de estudiantes que
-    vieron el contenido.`,
-  },
-  {
-    element: '#VisualizacionesTotales a',
-    intro: `Puede descargar esta información en una planilla de cálculos.`,
-  },
-  {
-    element: '#Cobertura',
-    title: 'Cobertura',
-    intro: `En esta sección se cargará la cantidad de usuarios que han visto
-    en completitud los videos y cuántos no lo han hecho.
-    Las estadísticas en verde corresponden a visualizaciones completas.
-    También puede descargar esta información en una planilla de cálculos
-    usando el botón.`,
-  },
-  {
-    element: '#DetallesPorVideo',
-    title: 'Detalle por video',
-    intro: `En esta sección se cargará una linea de tiempo que contempla
-    de principio a fin los segmentos reproducidos de un video.
-    Las estadísticas en azul oscuro corresponden a repeticiones.
-    También puede descargar esta información en una planilla de cálculos
-    usando el botón.`,
-  },
-  {
-    element: '#DetallesPorVideo .input-group',
-    title: 'Detalle por video',
-    intro: `Para ver la información de otro video, seleccionelo en la lista
-    desplegable.`,
-  },
-];
+import { videosTutorial as steps } from '../data/tutorials';
 
 /**
  * VideosTable

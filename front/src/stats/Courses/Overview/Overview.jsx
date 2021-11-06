@@ -18,40 +18,7 @@ import PropTypes from 'prop-types';
 import { useLoadCourseInfo } from '../hooks';
 import { course as courseActions, actions } from '../../Courses/data/actions';
 import { overviewActions } from '.';
-
-const steps = [
-  {
-    title: 'Resumen del curso',
-    intro: 'Aquí podrá ver las estadisticas de su curso.',
-  },
-  {
-    element: '#countboxes',
-    title: 'Estadísticas generales',
-    intro: `En esta sección se cargarán las estadísticas generales, 
-      es decir, cuál es el registro de la totalidad del curso a la fecha.`,
-  },
-  {
-    element: '#chartboxes',
-    title: 'Estadísticas semanales',
-    intro: `En esta sección se cargarán las estadísticas semanales, 
-      gráficando las visitas diarias al curso junto a su duración 
-      y cuál fue el contenido más visto de la semana indicada, agrupado
-      por Subsección o Sección.`,
-  },
-  {
-    element: '#chartboxes .btn-group',
-    title: 'Estadísticas semanales',
-    intro: `Si quiere ver las estadísticas de semanas anteriores, 
-      puede hacerlo moviéndose con los botones o seleccionando
-      la fecha del último día a buscar.`,
-  },
-  {
-    element: '#analitica-menu',
-    title: 'Estadísticas particulares',
-    intro: `Si desea ver estadísticas más detalladas, asi como descargarlas
-      en una planilla, puede hacerlo visitando los siguientes enlaces.`,
-  },
-];
+import { overviewTutorial as steps } from '../data/tutorials';
 
 const Overview = (props) => {
   const course = useSelector((state) => state.course);

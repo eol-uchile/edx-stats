@@ -18,58 +18,7 @@ import {
   faQuestionCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import '../common/TableandChart.css';
-
-const steps = [
-  {
-    title: 'Visitas por contenido',
-    intro:
-      'Aquí podrá ver lo que los usuarios visitan con más regularidad en su curso.',
-  },
-  {
-    element: '.date-table-selectors',
-    title: 'Visitas por contenido',
-    intro: `Si quiere ver las estadísticas agrupadas de otro periodo de tiempo
-    seleccione las fechas deseadas y luego cárguelas con el botón Explorar.`,
-  },
-  {
-    element: '#VisitasTotales',
-    title: 'Visitas totales',
-    intro: `En esta sección se cargarán las visitas de cada sección, 
-    acompañado de la cantidad de estudiantes que
-    vieron el contenido.`,
-  },
-  {
-    element: '#VisitasTotales .pgn__form-group',
-    intro: `Puede seleccionar la vista desagrupada
-    para una vista más particular de cada unidad.`,
-  },
-  {
-    element: '#VisitasTotales a',
-    intro: `También puede descargar esta información en una planilla de cálculos.`,
-  },
-  {
-    element: '#date-browser',
-    title: 'Visitas diarias',
-    intro: `En esta sección se cargará la cantidad de visitas diarias de cada sección.
-    Puede seleccionar distintos periodos de visualización.
-    También puede descargar esta información en una planilla de cálculos
-    usando el botón.`,
-  },
-  {
-    element: '#DetallesPorEstudiante',
-    title: 'Detalle por estudiante',
-    intro: `En esta sección se cargará una tabla con las visitas de cada usuario 
-    registrado en el curso. Puede seleccionar la vista desagrupada para datos más
-    particulares. También puede descargar esta información en una planilla de cálculos
-    usando el botón.`,
-  },
-  {
-    element: '#DetallesPorEstudiante nav',
-    title: 'Detalle por estudiante',
-    intro: `Para ver la información de cada estudiante, desplácese usando estos
-    botones.`,
-  },
-];
+import { visitsTutorial as steps } from '../data/tutorials';
 
 /**
  * VisitsTable

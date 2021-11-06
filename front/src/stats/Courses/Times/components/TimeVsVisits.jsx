@@ -5,7 +5,7 @@ import { useMediaQuery } from 'react-responsive';
 import { AsyncCSVButton, MultiAxisBars } from '../../common';
 
 const TimeVsVisits = ({ tableData, rowData }) => {
-  const [state, setState] = useState(false);
+  const [state, setState] = useState(true);
 
   const isShort = useMediaQuery({ maxWidth: 418 });
 
