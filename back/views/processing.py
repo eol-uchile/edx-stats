@@ -26,36 +26,36 @@ def video_info_parser(row):
     Returns video id and its duration tuple from event column,
     using only play, pause and stop type events
     """
-        etype = row.event_type
-        pps = ['play_video', 'pause_video', 'stop_video']
-        if etype in pps:
-            match = pps_videore.match(row.event)
-            return match[3], float(match[1])
-        elif etype == 'load_video':
-            match = load_videore.match(row.event)
-            return match[3], float(match[1])
-        elif etype == 'seek_video':
-            match = seek_videore.match(row.event)
-            return match[5], float(match[4])
-        elif etype == 'speed_change_video':
-            match = speedchange_videore.match(row.event)
-            return match[6], float(match[5])
-        else:
-            return
+    etype = row.event_type
+    pps = ['play_video', 'pause_video', 'stop_video']
+    if etype in pps:
+        match = pps_videore.match(row.event)
+        return match[3], float(match[1])
+    elif etype == 'load_video':
+        match = load_videore.match(row.event)
+        return match[3], float(match[1])
+    elif etype == 'seek_video':
+        match = seek_videore.match(row.event)
+        return match[5], float(match[4])
+    elif etype == 'speed_change_video':
+        match = speedchange_videore.match(row.event)
+        return match[6], float(match[5])
+    else:
+        return
 
 def generate_video_dataframe(raw_video_data):
     """
     From video type logs, catch videos into it and creates a dataframe 
     with its id and duration
     """
-        video_cols = ['id', 'duration']
-        video_tuples = []
-        for index, row in raw_video_data.iterrows():
-            video_tuples.append(video_info_parser(row))
-        all_video_df = pd.DataFrame(
-            video_tuples, columns=video_cols).drop_duplicates()
+    video_cols = ['id', 'duration']
+    video_tuples = []
+    for index, row in raw_video_data.iterrows():
+        video_tuples.append(video_info_parser(row))
+    all_video_df = pd.DataFrame(
+        video_tuples, columns=video_cols).drop_duplicates()
 
-        return all_video_df
+    return all_video_df
 
 def video_event_expander(row):
     """

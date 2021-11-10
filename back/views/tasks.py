@@ -63,28 +63,25 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
         raw_video_course_logs = course_data[course_data.event_type.isin(
             video_event_type + video_mobile_type)]
         return raw_video_course_logs
-
-    def save_videos_row(row, course_id):
+    
+    def test_exists(id, previous_objects):
         """
-        Creates Video model instance if it does not already exist
+        Returns true if video/view exists in previous_objects dictionary
+        """
+        return previous_objects.get(id, None) is not None
+
+    def create_videos_row(row, vertical_to_associate, videos):
+        """
+        Creates Video model instance
         referencing its CourseVertical by block_id
         """
-        vertical_to_refer = CourseVertical.objects.filter(
-            course=course_id,
-            block_id__icontains=row["id"]
-        )
-        previous = Video.objects.filter(
-            block_id=row["id"]
-        )
-        if(previous.count() != 0):
-            pass
-        else:
-            video = Video(
-                vertical=vertical_to_refer.first(),
-                block_id=row["id"],
-                duration=row["duration"],
-                watch_time=0)
-            video.save()
+        video = Video(
+            vertical=vertical_to_associate,
+            block_id=row["id"],
+            duration=row["duration"],
+            watch_time=0)
+        videos[row["id"]] = video
+        return video
 
     def make_segment_dataframe(grouped):
         """
@@ -147,37 +144,26 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
         segments_df = pd.DataFrame(all_pairs, columns=df_cols)
         return segments_df
 
-    def save_views_row(row, course_df):
+    def create_views_row(row, video_to_associate, views):
         """
         Creates ViewOnVideo model instance if it does not already exist
         referencing the video watched by block_id
         """
-        video_to_refer = Video.objects.filter(
-            block_id=row['id']
-        ).first()
-        previous = ViewOnVideo.objects.filter(
-            video=video_to_refer, username=row['username'])
-        if(previous.count() != 0):
-            pass
-        else:
-            view = ViewOnVideo(
-                video=video_to_refer,
-                username=row['username'],
-                coverage=0
-            )
-            view.save()
+        view = ViewOnVideo(
+            video=video_to_associate,
+            username=row['username'],
+            coverage=0
+        )
+        views[row["id"]+"-"+row["username"]] = view
+        return view
 
-    def make_segment(row):
+    def make_segment(row, view_to_associate):
         """
         Creates Segment model instance
         referencing the user who watched those seconds
         """
-        view_to_refer = ViewOnVideo.objects.filter(
-            video__block_id=row['id'],
-            username=row['username']
-        ).first()
         segment = Segment(
-            view=view_to_refer,
+            view=view_to_associate,
             time=row['time'],
             start=int(row['start']),
             end=int(row['end'])
@@ -189,12 +175,27 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
         raw_video_course_logs = get_video_logs(dataframe[cols_to_use])
         videos_in_logs = generate_video_dataframe(raw_video_course_logs)
         course_id_df = course_df["course"][0]
-        with transaction.atomic():
-            # Update information on DB
-            videos_in_logs.apply(
-                lambda row: save_videos_row(row, course_id_df), axis=1)
-            logger.info("Course {}, videos updated for {}".format(
-                course_id, date))
+        
+        verticals = list(CourseVertical.objects.filter(course=course_id_df))
+        verticals_to_associate = {}
+        for b in verticals:
+                verticals_to_associate[b.vertical] = b
+
+        previous_info = list(Video.objects.filter(vertical__course=course_id_df))
+        previous_videos = {}
+        for b in previous_info:
+            previous_videos[b.block_id] = b
+        # Split groups
+        actual_videos_row = videos_in_logs[videos_in_logs.apply(lambda row: test_exists(row["id"], previous_videos), axis=1)]
+        new_videos_row = videos_in_logs[videos_in_logs.apply(lambda row: not test_exists(row["id"], previous_videos), axis=1)]
+        # Create new videos
+        count, _ = new_videos_row.shape
+        if count != 0:
+            new_videos = list(new_videos_row.apply(lambda row: create_videos_row(row, verticals_to_associate.get(row["id"]), previous_videos), axis=1))
+            Video.objects.bulk_create(new_videos)
+        # Update old
+        # Videos does not require update.
+
         extend_video_logs = expand_event_info(
             raw_video_course_logs)
         sort_video_logs = extend_video_logs[extend_video_logs.event_type != 'load_video'].copy(
@@ -206,11 +207,22 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
         segments_df = make_segment_dataframe(grouped_logs)
         views_df = segments_df[['id', 'username']].drop_duplicates()
 
-        with transaction.atomic():
-            # Update information on DB
-            views_df.apply(lambda row: save_views_row(row, course_df), axis=1)
-            logger.info("Course {}, video viewers updated for {}".format(
-                course_id, date))
+        previous_info = list(ViewOnVideo.objects.filter(video__vertical__course=course_id_df))
+        previous_views = {}
+        for b in previous_info:
+            previous_views[str(b.video.block_id+"-"+b.username)] = b
+        # Split groups
+        actual_views_row = views_df[views_df.apply(lambda row: test_exists(row["id"]+"-"+row["username"], previous_views), axis=1)]
+        new_views_row = views_df[views_df.apply(lambda row: not test_exists(row["id"]+"-"+row["username"], previous_views), axis=1)]
+        # Create new views on video
+        count, _ = new_views_row.shape
+        if count != 0:
+            new_views = list(new_views_row.apply(lambda row: create_views_row(row, previous_videos.get(row["id"]), previous_views), axis=1))
+            #print(new_views[0])
+            ViewOnVideo.objects.bulk_create(new_views)
+            #TODO: Put new views on video in views_to_associate. Revisar retorno bulk o usar filter en vez de dict
+        #Update old
+        # ViewOnVideos does not require update
 
         with transaction.atomic():
             # Delete today's info to overwrite
@@ -223,7 +235,7 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
             for i in range(0, count, BULK_UPLOAD_SIZE):
                 bulk = segments_df[i:i+BULK_UPLOAD_SIZE]
                 segments = list(bulk.apply(
-                    lambda row: make_segment(row), axis=1))
+                    lambda row: make_segment(row, previous_views.get(str(row['id']+"-"+row['username']))), axis=1))
                 Segment.objects.bulk_create(segments)
 
             logger.info("Course {}, {} segments processed for {}".format(
