@@ -186,15 +186,12 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
         for b in previous_info:
             previous_videos[b.block_id] = b
         # Split groups
-        actual_videos_row = videos_in_logs[videos_in_logs.apply(lambda row: test_exists(row["id"], previous_videos), axis=1)]
         new_videos_row = videos_in_logs[videos_in_logs.apply(lambda row: not test_exists(row["id"], previous_videos), axis=1)]
         # Create new videos
         count, _ = new_videos_row.shape
         if count != 0:
             new_videos = list(new_videos_row.apply(lambda row: create_videos_row(row, verticals_to_associate.get(row["id"]), previous_videos), axis=1))
             Video.objects.bulk_create(new_videos)
-        # Update old
-        # Videos does not require update.
 
         extend_video_logs = expand_event_info(
             raw_video_course_logs)
@@ -212,17 +209,12 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
         for b in previous_info:
             previous_views[str(b.video.block_id+"-"+b.username)] = b
         # Split groups
-        actual_views_row = views_df[views_df.apply(lambda row: test_exists(row["id"]+"-"+row["username"], previous_views), axis=1)]
         new_views_row = views_df[views_df.apply(lambda row: not test_exists(row["id"]+"-"+row["username"], previous_views), axis=1)]
         # Create new views on video
         count, _ = new_views_row.shape
         if count != 0:
             new_views = list(new_views_row.apply(lambda row: create_views_row(row, previous_videos.get(row["id"]), previous_views), axis=1))
-            #print(new_views[0])
             ViewOnVideo.objects.bulk_create(new_views)
-            #TODO: Put new views on video in views_to_associate. Revisar retorno bulk o usar filter en vez de dict
-        #Update old
-        # ViewOnVideos does not require update
 
         with transaction.atomic():
             # Delete today's info to overwrite
