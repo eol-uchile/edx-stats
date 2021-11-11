@@ -37,6 +37,7 @@ const StudentDetails = ({
   tableData,
   caption = 'Detalle por estudiante',
   parseFunction = (e) => e,
+  clickFunction = (e) => e,
   doTotal = false,
   doAnimation = false,
 }) => {
@@ -113,6 +114,7 @@ const StudentDetails = ({
       parseFunction={parseFunction}
       doTotal={doTotal}
       onHeader={sortHeader}
+      onRow={clickFunction}
       key="table-chapters"
     />
   ) : (

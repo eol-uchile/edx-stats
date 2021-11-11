@@ -16,6 +16,7 @@ export {
   ErrorBarChart,
   MultiAxisBars,
   StudentDetails,
+  StudentInfoModal,
   LineArea,
   CalendarView,
   PieChart,

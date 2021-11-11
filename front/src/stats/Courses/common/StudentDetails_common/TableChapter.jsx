@@ -24,6 +24,7 @@ const TableChapter = ({
   doTotal = false,
   parseFunction = (e) => e,
   onHeader = (e, _) => e,
+  onRow = (e) => e,
 }) => {
   const [pagination, setPagination] = useState({
     current: 1,
@@ -98,7 +99,7 @@ const TableChapter = ({
             </thead>
             <tbody>
               {errors.length === 0 &&
-                subArray.map((e, k) => parseToTableRows(e, k, parseFunction))}
+                subArray.map((e, k) => parseToTableRows(e, k, parseFunction, ()=>'', onRow))}
               <tr></tr>
             </tbody>
           </TableBT>

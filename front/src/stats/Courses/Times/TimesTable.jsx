@@ -15,9 +15,13 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { timesActions } from '.';
 import { course as courseActions, actions } from '../data/actions';
-import { StudentDetails } from '../common';
+import { StudentDetails, StudentInfoModal } from '../common';
 import { TimesAvg, TimeVsVisits } from './components';
-import { useLoadCourseInfo, useProcessSumData } from '../hooks';
+import {
+  useLoadCourseInfo,
+  useLoadStudentInfo,
+  useProcessSumData,
+} from '../hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHome,
@@ -35,6 +39,24 @@ import { timesTutorial as steps } from '../data/tutorials';
  * The course can be provided by the URL, the
  *
  */
+
+const tableDummie = {
+  all: 2,
+  chapters: [{ name: 'bar', subtotal: 1 }],
+  sequentials: [{ id: 0, val: '1.1', tooltip: 'bar' }],
+  verticals: [{ id: 0, val: '1.1.1', tooltip: 'bar' }],
+};
+
+const rowDummie = {
+  all: [
+    ['foo student', '0'],
+    ['bar student', '10'],
+  ],
+  chapters: [
+    ['foo student', '0'],
+    ['bar student', '10'],
+  ],
+};
 const TimesTable = (props) => {
   const course = useSelector((state) => state.course);
   const times = useSelector((state) => state.times);
@@ -46,14 +68,22 @@ const TimesTable = (props) => {
     []
   );
 
-  const [state, setState, errors, setErrors, removeErrors] = useLoadCourseInfo(
-    props.match,
-    resetTimes,
-    times.errors
-  );
+  const [state, setState, errors, setErrors, removeErrors] = [
+    {
+      current: 'course-v1:UChile+LEIT01+2020_T3',
+      lowerDate: '2019-07-27T00:00:00Z',
+      upperDate: '2019-12-22T04:00:00Z',
+      courseName: 'Course',
+      allowed: true,
+    },
+    () => {},
+    [],
+    () => {},
+    () => {},
+  ];
 
   const [tableData, setTableData, rowData, setRowData] = useProcessSumData(
-    times.added_times,
+    [],
     'vertical__vertical',
     recoverCourseStudentTimesSum,
     errors,
@@ -61,6 +91,13 @@ const TimesTable = (props) => {
     state.upperDate,
     state.lowerDate
   );
+
+  // const recoverStudentInfo = useCallback(
+  //   (s) => dispatch(timesActions.recoverStudentInfo(s)),
+  //   []
+  // );
+
+  const [modal, setModal, studentInfo, setStudentInfo] = useLoadStudentInfo();
 
   // Load data when the button trigers
   const submit = () => {
@@ -290,11 +327,20 @@ const TimesTable = (props) => {
               </Row>
             )}
           </Container>
+          <StudentInfoModal
+            isOpen={modal}
+            doToggle={setModal}
+            data={studentInfo}
+          />
           <StudentDetails
             title="Tiempos"
-            rowData={rowData}
-            tableData={tableData}
+            rowData={rowDummie}
+            tableData={tableDummie}
             parseFunction={parseFloatToTimeString}
+            clickFunction={(user) => {
+              setStudentInfo({ username: user });
+              setModal(!modal);
+            }}
             doTotal
             doAnimation
           />
