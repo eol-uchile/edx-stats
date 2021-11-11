@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
+import logging
 
+logger = logging.getLogger(__name__)
 
 class Video(models.Model):
     vertical = models.ForeignKey(
@@ -32,17 +34,21 @@ class ViewOnVideo(models.Model):
 
 class SegmentManager(models.Manager):
     def bulk_create(self, objs, **kwargs):
+        unreferenced_segments = 0
         for obj in objs:
             try:
                 obj.view.video.watch_time += (obj.end - obj.start)
                 obj.view.video.save()
             except AttributeError:
-                raise Exception("SegmentManager Bulk Create Error")
+                unreferenced_segments+=1
+        if(unreferenced_segments>0):
+            logger.info("Failed to increase time watched on videos for {} segments".format(unreferenced_segments))
         return super().bulk_create(objs, **kwargs)
 
 
 class SegmentQuerySet(models.QuerySet):
     def delete(self, *args, **kwargs):
+        unreferenced_segments = 0
         delta_delete = {}
         for obj in self:
             try:
@@ -51,13 +57,12 @@ class SegmentQuerySet(models.QuerySet):
                 else:
                     delta_delete[obj.view.video] = (obj.end - obj.start)
             except AttributeError:
-                raise Exception("SegmentQuerySet Delete Error")
+                unreferenced_segments+=1
+        if(unreferenced_segments>0):
+            logger.info("Failed to decrease time watched on videos for {} segments".format(unreferenced_segments))
         for video in delta_delete.keys():
-            try:
-                video.watch_time -= delta_delete[video]
-                video.save()
-            except AttributeError:
-                raise Exception("SegmentQuerySet Delete Error")
+            video.watch_time -= delta_delete[video]
+            video.save()
         super(SegmentQuerySet, self).delete(*args, **kwargs)
 
 
@@ -83,7 +88,7 @@ class Segment(models.Model):
             self.view.video.watch_time += (self.end - self.start)
             self.view.video.save()
         except AttributeError:
-            raise Exception("Segment Save Error")
+            logger.warning("Segment: save Error")
         super(Segment, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
@@ -91,7 +96,7 @@ class Segment(models.Model):
             self.view.video.watch_time -= (self.end - self.start)
             self.view.video.save()
         except AttributeError:
-            raise Exception("Segment Delete Error")
+            logger.warning("Segment: delete Error")
         super(Segment, self).delete(*args, **kwargs)
 
     def __str__(self):
