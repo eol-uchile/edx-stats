@@ -73,3 +73,15 @@ class StaffUserName(models.Model):
 
     def __str__(self):
         return self.username
+
+class Student(models.Model):
+    username = models.CharField(max_length=150)
+    date_joined = models.DateTimeField()
+    name = models.CharField(max_length=150, null=True, blank=True)
+    email = models.EmailField(max_length=254)
+    gender = models.CharField(max_length=1, null=True, blank=True)
+    year_of_birth = models.CharField(max_length=4, null=True, blank=True)
+    country = models.CharField(max_length=2, null=True, blank=True)
+
+    def __str__(self):
+        return self.username

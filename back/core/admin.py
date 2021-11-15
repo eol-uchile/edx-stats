@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models import Log, CourseVertical, StaffUserName, LogFile
+from core.models import Log, CourseVertical, StaffUserName, LogFile, Student
 
 
 class LogAdmin(admin.ModelAdmin):
@@ -14,6 +14,10 @@ class StaffUsernameAdmin(admin.ModelAdmin):
     pass
 
 
+class StudentAdmin(admin.ModelAdmin):
+    pass
+
+
 class LogFileAdmin(admin.ModelAdmin):
     pass
 
@@ -21,4 +25,5 @@ class LogFileAdmin(admin.ModelAdmin):
 admin.site.register(Log, LogAdmin)
 admin.site.register(CourseVertical, CoursesAdmin)
 admin.site.register(StaffUserName, StaffUsernameAdmin)
+admin.site.register(Student, StudentAdmin)
 admin.site.register(LogFile, LogFileAdmin)
