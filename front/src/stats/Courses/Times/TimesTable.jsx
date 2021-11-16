@@ -14,7 +14,7 @@ import { Button, Input } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { timesActions } from '.';
-import { course as courseActions, actions } from '../data/actions';
+import { course as courseActions, student as studentActions, actions } from '../data/actions';
 import { StudentDetails, StudentInfoModal } from '../common';
 import { TimesAvg, TimeVsVisits } from './components';
 import {
@@ -92,12 +92,12 @@ const TimesTable = (props) => {
     state.lowerDate
   );
 
-  // const recoverStudentInfo = useCallback(
-  //   (s) => dispatch(timesActions.recoverStudentInfo(s)),
-  //   []
-  // );
+  const recoverStudentInfo = useCallback(
+    (s) => dispatch(studentActions.recoverStudentInfo(s)),
+    []
+  );
 
-  const [modal, setModal, studentInfo, setStudentInfo] = useLoadStudentInfo();
+  const [modal, setModal, studentInfo, setUser] = useLoadStudentInfo(recoverStudentInfo);
 
   // Load data when the button trigers
   const submit = () => {
@@ -338,7 +338,7 @@ const TimesTable = (props) => {
             tableData={tableDummie}
             parseFunction={parseFloatToTimeString}
             clickFunction={(user) => {
-              setStudentInfo({ username: user });
+              setUser({ username: user });
               setModal(!modal);
             }}
             doTotal

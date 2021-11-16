@@ -3,15 +3,8 @@ import { Row, Col, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
+import { parseStringToYMDDate as getDate } from '../../helpers';
 import PropTypes from 'prop-types';
-
-const getDate = (d) => {
-  let date = new Date(d);
-  let dd = String(date.getDate()).padStart(2, '0');
-  let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
-  let yyyy = date.getFullYear();
-  return `${yyyy}-${mm}-${dd}`;
-};
 
 const Menu = ({ url }) => {
   const key = url ? url.key : null;

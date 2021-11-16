@@ -8,7 +8,7 @@ from django.views.decorators.cache import cache_page
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from core.models import CourseVertical, Log
+from core.models import CourseVertical, Log, Student
 from core.serializers import LogSerializer, CourseVerticalSerializer
 from core.authentication import recoverUserCourseRoles
 
@@ -183,3 +183,16 @@ def health(_):
         return JsonResponse(data)
     else:
         return JsonResponse(data, status=503)
+
+
+@api_view()
+def get_student_information(request):
+    """
+    Retrieve Student instance using loaded info from lms
+    """
+    if "username" not in request.query_params:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data="Username field required")
+    student = Student.objects.filter(username=request.query_params["username"])
+    if len(student) == 0:
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    return JsonResponse({'student': list(student.values('username','name','year_of_birth','gender','email','date_joined','country'))})

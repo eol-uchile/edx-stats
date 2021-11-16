@@ -25,6 +25,24 @@ const parseFloatToTimeString = (seconds) => {
     }`;
 };
 
+const parseStringToYMDDate = (d) => {
+  // Parse string to year-month-day format
+  let date = new Date(d);
+  let dd = String(date.getDate()).padStart(2, '0');
+  let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+  let yyyy = date.getFullYear();
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+const parseStringToDMYDate = (d) => {
+  // Parse string to day-month-year format
+  let date = new Date(d);
+  let dd = String(date.getDate()).padStart(2, '0');
+  let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+  let yyyy = date.getFullYear();
+  return `${dd}-${mm}-${yyyy}`;
+}
+
 const classNameRuling = (data, l0, l1, l2) => {
   if (typeof data !== 'number') {
     return '';
@@ -75,6 +93,8 @@ const sortByColumn = (rows, column, reverse = false, strings = false) => {
 export {
   parseFloatToTimeString,
   parseToTableRows,
+  parseStringToYMDDate,
+  parseStringToDMYDate,
   classNameRuling,
   sortByColumn,
 };

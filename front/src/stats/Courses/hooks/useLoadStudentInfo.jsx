@@ -2,28 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 function useLoadStudentInfo(recoverInfo) {
-  //const studentDetails = useSelector((state) => state.student);
+  const studentDetails = useSelector((state) => state.student);
 
   const [modal, setModal] = useState(false);
-  const [studentInfo, setStudentInfo] = useState({
+  const [user, setUser] = useState({
     loaded: false,
     username: '',
   });
+  const [studentInfo, setStudentInfo] = useState({
+    username: '',
+    name: '',
+    year_of_birth: '',
+    gender: '',
+    email: '',
+    date_joined: '',
+    country: '',
+  });
 
   useEffect(() => {
-    if (studentInfo.username !== '') {
-      //recoverInfo(studentInfo.username);
-      setStudentInfo({ ...studentInfo, loaded: true });
+    if (user.username !== '') {
+      recoverInfo(user.username);
+      setUser({ ...studentInfo, loaded: true });
     }
   }, [modal]);
 
-  // useEffect(() => {
-  //   if (studentInfo.loaded && studentDetails.status === 'success') {
-  //     setStudentInfo({ ...studentInfo, ...studentDetails.student_details});
-  //   }
-  // }, [studentInfo, studentDetails]);
+  useEffect(() => {
+    if (user.loaded && studentDetails.status === 'success') {
+      setStudentInfo({ ...studentInfo, ...studentDetails.student_details });
+    }
+  }, [user.loaded, studentDetails.status]);
 
-  return [modal, setModal, studentInfo, setStudentInfo];
+  return [modal, setModal, studentInfo, setUser];
 }
 
 export default useLoadStudentInfo;
