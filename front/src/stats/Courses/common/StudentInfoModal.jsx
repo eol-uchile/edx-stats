@@ -95,7 +95,7 @@ const StudentInfoModal = ({ isOpen, doToggle, data, errors }) => {
               <Row>
                 <Col>
                   <p style={{ textAlign: 'center', fontStyle: 'italic' }}>
-                    La información no podría estar actualizada. Datos
+                    La información podría no estar actualizada. Datos
                     correspondientes al día {getInfo(getDate(data.last_update))}
                   </p>
                 </Col>

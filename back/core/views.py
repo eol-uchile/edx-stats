@@ -195,4 +195,4 @@ def get_student_information(request):
     student = Student.objects.filter(username=request.query_params["username"])
     if len(student) == 0:
         return Response(status=status.HTTP_204_NO_CONTENT)
-    return JsonResponse({'student': list(student.values('username','name','year_of_birth','gender','email','date_joined','country'))})
+    return JsonResponse({'student': list(student.values('username','name','year_of_birth','gender','email','date_joined','country', 'last_update'))})

@@ -82,6 +82,7 @@ class Student(models.Model):
     gender = models.CharField(max_length=1, null=True, blank=True)
     year_of_birth = models.CharField(max_length=4, null=True, blank=True)
     country = models.CharField(max_length=2, null=True, blank=True)
+    last_update = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.username

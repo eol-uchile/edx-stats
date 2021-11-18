@@ -15,7 +15,9 @@ class StaffUsernameAdmin(admin.ModelAdmin):
 
 
 class StudentAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ('username', 'name', 'email', 'country')
+    list_display = ('username','name','email', 'date_joined', 'last_update')
+    ordering = ['-last_update']
 
 
 class LogFileAdmin(admin.ModelAdmin):

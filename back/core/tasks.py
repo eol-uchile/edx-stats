@@ -381,6 +381,7 @@ def load_users_from_api():
     def update_user_row(row, previous_users):
         previous_user = previous_users.get(row["username"])
         previous_user.name = row["name"]
+        previous_user.email = row["email"]
         previous_user.gender = row["gender"]
         previous_user.year_of_birth = row["year_of_birth"]
         previous_user.country = row["country"]
@@ -399,7 +400,7 @@ def load_users_from_api():
     with connections['lms'].cursor() as cursor:
         cursor.execute(
             "SELECT "
-            "username, date_joined, name, email, gender, year_of_birth, country "
+            "username, date_joined, name, email, gender, YEAR(year_of_birth), country "
             "FROM "
             "auth_user "
             "JOIN auth_userprofile ON auth_user.id = auth_userprofile.user_id "
@@ -424,5 +425,4 @@ def load_users_from_api():
     # Update old
     actual_users_row.apply(lambda row: update_user_row(row, previous_users), axis=1)
     Student.objects.bulk_update(previous_info, [
-        "username","date_joined","name","email",
-        "gender","year_of_birth","country"]) # Single update
+        "name", "email", "gender","year_of_birth","country"]) # Single update
