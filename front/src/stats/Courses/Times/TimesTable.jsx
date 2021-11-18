@@ -14,7 +14,11 @@ import { Button, Input } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { timesActions } from '.';
-import { course as courseActions, student as studentActions, actions } from '../data/actions';
+import {
+  course as courseActions,
+  student as studentActions,
+  actions,
+} from '../data/actions';
 import { StudentDetails, StudentInfoModal } from '../common';
 import { TimesAvg, TimeVsVisits } from './components';
 import {
@@ -40,23 +44,6 @@ import { timesTutorial as steps } from '../data/tutorials';
  *
  */
 
-const tableDummie = {
-  all: 2,
-  chapters: [{ name: 'bar', subtotal: 1 }],
-  sequentials: [{ id: 0, val: '1.1', tooltip: 'bar' }],
-  verticals: [{ id: 0, val: '1.1.1', tooltip: 'bar' }],
-};
-
-const rowDummie = {
-  all: [
-    ['foo student', '0'],
-    ['bar student', '10'],
-  ],
-  chapters: [
-    ['foo student', '0'],
-    ['bar student', '10'],
-  ],
-};
 const TimesTable = (props) => {
   const course = useSelector((state) => state.course);
   const times = useSelector((state) => state.times);
@@ -68,22 +55,14 @@ const TimesTable = (props) => {
     []
   );
 
-  const [state, setState, errors, setErrors, removeErrors] = [
-    {
-      current: 'course-v1:UChile+LEIT01+2020_T3',
-      lowerDate: '2019-07-27T00:00:00Z',
-      upperDate: '2019-12-22T04:00:00Z',
-      courseName: 'Course',
-      allowed: true,
-    },
-    () => {},
-    [],
-    () => {},
-    () => {},
-  ];
+  const [state, setState, errors, setErrors, removeErrors] = useLoadCourseInfo(
+    props.match,
+    resetTimes,
+    times.errors
+  );
 
   const [tableData, setTableData, rowData, setRowData] = useProcessSumData(
-    [],
+    times.added_times,
     'vertical__vertical',
     recoverCourseStudentTimesSum,
     errors,
@@ -92,12 +71,19 @@ const TimesTable = (props) => {
     state.lowerDate
   );
 
+  const resetStudentInfo = useCallback(
+    () => dispatch(studentActions.resetStudents()),
+    []
+  );
   const recoverStudentInfo = useCallback(
-    (s) => dispatch(studentActions.recoverStudentInfo(s)),
+    (username) => dispatch(studentActions.recoverStudentInfo(username)),
     []
   );
 
-  const [modal, setModal, studentInfo, setUser] = useLoadStudentInfo(recoverStudentInfo);
+  const [modal, setModal, studentInfo, modalErrors, setUser] = useLoadStudentInfo(
+    recoverStudentInfo,
+    resetStudentInfo
+  );
 
   // Load data when the button trigers
   const submit = () => {
@@ -331,11 +317,12 @@ const TimesTable = (props) => {
             isOpen={modal}
             doToggle={setModal}
             data={studentInfo}
+            errors={modalErrors}
           />
           <StudentDetails
             title="Tiempos"
-            rowData={rowDummie}
-            tableData={tableDummie}
+            rowData={rowData}
+            tableData={tableData}
             parseFunction={parseFloatToTimeString}
             clickFunction={(user) => {
               setUser({ username: user });

@@ -47,102 +47,8 @@ function useProcessSumData(
    *  Finally ask for sums
    */
   useEffect(() => {
-    if (true) {
-      let current = {
-        chapters: [
-          {
-            name: 'Cap1',
-            sequentials: [
-              {
-                name: 'seq1',
-                verticals: [
-                  {
-                    vertical_id:
-                      'block-v1:UChile+LEIT01+2020_T3+type@vertical+block@00b59e8cfaac4b5088af188e85318163',
-
-                    name: 'UNO',
-                  },
-                ],
-              },
-              {
-                name: 'seq2',
-                verticals: [
-                  {
-                    vertical_id:
-                      'block-v1:UChile+LEIT01+2020_T3+type@vertical+block@117def145895447ab1929e37a002a288',
-
-                    name: 'dos',
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            name: 'Cap2',
-            sequentials: [
-              {
-                name: 'seq1',
-                verticals: [
-                  {
-                    vertical_id:
-                      'block-v1:UChile+LEIT01+2020_T3+type@vertical+block@231fd26ff2704d5a8f2a7ef08a891277',
-
-                    name: 'tres',
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            name: 'Cap3',
-            sequentials: [
-              {
-                name: 'seq1',
-                verticals: [
-                  {
-                    vertical_id:
-                      'block-v1:UChile+LEIT01+2020_T3+type@vertical+block@50d943fade514884a1c6859a429a4334',
-
-                    name: 'cuatro',
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            name: 'Cap4',
-            sequentials: [
-              {
-                name: 'seq1',
-                verticals: [
-                  {
-                    vertical_id:
-                      'block-v1:UChile+LEIT01+2020_T3+type@vertical+block@58757fca448b4337a4b86b64ca7713cf',
-
-                    name: 'cinco',
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            name: 'Cap5',
-            sequentials: [
-              {
-                name: 'seq1',
-                verticals: [
-                  {
-                    vertical_id:
-                      'block-v1:UChile+LEIT01+2020_T3+type@vertical+block@7335f24ec9cd4c9099facd57e9025b1c',
-
-                    name: 'seis',
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      };
+    if (course.course.length !== 0) {
+      let current = course.course[0];
       // Get all the numbers
       let chapters = [];
       let sequentials = [];
@@ -182,7 +88,7 @@ function useProcessSumData(
       });
 
       // Load sum
-      //recoverSum(current.id, new Date(lowerDate), new Date(upperDate));
+      recoverSum(current.id, new Date(lowerDate), new Date(upperDate));
     }
     // eslint-disable-next-line
   }, [course.course]);

@@ -7,6 +7,13 @@ import StudentInfoModal from '../../common/StudentInfoModal';
 const userData = {
   loaded: true,
   username: 'dummy',
+  name: '',
+  year_of_birth: '',
+  gender: '',
+  email: '',
+  date_joined: '',
+  country: '',
+  last_update: ''
 };
 
 it('renders correctly', () => {
