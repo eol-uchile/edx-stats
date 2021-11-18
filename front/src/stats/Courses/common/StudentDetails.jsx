@@ -126,6 +126,7 @@ const StudentDetails = ({
       parseFunction={parseFunction}
       doTotal={doTotal}
       onHeader={sortHeader}
+      onRow={clickFunction}
       coloring={state.coloring ? coloringFunction : undefined}
       key="table-verticals"
     />

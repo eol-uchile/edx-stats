@@ -1,9 +1,14 @@
 import React from 'react';
 
-const parseToTableRows = (r, k, parse, classRuling = () => '', clickRuling = () => { }) => (
+const parseToTableRows = (r, k, parse, classRuling = () => '', clickRuling) => (
   <tr key={'row' + k}>
     {r.map((d, kd) => (
-      <td key={kd} className={classRuling(d)} onClick={0 === kd ? () => clickRuling(d) : undefined}>
+      <td 
+        key={kd} 
+        className={classRuling(d)} 
+        style={0 === kd && clickRuling ? { cursor: 'pointer', textDecoration: 'underline' } : {}} 
+        onClick={0 === kd && clickRuling ? () => clickRuling(d) : undefined}
+      >
         {parse(d)}
       </td>
     ))}

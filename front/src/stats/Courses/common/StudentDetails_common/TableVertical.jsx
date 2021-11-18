@@ -31,6 +31,7 @@ const TableVertical = ({
   doTotal = false,
   parseFunction = (e) => e,
   onHeader = (e, _) => e,
+  onRow = (e) => e,
   coloring = (e) => e,
 }) => {
   const [pagination, setPagination] = useState({
@@ -139,7 +140,7 @@ const TableVertical = ({
             <tbody>
               {errors.length === 0 &&
                 subArray.map((e, k) =>
-                  parseToTableRows(e, k, parseFunction, coloring)
+                  parseToTableRows(e, k, parseFunction, coloring, onRow)
                 )}
               <tr></tr>
             </tbody>

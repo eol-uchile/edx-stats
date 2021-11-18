@@ -1,16 +1,32 @@
 import React, { useEffect, useCallback, useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Row, Col, Breadcrumb, InputGroup, Container } from 'react-bootstrap';
-import { Button, Input, Spinner, Alert } from '@edx/paragon';
+import {
+  Row,
+  Col,
+  Spinner,
+  Alert,
+  InputGroup,
+  Container,
+  Breadcrumb,
+} from 'react-bootstrap';
+import { Button, Input } from '@edx/paragon';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { course as courseActions, actions } from '../data/actions';
+import {
+  course as courseActions,
+  student as studentActions,
+  actions,
+} from '../data/actions';
 import { visitActions } from '.';
-import { StudentDetails } from '../common';
+import { StudentDetails, StudentInfoModal } from '../common';
 import { VisitTotals, DateBrowser } from './components';
 import { useProcessDailyData } from './hooks';
-import { useProcessSumData, useLoadCourseInfo } from '../hooks';
+import {
+  useLoadCourseInfo,
+  useLoadStudentInfo,
+  useProcessSumData,
+} from '../hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHome,
@@ -68,6 +84,18 @@ const VisitsTable = (props) => {
     state.lowerDate,
     state.upperDate
   );
+
+  const resetStudentInfo = useCallback(
+    () => dispatch(studentActions.resetStudents()),
+    []
+  );
+  const recoverStudentInfo = useCallback(
+    (username) => dispatch(studentActions.recoverStudentInfo(username)),
+    []
+  );
+
+  const [modal, setModal, studentInfo, modalErrors, setUser] =
+    useLoadStudentInfo(recoverStudentInfo, resetStudentInfo);
 
   // Load data when the button trigers
   const submit = () => {
@@ -281,10 +309,20 @@ const VisitsTable = (props) => {
             loading={dailyState.computing}
             haveErrors={errors.length !== 0}
           />
+          <StudentInfoModal
+            isOpen={modal}
+            doToggle={setModal}
+            data={studentInfo}
+            errors={modalErrors}
+          />
           <StudentDetails
-            tableData={tableData}
-            title={'Visitas'}
+            title='Visitas'
             rowData={rowData}
+            tableData={tableData}
+            clickFunction={(user) => {
+              setUser({ username: user });
+              setModal(!modal);
+            }}
             doAnimation
           />
           <Row>
