@@ -1,16 +1,8 @@
 import React, { useEffect, useCallback, useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import {
-  Row,
-  Col,
-  Spinner,
-  Alert,
-  InputGroup,
-  Container,
-  Breadcrumb,
-} from 'react-bootstrap';
-import { Button, Input } from '@edx/paragon';
+import { Row, Col, Breadcrumb, InputGroup, Container } from 'react-bootstrap';
+import { Button, Input, Spinner, Alert } from '@edx/paragon';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import {
