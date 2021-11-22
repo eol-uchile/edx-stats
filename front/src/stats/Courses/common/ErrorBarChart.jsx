@@ -29,11 +29,11 @@ function CustomTooltip({ payload, label, active }, doLabel = false) {
             ? `${label} : ${payload[0] && payload[0].payload.tooltip}`
             : payload[0] && payload[0].payload.tooltip}
         </p>
-        <p className="views">
+        <p className="first">
           Tiempo promedio de visualización:{' '}
           {payload[0] && parseFloatToTimeString(payload[0].value)}
         </p>
-        <p className="views">
+        <p className="second">
           Desviación estándar:{' '}
           {payload[0] && parseFloatToTimeString(payload[0].payload.errorX)}
         </p>

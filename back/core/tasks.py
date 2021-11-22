@@ -192,6 +192,7 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
     - run_code to save errors on a single file with the same code
 
     """
+    
     def test_exists(row, previous_verticals):
         """
         Returns true if vertical exists

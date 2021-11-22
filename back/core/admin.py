@@ -4,10 +4,11 @@ from core.models import Log, CourseVertical, StaffUserName, LogFile, Student
 
 class LogAdmin(admin.ModelAdmin):
     show_full_result_count = False
+    search_fields = ['event_type', ]
 
 
 class CoursesAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ['block_id', 'block_type']
 
 
 class StaffUsernameAdmin(admin.ModelAdmin):

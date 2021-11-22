@@ -7,6 +7,8 @@ import LineArea from './LineArea';
 import CalendarView from './CalendarView';
 import PieChart from './PieChart';
 import PullUp from './PullUp';
+import StackedBar from './StackedBar';
+import StackedArea from './StackedArea';
 import StudentInfoModal from './StudentInfoModal';
 
 export {
@@ -20,4 +22,6 @@ export {
   CalendarView,
   PieChart,
   PullUp,
+  StackedBar,
+  StackedArea,
 };

@@ -2,6 +2,27 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "ProcessCoverage",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/manage.py",
+      "args": [
+        "processcoverage",
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "ProcessViews",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/manage.py",
+      "args": [
+        "processviews",
+        "2019-01-01"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
       "name": "ProcessVisits",
       "type": "python",
       "request": "launch",

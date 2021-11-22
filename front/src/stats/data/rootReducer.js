@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { auth } from './reducers';
-import { course, student, times, urls, visits, generalStats } from '../Courses';
+import { course, student, times, urls, visits, videos, generalStats } from '../Courses';
 import { reducers as messages } from '../Messages';
 
 const rootReducer = combineReducers({
@@ -10,6 +10,7 @@ const rootReducer = combineReducers({
   auth,
   urls,
   visits,
+  videos,
   generalStats,
   messages,
 });

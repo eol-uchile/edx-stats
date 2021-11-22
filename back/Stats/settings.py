@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'core',
     'times',
     'visits',
+    'views',
     'webadmin',
     'django_celery_results',
     'django_celery_beat',
@@ -157,6 +158,10 @@ LOGGING = {
             'level': 'INFO',
         },
         'webadmin': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'views': {
             'handlers': ['console'],
             'level': 'INFO',
         },

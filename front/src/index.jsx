@@ -20,7 +20,6 @@ import Footer, {
 import appMessages from './i18n';
 
 import 'font-awesome/css/font-awesome.min.css';
-import 'intro.js/introjs.css';
 import './index.scss';
 import './assets/favicon.png';
 import { Routes, configureStore, Message } from './stats';
