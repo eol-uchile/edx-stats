@@ -1,4 +1,5 @@
 import { course } from './course';
+import { student } from './student';
 
 /**
  * Dummy Url holder on Redux
@@ -9,4 +10,4 @@ function urls(state = { lms: '', base: '', discovery: '' }, action) {
   return state;
 }
 
-export { course, urls };
+export { course, student, urls };

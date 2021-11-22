@@ -9,6 +9,7 @@ import PieChart from './PieChart';
 import PullUp from './PullUp';
 import StackedBar from './StackedBar';
 import StackedArea from './StackedArea';
+import StudentInfoModal from './StudentInfoModal';
 
 export {
   AsyncCSVButton,
@@ -16,6 +17,7 @@ export {
   ErrorBarChart,
   MultiAxisBars,
   StudentDetails,
+  StudentInfoModal,
   LineArea,
   CalendarView,
   PieChart,

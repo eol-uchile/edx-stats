@@ -14,10 +14,18 @@ import { Button, Input } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { timesActions } from '.';
-import { course as courseActions, actions } from '../data/actions';
-import { StudentDetails } from '../common';
+import {
+  course as courseActions,
+  student as studentActions,
+  actions,
+} from '../data/actions';
+import { StudentDetails, StudentInfoModal } from '../common';
 import { TimesAvg, TimeVsVisits } from './components';
-import { useLoadCourseInfo, useProcessSumData } from '../hooks';
+import {
+  useLoadCourseInfo,
+  useLoadStudentInfo,
+  useProcessSumData,
+} from '../hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHome,
@@ -35,6 +43,7 @@ import { timesTutorial as steps } from '../data/tutorials';
  * The course can be provided by the URL, the
  *
  */
+
 const TimesTable = (props) => {
   const course = useSelector((state) => state.course);
   const times = useSelector((state) => state.times);
@@ -60,6 +69,20 @@ const TimesTable = (props) => {
     setErrors,
     state.upperDate,
     state.lowerDate
+  );
+
+  const resetStudentInfo = useCallback(
+    () => dispatch(studentActions.resetStudents()),
+    []
+  );
+  const recoverStudentInfo = useCallback(
+    (username) => dispatch(studentActions.recoverStudentInfo(username)),
+    []
+  );
+
+  const [modal, setModal, studentInfo, modalErrors, setUser] = useLoadStudentInfo(
+    recoverStudentInfo,
+    resetStudentInfo
   );
 
   // Load data when the button trigers
@@ -290,11 +313,21 @@ const TimesTable = (props) => {
               </Row>
             )}
           </Container>
+          <StudentInfoModal
+            isOpen={modal}
+            doToggle={setModal}
+            data={studentInfo}
+            errors={modalErrors}
+          />
           <StudentDetails
             title="Tiempos"
             rowData={rowData}
             tableData={tableData}
             parseFunction={parseFloatToTimeString}
+            clickFunction={(user) => {
+              setUser({ username: user });
+              setModal(!modal);
+            }}
             doTotal
             doAnimation
           />
