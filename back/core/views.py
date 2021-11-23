@@ -70,7 +70,7 @@ def verify_time_range_course_params(request):
 
 
 @api_view()
-#@cache_page(settings.CACHE_TTL, key_prefix="v1")
+@cache_page(settings.CACHE_TTL, key_prefix="v1")
 def get_course_structure(request):
     """
     Map a course structure using the recovered Verticals from the Edx API
@@ -189,9 +189,21 @@ def health(_):
 def get_student_information(request):
     """
     Retrieve Student instance using loaded info from lms
+    Checks if the user has role permissions
     """
+    roles = recoverUserCourseRoles(request)
+    allowed_list = [r['course_id'].replace(
+        "course", "block") for r in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES]
+
+    course = request.query_params["course"]
+
+    # Check that user has permissions
+    if course not in allowed_list:
+        return Response(status=status.HTTP_403_FORBIDDEN, data="No tiene permisos para ver los datos en los cursos solicitados")
+
     if "username" not in request.query_params:
         return Response(status=status.HTTP_400_BAD_REQUEST, data="Username field required")
+        
     student = Student.objects.filter(username=request.query_params["username"])
     if len(student) == 0:
         return Response(status=status.HTTP_204_NO_CONTENT)

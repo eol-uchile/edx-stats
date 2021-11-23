@@ -76,7 +76,7 @@ const TimesTable = (props) => {
     []
   );
   const recoverStudentInfo = useCallback(
-    (username) => dispatch(studentActions.recoverStudentInfo(username)),
+    (c_id, u) => dispatch(studentActions.recoverStudentInfo(c_id, u)),
     []
   );
 
