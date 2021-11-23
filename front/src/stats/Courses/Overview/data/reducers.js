@@ -15,6 +15,9 @@ export const LOADING_GENERAL_VISITS_ERROR = 'LOADING_GENERAL_VISITS_ERROR';
 export const LOADED_DETAILED_VISITS = 'LOADED_DETAILED_VISITS';
 export const LOADING_DETAILED_VISITS_ERROR = 'LOADING_DETAILED_VISITS_ERROR';
 
+export const LOADED_GENERAL_USERS = 'LOADED_GENERAL_USERS';
+export const LOADING_GENERAL_USERS_ERROR = 'LOADING_GENERAL_USERS_ERROR';
+
 const initialGeneralState = {
     general_times: '',
     detailed_times: '',
@@ -65,7 +68,6 @@ export function generalStats(state = initialGeneralState, action) {
             return {
                 ...state,
                 general_visits: action.data.total_visits,
-                general_users: action.data.total_users,
                 errors: [], //y los errores de times?
                 loading: false, //y el loading de times?
             };
@@ -73,7 +75,6 @@ export function generalStats(state = initialGeneralState, action) {
             return {
                 ...state,
                 general_visits: '',
-                general_users: '',
                 errors: [...action.data], //y los errores de times?
                 loading: false, //y el loading de times?
             };
@@ -90,6 +91,20 @@ export function generalStats(state = initialGeneralState, action) {
                 detailed_visits: { date: '', module: '', seq: '' },
                 errors: [...action.data], //y los errores de los otros?
                 loading: false,  //y el loading de los otros?
+            };
+        case LOADED_GENERAL_USERS:
+            return {
+                ...state,
+                general_users: action.data.total_users,
+                errors: [],
+                loading: false,
+            };
+        case LOADING_GENERAL_USERS_ERROR:
+            return {
+                ...state,
+                general_users: '',
+                errors: [...action.data],
+                loading: false,
             };
         case LOADED_GENERAL_STATS_RESET:
             return { ...initialGeneralState };

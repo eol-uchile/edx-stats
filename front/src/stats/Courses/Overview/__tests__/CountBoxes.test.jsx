@@ -30,6 +30,17 @@ it('renders with no data', async () => {
         return res(
           ctx.json({
             total_visits: 0,
+          })
+        );
+      }
+    )
+  );
+  server.use(
+    rest.get(
+      `${urls.base_url}/api/core/usersincourse/overview/*`,
+      async (req, res, ctx) => {
+        return res(
+          ctx.json({
             total_users: 0,
           })
         );
@@ -61,13 +72,23 @@ it('renders correctly', async () => {
         return res(
           ctx.json({
             total_visits: 1481,
+          })
+        );
+      }
+    )
+  );
+  server.use(
+    rest.get(
+      `${urls.base_url}/api/core/usersincourse/overview/*`,
+      async (req, res, ctx) => {
+        return res(
+          ctx.json({
             total_users: 32,
           })
         );
       }
     )
   );
-
   render(
     <CoursesWrapper
       render={(props) => <CountBoxes {...{ courseData, errors, setErrors }} />}

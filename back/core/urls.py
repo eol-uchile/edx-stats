@@ -10,5 +10,6 @@ urlpatterns = [
     path(r'', include(router.urls)),
     path(r'course-structure/', views.get_course_structure, name="course-structure"),
     path(r'health/', views.health, name="health"),
-    path(r'student-info/', views.get_student_information, name="student-information")
+    path(r'student-info/', views.get_student_information, name="student-information"),
+    path(r'usersincourse/overview/', views.count_users_overview_course, name="students-overview")
 ]
