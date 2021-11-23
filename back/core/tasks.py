@@ -6,10 +6,11 @@ import pandas as pd
 from datetime import timedelta
 from celery import shared_task
 from django.conf import settings
-from core.models import Log, CourseVertical, LogFile, StaffUserName
+from core.models import Log, CourseVertical, LogFile, StaffUserName, Student
 from core.processing import read_json_course, read_json_course_file, \
     flatten_course_as_verticals, read_logs, load_course_blocks_from_LMS, \
     filter_course_team, filter_by_log_qty
+from django.db import connections
 
 logger = logging.getLogger(__name__)
 BULK_UPLOAD_SIZE = 500
@@ -367,3 +368,62 @@ def process_logs_standard_procedure(procedure, name, end_date=None, day_window=N
             continue
         process_logs_single_course(
             procedure, name, course_id, end_date, day_window, run_code)
+
+def load_users_from_api():
+    """
+    Process all users, creating new ones and updating old information
+    """
+    def test_exists(row, previous_users):
+        """
+        Returns true if user exists
+        """
+        return previous_users.get(row["username"], None) is not None
+
+    def update_user_row(row, previous_users):
+        previous_user = previous_users.get(row["username"])
+        previous_user.name = row["name"]
+        previous_user.email = row["email"]
+        previous_user.gender = row["gender"]
+        previous_user.year_of_birth = row["year_of_birth"]
+        previous_user.country = row["country"]
+
+    def create_user_row(row):
+        student = Student(
+            username=row["username"],
+            date_joined=row["date_joined"],
+            name=row["name"],
+            email=row["email"],
+            gender=row["gender"],
+            year_of_birth=row["year_of_birth"],
+            country=row["country"])
+        return student
+
+    with connections['lms'].cursor() as cursor:
+        cursor.execute(
+            "SELECT "
+            "username, date_joined, name, email, gender, YEAR(year_of_birth), country "
+            "FROM "
+            "auth_user "
+            "JOIN auth_userprofile ON auth_user.id = auth_userprofile.user_id "
+            "WHERE is_staff=False"
+        )
+        users = cursor.fetchall()
+        users_dataframe = pd.DataFrame(users, 
+                            columns =['username', 'date_joined', 'name', 
+                                    'email', 'gender', 'year_of_birth','country'])
+
+    previous_info = list(Student.objects.all())
+    previous_users = {}
+    for s in previous_info:
+        previous_users[s.username] = s
+    # Split groups
+    actual_users_row = users_dataframe[users_dataframe.apply(lambda row: test_exists(row,previous_users), axis=1)]
+    new_users_row = users_dataframe[users_dataframe.apply(lambda row: not test_exists(row,previous_users), axis=1)]
+    count, _ = new_users_row.shape
+    if count != 0:
+        new_users = list(new_users_row.apply(create_user_row, axis=1))
+        Student.objects.bulk_create(new_users) # Single update
+    # Update old
+    actual_users_row.apply(lambda row: update_user_row(row, previous_users), axis=1)
+    Student.objects.bulk_update(previous_info, [
+        "name", "email", "gender","year_of_birth","country"]) # Single update

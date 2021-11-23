@@ -1,9 +1,14 @@
 import React from 'react';
 
-const parseToTableRows = (r, k, parse, classRuling = () => '', clickRuling = () => { }) => (
+const parseToTableRows = (r, k, parse, classRuling = () => '', clickRuling) => (
   <tr key={'row' + k}>
     {r.map((d, kd) => (
-      <td key={kd} className={classRuling(d)} onClick={0 === kd ? () => clickRuling(d) : undefined}>
+      <td 
+        key={kd} 
+        className={classRuling(d)} 
+        style={0 === kd && clickRuling ? { cursor: 'pointer', textDecoration: 'underline' } : {}} 
+        onClick={0 === kd && clickRuling ? () => clickRuling(d) : undefined}
+      >
         {parse(d)}
       </td>
     ))}
@@ -24,6 +29,24 @@ const parseFloatToTimeString = (seconds) => {
   return `${mins.length === 1 ? '0' + mins : mins}:${secs.length === 1 ? '0' + secs : secs
     }`;
 };
+
+const parseStringToYMDDate = (d) => {
+  // Parse string to year-month-day format
+  let date = new Date(d);
+  let dd = String(date.getDate()).padStart(2, '0');
+  let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+  let yyyy = date.getFullYear();
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+const parseStringToDMYDate = (d) => {
+  // Parse string to day-month-year format
+  let date = new Date(d);
+  let dd = String(date.getDate()).padStart(2, '0');
+  let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+  let yyyy = date.getFullYear();
+  return `${dd}-${mm}-${yyyy}`;
+}
 
 const classNameRuling = (data, l0, l1, l2) => {
   if (typeof data !== 'number') {
@@ -75,6 +98,8 @@ const sortByColumn = (rows, column, reverse = false, strings = false) => {
 export {
   parseFloatToTimeString,
   parseToTableRows,
+  parseStringToYMDDate,
+  parseStringToDMYDate,
   classNameRuling,
   sortByColumn,
 };
