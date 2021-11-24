@@ -52,7 +52,7 @@ function rgbToHex(rgb) {
   );
 }
 
-const PieChart = ({ data, height = '400' }) => {
+const PieChart = ({ data, height = 400 }) => {
   const colors = useMemo(() => {
     let len = data.length;
     let fun = interpolateHsl('red', 'blue');
