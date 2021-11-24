@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from core.models import CourseVertical, Log, Student
 from core.serializers import LogSerializer, CourseVerticalSerializer
 from core.authentication import recoverUserCourseRoles
+from django.db import connections
 
 
 class LogViewSet(viewsets.ModelViewSet):
@@ -228,8 +229,19 @@ def count_users_overview_course(request):
     if course not in allowed_list:
         return Response(status=status.HTTP_403_FORBIDDEN, data="No tiene permisos para ver los datos en los cursos solicitados")
 
-    # total_users = Student.objects.filter().count()
-
+    with connections['lms'].cursor() as cursor:
+        cursor.execute(
+            "SELECT "
+            "COUNT(auth_user.id) "
+            "FROM "
+            "auth_user "
+            "JOIN student_courseenrollment ON auth_user.id = student_courseenrollment.user_id "
+            "JOIN auth_userprofile ON auth_user.id = auth_userprofile.user_id "
+            "WHERE course_id=%s "
+            "AND is_staff=False",
+        [course.replace('block-v1','course-v1')])
+        total = cursor.fetchall()
+        
     return JsonResponse({
-        'total_users': 0,
+        'total_users': total,
     })
