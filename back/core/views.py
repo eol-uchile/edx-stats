@@ -240,7 +240,7 @@ def count_users_overview_course(request):
             "WHERE course_id=%s "
             "AND is_staff=False",
         [course.replace('block-v1','course-v1')])
-        total = cursor.fetchall()
+        total = cursor.fetchone()[0]
         
     return JsonResponse({
         'total_users': total,
