@@ -75,7 +75,6 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
         return new Date(a.date) - new Date(b.date);
       });
       setDataLine({ loaded: true, values: sortedAscending });
-      setErrors([]);
     }
   }, [dataLoaded, data.detailed_times, data.detailed_visits.date]);
 
@@ -102,7 +101,6 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
         circularPortions.push(namedPortion);
       });
       setDataPie({ loaded: true, values: circularPortions });
-      setErrors([]);
     }
   }, [
     dataLoaded,
@@ -110,14 +108,6 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
     data.detailed_visits.module,
     data.detailed_visits.seq,
   ]);
-
-  useEffect(() => {
-    if (errors.length > 0) {
-      // If errors then reset the state
-      setDataLine({ loaded: true, values: [] });
-      setDataPie({ loaded: true, values: [] });
-    }
-  }, [errors]);
 
   return [dataLoaded, setDataLoaded, dataLine, dataPie];
 };

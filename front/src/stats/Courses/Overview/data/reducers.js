@@ -1,6 +1,6 @@
 import { CLEAN_ERRORS } from '../../data/types';
 
-export const LOADING_GENERAL_STATS = 'LOADING_GENERAL_STATS';
+export const LOADING_DETAILED_STATS = 'LOADING_DETAILED_STATS';
 export const LOADED_GENERAL_STATS_RESET = 'LOADED_GENERAL_STATS_RESET';
 
 export const LOADED_GENERAL_TIMES = 'LOADED_GENERAL_TIMES';
@@ -34,77 +34,66 @@ const initialGeneralState = {
 
 export function generalStats(state = initialGeneralState, action) {
     switch (action.type) {
-        case LOADING_GENERAL_STATS:
+        case LOADING_DETAILED_STATS:
             return { ...state, loading: true };
         case LOADED_GENERAL_TIMES:
             return {
                 ...state,
                 general_times: action.data.total_time,
-                errors: [], //y los errores de visits?,
-                loading: false, //y el loading de visits?
             };
         case LOADING_GENERAL_TIMES_ERROR:
             return {
                 ...state,
-                general_times: '',
-                errors: [...action.data], //y los errores de visits?
-                loading: false,  //y el loading de visits?
+                general_times: 0,
+                errors: [...state.errors, ...action.data],
             };
         case LOADED_DETAILED_TIMES:
             return {
                 ...state,
                 detailed_times: action.data.total_time,
-                errors: [], //y los errores de los otros?,
-                loading: false, //y el loading de los otros?
+                loading: false,
             };
         case LOADING_DETAILED_TIMES_ERROR:
             return {
                 ...state,
                 detailed_times: '',
-                errors: [...action.data], //y los errores de los otros?
-                loading: false,  //y el loading de los otros?
+                errors: [...state.errors, ...action.data],
+                loading: false,
             };
         case LOADED_GENERAL_VISITS:
             return {
                 ...state,
                 general_visits: action.data.total_visits,
-                errors: [], //y los errores de times?
-                loading: false, //y el loading de times?
             };
         case LOADING_GENERAL_VISITS_ERROR:
             return {
                 ...state,
-                general_visits: '',
-                errors: [...action.data], //y los errores de times?
-                loading: false, //y el loading de times?
+                general_visits: 0,
+                errors: [...state.errors, ...action.data],
             };
         case LOADED_DETAILED_VISITS:
             return {
                 ...state,
                 detailed_visits: action.data.total_visits,
-                errors: [], //y los errores de los otros?,
-                loading: false, //y el loading de los otros?
+                loading: false,
             };
         case LOADING_DETAILED_VISITS_ERROR:
             return {
                 ...state,
                 detailed_visits: { date: '', module: '', seq: '' },
-                errors: [...action.data], //y los errores de los otros?
-                loading: false,  //y el loading de los otros?
+                errors: [...state.errors, ...action.data],
+                loading: false,
             };
         case LOADED_GENERAL_USERS:
             return {
                 ...state,
                 general_users: action.data.total_users,
-                errors: [],
-                loading: false,
             };
         case LOADING_GENERAL_USERS_ERROR:
             return {
                 ...state,
-                general_users: '',
-                errors: [...action.data],
-                loading: false,
+                general_users: 0,
+                errors: [...state.errors, ...action.data],
             };
         case LOADED_GENERAL_STATS_RESET:
             return { ...initialGeneralState };

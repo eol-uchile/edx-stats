@@ -67,27 +67,6 @@ const useCountBoxes = (
     }
   }, [dataLoaded, data.general_times]);
 
-  useEffect(() => {
-    if (
-      countBox.visits.loaded &&
-      countBox.users.loaded &&
-      countBox.times.loaded
-    ) {
-      setErrors([]);
-    }
-  }, [countBox]);
-
-  useEffect(() => {
-    if (errors.length > 0) {
-      // If errors then reset the state
-      setCountBox({
-        visits: { loaded: true, value: 0 },
-        users: { loaded: true, value: 0 },
-        times: { loaded: true, value: 0 },
-      });
-    }
-  }, [errors]);
-
   return [dataLoaded, setDataLoaded, countBox];
 };
 

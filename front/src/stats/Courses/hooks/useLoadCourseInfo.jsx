@@ -90,6 +90,9 @@ function useLoadCourseInfo(match, resetData, dataErrors) {
   const removeErrors = (msg) => {
     let newErrors = errors.filter((el) => msg !== el);
     setErrors(newErrors);
+    if (newErrors.length === 0) {
+      dispatch(actions.cleanErrors());
+    }
   };
 
   return [state, setState, errors, setErrors, removeErrors];

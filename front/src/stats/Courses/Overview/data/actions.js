@@ -1,5 +1,5 @@
 import {
-    LOADING_GENERAL_STATS,
+    LOADING_DETAILED_STATS,
     LOADED_GENERAL_STATS_RESET,
     LOADING_GENERAL_TIMES_ERROR,
     LOADED_GENERAL_TIMES,
@@ -20,7 +20,7 @@ export const resetGeneralStats = () => (dispatch) =>
     dispatch({ type: LOADED_GENERAL_STATS_RESET });
 
 export const setLoadingGeneralStats = () => (dispatch) =>
-    dispatch({ type: LOADING_GENERAL_STATS });
+    dispatch({ type: LOADING_DETAILED_STATS });
 
 export const recoverCourseGeneralTimes =
     (course_id = 'nan', lower_date, upper_date, retry = 1) =>
@@ -122,7 +122,7 @@ export const recoverCourseDetailedTimes =
     (course_id = 'nan', lower_date, upper_date, retry = 1) =>
         (dispatch, getState) => {
             let base = getState().urls.base;
-
+            dispatch({ type: LOADING_DETAILED_STATS });
             return getAuthenticatedHttpClient()
                 .get(
                     `${base}/api/times/timeoncourse/overview/detailed/?course=${encodeURIComponent(
@@ -154,7 +154,7 @@ export const recoverCourseDetailedVisits =
     (course_id = 'nan', lower_date, upper_date, retry = 1) =>
         (dispatch, getState) => {
             let base = getState().urls.base;
-
+            dispatch({ type: LOADING_DETAILED_STATS });
             return getAuthenticatedHttpClient()
                 .get(
                     `${base}/api/visits/visitsoncourse/overview/detailed/?course=${encodeURIComponent(

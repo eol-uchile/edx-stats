@@ -83,24 +83,28 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                   type="date"
                   value={dataLoaded.upperDate.slice(0, 10)}
                   onChange={(e) => setWeek(e.target.value)}
+                  disabled={generalStats.loading}
                 />
               </InputGroup>
               <Button
                 onClick={() => setWeek(courseData.lowerDate)}
                 data-testid="chart-startDate"
                 title="Ir al inicio del curso"
+                disabled={generalStats.loading}
               >
                 <FontAwesomeIcon icon={faAngleDoubleLeft} />
               </Button>
               <Button
                 onClick={() => setWeek(dataLoaded.upperDate, -7)}
                 title="Retroceder una semana"
+                disabled={generalStats.loading}
               >
                 <FontAwesomeIcon icon={faAngleLeft} />
               </Button>
               <Button
                 onClick={() => setWeek(dataLoaded.upperDate, 7)}
                 title="Avanzar una semana"
+                disabled={generalStats.loading}
               >
                 <FontAwesomeIcon icon={faAngleRight} />
               </Button>
@@ -108,15 +112,15 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                 onClick={() => setWeek(courseData.upperDate)}
                 data-testid="chart-endDate"
                 title="Ir al fin del curso"
+                disabled={generalStats.loading}
               >
                 <FontAwesomeIcon icon={faAngleDoubleRight} />
               </Button>
             </ButtonGroup>
           </Col>
         </Row>
-        {dataLine.loaded &&
+        {!generalStats.loading &&
         dataLine.values.length !== 0 &&
-        dataPie.loaded &&
         dataPie.values.length !== 0 ? (
           <Row>
             <Col lg="6" className="week-line">
@@ -179,7 +183,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
               </ChartBox>
             </Col>
           </Row>
-        ) : errors.length === 0 && (!dataLine.loaded || !dataPie.loaded) ? (
+        ) : generalStats.loading ? (
           <Row>
             <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
               <Spinner animation="border" variant="primary" />
