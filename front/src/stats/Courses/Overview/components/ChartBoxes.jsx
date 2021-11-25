@@ -119,9 +119,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
             </ButtonGroup>
           </Col>
         </Row>
-        {!generalStats.loading &&
-        dataLine.values.length !== 0 &&
-        dataPie.values.length !== 0 ? (
+        {dataLine.values.length !== 0 && dataPie.values.length !== 0 ? (
           <Row>
             <Col lg="6" className="week-line">
               <ChartBox title={'Total durante la semana'}>
@@ -183,7 +181,9 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
               </ChartBox>
             </Col>
           </Row>
-        ) : generalStats.loading ? (
+        ) : ((!dataLine.loaded || !dataPie.loaded) &&
+            generalStats.detailed_errors.length === 0) ||
+          generalStats.loading ? (
           <Row>
             <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
               <Spinner animation="border" variant="primary" />

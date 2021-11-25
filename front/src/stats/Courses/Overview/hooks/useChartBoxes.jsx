@@ -19,6 +19,9 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
     lowerDate: getDate(TODAY.toISOString(), -7).toISOString(),
   });
 
+  const [dataLine, setDataLine] = useState({ loaded: false, values: [] });
+  const [dataPie, setDataPie] = useState({ loaded: false, values: [] });
+
   useEffect(() => {
     if (course.course.length !== 0) {
       let current = course.course[0];
@@ -32,11 +35,11 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
         new Date(dataLoaded.lowerDate),
         new Date(dataLoaded.upperDate)
       );
+      setDataLine({ loaded: false, values: [] });
+      setDataPie({ loaded: false, values: [] });
     }
     // eslint-disable-next-line
   }, [course.course, dataLoaded.upperDate, dataLoaded.lowerDate]);
-
-  const [dataLine, setDataLine] = useState({ loaded: false, values: [] });
 
   useEffect(() => {
     if (
@@ -76,9 +79,7 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
       });
       setDataLine({ loaded: true, values: sortedAscending });
     }
-  }, [dataLoaded, data.detailed_times, data.detailed_visits.date]);
-
-  const [dataPie, setDataPie] = useState({ loaded: false, values: [] });
+  }, [dataLoaded.loaded, data.detailed_times, data.detailed_visits.date]);
 
   useEffect(() => {
     if (
@@ -103,7 +104,7 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
       setDataPie({ loaded: true, values: circularPortions });
     }
   }, [
-    dataLoaded,
+    dataLoaded.loaded,
     viewModules,
     data.detailed_visits.module,
     data.detailed_visits.seq,

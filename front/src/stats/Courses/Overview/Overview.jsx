@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, Fragment, useState } from 'react';
+import React, { useEffect, useCallback, Fragment, useMemo } from 'react';
 import {
   Container,
   Row,
@@ -31,10 +31,15 @@ const Overview = (props) => {
     []
   );
 
+  const statsErrors = useMemo(
+    () => generalStats.general_errors.concat(generalStats.detailed_errors),
+    [generalStats.general_errors, generalStats.detailed_errors]
+  );
+
   const [state, setState, errors, setErrors, removeErrors] = useLoadCourseInfo(
     props.match,
     resetStats,
-    generalStats.errors
+    statsErrors
   );
 
   useEffect(() => {

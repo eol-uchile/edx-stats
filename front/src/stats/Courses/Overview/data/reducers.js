@@ -20,15 +20,16 @@ export const LOADING_GENERAL_USERS_ERROR = 'LOADING_GENERAL_USERS_ERROR';
 
 const initialGeneralState = {
     general_times: '',
-    detailed_times: '',
     general_visits: '',
+    general_users: '',
+    general_errors: [],
+    detailed_times: '',
     detailed_visits: {
         date: '',
         module: '',
         seq: '',
     },
-    general_users: '',
-    errors: [],
+    detailed_errors: [],
     loading: false,
 };
 
@@ -45,7 +46,7 @@ export function generalStats(state = initialGeneralState, action) {
             return {
                 ...state,
                 general_times: 0,
-                errors: [...state.errors, ...action.data],
+                general_errors: [...action.data],
             };
         case LOADED_DETAILED_TIMES:
             return {
@@ -57,7 +58,7 @@ export function generalStats(state = initialGeneralState, action) {
             return {
                 ...state,
                 detailed_times: '',
-                errors: [...state.errors, ...action.data],
+                detailed_errors: [...action.data],
                 loading: false,
             };
         case LOADED_GENERAL_VISITS:
@@ -69,7 +70,7 @@ export function generalStats(state = initialGeneralState, action) {
             return {
                 ...state,
                 general_visits: 0,
-                errors: [...state.errors, ...action.data],
+                general_errors: [...action.data],
             };
         case LOADED_DETAILED_VISITS:
             return {
@@ -81,7 +82,7 @@ export function generalStats(state = initialGeneralState, action) {
             return {
                 ...state,
                 detailed_visits: { date: '', module: '', seq: '' },
-                errors: [...state.errors, ...action.data],
+                detailed_errors: [...action.data],
                 loading: false,
             };
         case LOADED_GENERAL_USERS:
@@ -93,7 +94,7 @@ export function generalStats(state = initialGeneralState, action) {
             return {
                 ...state,
                 general_users: 0,
-                errors: [...state.errors, ...action.data],
+                general_errors: [...action.data],
             };
         case LOADED_GENERAL_STATS_RESET:
             return { ...initialGeneralState };
@@ -101,7 +102,8 @@ export function generalStats(state = initialGeneralState, action) {
         case CLEAN_ERRORS:
             return {
                 ...state,
-                errors: [],
+                general_errors: [],
+                detailed_errors: []
             };
         default:
             return state;
