@@ -69,13 +69,13 @@ const VideosTable = (props) => {
   };
   useEffect(() => {
     if (
-      course.course_status === 'success' &&
+      rowData.loaded &&
       localStorage.getItem('tutorial-videostable') === null
     ) {
       showTutorial();
       localStorage.setItem('tutorial-videostable', 'seen');
     }
-  }, [course.course_status]);
+  }, [rowData.loaded]);
 
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2">

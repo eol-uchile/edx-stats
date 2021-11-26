@@ -38,7 +38,7 @@ const Menu = ({ url }) => {
             </Link>
             <p>Monitorea que se está viendo y cuando</p>
           </ListGroupItem>
-          <ListGroupItem disabled>
+          <ListGroupItem>
             <Link to={`/courses/${key}/videos`}>
               Ver actividad por videos{' '}
               <FontAwesomeIcon
