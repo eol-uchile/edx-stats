@@ -190,8 +190,8 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
         verticals = list(CourseVertical.objects.filter(course=course_id_df))
         verticals_to_associate = {}
         for b in verticals:
-                full_id = b.block_id
-                verticals_to_associate[full_id.split("@")[2]] = b
+            full_id = b.block_id
+            verticals_to_associate[full_id.split("@")[2]] = b
         previous_info = list(Video.objects.filter(vertical__course=course_id_df))
         previous_videos = {}
         for b in previous_info:
@@ -293,7 +293,7 @@ def calculate_coverage(course=None):
     - course to be processed
     """
     
-    def compute_coverage(course_id):
+    def compute_coverage_single_course(course_id):
         segments_user_video = ViewOnVideo.objects.filter(
             video__vertical__is_active=True,
             video__vertical__course__icontains=course_id,
@@ -314,10 +314,31 @@ def calculate_coverage(course=None):
             viewer.coverage = coverage
             viewer.save()
 
+    def compute_coverage():
+        segments_user_video = ViewOnVideo.objects.filter(
+            video__vertical__is_active=True,
+        ).order_by(
+            'video__vertical__course',
+            'video__vertical__chapter_number',
+            'video__vertical__sequential_number',
+            'video__vertical__vertical_number',
+            'video__vertical__child_number'
+        ).annotate(
+            video_duration=F('video__duration'),
+        )
+        for viewer in segments_user_video:
+            segments = Segment.objects.filter(
+                view__id=viewer.id,
+            )
+            length, _ = ut.klee_distance(segments)
+            coverage = length/viewer.video_duration
+            viewer.coverage = coverage
+            viewer.save()
+
     if course is not None:
-        compute_coverage(course)
+        compute_coverage_single_course(course)
     else:
-        return
+        compute_coverage()
 
 
 @shared_task
