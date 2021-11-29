@@ -29,6 +29,7 @@ global.localStorage = localStorageMock;
 global.localStorage.setItem('tutorial-overview', 'seen');
 global.localStorage.setItem('tutorial-visitstable', 'seen');
 global.localStorage.setItem('tutorial-timestable', 'seen');
+global.localStorage.setItem('tutorial-videostable', 'seen');
 
 beforeAll(() => {
   server.listen();
