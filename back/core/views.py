@@ -238,7 +238,7 @@ def count_users_overview_course(request):
             "JOIN student_courseenrollment ON auth_user.id = student_courseenrollment.user_id "
             "JOIN auth_userprofile ON auth_user.id = auth_userprofile.user_id "
             "WHERE course_id=%s "
-            "AND is_staff=False",
+            "AND student_courseenrollment.is_active=True",
         [course.replace('block-v1','course-v1')])
         total = cursor.fetchone()[0]
         
