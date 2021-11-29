@@ -19,6 +19,18 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
     lowerDate: getDate(TODAY.toISOString(), -7).toISOString(),
   });
 
+  const setWeek = (dateIsoString, d = 0) => {
+    let DAY_IN_MILISECS = 24 * 60 * 60 * 1000;
+    let date = new Date(dateIsoString);
+    setDataLoaded({
+      ...dataLoaded,
+      upperDate: new Date(date.getTime() + d * DAY_IN_MILISECS).toISOString(),
+      lowerDate: new Date(
+        date.getTime() + d - 7 * DAY_IN_MILISECS
+      ).toISOString(),
+    });
+  };
+
   const [dataLine, setDataLine] = useState({ loaded: false, values: [] });
   const [dataPie, setDataPie] = useState({ loaded: false, values: [] });
 
@@ -110,7 +122,7 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
     data.detailed_visits.seq,
   ]);
 
-  return [dataLoaded, setDataLoaded, dataLine, dataPie];
+  return [setWeek, dataLoaded, setDataLoaded, dataLine, dataPie];
 };
 
 export default useChartBoxes;

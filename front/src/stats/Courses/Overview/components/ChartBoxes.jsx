@@ -35,25 +35,13 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
   const [viewModules, setViewModules] = useState(true);
   const isShort = useMediaQuery({ maxWidth: 418 });
 
-  const [dataLoaded, setDataLoaded, dataLine, dataPie] = useChartBoxes(
+  const [setWeek, dataLoaded, setDataLoaded, dataLine, dataPie] = useChartBoxes(
     generalStats,
     recoverCourseDetailedStats,
     errors,
     setErrors,
     viewModules
   );
-
-  const setWeek = (dateIsoString, d = 0) => {
-    let DAY_IN_MILISECS = 24 * 60 * 60 * 1000;
-    let date = new Date(dateIsoString);
-    setDataLoaded({
-      ...dataLoaded,
-      upperDate: new Date(date.getTime() + d * DAY_IN_MILISECS).toISOString(),
-      lowerDate: new Date(
-        date.getTime() + d - 7 * DAY_IN_MILISECS
-      ).toISOString(),
-    });
-  };
 
   return (
     <ListGroup style={{ margin: '0.5rem 0' }} id="chartboxes">
