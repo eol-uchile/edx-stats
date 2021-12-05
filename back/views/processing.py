@@ -13,13 +13,27 @@ from django.core.cache import cache
 logger = logging.getLogger(__name__)
 
 pps_videore = re.compile(
-    r'{"duration"\: ([0-9.]+), "code"\: "(.*)", "id"\: "(.*)", "currentTime"\: ([0-9.]+)}')
+    r'((?<="duration": )[0-9.]+?(?=,|}))|((?<="code": ").*?(?="))|((?<="id": ").*?(?="))|((?<="currentTime": )[0-9.]?(?=,|}))'
+)
 load_videore = re.compile(
-    r'{"duration"\: ([0-9.]+), "code"\: "(.*)", "id"\: "(.*)"}')
+    r'((?<="duration": )[0-9.]+?(?=,|}))|((?<="code": ").*?(?="))|((?<="id": ").*?(?="))'
+)
 seek_videore = re.compile(
-    r'{"code"\: "(.*)", "new_time"\: ([0-9.]+), "old_time"\: ([0-9.]+), "duration"\: ([0-9.]+), "type"\: ".*", "id"\: "(.*)"}')
+    r'((?<="code": ").*?(?="))|((?<="new_time": )[0-9.]+?(?=,|}))|((?<="old_time": )[0-9.]+?(?=,|}))|((?<="duration": )[0-9.]+?(?=,|}))|((?<="type": ").*?(?="))|((?<="id": ").*?(?="))'
+)
 speedchange_videore = re.compile(
-    r'{"current_time"\: ([0-9.]*), "old_speed"\: "([0-9.]*)", "code"\: "(.*)", "new_speed"\: "([0-9.]*)", "duration"\: ([0-9.]*), "id"\: "(.*)"}')
+    r'((?<="current_time": )[0-9.]+?(?=,|}))|((?<="old_speed": )[0-9.]+?(?=,|}))|((?<="code": ").*?(?="))|((?<="new_speed": )[0-9.]+?(?=,|}))|((?<="duration": )[0-9.]+?(?=,|}))|((?<="id": ").*?(?="))'
+)
+
+def reduce_to_tuple(groupTuples):
+    """
+    Reduce an array of tuples to a single tuple
+    Eg: [("","","id"),("duration","",""),("","code","")]
+        returns ("duration","code","id")
+    """
+    data = np.array(groupTuples)
+    match = pd.DataFrame(data)
+    return tuple(match.sum(axis=0))
 
 def video_info_parser(row):
     """
@@ -29,19 +43,20 @@ def video_info_parser(row):
     etype = row.event_type
     pps = ['play_video', 'pause_video', 'stop_video']
     if etype in pps:
-        match = pps_videore.match(row.event)
-        return match[3], float(match[1])
+        match = reduce_to_tuple(pps_videore.findall(row.event))
+        return match[2], float(match[0])
     elif etype == 'load_video':
-        match = load_videore.match(row.event)
-        return match[3], float(match[1])
+        match = reduce_to_tuple(load_videore.findall(row.event))
+        return match[2], float(match[0])
     elif etype == 'seek_video':
-        match = seek_videore.match(row.event)
-        return match[5], float(match[4])
+        match = reduce_to_tuple(seek_videore.findall(row.event))
+        return match[5], float(match[3])
     elif etype == 'speed_change_video':
-        match = speedchange_videore.match(row.event)
-        return match[6], float(match[5])
+        match = reduce_to_tuple(speedchange_videore.findall(row.event))
+        return match[5], float(match[4])
     else:
         return
+
 
 def generate_video_dataframe(raw_video_data):
     """
@@ -52,10 +67,11 @@ def generate_video_dataframe(raw_video_data):
     video_tuples = []
     for index, row in raw_video_data.iterrows():
         video_tuples.append(video_info_parser(row))
-    all_video_df = pd.DataFrame(
-        video_tuples, columns=video_cols).drop_duplicates()
+    all_video_df = pd.DataFrame(video_tuples,
+                                columns=video_cols).drop_duplicates()
 
     return all_video_df
+
 
 def video_event_expander(row):
     """
@@ -66,47 +82,47 @@ def video_event_expander(row):
     etype = row.event_type
     pps = ['play_video', 'pause_video', 'stop_video']
     if etype in pps:
-        match = pps_videore.match(row.event)
-        return (row.username, row.time, row.event_type,
-                match[3], float(match[1]), float(match[4]),
-                float(match[4]), float(match[4]))
+        match = reduce_to_tuple(pps_videore.findall(row.event))
+        return (row.username, row.time, row.event_type, match[2], float(match[0]),
+                float(match[3]), float(match[3]), float(match[3]))
 
     elif etype == 'load_video':
-        match = load_videore.match(row.event)
-        return (row.username, row.time, row.event_type,
-                match[3], float(match[1]), -1, -1, -1)
+        match = reduce_to_tuple(load_videore.findall(row.event))
+        return (row.username, row.time, row.event_type, match[2], float(match[0]),
+                -1, -1, -1)
 
     elif etype == 'seek_video':
-        match = seek_videore.match(row.event)
-        old = float(match[3])
-        new = float(match[2])
+        match = reduce_to_tuple(seek_videore.findall(row.event))
+        old = float(match[2])
+        new = float(match[1])
         # Seek video forward
         if old < new:
-            return (row.username, row.time, 'seek_forward',
-                    match[5], float(match[4]), new, old, new)
+            return (row.username, row.time, 'seek_forward', match[5], float(match[3]), 
+            new, old, new)
         # Seek video backward
         elif old > new:
-            return (row.username, row.time, 'seek_back',
-                    match[5], float(match[4]), new, old, new)
+            return (row.username, row.time, 'seek_back', match[5], float(match[3]),
+                    new, old, new)
         else:
-            return (row.username, row.time, 'seek_equal',
-                    match[5], float(match[4]), new, old, new)
+            return (row.username, row.time, 'seek_equal', match[5], float(match[3]), 
+                    new, old, new)
     elif etype == 'speed_change_video':
-        match = speedchange_videore.match(row.event)
-        old = float(match[2])
-        new = float(match[4])
+        match = reduce_to_tuple(speedchange_videore.findall(row.event))
+        old = float(match[1])
+        new = float(match[3])
         if old < new:  # Speed increased
-            return (row.username, row.time, 'speed_change_up',
-                    match[6], float(match[5]), float(match[1]), old, new)
+            return (row.username, row.time, 'speed_change_up', match[5], float(match[4]), 
+                    float(match[0]), old, new)
         elif old > new:  # Speed decreased
-            return (row.username, row.time, 'speed_change_down',
-                    match[6], float(match[5]), float(match[1]), old, new)
+            return (row.username, row.time, 'speed_change_down', match[5], float(match[4]), 
+                    float(match[0]), old, new)
         else:
-            return (row.username, row.time, 'speed_change_equal',
-                    match[6], float(match[5]), float(match[1]), old, new)
+            return (row.username, row.time, 'speed_change_equal', match[5], float(match[4]), 
+                    float(match[0]), old, new)
 
     else:
         return
+
 
 def expand_event_info(video_logs):
     """
@@ -114,8 +130,10 @@ def expand_event_info(video_logs):
     with expanded video player info,
     initially contained in the event column
     """
-    dframe_cols = ['username', 'time', 'event_type',
-                'id', 'duration', 'currenttime', 'old', 'new']
+    dframe_cols = [
+        'username', 'time', 'event_type', 'id', 'duration', 
+        'currenttime', 'old', 'new'
+    ]
     extend_video_tuples = []
     for index, row in video_logs.iterrows():
         extend_video_tuples.append(video_event_expander(row))
