@@ -51,7 +51,7 @@ const VideosTable = (props) => {
     course.course_status === 'success',
     'tutorial-videostable'
   );
-
+  
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2">
       <Helmet>
