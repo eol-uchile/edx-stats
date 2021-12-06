@@ -4,8 +4,10 @@
 import logging
 from datetime import timedelta, datetime, date
 import pandas as pd
+import views.utils as ut
 from django.conf import settings
 from django.db import transaction
+from django.db.models import F
 from celery import shared_task
 from core.models import CourseVertical
 from core.tasks import process_logs_standard_procedure, process_logs_single_course
