@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, Fragment, useState } from 'react';
+import React, { useCallback, Fragment, useMemo } from 'react';
 import {
   Container,
   Row,
@@ -15,8 +15,11 @@ import { Collapsible } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import { CountBoxes, ChartBoxes, Menu } from './components';
 import PropTypes from 'prop-types';
-import { useLoadCourseInfo } from '../hooks';
-import { course as courseActions, actions } from '../../Courses/data/actions';
+import {
+  useLoadCourseInfo,
+  useLoadStructure,
+  useShowTutorial,
+} from '../hooks';
 import { overviewActions } from '.';
 import { overviewTutorial as steps } from '../data/tutorials';
 
@@ -31,48 +34,24 @@ const Overview = (props) => {
     []
   );
 
+  const statsErrors = useMemo(
+    () => generalStats.general_errors.concat(generalStats.detailed_errors),
+    [generalStats.general_errors, generalStats.detailed_errors]
+  );
+
   const [state, setState, errors, setErrors, removeErrors] = useLoadCourseInfo(
     props.match,
     resetStats,
-    generalStats.errors
+    statsErrors
   );
 
-  useEffect(() => {
-    if (
-      state.current !== '' &&
-      state.lowerDate !== '' &&
-      state.upperDate !== '' &&
-      state.allowed
-    ) {
-      dispatch(courseActions.recoverCourseStructure(state.current));
-      setErrors([]);
-      dispatch(actions.cleanErrors());
-    }
-  }, [state.current, state.lowerDate, state.upperDate, state.allowed]);
+  const courseStructure = useLoadStructure(state, setErrors);
 
-  const showTutorial = () => {
-    introJs()
-      .setOptions({
-        steps: steps,
-        showBullets: false,
-        showProgress: true,
-        prevLabel: 'Atrás',
-        nextLabel: 'Siguiente',
-        doneLabel: 'Finalizar',
-        keyboardNavigation: true,
-      })
-      .start()
-      .onexit(() => window.scrollTo({ behavior: 'smooth', top: 0 }));
-  };
-  useEffect(() => {
-    if (
-      course.course_status === 'success' &&
-      localStorage.getItem('tutorial-overview') === null
-    ) {
-      showTutorial();
-      localStorage.setItem('tutorial-overview', 'seen');
-    }
-  }, [course.course_status]);
+  const tutorial = useShowTutorial(
+    steps,
+    course.course_status === 'success',
+    'tutorial-overview'
+  );
 
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2">

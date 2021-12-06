@@ -24,40 +24,48 @@ const useCountBoxes = (
   }, [course.course, lowerDate, upperDate]);
 
   const [countBox, setCountBox] = useState({
-    loaded: false,
-    values: { visits: 0, users: 0, times: 0 },
+    visits: { loaded: false, value: 0 },
+    users: { loaded: false, value: 0 },
+    times: { loaded: false, value: 0 },
   });
 
   useEffect(() => {
-    if (
-      dataLoaded &&
-      data.general_visits !== '' &&
-      data.general_users !== '' &&
-      data.general_times !== ''
-    ) {
+    if (dataLoaded && data.general_visits !== '') {
+      setCountBox({
+        ...countBox,
+        visits: {
+          loaded: true,
+          value: data.general_visits,
+        },
+      });
+    }
+  }, [dataLoaded, data.general_visits]);
+
+  useEffect(() => {
+    if (dataLoaded && data.general_users !== '') {
+      setCountBox({
+        ...countBox,
+        users: {
+          loaded: true,
+          value: data.general_users,
+        },
+      });
+    }
+  }, [dataLoaded, data.general_users]);
+
+  useEffect(() => {
+    if (dataLoaded && data.general_times !== '') {
       let seconds = data.general_times;
       let minutes = Math.floor(seconds / 60);
       setCountBox({
-        loaded: true,
-        values: {
-          visits: data.general_visits,
-          users: data.general_users,
-          times: minutes,
+        ...countBox,
+        times: {
+          loaded: true,
+          value: minutes,
         },
       });
-      setErrors([]);
     }
-  }, [dataLoaded, data.general_visits, data.general_users, data.general_times]);
-
-  useEffect(() => {
-    if (errors.length > 0) {
-      // If errors then reset the state
-      setCountBox({
-        loaded: true,
-        values: { visits: 0, users: 0, times: 0 },
-      });
-    }
-  }, [errors]);
+  }, [dataLoaded, data.general_times]);
 
   return [dataLoaded, setDataLoaded, countBox];
 };

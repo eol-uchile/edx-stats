@@ -162,8 +162,6 @@ def hourly_visits_overview_on_course(request):
 def general_visits_overview_course(request):
     """
     Recover general visits overview for course.
-
-    Recover total visits on period and total students
     """
     roles = recoverUserCourseRoles(request)
     allowed_list = [r['course_id'].replace(
@@ -190,16 +188,8 @@ def general_visits_overview_course(request):
     else:
         total_visits = 0
 
-    total_users = VisitOnPage.objects.filter(
-        vertical__is_active=True,
-        vertical__course__icontains=course,
-        time__lte=time__lte,
-        time__gte=time__gte,
-    ).values("username").distinct("username").count()
-
     return JsonResponse({
-        'total_visits': total_visits,
-        'total_users': total_users,
+        'total_visits': total_visits
     })
 
 @api_view()

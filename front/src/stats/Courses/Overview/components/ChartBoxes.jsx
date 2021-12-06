@@ -35,25 +35,13 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
   const [viewModules, setViewModules] = useState(true);
   const isShort = useMediaQuery({ maxWidth: 418 });
 
-  const [dataLoaded, setDataLoaded, dataLine, dataPie] = useChartBoxes(
+  const [setWeek, dataLoaded, setDataLoaded, dataLine, dataPie] = useChartBoxes(
     generalStats,
     recoverCourseDetailedStats,
     errors,
     setErrors,
     viewModules
   );
-
-  const setWeek = (dateIsoString, d = 0) => {
-    let DAY_IN_MILISECS = 24 * 60 * 60 * 1000;
-    let date = new Date(dateIsoString);
-    setDataLoaded({
-      ...dataLoaded,
-      upperDate: new Date(date.getTime() + d * DAY_IN_MILISECS).toISOString(),
-      lowerDate: new Date(
-        date.getTime() + d - 7 * DAY_IN_MILISECS
-      ).toISOString(),
-    });
-  };
 
   return (
     <ListGroup style={{ margin: '0.5rem 0' }} id="chartboxes">
@@ -83,24 +71,28 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                   type="date"
                   value={dataLoaded.upperDate.slice(0, 10)}
                   onChange={(e) => setWeek(e.target.value)}
+                  disabled={generalStats.loading}
                 />
               </InputGroup>
               <Button
                 onClick={() => setWeek(courseData.lowerDate)}
                 data-testid="chart-startDate"
                 title="Ir al inicio del curso"
+                disabled={generalStats.loading}
               >
                 <FontAwesomeIcon icon={faAngleDoubleLeft} />
               </Button>
               <Button
                 onClick={() => setWeek(dataLoaded.upperDate, -7)}
                 title="Retroceder una semana"
+                disabled={generalStats.loading}
               >
                 <FontAwesomeIcon icon={faAngleLeft} />
               </Button>
               <Button
                 onClick={() => setWeek(dataLoaded.upperDate, 7)}
                 title="Avanzar una semana"
+                disabled={generalStats.loading}
               >
                 <FontAwesomeIcon icon={faAngleRight} />
               </Button>
@@ -108,16 +100,14 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                 onClick={() => setWeek(courseData.upperDate)}
                 data-testid="chart-endDate"
                 title="Ir al fin del curso"
+                disabled={generalStats.loading}
               >
                 <FontAwesomeIcon icon={faAngleDoubleRight} />
               </Button>
             </ButtonGroup>
           </Col>
         </Row>
-        {dataLine.loaded &&
-        dataLine.values.length !== 0 &&
-        dataPie.loaded &&
-        dataPie.values.length !== 0 ? (
+        {dataLine.values.length !== 0 && dataPie.values.length !== 0 ? (
           <Row>
             <Col lg="6" className="week-line">
               <ChartBox title={'Total durante la semana'}>
@@ -179,7 +169,9 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
               </ChartBox>
             </Col>
           </Row>
-        ) : errors.length === 0 && (!dataLine.loaded || !dataPie.loaded) ? (
+        ) : ((!dataLine.loaded || !dataPie.loaded) &&
+            generalStats.detailed_errors.length === 0) ||
+          generalStats.loading ? (
           <Row>
             <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
               <Spinner animation="border" variant="primary" />

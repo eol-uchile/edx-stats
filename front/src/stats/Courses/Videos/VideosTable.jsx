@@ -1,14 +1,13 @@
-import React, { useEffect, useCallback, useState, Fragment } from 'react';
+import React, { useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Row, Col, Breadcrumb, InputGroup, Container } from 'react-bootstrap';
-import { Button, Input, Spinner, Alert } from '@edx/paragon';
+import { Spinner, Alert } from '@edx/paragon';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { course as courseActions, actions } from '../data/actions';
 import { videosActions } from '.';
 import { TotalViews, VideoCoverage, VideoDetailed } from './components';
-import { useLoadCourseInfo } from '../hooks';
+import { useLoadCourseInfo, useLoadStructure, useShowTutorial } from '../hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import '../common/TableandChart.css';
@@ -39,44 +38,20 @@ const VideosTable = (props) => {
     videos.errors
   );
 
+  const courseStructure = useLoadStructure(state, setErrors);
+
   const recoverVideos = useCallback((i) => {
     dispatch(videosActions.recoverVideos(i));
   }, []);
 
   const [rowData, setRowData] = useLoadVideos(videos, recoverVideos);
 
-  useEffect(() => {
-    if (state.current !== '' && state.courseName !== '' && state.allowed) {
-      dispatch(courseActions.recoverCourseStructure(state.current));
-      setErrors([]);
-      dispatch(actions.cleanErrors());
-    }
-  }, [state.current, state.courseName, state.allowed]);
-
-  const showTutorial = () => {
-    introJs()
-      .setOptions({
-        steps: steps,
-        showBullets: false,
-        showProgress: true,
-        prevLabel: 'Atrás',
-        nextLabel: 'Siguiente',
-        doneLabel: 'Finalizar',
-        keyboardNavigation: true,
-      })
-      .start()
-      .onexit(() => window.scrollTo({ behavior: 'smooth', top: 0 }));
-  };
-  useEffect(() => {
-    if (
-      rowData.loaded &&
-      localStorage.getItem('tutorial-videostable') === null
-    ) {
-      showTutorial();
-      localStorage.setItem('tutorial-videostable', 'seen');
-    }
-  }, [rowData.loaded]);
-
+  const tutorial = useShowTutorial(
+    steps,
+    course.course_status === 'success',
+    'tutorial-videostable'
+  );
+  
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2">
       <Helmet>

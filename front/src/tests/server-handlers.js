@@ -91,6 +91,14 @@ const handlers = [
     }
     return res(ctx.json({
       total_visits: 1481,
+    }));
+  }),
+  rest.get(`${base_url}/api/core/usersincourse/overview/*`, async (req, res, ctx) => {
+    let course = req.url.searchParams.get('course');
+    if (params === undefined) {
+      return res(ctx.status(400));
+    }
+    return res(ctx.json({
       total_users: 32,
     }));
   }),

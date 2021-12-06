@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from core.models import CourseVertical, Log, Student
 from core.serializers import LogSerializer, CourseVerticalSerializer
 from core.authentication import recoverUserCourseRoles
+from django.db import connections
 
 
 class LogViewSet(viewsets.ModelViewSet):
@@ -70,7 +71,7 @@ def verify_time_range_course_params(request):
 
 
 @api_view()
-#@cache_page(settings.CACHE_TTL, key_prefix="v1")
+@cache_page(settings.CACHE_TTL, key_prefix="v1")
 def get_course_structure(request):
     """
     Map a course structure using the recovered Verticals from the Edx API
@@ -189,10 +190,58 @@ def health(_):
 def get_student_information(request):
     """
     Retrieve Student instance using loaded info from lms
+    Checks if the user has role permissions
     """
+    roles = recoverUserCourseRoles(request)
+    allowed_list = [r['course_id'].replace(
+        "course", "block") for r in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES]
+
+    course = request.query_params["course"]
+
+    # Check that user has permissions
+    if course not in allowed_list:
+        return Response(status=status.HTTP_403_FORBIDDEN, data="No tiene permisos para ver los datos en los cursos solicitados")
+
     if "username" not in request.query_params:
         return Response(status=status.HTTP_400_BAD_REQUEST, data="Username field required")
+
     student = Student.objects.filter(username=request.query_params["username"])
     if len(student) == 0:
         return Response(status=status.HTTP_204_NO_CONTENT)
-    return JsonResponse({'student': list(student.values('username','name','year_of_birth','gender','email','date_joined','country', 'last_update'))})
+    return JsonResponse({'student': list(student.values('username', 'name', 'year_of_birth', 'gender', 'email', 'date_joined', 'country', 'last_update'))})
+
+
+@api_view()
+def count_users_overview_course(request):
+    """
+    Recover total students in a course
+    """
+    roles = recoverUserCourseRoles(request)
+    allowed_list = [r['course_id'].replace(
+        "course", "block") for r in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES]
+
+    try:
+        course, time__gte, time__lte = verify_time_range_course_params(request)
+    except Exception as e:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=str(e))
+
+    # Check that user has permissions
+    if course not in allowed_list:
+        return Response(status=status.HTTP_403_FORBIDDEN, data="No tiene permisos para ver los datos en los cursos solicitados")
+
+    with connections['lms'].cursor() as cursor:
+        cursor.execute(
+            "SELECT "
+            "COUNT(auth_user.id) "
+            "FROM "
+            "auth_user "
+            "JOIN student_courseenrollment ON auth_user.id = student_courseenrollment.user_id "
+            "JOIN auth_userprofile ON auth_user.id = auth_userprofile.user_id "
+            "WHERE course_id=%s "
+            "AND is_staff=False",
+        [course.replace('block-v1','course-v1')])
+        total = cursor.fetchone()[0]
+        
+    return JsonResponse({
+        'total_users': total,
+    })
