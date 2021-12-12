@@ -14,44 +14,16 @@ import { videosActions } from '../';
 import { useProcessDetailed } from '../hooks';
 import PropTypes from 'prop-types';
 
-const VideoDetailed = ({ videoDict, errors, setErrors }) => {
+const VideoDetailed = ({ tableData, errors, setErrors }) => {
   const videos = useSelector((state) => state.videos);
   const dispatch = useDispatch();
-
-  const [videoSelector, setVideoSelector] = useState({
-    selected: 0,
-    options: [{ block_id: '', value: '', key: 0 }],
-  });
-
-  useEffect(() => {
-    if (videoDict.loaded) {
-      let options = [];
-      Object.keys(videoDict.videos).forEach((b, k) => {
-        options.push({
-          block_id: b,
-          duration: videoDict.videos[b].duration,
-          value: `${videoDict.videos[b].position} ${videoDict.videos[b].name}`,
-          key: k,
-        });
-      });
-      setVideoSelector({
-        options: options,
-        selected: 0,
-      });
-    }
-  }, [videoDict]);
 
   const recoverVideoDetails = useCallback((i, v) => {
     dispatch(videosActions.recoverVideoDetails(i, v));
   }, []);
 
-  const [dataLoaded, setDataLoaded, rowData] = useProcessDetailed(
-    videos,
-    recoverVideoDetails,
-    errors,
-    setErrors,
-    videoSelector.options[videoSelector.selected]
-  );
+  const [videoSelector, setVideoSelector, rowData, setRowData] =
+    useProcessDetailed(tableData, videos.detailed, recoverVideoDetails, errors);
 
   const isShort = useMediaQuery({ maxWidth: 418 });
 
@@ -154,7 +126,7 @@ const VideoDetailed = ({ videoDict, errors, setErrors }) => {
 };
 
 VideoDetailed.propTypes = {
-  videoDict: PropTypes.shape({
+  tableData: PropTypes.shape({
     duration: PropTypes.number.isRequired,
     position: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,

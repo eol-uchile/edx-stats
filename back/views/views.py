@@ -161,8 +161,7 @@ def video_details(request):
 
     if "course" not in request.query_params:
         return Response(status=status.HTTP_400_BAD_REQUEST, data="Se requiere un curso válido.")
-    else:
-        course = request.query_params["course"]
+    course = request.query_params["course"]
 
     # Check that user has permissions
     if course not in allowed_list:
@@ -170,8 +169,7 @@ def video_details(request):
 
     if "video" not in request.query_params:
         return Response(status=status.HTTP_400_BAD_REQUEST, data="Se requiere un video válido.")
-    else:
-        video_id = request.query_params["video"]
+    video_id = request.query_params["video"]
 
     video_viewers = ViewOnVideo.objects.filter(
         video__vertical__is_active=True,
@@ -185,4 +183,7 @@ def video_details(request):
         )
         partitions = ut.make_partition_with_repetition(segments)
         viewers.append(partitions)
+
+    if len(viewers) == 0:
+        return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(viewers)

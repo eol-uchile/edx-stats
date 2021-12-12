@@ -23,14 +23,16 @@ import { videosTutorial as steps } from '../data/tutorials';
  */
 const VideosTable = (props) => {
   const course = useSelector((state) => state.course);
-  const dispatch = useDispatch();
-
   const videos = useSelector((state) => state.videos);
+  const dispatch = useDispatch();
 
   const resetVideos = useCallback(
     () => dispatch(videosActions.resetVideos()),
     []
   );
+  const recoverVideos = useCallback((i) => {
+    dispatch(videosActions.recoverVideos(i));
+  }, []);
 
   const [state, setState, errors, setErrors, removeErrors] = useLoadCourseInfo(
     props.match,
@@ -38,20 +40,20 @@ const VideosTable = (props) => {
     videos.errors
   );
 
+  const [tableData, setTableData] = useLoadVideos(
+    videos.video_list,
+    recoverVideos,
+    errors
+  );
+
   const courseStructure = useLoadStructure(state, setErrors);
-
-  const recoverVideos = useCallback((i) => {
-    dispatch(videosActions.recoverVideos(i));
-  }, []);
-
-  const [rowData, setRowData] = useLoadVideos(videos, recoverVideos);
 
   const tutorial = useShowTutorial(
     steps,
     course.course_status === 'success',
     'tutorial-videostable'
   );
-  
+
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2">
       <Helmet>
@@ -103,13 +105,13 @@ const VideosTable = (props) => {
           </h2>
         </Col>
       </Row>
-      {course.course_status === 'loading' ? (
+      {course.course_status === 'loading' && !tableData.loaded ? (
         <Row>
           <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />
           </Col>
         </Row>
-      ) : course.course_status === 'success' ? (
+      ) : tableData.loaded ? (
         <Fragment>
           <Row>
             <Col>
@@ -146,14 +148,18 @@ const VideosTable = (props) => {
               </ul>
             </Col>
           </Row>
-          <TotalViews barData={rowData} errors={errors} setErrors={setErrors} />
+          <TotalViews
+            tableData={tableData}
+            errors={errors}
+            setErrors={setErrors}
+          />
           <VideoCoverage
-            barData={rowData}
+            tableData={tableData}
             errors={errors}
             setErrors={setErrors}
           />
           <VideoDetailed
-            videoDict={rowData}
+            tableData={tableData}
             errors={errors}
             setErrors={setErrors}
           />

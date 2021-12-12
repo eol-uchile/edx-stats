@@ -7,7 +7,7 @@ import { videosActions } from '../';
 import { useProcessViewSum } from '../hooks';
 import PropTypes from 'prop-types';
 
-const TotalViews = ({ barData, errors, setErrors }) => {
+const TotalViews = ({ tableData, errors, setErrors }) => {
   const videos = useSelector((state) => state.videos);
   const dispatch = useDispatch();
 
@@ -15,12 +15,11 @@ const TotalViews = ({ barData, errors, setErrors }) => {
     dispatch(videosActions.recoverViewSum(i));
   }, []);
 
-  const [dataLoaded, setDataLoaded, rowData] = useProcessViewSum(
-    videos,
+  const [rowData, setRowData] = useProcessViewSum(
+    tableData,
+    videos.views,
     recoverViewSum,
-    errors,
-    setErrors,
-    barData
+    errors
   );
 
   const csvHeaders = useMemo(
@@ -85,7 +84,7 @@ const TotalViews = ({ barData, errors, setErrors }) => {
 };
 
 TotalViews.propTypes = {
-  barData: PropTypes.shape({
+  tableData: PropTypes.shape({
     duration: PropTypes.number.isRequired,
     position: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
