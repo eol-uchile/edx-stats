@@ -186,7 +186,7 @@ def general_visits_overview_course(request):
     if total_visits.count() != 0:
         total_visits = total_visits[0]['total']
     else:
-        total_visits = 0
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     return JsonResponse({
         'total_visits': total_visits

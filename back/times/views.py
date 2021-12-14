@@ -96,7 +96,7 @@ def general_times_overview_course(request):
     if total_course_time.count() != 0:
         total_course_time= total_course_time[0]['total']
     else:
-        total_course_time = 0
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
     return JsonResponse({
         'total_time': total_course_time,

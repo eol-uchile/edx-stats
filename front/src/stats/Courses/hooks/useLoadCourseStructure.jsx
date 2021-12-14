@@ -8,12 +8,18 @@ function useLoadStructure(courseInfo, setLocalErrors) {
     if (
       courseInfo.current !== '' &&
       courseInfo.lowerDate !== '' &&
-      courseInfo.upperDate !== '' &&
-      courseInfo.allowed
+      courseInfo.upperDate !== ''
     ) {
-      dispatch(courseActions.recoverCourseStructure(courseInfo.current));
-      setLocalErrors([]);
-      dispatch(actions.cleanErrors());
+      if (!courseInfo.allowed) {
+        setLocalErrors([
+          ...errors,
+          'No tienes permisos para consultar estos datos',
+        ]);
+      } else {
+        dispatch(courseActions.recoverCourseStructure(courseInfo.current));
+        setLocalErrors([]);
+        dispatch(actions.cleanErrors());
+      }
     }
   }, [
     courseInfo.current,
@@ -24,7 +30,12 @@ function useLoadStructure(courseInfo, setLocalErrors) {
   return;
 }
 
-function useLoadStructureOnSubmit(courseInfo, setLocalErrors, tableData, setTableData) {
+function useLoadStructureOnSubmit(
+  courseInfo,
+  setLocalErrors,
+  tableData,
+  setTableData
+) {
   const dispatch = useDispatch();
   // Load data when the button trigers
   const submit = () => {

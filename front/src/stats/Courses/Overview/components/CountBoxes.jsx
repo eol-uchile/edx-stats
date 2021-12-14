@@ -19,7 +19,7 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
     dispatch(overviewActions.recoverCourseGeneralUsers(i, l, u));
   }, []);
 
-  const [dataLoaded, setDataLoaded, countBox] = useCountBoxes(
+  const [visits, users, times] = useCountBoxes(
     generalStats,
     recoverCourseGeneralStats,
     errors,
@@ -38,13 +38,13 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
             caption={'Visitas totales'}
             countUpProps={{
               start: 0,
-              end: countBox.visits.value,
+              end: visits.value,
               duration: 2.75,
               separator: '.',
               decimals: 0,
               decimal: ',',
             }}
-            isLoading={!countBox.visits.loaded}
+            isLoading={!visits.loaded}
           />
         </Col>
         <Col md={4}>
@@ -54,13 +54,13 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
             caption={'Usuarios registrados'}
             countUpProps={{
               start: 0,
-              end: countBox.users.value,
+              end: users.value,
               duration: 2.75,
               separator: '.',
               decimals: 0,
               decimal: ',',
             }}
-            isLoading={!countBox.users.loaded}
+            isLoading={!users.loaded}
           />
         </Col>
         <Col md={4}>
@@ -70,13 +70,13 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
             caption={'Minutos vistos'}
             countUpProps={{
               start: 0,
-              end: countBox.times.value,
+              end: times.value,
               duration: 2.75,
               separator: '.',
               decimals: 0,
               decimal: ',',
             }}
-            isLoading={!countBox.times.loaded}
+            isLoading={!times.loaded}
           />
         </Col>
       </Row>

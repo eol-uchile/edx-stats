@@ -241,7 +241,9 @@ def count_users_overview_course(request):
             "AND is_staff=False",
         [course.replace('block-v1','course-v1')])
         total = cursor.fetchone()[0]
-        
+    
+    if(total == 0):
+        return Response(status=status.HTTP_204_NO_CONTENT)
     return JsonResponse({
         'total_users': total,
     })
