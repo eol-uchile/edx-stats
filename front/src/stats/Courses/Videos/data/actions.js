@@ -67,7 +67,7 @@ export const recoverViewSum =
           LOADING_VIEWS_ERROR,
           dispatch,
           getState
-        )(course_id, lower_date, upper_date)
+        )(course_id)
       );
   };
 
@@ -96,7 +96,7 @@ export const recoverCoverage =
           LOADING_VIEWS_ERROR,
           dispatch,
           getState
-        )(course_id, lower_date, upper_date)
+        )(course_id)
       );
   };
 
@@ -127,6 +127,6 @@ export const recoverVideoDetails =
           LOADING_VIEWS_ERROR,
           dispatch,
           getState
-        )(course_id, video_id, lower_date, upper_date)
+        )(course_id, video_id)
       );
   };

@@ -4,7 +4,7 @@ import { parseSecondToTimeString } from '../../helpers';
 
 const useProcessDetailed = (
   tableData,
-  videoPartitions,
+  partitionsPerUser,
   recoverData,
   errors
 ) => {
@@ -44,17 +44,25 @@ const useProcessDetailed = (
       vdSelector.options[vdSelector.selected].block_id !== ''
     ) {
       let current = course.course[0];
-      setDataLoaded(true);
       // Load data
       recoverData(current.id, vdSelector.options[vdSelector.selected].block_id);
     }
     // eslint-disable-next-line
-  }, [course.course, vdSelector.selected]);
+  }, [course.course, vdSelector]);
 
   useEffect(() => {
-    if (tableData.loaded && videoPartitions.length > 0 && errors.length === 0) {
-      let partitionsPerUser = videoPartitions;
+    if (
+      tableData.loaded &&
+      partitionsPerUser.length > 0 &&
+      errors.length === 0
+    ) {
       let videoPartitions = {};
+      // For each user
+      // and for each second watched by the user
+      // we create a key with the current second and
+      // two values for the unique and repeated replays.
+      // We add one to the unique value and
+      // (the number of times watched by the user - 1) to the repetitions
       partitionsPerUser.forEach((st_p) => {
         Object.keys(st_p).forEach((second) => {
           if (videoPartitions[second]) {
@@ -85,7 +93,7 @@ const useProcessDetailed = (
         loaded: true,
       });
     }
-  }, [tableData.loaded, videoPartitions]);
+  }, [tableData.loaded, partitionsPerUser]);
 
   useEffect(() => {
     if (errors.length > 0) {

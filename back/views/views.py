@@ -137,8 +137,8 @@ def videos_coverage(request):
         'vertical__vertical_number',
         'vertical__child_number'
     ).annotate(
-        completed=Count('viewonvideo', filter=Q(viewonvideo__coverage >= 0.9)),
-        uncompleted=Count('viewonvideo', filter=Q(viewonvideo__coverage < 0.9)),
+        completed=Count('viewonvideo', filter=Q(viewonvideo__coverage__gte = 0.9)),
+        uncompleted=Count('viewonvideo', filter=Q(viewonvideo__coverage__lt = 0.9)),
     )
     return manage_standard_request(request, query)
 

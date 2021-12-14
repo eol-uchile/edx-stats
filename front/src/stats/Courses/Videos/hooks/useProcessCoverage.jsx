@@ -31,14 +31,10 @@ const useProcessCoverage = (tableData, coverage, recoverData, errors) => {
             position: tableData.videos[obj['block_id']].position
               ? tableData.videos[obj['block_id']].position
               : '',
-            Completo: 0,
-            Incompleto: 0,
+            Completo: obj['completed'],
+            Incompleto: obj['uncompleted'],
           };
         }
-        // Add object to list for given key's value
-        obj['coverage'] >= 0.9
-          ? (acc[key].Completo += 1)
-          : (acc[key].Incompleto += 1);
         return acc;
       }, {});
       let stackedBars = Object.values(videos);

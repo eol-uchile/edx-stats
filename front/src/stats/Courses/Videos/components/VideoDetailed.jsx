@@ -127,9 +127,12 @@ const VideoDetailed = ({ tableData, errors, setErrors }) => {
 
 VideoDetailed.propTypes = {
   tableData: PropTypes.shape({
-    duration: PropTypes.number.isRequired,
-    position: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
+    loaded: PropTypes.bool.isRequired,
+    videos: PropTypes.shape({
+      duration: PropTypes.number,
+      position: PropTypes.string,
+      name: PropTypes.string,
+    }).isRequired,
   }).isRequired,
   errors: PropTypes.array.isRequired,
   setErrors: PropTypes.func.isRequired,
