@@ -15,11 +15,7 @@ import { Collapsible } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import { CountBoxes, ChartBoxes, Menu } from './components';
 import PropTypes from 'prop-types';
-import {
-  useLoadCourseInfo,
-  useLoadStructure,
-  useShowTutorial,
-} from '../hooks';
+import { useLoadCourseInfo, useLoadStructure, useShowTutorial } from '../hooks';
 import { overviewActions } from '.';
 import { overviewTutorial as steps } from '../data/tutorials';
 
@@ -47,7 +43,7 @@ const Overview = (props) => {
 
   const courseStructure = useLoadStructure(state, setErrors);
 
-  const tutorial = useShowTutorial(
+  const showTutorial = useShowTutorial(
     steps,
     course.course_status === 'success',
     'tutorial-overview'

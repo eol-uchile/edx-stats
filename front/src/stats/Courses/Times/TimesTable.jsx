@@ -88,7 +88,7 @@ const TimesTable = (props) => {
   const [modal, setModal, studentInfo, modalErrors, setUser] =
     useLoadStudentInfo(recoverStudentInfo, resetStudentInfo);
 
-  const tutorial = useShowTutorial(
+  const showTutorial = useShowTutorial(
     steps,
     rowData.loaded,
     'tutorial-timestable'

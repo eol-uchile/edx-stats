@@ -22,7 +22,7 @@ function useShowTutorial(steps, localCondition, storagedItem) {
     }
   }, [localCondition]);
 
-  return;
+  return showTutorial;
 }
 
 export default useShowTutorial;

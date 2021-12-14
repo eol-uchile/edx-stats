@@ -48,7 +48,7 @@ const VideosTable = (props) => {
 
   const courseStructure = useLoadStructure(state, setErrors);
 
-  const tutorial = useShowTutorial(
+  const showTutorial = useShowTutorial(
     steps,
     course.course_status === 'success',
     'tutorial-videostable'
