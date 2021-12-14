@@ -46,6 +46,10 @@ const useProcessDetailed = (
       let current = course.course[0];
       // Load data
       recoverData(current.id, vdSelector.options[vdSelector.selected].block_id);
+      setRowData({
+        loaded: false,
+        values: [],
+      });
     }
     // eslint-disable-next-line
   }, [course.course, vdSelector]);

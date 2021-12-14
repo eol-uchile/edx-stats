@@ -50,10 +50,10 @@ const VideoDetailed = ({ tableData, errors, setErrors }) => {
           <h4>Detalles por video</h4>
         </Col>
       </Row>
-      {rowData.loaded && rowData.values.length > 0 ? (
-        <Fragment>
-          <Row>
-            <Col sm={6}>
+      {tableData.loaded && errors.length === 0 && (
+        <Row>
+          <Col sm={6}>
+            {rowData.loaded && (
               <AsyncCSVButton
                 text="Descargar Datos"
                 filename={`${
@@ -62,42 +62,47 @@ const VideoDetailed = ({ tableData, errors, setErrors }) => {
                 headers={csvHeaders}
                 data={csvData}
               />
-            </Col>
-            <Col sm={6}>
-              <InputGroup
-                style={
-                  isShort
-                    ? { margin: '1rem 0', flexWrap: 'nowrap', width: 'auto' }
-                    : {
-                        paddingRight: '1.5rem',
-                        flexWrap: 'nowrap',
-                        width: 'auto',
-                      }
-                }
-                className={isShort ? 'float-left' : 'float-right'}
+            )}
+          </Col>
+          <Col sm={6}>
+            <InputGroup
+              style={
+                isShort
+                  ? { margin: '1rem 0', flexWrap: 'nowrap', width: 'auto' }
+                  : {
+                      paddingRight: '1.5rem',
+                      flexWrap: 'nowrap',
+                      width: 'auto',
+                    }
+              }
+              className={isShort ? 'float-left' : 'float-right'}
+            >
+              <InputGroup.Prepend>
+                <InputGroup.Text>Video</InputGroup.Text>
+              </InputGroup.Prepend>
+              <select
+                id="video-select"
+                data-testid="video-select"
+                type="date"
+                value={videoSelector.selected}
+                onChange={(e) => {
+                  setVideoSelector({
+                    ...videoSelector,
+                    selected: Number(e.target.value),
+                  });
+                }}
+                disabled={!rowData.loaded}
               >
-                <InputGroup.Prepend>
-                  <InputGroup.Text>Video</InputGroup.Text>
-                </InputGroup.Prepend>
-                <select
-                  id="video-select"
-                  data-testid="video-select"
-                  type="date"
-                  value={videoSelector.selected}
-                  onChange={(e) => {
-                    setVideoSelector({
-                      ...videoSelector,
-                      selected: Number(e.target.value),
-                    });
-                  }}
-                >
-                  {videoSelector.options.map((el) => (
-                    <option value={el.key}>{el.value}</option>
-                  ))}
-                </select>
-              </InputGroup>
-            </Col>
-          </Row>
+                {videoSelector.options.map((el) => (
+                  <option value={el.key}>{el.value}</option>
+                ))}
+              </select>
+            </InputGroup>
+          </Col>
+        </Row>
+      )}
+      {rowData.loaded && rowData.values.length > 0 ? (
+        <Fragment>
           <Row>
             <Col>
               <StackedArea

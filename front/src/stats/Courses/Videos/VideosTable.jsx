@@ -50,7 +50,7 @@ const VideosTable = (props) => {
 
   const showTutorial = useShowTutorial(
     steps,
-    course.course_status === 'success',
+    tableData.loaded,
     'tutorial-videostable'
   );
 

@@ -138,7 +138,7 @@ const videosTutorial = [
   {
     element: '#VisualizacionesTotales',
     title: 'Visualizaciones totales',
-    intro: `En esta sección se cargarán las visualizaciones de cada video, 
+    intro: `En esta sección se cargarán los minutos vistos de cada video, 
       incluyendo repeticiones, 
       acompañado de la cantidad de estudiantes que
       vieron el contenido.`,
@@ -148,7 +148,7 @@ const videosTutorial = [
     title: 'Cobertura',
     intro: `En esta sección se cargará la cantidad de estudiantes que han visto
       en completitud los videos y cuántos no lo han hecho.
-      Las estadísticas en verde corresponden a visualizaciones completas.`,
+      Las estadísticas en azul corresponden a visualizaciones completas.`,
   },
   {
     element: '#DetallesPorVideo',
@@ -157,7 +157,7 @@ const videosTutorial = [
       Las estadísticas en azul oscuro corresponden a repeticiones.`,
   },
   {
-    element: '#DetallesPorVideo .input-group',
+    element: '#DetallesPorVideo div.input-group',
     title: 'Detalle por video',
     intro: `Para ver la información de otro video, seleccionelo en la lista
       desplegable.`,
