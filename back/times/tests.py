@@ -93,7 +93,7 @@ class TestTimesOnCourse(UserMixin, JwtMixin, APITestCase):
         mock_recoverUserCourseRoles.return_value = {
             'roles': [{'course_id': 'Test-EOL_T2', 'role': 'staff'}]}
         response = self.client.get(
-            self.url+"?course=Test-EOL_T2&time__gte=2019-09-04T00:00:00.000000&time__lte=2019-09-05T00:00:00.000000")
+            self.url+"?course=block-v1:Test-EOL_T2&time__gte=2019-09-04T00:00:00.000000&time__lte=2019-09-05T00:00:00.000000")
         self.assertEqual(response.status_code, 200)
 
 
