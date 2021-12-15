@@ -315,12 +315,12 @@ def calculate_coverage(course=None):
     user (ViewOnVideo) to the corresponding video.
 
     Arguments
-    - course to be processed
+    - course: course_id to be processed without block-v1 prefix
     """
     def compute_coverage_single_course(course_id):
         segments_user_video = ViewOnVideo.objects.filter(
             video__vertical__is_active=True,
-            video__vertical__course__icontains=course_id,
+            video__vertical__course__icontains=course_id+"+type@course+block@course",
         ).order_by('video__vertical__chapter_number',
                    'video__vertical__sequential_number',
                    'video__vertical__vertical_number',

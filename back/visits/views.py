@@ -50,18 +50,17 @@ def visits_on_course(request):
     Compact user visits per verticals by days
 
     Expects 3 query parameters
-    - course: course id in block-v1:COURSE+type@course+block@course format
+    - course: course id in block-v1:COURSE format
     - time__gte (lower limit): a string datetime in isoformat
     - time__lte (upper limit): a string datetime in isoformat
     both timestamps are included on the query.
 
     Timezone is added on runtime
     """
-    # Course will arrive in format block-v1:COURSE without +type@course-block@course
-    # hence we do a icontains query
+    # Course will arrive in format block-v1:COURSE without +type@course+block@course
     query = lambda x,y,z: VisitOnPage.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=x,
+        vertical__course=x+"+type@course+block@course",
         time__lte=y,
         time__gte=z
     ).annotate(
@@ -79,7 +78,7 @@ def daily_visits_per_chapter_on_course(request):
     Compact user visits per verticals and add all for each day
 
     Expects 3 query parameters
-    - course: course id in block-v1:COURSE+type@course+block@course format
+    - course: course id in block-v1:COURSE format
     - time__gte (lower limit): a string datetime in isoformat
     - time__lte (upper limit): a string datetime in isoformat
     both timestamps are included on the query.
@@ -87,11 +86,10 @@ def daily_visits_per_chapter_on_course(request):
     Timezone is added on runtime
     """
     
-    # Course will arrive in format block-v1:COURSE without +type@course-block@course
-    # hence we do a icontains query
+    # Course will arrive in format block-v1:COURSE without +type@course+block@course
     query = lambda x,y,z: VisitOnPage.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=x,
+        vertical__course=x+"+type@course+block@course",
         time__lte=y,
         time__gte=z
     ).annotate(
@@ -107,7 +105,7 @@ def daily_visits_on_course(request):
     Compact user visits per verticals and add all for each day
 
     Expects 3 query parameters
-    - course: course id in block-v1:COURSE+type@course+block@course format
+    - course: course id in block-v1:COURSE format
     - time__gte (lower limit): a string datetime in isoformat
     - time__lte (upper limit): a string datetime in isoformat
     both timestamps are included on the query.
@@ -115,11 +113,10 @@ def daily_visits_on_course(request):
     Timezone is added on runtime
     """
     
-    # Course will arrive in format block-v1:COURSE without +type@course-block@course
-    # hence we do a icontains query
+    # Course will arrive in format block-v1:COURSE without +type@course+block@course
     query = lambda x,y,z: VisitOnPage.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=x,
+        vertical__course=x+"+type@course+block@course",
         time__lte=y,
         time__gte=z
     ).annotate(
@@ -135,7 +132,7 @@ def hourly_visits_overview_on_course(request):
     Compact user visits per verticals. Use these and group by hour and day
 
     Expects 3 query parameters
-    - course: course id in block-v1:COURSE+type@course+block@course format
+    - course: course id in block-v1:COURSE format
     - time__gte (lower limit): a string datetime in isoformat
     - time__lte (upper limit): a string datetime in isoformat
     both timestamps are included on the query.
@@ -143,11 +140,10 @@ def hourly_visits_overview_on_course(request):
     Timezone is added on runtime
     """
     
-    # Course will arrive in format block-v1:COURSE without +type@course-block@course
-    # hence we do a icontains query
+    # Course will arrive in format block-v1:COURSE without +type@course+block@course
     query = lambda x,y,z: VisitOnPage.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=x,
+        vertical__course=x+"+type@course+block@course",
         time__lte=y,
         time__gte=z,
     ).annotate(
@@ -178,7 +174,7 @@ def general_visits_overview_course(request):
 
     total_visits = VisitOnPage.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=course,
+        vertical__course=course+"+type@course+block@course",
         time__lte=time__lte,
         time__gte=time__gte,
     )
@@ -213,7 +209,7 @@ def detailed_visits_overview_course(request):
 
     total_visits = VisitOnPage.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=course,
+        vertical__course=course+"+type@course+block@course",
         time__lte=time__lte,
         time__gte=time__gte,
     )

@@ -82,10 +82,10 @@ def get_course_structure(request):
 
     if "search" not in request.query_params:
         return Response(status=status.HTTP_400_BAD_REQUEST, data="Search field required")
-    # Look on course name and course code
+    # Look on course name and course code in format course-v1:COURSE without +type@course+block@course
     verticals = CourseVertical.objects.filter(
         Q(course_name__icontains=request.query_params["search"]) |
-        Q(course__icontains=request.query_params["search"].replace("course-v1", "block-v1")))
+        Q(course=request.query_params["search"].replace("course-v1", "block-v1"))+"+type@course+block@course")
     if len(verticals) == 0:
         return Response(status=status.HTTP_204_NO_CONTENT)
 

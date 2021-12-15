@@ -51,16 +51,15 @@ def videos_course(request):
     Returns active videos with its position
 
     Expects 1 query parameter
-    - course: course id in block-v1:COURSE+type@course+block@course format
+    - course: course id in block-v1:COURSE format
 
     Timezone is added on runtime
     """
-    # Course will arrive in format block-v1:COURSE without +type@course-block@course
-    # hence we do a icontains query
+    # Course will arrive in format block-v1:COURSE without +type@course+block@course
     
     def query(x): return Video.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=x
+        vertical__course=x+"+type@course+block@course"
     ).values(
         'block_id', 'duration'
     ).order_by(
@@ -95,15 +94,14 @@ def videos_statistics(request):
     """
     Returns active videos and its basics statistics
     Expects 1 query parameter
-    - course: course id in block-v1:COURSE+type@course+block@course format
+    - course: course id in block-v1:COURSE format
 
     Timezone is added on runtime
     """
-    # Course will arrive in format block-v1:COURSE without +type@course-block@course
-    # hence we do a icontains query
+    # Course will arrive in format block-v1:COURSE without +type@course+block@course
     def query(x): return Video.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=x
+        vertical__course=x+"+type@course+block@course"
     ).values(
         'block_id', 'watch_time'
     ).order_by(
@@ -122,13 +120,13 @@ def videos_coverage(request):
     Compact user coverage for each video
 
     Expects 1 query parameter
-    - course: course id in block-v1:COURSE+type@course+block@course format
+    - course: course id in block-v1:COURSE format
 
     Timezone is added on runtime
     """
     def query(x): return Video.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=x,
+        vertical__course=x+"+type@course+block@course",
     ).values(
         'block_id',
     ).order_by(
@@ -149,12 +147,11 @@ def video_details(request):
     counting uniques visualizations and repetitions.
 
     Expects 1 query parameter
-    - course: course id in block-v1:COURSE+type@course+block@course format
+    - course: course id in block-v1:COURSE format
 
     Timezone is added on runtime
     """
-    # Course will arrive in format block-v1:COURSE without +type@course-block@course
-    # hence we do a icontains query
+    # Course will arrive in format block-v1:COURSE without +type@course+block@course
     roles = recoverUserCourseRoles(request)
     allowed_list = [r['course_id'].replace(
         "course", "block") for r in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES]
@@ -173,7 +170,7 @@ def video_details(request):
 
     video_viewers = ViewOnVideo.objects.filter(
         video__vertical__is_active=True,
-        video__vertical__course__icontains=course,
+        video__vertical__course=course+"+type@course+block@course",
         video__block_id=video_id
     )
     viewers = []
