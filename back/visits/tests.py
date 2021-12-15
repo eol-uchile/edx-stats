@@ -14,7 +14,7 @@ class TestVisitsOnCourse(UserMixin, JwtMixin, APITestCase):
         self.user = self.create_user()
         CourseVertical.objects.create(
             is_active=True,
-            course="Test-EOL_T2",
+            course="block-v1:Test-EOL_T2+type@course+block@course",
             course_name="Test EOL T2",
             chapter="Test-EOL_T2+type@chapter+block@a", 
             chapter_name="Chapter 1: Testing", 
@@ -34,7 +34,7 @@ class TestVisitsOnCourse(UserMixin, JwtMixin, APITestCase):
         VisitOnPage.objects.create(
             vertical=CourseVertical.objects.filter(
                 sequential="Test-EOL_T2+type@sequential+block@0a",
-                course="Test-EOL_T2"
+                course="block-v1:Test-EOL_T2+type@course+block@course"
             ).first(),
             username="eol",
             count=1,
