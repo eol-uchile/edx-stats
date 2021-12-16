@@ -16,13 +16,13 @@ class TestVisitsOnCourse(UserMixin, JwtMixin, APITestCase):
             is_active=True,
             course="block-v1:Test-EOL_T2+type@course+block@course",
             course_name="Test EOL T2",
-            chapter="Test-EOL_T2+type@chapter+block@a", 
+            chapter="block-v1:Test-EOL_T2+type@chapter+block@a", 
             chapter_name="Chapter 1: Testing", 
-            sequential="Test-EOL_T2+type@sequential+block@0a",
+            sequential="block-v1:Test-EOL_T2+type@sequential+block@0a",
             sequential_name="Introduction to testing",
-            vertical="Test-EOL_T2+type@vertical+block@a",
+            vertical="block-v1:Test-EOL_T2+type@vertical+block@a",
             vertical_name="Resume",
-            block_id = "Test-EOL_T2+type@html+block@a",
+            block_id = "block-v1:Test-EOL_T2+type@html+block@a",
             vertical_number = 1,
             sequential_number = 1,
             chapter_number = 1,
@@ -33,7 +33,7 @@ class TestVisitsOnCourse(UserMixin, JwtMixin, APITestCase):
         )
         VisitOnPage.objects.create(
             vertical=CourseVertical.objects.filter(
-                sequential="Test-EOL_T2+type@sequential+block@0a",
+                sequential="block-v1:Test-EOL_T2+type@sequential+block@0a",
                 course="block-v1:Test-EOL_T2+type@course+block@course"
             ).first(),
             username="eol",
@@ -49,47 +49,47 @@ class TestVisitsOnCourse(UserMixin, JwtMixin, APITestCase):
     @patch('visits.views.recoverUserCourseRoles')
     def test_no_search_field_fails(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
-        mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "Test-Eol-Fail", "role": ""}]}
+        mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "course-v1:Test-Eol-Fail", "role": ""}]}
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 400)
     
     @patch('visits.views.recoverUserCourseRoles')
     def test_no_llimit_field_fails(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
-        mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "Test-Eol-Fail", "role": ""}]}
-        response = self.client.get(self.url+"?course=Test-EOL_T1")
+        mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "course-v1:Test-Eol-Fail", "role": ""}]}
+        response = self.client.get(self.url+"?course=block-v1:Test-EOL_T1")
         self.assertEqual(response.status_code, 400)
     
     @patch('visits.views.recoverUserCourseRoles')
     def test_no_ulimit_field_fails(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
-        mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "Test-Eol-Fail", "role": ""}]}
+        mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "course-v1:Test-Eol-Fail", "role": ""}]}
         response = self.client.get(
-            self.url+"?course=Test-EOL_T1&time__gte=2019-09-04T00:00:00.000000")
+            self.url+"?course=block-v1:Test-EOL_T1&time__gte=2019-09-04T00:00:00.000000")
         self.assertEqual(response.status_code, 400)
     
     @patch('visits.views.recoverUserCourseRoles')
     def test_course_not_allowed(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
-        mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "Test-Eol-Fail", "role": ""}]}
+        mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "course-v1:Test-Eol-Fail", "role": ""}]}
         response = self.client.get(
-            self.url+"?course=Test-EOL_T1&time__gte=2019-09-04T00:00:00.000000&time__lte=2019-09-05T00:00:00.000000")
+            self.url+"?course=block-v1:Test-EOL_T1&time__gte=2019-09-04T00:00:00.000000&time__lte=2019-09-05T00:00:00.000000")
         self.assertEqual(response.status_code, 403)
 
     @patch('visits.views.recoverUserCourseRoles')
     def test_course_empty(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {
-            'roles': [{'course_id': 'Test-EOL_T1', 'role': 'staff'}]}
+            'roles': [{'course_id': 'course-v1:Test-EOL_T1', 'role': 'staff'}]}
         response = self.client.get(
-            self.url+"?course=Test-EOL_T1&time__gte=2019-09-04T00:00:00.000000&time__lte=2019-09-05T00:00:00.000000")
+            self.url+"?course=block-v1:Test-EOL_T1&time__gte=2019-09-04T00:00:00.000000&time__lte=2019-09-05T00:00:00.000000")
         self.assertEqual(response.status_code, 204)
 
     @patch('visits.views.recoverUserCourseRoles')
     def test_course_has_content(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {
-            'roles': [{'course_id': 'Test-EOL_T2', 'role': 'staff'}]}
+            'roles': [{'course_id': 'course-v1:Test-EOL_T2', 'role': 'staff'}]}
         response = self.client.get(
             self.url+"?course=block-v1:Test-EOL_T2&time__gte=2019-09-04T00:00:00.000000&time__lte=2019-09-05T00:00:00.000000")
         self.assertEqual(response.status_code, 200)
