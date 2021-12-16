@@ -150,7 +150,8 @@ def load_logs(dirpath=settings.BACKEND_LOGS_DIR, zipped=True):
             continue
         try:
             # Parse and save to db
-            log_df = read_logs(filepath, zipped)
+            data_df = read_logs(filepath, zipped)
+            log_df = data_df[data_df.apply(lambda row: row["username"] != '', axis=1)]
             # Process bulks
             count, _ = log_df.shape
             for i in range(0, count, BULK_UPLOAD_SIZE):
