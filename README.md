@@ -16,6 +16,7 @@ For detailed documentations refer to docs/.
 * Docker-Compose.
 * An existing Redis server
 * A working course discovery application to fetch courses
+* Run on the front/ ```git submodule update --init --recursive```
 
 ## Setup (dev) with local environment
 
