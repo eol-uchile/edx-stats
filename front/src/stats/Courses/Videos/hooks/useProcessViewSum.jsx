@@ -24,7 +24,7 @@ const useProcessViewSum = (tableData, views, recoverData, errors) => {
         position: tableData.videos[v.block_id].position
           ? tableData.videos[v.block_id].position
           : '',
-        name: tableData.videos[v.block_id].name
+        tooltip: tableData.videos[v.block_id].name
           ? tableData.videos[v.block_id].name
           : '',
         Minutos: Math.floor(v.watch_time / 60),

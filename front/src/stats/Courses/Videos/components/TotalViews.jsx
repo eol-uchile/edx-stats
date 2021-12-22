@@ -23,7 +23,7 @@ const TotalViews = ({ tableData, errors, setErrors }) => {
   );
 
   const csvHeaders = useMemo(
-    () => ['Unidad', ...rowData.values.map((el) => el.name)],
+    () => ['Unidad', ...rowData.values.map((el) => el.tooltip)],
     [rowData.values]
   );
 
@@ -64,6 +64,7 @@ const TotalViews = ({ tableData, errors, setErrors }) => {
                 name_key="position"
                 x_label="Ubicación de cada video"
                 y_label="Total"
+                tooltipLabel
               />
             </Col>
           </Row>

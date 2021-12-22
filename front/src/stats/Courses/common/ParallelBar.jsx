@@ -12,11 +12,15 @@ import {
 } from 'recharts';
 import PropTypes from 'prop-types';
 
-function CustomTooltip({ label, payload, active }) {
+function CustomTooltip({ label, payload, active }, doLabel = false) {
   if (active) {
     return (
       <div className="custom-tooltip">
-        <p className="label">{`${label} : ${payload[0].payload.name} `}</p>
+        <p className="label">
+          {doLabel
+            ? `${label} : ${payload[0] && payload[0].payload.tooltip}`
+            : payload[0] && payload[0].payload.tooltip}
+        </p>
         <p className="first">{`${payload[0].value} estudiantes vieron el contenido`}</p>
         <p className="second">{`Equivalente a ${payload[1].value} minutos.`}</p>
       </div>
@@ -34,6 +38,7 @@ const ParallelBar = ({
   x_label,
   y_label,
   width = '100%',
+  tooltipLabel = false,
 }) => (
   <ResponsiveContainer width={width} height={450}>
     <BarChart data={data} margin={{ top: 5, right: 20, bottom: 30, left: 0 }}>
@@ -41,7 +46,7 @@ const ParallelBar = ({
         <Label value={x_label} offset={-10} position="insideBottom" />
       </XAxis>
       <YAxis label={{ value: y_label, angle: -90, position: 'insideLeft' }} />
-      <Tooltip content={(arg) => CustomTooltip(arg)} />
+      <Tooltip content={(arg) => CustomTooltip(arg, tooltipLabel)} />
       <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
       <Legend
         wrapperStyle={{
