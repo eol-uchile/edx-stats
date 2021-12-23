@@ -26,7 +26,7 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
       ...dataLoaded,
       upperDate: new Date(date.getTime() + d * DAY_IN_MILISECS).toISOString(),
       lowerDate: new Date(
-        date.getTime() + d - 7 * DAY_IN_MILISECS
+        date.getTime() + (d - 7) * DAY_IN_MILISECS
       ).toISOString(),
     });
   };
