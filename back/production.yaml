@@ -6,11 +6,11 @@ AWS_S3_REGION_NAME: ''
 AWS_S3_ENDPOINT_URL: 'http://minio:9000'
 ALLOWED_HOSTS:
   - '*'
-BACKEND_SERVICE_EDX_OAUTH2_KEY: 'g4S52ki5v1VjdozsLh0sgzoeovbunfqTz2pHZxOl'
-BACKEND_SERVICE_EDX_OAUTH2_SECRET:  'ZLWeN0jegl0JxpwrSrgBvdNoP8X67HKKHJUi1rz2z49I4lQp6lPQQouYg9sDKp7D4dOnHyBxHccxmVdMBkHk877ZNGdx8CMDCVzuOxQlyrpLAtnFtn7EX5w9Lw1fXKZQ'  # Local Development Values
-BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL: 'https://eol.andhael.cl/oauth2'
-BACKEND_LMS_BASE_URL: 'https://eol.andhael.cl'
-BACKEND_CMS_BASE_URL: 'https://cms.eol.andhael.cl'
+BACKEND_SERVICE_EDX_OAUTH2_KEY: 'AnHf237Y0OWuNrurqT998pQh8QB4H4jY4OdG59Lk'
+BACKEND_SERVICE_EDX_OAUTH2_SECRET:  'ETPIZ0X3GWCkVTdciRyhreb6omH7Ujkp0utGGxar3J9GHLeCTyzIiH9gqDnRscq6nQEa4hfPMfeFK57lib6lMTkWkJ8Y1MgggGgKk7Uhe8rxovtGqXAmmQFNbGUmt1cz'  # Local Development Values
+BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL: 'https://isa.andhael.cl/oauth2'
+BACKEND_LMS_BASE_URL: 'https://isa.andhael.cl'
+BACKEND_CMS_BASE_URL: 'https://studio.isa.andhael.cl'
 BACKEND_ALLOWED_ROLES:
   - 'staff'
   - 'data researcher'
@@ -36,18 +36,26 @@ DATABASES:
     PASSWORD: 'postgres'
     HOST: 'db'
     PORT: 5432
+  lms:
+    ATOMIC_REQUESTS: true
+    ENGINE: django.db.backends.mysql
+    HOST: 172.16.244.52
+    PORT: 3306
+    NAME: 'edxapp'
+    PASSWORD: 'edxapp_password'
+    USER: 'edxapp'
 EDX_DRF_EXTENSIONS:
-  OAUTH2_USER_INFO_URL: "https://eol.andhael.cl/oauth2/user_info"
+  OAUTH2_USER_INFO_URL: "https://isa.andhael.cl/oauth2/user_info"
 JWT_AUTH: 
   JWT_ALGORITHM: 'RS512'
   JWT_ISSUERS: 
     - AUDIENCE: 'set-me-please'
-      ISSUER: 'https://eol.andhael.cl/oauth2/'
+      ISSUER: 'issuer'
       SECRET_KEY: 'jwt_secret'
   JWT_VERIFY_AUDIENCE: False
   JWT_DECODE_HANDLER: 'edx_rest_framework_extensions.auth.jwt.decoder.jwt_decode_handler'
   JWT_AUTH_COOKIE: 'edx-jwt-cookie'
-  JWT_PUBLIC_SIGNING_JWK_SET: '{"keys": [{"kty": "RSA", "kid": "9YFYI3J6", "e": "AQAB", "n": "iZExe9pxsMO8n2R0N4YAcx7_e5ay3Z5ZMhQ1ok8hCp57SR1IX04MC5j0atVFX0a1GquXW65VasguMUzrMFvkpamkjeQ3CnIWQCyfFqqzfeO7e7x_sAcUcDbycRohKcXQVtEM_W-ObOi4-4KCf0bedsYfPMddTfgf-4buhzs2Qf0eim4PtD5d3AXO1q-P_i2kTbsq2VN8hWWFN4Dr0aIu8Jz7s4tZ0T57NfMQ6KcsDmVGMEucgoOvdWXN2g04yBkCBsnWUB-QZeGGgAslVsXvvizBWbkSSvwO6LHCYhsP0OfRZt-Qe5IF_Jd-FlH18coMLELfa3nL2ouYKffLakTiXQ"}]}'
+  JWT_PUBLIC_SIGNING_JWK_SET: '{"keys": [{"kty": "RSA", "kid": "FEE4CI2B", "n": "6dmKES5VIa8BGU3CEpFU2qpd93jz5VySP2gTYmtjvpwP1TzrlzD2mys4Ia5b7WLSsZuhC0iPYD1oXclvYWW56qB-1rzAIXnqZo0q_9UB0cfxJzQknVK5AWA3Iu5hQLzEw4xPG46054KxiBIZaIhIVbl_HHMk1wVRy-v-3iRWN2yP-4nhsz9jRHAMqIaQTApXUFXTct3AZRbHBBffi9yJdIOYpp606HIMvbTCq6IzEi_WOFm7gCb1a3X4LtjagXFvASGfCiRjw7ZFBY5e9lEgoKcc3Yz14wZWwRZpd-_AFwjcAzK7NVWHXF-BYBHKSN_Kg-ecbOPF0hl2j5PzSK_r5w", "e": "AQAB"}]}'
   JWT_AUTH_COOKIE_HEADER_PAYLOAD: 'edx-jwt-cookie-header-payload'
   JWT_AUTH_COOKIE_SIGNATURE: 'edx-jwt-cookie-signature'
   JWT_AUTH_HEADER_PREFIX: 'JWT'
