@@ -1,15 +1,11 @@
-import React, { useEffect, useCallback, useState, Fragment } from 'react';
+import React, { useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Row, Col, Breadcrumb, InputGroup, Container } from 'react-bootstrap';
 import { Button, Input, Spinner, Alert } from '@edx/paragon';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import {
-  course as courseActions,
-  student as studentActions,
-  actions,
-} from '../data/actions';
+import { student as studentActions } from '../data/actions';
 import { visitActions } from '.';
 import { StudentDetails, StudentInfoModal } from '../common';
 import { VisitTotals, DateBrowser } from './components';
@@ -17,7 +13,9 @@ import { useProcessDailyData } from './hooks';
 import {
   useLoadCourseInfo,
   useLoadStudentInfo,
+  useLoadStructureOnSubmit,
   useProcessSumData,
+  useShowTutorial,
 } from '../hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -69,6 +67,13 @@ const VisitsTable = (props) => {
     state.lowerDate
   );
 
+  const submit = useLoadStructureOnSubmit(
+    state,
+    setErrors,
+    tableData,
+    setTableData
+  );
+
   const [dailyState, __] = useProcessDailyData(
     visits.added_chapter_visits,
     recoverDailyChapterVisits,
@@ -82,57 +87,18 @@ const VisitsTable = (props) => {
     []
   );
   const recoverStudentInfo = useCallback(
-    (username) => dispatch(studentActions.recoverStudentInfo(username)),
+    (c_id, u) => dispatch(studentActions.recoverStudentInfo(c_id, u)),
     []
   );
 
   const [modal, setModal, studentInfo, modalErrors, setUser] =
     useLoadStudentInfo(recoverStudentInfo, resetStudentInfo);
 
-  // Load data when the button trigers
-  const submit = () => {
-    if (state.current !== '') {
-      if (state.lowerDate === '' && state.upperDate === '') {
-        setErrors([...errors, 'Por favor ingrese fechas válidas']);
-      } else if (!state.allowed) {
-        setErrors([...errors, 'No tienes permisos para consultar estos datos']);
-      } else {
-        setTableData({ ...tableData, loaded: false });
-        dispatch(courseActions.recoverCourseStructure(state.current));
-        setErrors([]);
-        dispatch(actions.cleanErrors());
-      }
-    }
-  };
-
-  const showTutorial = () => {
-    introJs()
-      .setOptions({
-        steps: steps,
-        showBullets: false,
-        showProgress: true,
-        prevLabel: 'Atrás',
-        nextLabel: 'Siguiente',
-        doneLabel: 'Finalizar',
-        keyboardNavigation: true,
-      })
-      .start()
-      .onexit(() => window.scrollTo({ behavior: 'smooth', top: 0 }));
-  };
-  useEffect(() => {
-    if (
-      rowData.loaded &&
-      localStorage.getItem('tutorial-visitstable') === null
-    ) {
-      showTutorial();
-      localStorage.setItem('tutorial-visitstable', 'seen');
-    }
-  }, [rowData.loaded]);
-
-  // Load chart info right away
-  useEffect(() => {
-    state.courseName !== '' && submit();
-  }, [state.courseName]);
+  const showTutorial = useShowTutorial(
+    steps,
+    rowData.loaded,
+    'tutorial-visitstable'
+  );
 
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 data-view">
@@ -308,7 +274,7 @@ const VisitsTable = (props) => {
             errors={modalErrors}
           />
           <StudentDetails
-            title='Visitas'
+            title="Visitas"
             rowData={rowData}
             tableData={tableData}
             clickFunction={(user) => {

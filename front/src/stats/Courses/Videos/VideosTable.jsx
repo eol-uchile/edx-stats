@@ -1,14 +1,13 @@
-import React, { useEffect, useCallback, useState, Fragment } from 'react';
+import React, { useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Row, Col, Breadcrumb, InputGroup, Container } from 'react-bootstrap';
-import { Button, Input, Spinner, Alert } from '@edx/paragon';
+import { Spinner, Alert } from '@edx/paragon';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { course as courseActions, actions } from '../data/actions';
 import { videosActions } from '.';
 import { TotalViews, VideoCoverage, VideoDetailed } from './components';
-import { useLoadCourseInfo } from '../hooks';
+import { useLoadCourseInfo, useLoadStructure, useShowTutorial } from '../hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import '../common/TableandChart.css';
@@ -24,14 +23,16 @@ import { videosTutorial as steps } from '../data/tutorials';
  */
 const VideosTable = (props) => {
   const course = useSelector((state) => state.course);
-  const dispatch = useDispatch();
-
   const videos = useSelector((state) => state.videos);
+  const dispatch = useDispatch();
 
   const resetVideos = useCallback(
     () => dispatch(videosActions.resetVideos()),
     []
   );
+  const recoverVideos = useCallback((i) => {
+    dispatch(videosActions.recoverVideos(i));
+  }, []);
 
   const [state, setState, errors, setErrors, removeErrors] = useLoadCourseInfo(
     props.match,
@@ -39,43 +40,19 @@ const VideosTable = (props) => {
     videos.errors
   );
 
-  const recoverVideos = useCallback((i) => {
-    dispatch(videosActions.recoverVideos(i));
-  }, []);
+  const [tableData, setTableData] = useLoadVideos(
+    videos.video_list,
+    recoverVideos,
+    errors
+  );
 
-  const [rowData, setRowData] = useLoadVideos(videos, recoverVideos);
+  const courseStructure = useLoadStructure(state, setErrors);
 
-  useEffect(() => {
-    if (state.current !== '' && state.courseName !== '' && state.allowed) {
-      dispatch(courseActions.recoverCourseStructure(state.current));
-      setErrors([]);
-      dispatch(actions.cleanErrors());
-    }
-  }, [state.current, state.courseName, state.allowed]);
-
-  const showTutorial = () => {
-    introJs()
-      .setOptions({
-        steps: steps,
-        showBullets: false,
-        showProgress: true,
-        prevLabel: 'Atrás',
-        nextLabel: 'Siguiente',
-        doneLabel: 'Finalizar',
-        keyboardNavigation: true,
-      })
-      .start()
-      .onexit(() => window.scrollTo({ behavior: 'smooth', top: 0 }));
-  };
-  useEffect(() => {
-    if (
-      course.course_status === 'success' &&
-      localStorage.getItem('tutorial-videostable') === null
-    ) {
-      showTutorial();
-      localStorage.setItem('tutorial-videostable', 'seen');
-    }
-  }, [course.course_status]);
+  const showTutorial = useShowTutorial(
+    steps,
+    tableData.loaded,
+    'tutorial-videostable'
+  );
 
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 my-2">
@@ -128,13 +105,13 @@ const VideosTable = (props) => {
           </h2>
         </Col>
       </Row>
-      {course.course_status === 'loading' ? (
+      {course.course_status === 'loading' && !tableData.loaded ? (
         <Row>
           <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />
           </Col>
         </Row>
-      ) : course.course_status === 'success' ? (
+      ) : tableData.loaded ? (
         <Fragment>
           <Row>
             <Col>
@@ -171,14 +148,18 @@ const VideosTable = (props) => {
               </ul>
             </Col>
           </Row>
-          <TotalViews barData={rowData} errors={errors} setErrors={setErrors} />
+          <TotalViews
+            tableData={tableData}
+            errors={errors}
+            setErrors={setErrors}
+          />
           <VideoCoverage
-            barData={rowData}
+            tableData={tableData}
             errors={errors}
             setErrors={setErrors}
           />
           <VideoDetailed
-            videoDict={rowData}
+            tableData={tableData}
             errors={errors}
             setErrors={setErrors}
           />

@@ -11,7 +11,7 @@ import {
 } from 'recharts';
 import PropTypes from 'prop-types';
 
-const LineArea = ({ data, dataKey, areaProps, height = '400' }) => {
+const LineArea = ({ data, dataKey, areaProps, height = 438.5 }) => {
   return (
     <ResponsiveContainer width="100%" height={height} minHeight={400}>
       <AreaChart

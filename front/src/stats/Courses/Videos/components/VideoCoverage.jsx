@@ -7,7 +7,7 @@ import { videosActions } from '../';
 import { useProcessCoverage } from '../hooks';
 import PropTypes from 'prop-types';
 
-const VideoCoverage = ({ barData, errors, setErrors }) => {
+const VideoCoverage = ({ tableData, errors, setErrors }) => {
   const videos = useSelector((state) => state.videos);
   const dispatch = useDispatch();
 
@@ -15,12 +15,11 @@ const VideoCoverage = ({ barData, errors, setErrors }) => {
     dispatch(videosActions.recoverCoverage(i));
   }, []);
 
-  const [dataLoaded, setDataLoaded, rowData] = useProcessCoverage(
-    videos,
+  const [rowData, setRowData] = useProcessCoverage(
+    tableData,
+    videos.coverage,
     recoverCoverage,
-    errors,
-    setErrors,
-    barData
+    errors
   );
 
   const csvHeaders = useMemo(
@@ -91,10 +90,13 @@ const VideoCoverage = ({ barData, errors, setErrors }) => {
 };
 
 VideoCoverage.propTypes = {
-  barData: PropTypes.shape({
-    duration: PropTypes.number.isRequired,
-    position: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
+  tableData: PropTypes.shape({
+    loaded: PropTypes.bool.isRequired,
+    videos: PropTypes.shape({
+      duration: PropTypes.number,
+      position: PropTypes.string,
+      name: PropTypes.string,
+    }).isRequired,
   }).isRequired,
   errors: PropTypes.array.isRequired,
   setErrors: PropTypes.func.isRequired,

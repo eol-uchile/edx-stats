@@ -1,57 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-const useProcessViewSum = (data, recoverData, errors, setErrors, barData) => {
+const useProcessViewSum = (tableData, views, recoverData, errors) => {
   const course = useSelector((state) => state.course);
 
-  const [dataLoaded, setDataLoaded] = useState(false);
+  const [rowData, setRowData] = useState({
+    values: [],
+    loaded: false,
+  });
 
   useEffect(() => {
     if (course.course.length > 0) {
       let current = course.course[0];
-      setDataLoaded(true);
       // Load data
       recoverData(current.id);
     }
     // eslint-disable-next-line
   }, [course.course]);
 
-  const [rowData, setRowData] = useState({
-    loaded: false,
-    values: [],
-  });
-
   useEffect(() => {
-    if (barData.loaded && dataLoaded && data.views !== '') {
-      let bar = data.views.map((v) => ({
-        position: barData.videos[v.block_id].position
-          ? barData.videos[v.block_id].position
+    if (tableData.loaded && views.length > 0 && errors.length === 0) {
+      let bar = views.map((v) => ({
+        position: tableData.videos[v.block_id].position
+          ? tableData.videos[v.block_id].position
           : '',
-        name: barData.videos[v.block_id].name
-          ? barData.videos[v.block_id].name
+        tooltip: tableData.videos[v.block_id].name
+          ? tableData.videos[v.block_id].name
           : '',
         Minutos: Math.floor(v.watch_time / 60),
         Usuarios: v.viewers,
       }));
       setRowData({
-        loaded: true,
         values: bar,
+        loaded: true,
       });
-      setErrors([]);
     }
-  }, [barData, dataLoaded, data.views]);
+  }, [tableData.loaded, views]);
 
   useEffect(() => {
     if (errors.length > 0) {
       // If errors then reset the state
       setRowData({
-        loaded: true,
         values: [],
+        loaded: true,
       });
     }
   }, [errors]);
 
-  return [dataLoaded, setDataLoaded, rowData];
+  return [rowData, setRowData];
 };
 
 export default useProcessViewSum;

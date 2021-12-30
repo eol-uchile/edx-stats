@@ -27,7 +27,6 @@ const ChartBox = ({ title, children }) => {
 
 ChartBox.propTypes = {
   title: PropTypes.string.isRequired,
-  children: PropTypes.element.isRequired
 };
 
 export default ChartBox;

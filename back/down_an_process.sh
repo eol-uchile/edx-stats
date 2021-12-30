@@ -3,8 +3,11 @@
 run(){
   python manage.py downloadlogs --prefix logrotate --from-date "$1" --check-exists
   python manage.py loadlogs
+  python manage.py loadusers
   python manage.py processtimes "$1" --day-step 2
   python manage.py processvisits "$1" --day-step 2
+  python manage.py processviews "$1" --day-step 2
+  python manage.py processcoverage
 }
 
 if [[ ! -z $1 ]]; then

@@ -19,6 +19,21 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
     lowerDate: getDate(TODAY.toISOString(), -7).toISOString(),
   });
 
+  const setWeek = (dateIsoString, d = 0) => {
+    let DAY_IN_MILISECS = 24 * 60 * 60 * 1000;
+    let date = new Date(dateIsoString);
+    setDataLoaded({
+      ...dataLoaded,
+      upperDate: new Date(date.getTime() + d * DAY_IN_MILISECS).toISOString(),
+      lowerDate: new Date(
+        date.getTime() + (d - 7) * DAY_IN_MILISECS
+      ).toISOString(),
+    });
+  };
+
+  const [dataLine, setDataLine] = useState({ loaded: false, values: [] });
+  const [dataPie, setDataPie] = useState({ loaded: false, values: [] });
+
   useEffect(() => {
     if (course.course.length !== 0) {
       let current = course.course[0];
@@ -32,11 +47,11 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
         new Date(dataLoaded.lowerDate),
         new Date(dataLoaded.upperDate)
       );
+      setDataLine({ loaded: false, values: [] });
+      setDataPie({ loaded: false, values: [] });
     }
     // eslint-disable-next-line
   }, [course.course, dataLoaded.upperDate, dataLoaded.lowerDate]);
-
-  const [dataLine, setDataLine] = useState({ loaded: false, values: [] });
 
   useEffect(() => {
     if (
@@ -75,11 +90,8 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
         return new Date(a.date) - new Date(b.date);
       });
       setDataLine({ loaded: true, values: sortedAscending });
-      setErrors([]);
     }
-  }, [dataLoaded, data.detailed_times, data.detailed_visits.date]);
-
-  const [dataPie, setDataPie] = useState({ loaded: false, values: [] });
+  }, [dataLoaded.loaded, data.detailed_times, data.detailed_visits.date]);
 
   useEffect(() => {
     if (
@@ -102,24 +114,15 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
         circularPortions.push(namedPortion);
       });
       setDataPie({ loaded: true, values: circularPortions });
-      setErrors([]);
     }
   }, [
-    dataLoaded,
+    dataLoaded.loaded,
     viewModules,
     data.detailed_visits.module,
     data.detailed_visits.seq,
   ]);
 
-  useEffect(() => {
-    if (errors.length > 0) {
-      // If errors then reset the state
-      setDataLine({ loaded: true, values: [] });
-      setDataPie({ loaded: true, values: [] });
-    }
-  }, [errors]);
-
-  return [dataLoaded, setDataLoaded, dataLine, dataPie];
+  return [setWeek, dataLoaded, setDataLoaded, dataLine, dataPie];
 };
 
 export default useChartBoxes;

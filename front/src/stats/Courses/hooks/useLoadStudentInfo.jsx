@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 function useLoadStudentInfo(recoverInfo, resetData) {
+  const course = useSelector((state) => state.course);
   const studentDetails = useSelector((state) => state.student);
 
   const [modal, setModal] = useState(false);
@@ -46,11 +47,13 @@ function useLoadStudentInfo(recoverInfo, resetData) {
   }, [modal]);
 
   useEffect(() => {
-    if (user.username !== '') {
-      recoverInfo(user.username);
+    if (course.course.length !== 0 && user.username !== '') {
+      let current = course.course[0];
+      recoverInfo(current.id, user.username);
       setUser({ ...studentInfo, loaded: true });
     }
-  }, [modal]);
+    // eslint-disable-next-line
+  }, [course.course, modal]);
 
   useEffect(() => {
     if (user.loaded && studentDetails.status === 'success') {

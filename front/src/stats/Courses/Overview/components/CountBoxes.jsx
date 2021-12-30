@@ -16,9 +16,10 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
   const recoverCourseGeneralStats = useCallback((i, l, u) => {
     dispatch(overviewActions.recoverCourseGeneralTimes(i, l, u));
     dispatch(overviewActions.recoverCourseGeneralVisits(i, l, u));
+    dispatch(overviewActions.recoverCourseGeneralUsers(i, l, u));
   }, []);
 
-  const [dataLoaded, setDataLoaded, countBox] = useCountBoxes(
+  const [visits, users, times] = useCountBoxes(
     generalStats,
     recoverCourseGeneralStats,
     errors,
@@ -37,13 +38,13 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
             caption={'Visitas totales'}
             countUpProps={{
               start: 0,
-              end: countBox.values.visits,
+              end: visits.value,
               duration: 2.75,
               separator: '.',
               decimals: 0,
               decimal: ',',
             }}
-            isLoading={!countBox.loaded}
+            isLoading={!visits.loaded}
           />
         </Col>
         <Col md={4}>
@@ -53,13 +54,13 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
             caption={'Usuarios registrados'}
             countUpProps={{
               start: 0,
-              end: countBox.values.users,
+              end: users.value,
               duration: 2.75,
               separator: '.',
               decimals: 0,
               decimal: ',',
             }}
-            isLoading={!countBox.loaded}
+            isLoading={!users.loaded}
           />
         </Col>
         <Col md={4}>
@@ -69,13 +70,13 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
             caption={'Minutos vistos'}
             countUpProps={{
               start: 0,
-              end: countBox.values.times,
+              end: times.value,
               duration: 2.75,
               separator: '.',
               decimals: 0,
               decimal: ',',
             }}
-            isLoading={!countBox.loaded}
+            isLoading={!times.loaded}
           />
         </Col>
       </Row>

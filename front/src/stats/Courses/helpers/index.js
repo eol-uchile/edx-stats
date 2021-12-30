@@ -3,10 +3,14 @@ import React from 'react';
 const parseToTableRows = (r, k, parse, classRuling = () => '', clickRuling) => (
   <tr key={'row' + k}>
     {r.map((d, kd) => (
-      <td 
-        key={kd} 
-        className={classRuling(d)} 
-        style={0 === kd && clickRuling ? { cursor: 'pointer', textDecoration: 'underline' } : {}} 
+      <td
+        key={kd}
+        className={classRuling(d)}
+        style={
+          0 === kd && clickRuling
+            ? { cursor: 'pointer', textDecoration: 'underline' }
+            : {}
+        }
         onClick={0 === kd && clickRuling ? () => clickRuling(d) : undefined}
       >
         {parse(d)}
@@ -23,11 +27,19 @@ const parseFloatToTimeString = (seconds) => {
   let mins = `${Math.floor(seconds / 60) % 60}`;
   let hours = Math.floor(seconds / 3600);
   if (hours > 0) {
-    return `${hours}:${mins.length === 1 ? '0' + mins : mins}:${secs.length === 1 ? '0' + secs : secs
-      }`;
-  }
-  return `${mins.length === 1 ? '0' + mins : mins}:${secs.length === 1 ? '0' + secs : secs
+    return `${hours}:${mins.length === 1 ? '0' + mins : mins}:${
+      secs.length === 1 ? '0' + secs : secs
     }`;
+  }
+  return `${mins.length === 1 ? '0' + mins : mins}:${
+    secs.length === 1 ? '0' + secs : secs
+  }`;
+};
+
+const parseSecondToTimeString = (s) => {
+  let ss = String(Math.floor(s % 60)).padStart(2, '0');
+  let mm = String(Math.floor(s / 60)).padStart(2, '0');
+  return `${mm}:${ss}`;
 };
 
 const parseStringToYMDDate = (d) => {
@@ -37,7 +49,7 @@ const parseStringToYMDDate = (d) => {
   let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
   let yyyy = date.getFullYear();
   return `${yyyy}-${mm}-${dd}`;
-}
+};
 
 const parseStringToDMYDate = (d) => {
   // Parse string to day-month-year format
@@ -46,7 +58,7 @@ const parseStringToDMYDate = (d) => {
   let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
   let yyyy = date.getFullYear();
   return `${dd}-${mm}-${yyyy}`;
-}
+};
 
 const classNameRuling = (data, l0, l1, l2) => {
   if (typeof data !== 'number') {
@@ -97,6 +109,7 @@ const sortByColumn = (rows, column, reverse = false, strings = false) => {
 
 export {
   parseFloatToTimeString,
+  parseSecondToTimeString,
   parseToTableRows,
   parseStringToYMDDate,
   parseStringToDMYDate,

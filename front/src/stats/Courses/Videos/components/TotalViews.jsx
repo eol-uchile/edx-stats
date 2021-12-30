@@ -7,7 +7,7 @@ import { videosActions } from '../';
 import { useProcessViewSum } from '../hooks';
 import PropTypes from 'prop-types';
 
-const TotalViews = ({ barData, errors, setErrors }) => {
+const TotalViews = ({ tableData, errors, setErrors }) => {
   const videos = useSelector((state) => state.videos);
   const dispatch = useDispatch();
 
@@ -15,16 +15,15 @@ const TotalViews = ({ barData, errors, setErrors }) => {
     dispatch(videosActions.recoverViewSum(i));
   }, []);
 
-  const [dataLoaded, setDataLoaded, rowData] = useProcessViewSum(
-    videos,
+  const [rowData, setRowData] = useProcessViewSum(
+    tableData,
+    videos.views,
     recoverViewSum,
-    errors,
-    setErrors,
-    barData
+    errors
   );
 
   const csvHeaders = useMemo(
-    () => ['Unidad', ...rowData.values.map((el) => el.name)],
+    () => ['Unidad', ...rowData.values.map((el) => el.tooltip)],
     [rowData.values]
   );
 
@@ -65,6 +64,7 @@ const TotalViews = ({ barData, errors, setErrors }) => {
                 name_key="position"
                 x_label="Ubicación de cada video"
                 y_label="Total"
+                tooltipLabel
               />
             </Col>
           </Row>
@@ -85,10 +85,13 @@ const TotalViews = ({ barData, errors, setErrors }) => {
 };
 
 TotalViews.propTypes = {
-  barData: PropTypes.shape({
-    duration: PropTypes.number.isRequired,
-    position: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
+  tableData: PropTypes.shape({
+    loaded: PropTypes.bool.isRequired,
+    videos: PropTypes.shape({
+      duration: PropTypes.number,
+      position: PropTypes.string,
+      name: PropTypes.string,
+    }).isRequired,
   }).isRequired,
   errors: PropTypes.array.isRequired,
   setErrors: PropTypes.func.isRequired,

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, Fragment, useState } from 'react';
+import React, { useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
@@ -14,17 +14,15 @@ import { Button, Input } from '@edx/paragon';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { timesActions } from '.';
-import {
-  course as courseActions,
-  student as studentActions,
-  actions,
-} from '../data/actions';
+import { student as studentActions } from '../data/actions';
 import { StudentDetails, StudentInfoModal } from '../common';
 import { TimesAvg, TimeVsVisits } from './components';
 import {
   useLoadCourseInfo,
+  useLoadStructureOnSubmit,
   useLoadStudentInfo,
   useProcessSumData,
+  useShowTutorial,
 } from '../hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -71,64 +69,30 @@ const TimesTable = (props) => {
     state.lowerDate
   );
 
+  const submit = useLoadStructureOnSubmit(
+    state,
+    setErrors,
+    tableData,
+    setTableData
+  );
+
   const resetStudentInfo = useCallback(
     () => dispatch(studentActions.resetStudents()),
     []
   );
   const recoverStudentInfo = useCallback(
-    (username) => dispatch(studentActions.recoverStudentInfo(username)),
+    (c_id, u) => dispatch(studentActions.recoverStudentInfo(c_id, u)),
     []
   );
 
-  const [modal, setModal, studentInfo, modalErrors, setUser] = useLoadStudentInfo(
-    recoverStudentInfo,
-    resetStudentInfo
+  const [modal, setModal, studentInfo, modalErrors, setUser] =
+    useLoadStudentInfo(recoverStudentInfo, resetStudentInfo);
+
+  const showTutorial = useShowTutorial(
+    steps,
+    rowData.loaded,
+    'tutorial-timestable'
   );
-
-  // Load data when the button trigers
-  const submit = () => {
-    if (state.current !== '') {
-      if (state.lowerDate === '' && state.upperDate === '') {
-        setErrors([...errors, 'Por favor ingrese fechas válidas']);
-      } else if (!state.allowed) {
-        setErrors([...errors, 'No tienes permisos para consultar estos datos']);
-      } else {
-        setTableData({ ...tableData, loaded: false });
-        dispatch(courseActions.recoverCourseStructure(state.current));
-        setErrors([]);
-        dispatch(actions.cleanErrors());
-      }
-    }
-  };
-
-  const showTutorial = () => {
-    introJs()
-      .setOptions({
-        steps: steps,
-        showBullets: false,
-        showProgress: true,
-        prevLabel: 'Atrás',
-        nextLabel: 'Siguiente',
-        doneLabel: 'Finalizar',
-        keyboardNavigation: true,
-      })
-      .start()
-      .onexit(() => window.scrollTo({ behavior: 'smooth', top: 0 }));
-  };
-  useEffect(() => {
-    if (
-      rowData.loaded &&
-      localStorage.getItem('tutorial-timestable') === null
-    ) {
-      showTutorial();
-      localStorage.setItem('tutorial-timestable', 'seen');
-    }
-  }, [rowData.loaded]);
-
-  // Refresh course info and load
-  useEffect(() => {
-    state.courseName !== '' && submit();
-  }, [state.courseName]);
 
   return (
     <Container className="rounded-lg shadow-lg py-4 px-5 data-view">

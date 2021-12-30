@@ -11,55 +11,60 @@ const useCountBoxes = (
 ) => {
   const course = useSelector((state) => state.course);
 
-  const [dataLoaded, setDataLoaded] = useState(false);
-
   useEffect(() => {
     if (course.course.length !== 0 && lowerDate != '' && upperDate != '') {
       let current = course.course[0];
-      setDataLoaded(true);
       // Load data
       recoverData(current.id, new Date(lowerDate), new Date(upperDate));
     }
     // eslint-disable-next-line
   }, [course.course, lowerDate, upperDate]);
 
-  const [countBox, setCountBox] = useState({
+  const [visitsBox, setVisitsBox] = useState({
     loaded: false,
-    values: { visits: 0, users: 0, times: 0 },
+    value: 0,
+  });
+
+  const [usersBox, setUsersBox] = useState({
+    loaded: false,
+    value: 0,
+  });
+
+  const [timesBox, setTimesBox] = useState({
+    loaded: false,
+    value: 0,
   });
 
   useEffect(() => {
-    if (
-      dataLoaded &&
-      data.general_visits !== '' &&
-      data.general_users !== '' &&
-      data.general_times !== ''
-    ) {
-      let seconds = data.general_times;
-      let minutes = Math.floor(seconds / 60);
-      setCountBox({
+    if (data.general_visits !== '') {
+      setVisitsBox({
         loaded: true,
-        values: {
-          visits: data.general_visits,
-          users: data.general_users,
-          times: minutes,
-        },
+        value: data.general_visits,
       });
-      setErrors([]);
     }
-  }, [dataLoaded, data.general_visits, data.general_users, data.general_times]);
+  }, [data.general_visits]);
 
   useEffect(() => {
-    if (errors.length > 0) {
-      // If errors then reset the state
-      setCountBox({
+    if (data.general_users !== '') {
+      setUsersBox({
         loaded: true,
-        values: { visits: 0, users: 0, times: 0 },
+        value: data.general_users,
       });
     }
-  }, [errors]);
+  }, [data.general_users]);
 
-  return [dataLoaded, setDataLoaded, countBox];
+  useEffect(() => {
+    if (data.general_times !== '') {
+      let seconds = data.general_times;
+      let minutes = Math.floor(seconds / 60);
+      setTimesBox({
+        loaded: true,
+        value: minutes,
+      });
+    }
+  }, [data.general_times]);
+
+  return [visitsBox, usersBox, timesBox];
 };
 
 export default useCountBoxes;

@@ -51,16 +51,15 @@ def videos_course(request):
     Returns active videos with its position
 
     Expects 1 query parameter
-    - course: course id in block-v1:COURSE+type@course+block@course format
+    - course: course id in block-v1:COURSE format
 
     Timezone is added on runtime
     """
-    # Course will arrive in format block-v1:COURSE without +type@course-block@course
-    # hence we do a icontains query
+    # Course will arrive in format block-v1:COURSE without +type@course+block@course
     
     def query(x): return Video.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=x
+        vertical__course=x+"+type@course+block@course"
     ).values(
         'block_id', 'duration'
     ).order_by(
@@ -95,15 +94,14 @@ def videos_statistics(request):
     """
     Returns active videos and its basics statistics
     Expects 1 query parameter
-    - course: course id in block-v1:COURSE+type@course+block@course format
+    - course: course id in block-v1:COURSE format
 
     Timezone is added on runtime
     """
-    # Course will arrive in format block-v1:COURSE without +type@course-block@course
-    # hence we do a icontains query
+    # Course will arrive in format block-v1:COURSE without +type@course+block@course
     def query(x): return Video.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=x
+        vertical__course=x+"+type@course+block@course"
     ).values(
         'block_id', 'watch_time'
     ).order_by(
@@ -122,13 +120,13 @@ def videos_coverage(request):
     Compact user coverage for each video
 
     Expects 1 query parameter
-    - course: course id in block-v1:COURSE+type@course+block@course format
+    - course: course id in block-v1:COURSE format
 
     Timezone is added on runtime
     """
     def query(x): return Video.objects.filter(
         vertical__is_active=True,
-        vertical__course__icontains=x,
+        vertical__course=x+"+type@course+block@course",
     ).values(
         'block_id',
     ).order_by(
@@ -137,8 +135,8 @@ def videos_coverage(request):
         'vertical__vertical_number',
         'vertical__child_number'
     ).annotate(
-        completed=Count('viewonvideo', filter=Q(viewonvideo__coverage >= 0.9)),
-        uncompleted=Count('viewonvideo', filter=Q(viewonvideo__coverage < 0.9)),
+        completed=Count('viewonvideo', filter=Q(viewonvideo__coverage__gte = 0.9)),
+        uncompleted=Count('viewonvideo', filter=Q(viewonvideo__coverage__lt = 0.9)),
     )
     return manage_standard_request(request, query)
 
@@ -149,20 +147,18 @@ def video_details(request):
     counting uniques visualizations and repetitions.
 
     Expects 1 query parameter
-    - course: course id in block-v1:COURSE+type@course+block@course format
+    - course: course id in block-v1:COURSE format
 
     Timezone is added on runtime
     """
-    # Course will arrive in format block-v1:COURSE without +type@course-block@course
-    # hence we do a icontains query
+    # Course will arrive in format block-v1:COURSE without +type@course+block@course
     roles = recoverUserCourseRoles(request)
     allowed_list = [r['course_id'].replace(
         "course", "block") for r in roles['roles'] if r['role'] in settings.BACKEND_ALLOWED_ROLES]
 
     if "course" not in request.query_params:
         return Response(status=status.HTTP_400_BAD_REQUEST, data="Se requiere un curso válido.")
-    else:
-        course = request.query_params["course"]
+    course = request.query_params["course"]
 
     # Check that user has permissions
     if course not in allowed_list:
@@ -170,12 +166,11 @@ def video_details(request):
 
     if "video" not in request.query_params:
         return Response(status=status.HTTP_400_BAD_REQUEST, data="Se requiere un video válido.")
-    else:
-        video_id = request.query_params["video"]
+    video_id = request.query_params["video"]
 
     video_viewers = ViewOnVideo.objects.filter(
         video__vertical__is_active=True,
-        video__vertical__course__icontains=course,
+        video__vertical__course=course+"+type@course+block@course",
         video__block_id=video_id
     )
     viewers = []
@@ -185,4 +180,7 @@ def video_details(request):
         )
         partitions = ut.make_partition_with_repetition(segments)
         viewers.append(partitions)
+
+    if len(viewers) == 0:
+        return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(viewers)
