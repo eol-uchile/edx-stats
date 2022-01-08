@@ -7,8 +7,8 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { student as studentActions } from '../data/actions';
 import { visitActions } from '.';
-import { StudentDetails, StudentInfoModal } from '../common';
-import { VisitTotals, DateBrowser } from './components';
+import { RadialBar, StudentInfoModal } from '../common';
+import { VisitTotals, DateBrowser, StudentVisits } from './components';
 import { useProcessDailyData } from './hooks';
 import {
   useLoadCourseInfo,
@@ -226,6 +226,9 @@ const VisitsTable = (props) => {
               <h4>Visitas de estudiantes por Módulo</h4>
               <ul>
                 <li>
+                  <a href="#Completitud">Completitud</a>
+                </li>
+                <li>
                   <a href="#VisitasTotales">Visitas totales</a>
                 </li>
                 <li>
@@ -240,6 +243,35 @@ const VisitsTable = (props) => {
               </ul>
             </Col>
           </Row>
+          <Container fluid id="Completitud">
+            <Row>
+              <Col>
+                <h4>Completitud</h4>
+              </Col>
+            </Row>
+            <RadialBar
+              data={[
+                {
+                  name: 'Módulo 1',
+                  uv: 31,
+                  pv: 2400,
+                  fill: '#8884d8',
+                },
+                {
+                  name: 'Módulo 2',
+                  uv: 26,
+                  pv: 4567,
+                  fill: '#83a6ed',
+                },
+                {
+                  name: 'Módulo 3',
+                  uv: 0,
+                  pv: 1398,
+                  fill: '#8dd1e1',
+                },
+              ]}
+            />
+          </Container>
           <Container fluid id="VisitasTotales">
             <Row>
               <Col>
@@ -273,15 +305,14 @@ const VisitsTable = (props) => {
             data={studentInfo}
             errors={modalErrors}
           />
-          <StudentDetails
-            title="Visitas"
-            rowData={rowData}
+          <StudentVisits
+            visits={rowData}
+            completion={rowData}
             tableData={tableData}
             clickFunction={(user) => {
               setUser({ username: user });
               setModal(!modal);
             }}
-            doAnimation
           />
           <Row>
             <Col>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, Fragment } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { SearchField, Form, TransitionReplace } from '@edx/paragon';
 import { useMediaQuery } from 'react-responsive';
@@ -133,12 +133,7 @@ const StudentDetails = ({
   );
 
   return (
-    <Container fluid id="DetallesPorEstudiante">
-      <Row style={{ marginTop: '1em' }}>
-        <Col>
-          <h4>Detalle por estudiante</h4>
-        </Col>
-      </Row>
+    <Fragment>
       <Row>
         <Col sm={!isShort ? 3 : 12}>
           <AsyncCSVButton
@@ -194,7 +189,7 @@ const StudentDetails = ({
         </Col>
       </Row>
       {doAnimation ? <TransitionReplace>{table}</TransitionReplace> : table}
-    </Container>
+    </Fragment>
   );
 };
 

@@ -13,7 +13,7 @@ const parseToTableRows = (r, k, parse, classRuling = () => '', clickRuling) => (
         }
         onClick={0 === kd && clickRuling ? () => clickRuling(d) : undefined}
       >
-        {parse(d)}
+        {0 === kd ? d : parse(d)}
       </td>
     ))}
   </tr>
