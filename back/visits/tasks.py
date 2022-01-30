@@ -1,6 +1,7 @@
 import logging
 from datetime import timedelta, datetime, date
 import pandas as pd
+import re
 from django.conf import settings
 from django.db import transaction
 from celery import shared_task
@@ -9,7 +10,7 @@ from core.processing import read_json_course, \
     flatten_course_as_verticals, read_logs, filter_by_log_qty, filter_course_team
 from core.tasks import process_logs_standard_procedure, process_logs_single_course
 from core.classifier import LogParser
-from visits.models import VisitOnPage
+from visits.models import VisitOnPage, CompletionOnBlock
 
 logger = logging.getLogger(__name__)
 DAY_WINDOW = timedelta(days=3)
@@ -129,3 +130,96 @@ def compute_visit_batches(initial_date=None, time_delta=timedelta(days=3), final
         process_visit_count(times[i], time_delta,
                             run_code=run_code, course=course)
     logger.info("Finished processing visits")
+
+@shared_task
+def process_completion_count(end_date, day_window=None, run_code=None, course=None):
+    """Recovers logs from DB and computes completion per day for each vertical
+
+    Computes completion for each day until the end date given a day window.
+    Default Day window is DAY_WINDOW (3 days).
+
+    Note: Celery will set end_date as datetime.datetime.now()
+    Timezone localization will be set according to settings.py
+
+    Arguments
+    - end_date datetime to use and upper date limit,
+        lower date limit is set as end_date - DAY_WINDOW.
+        If none is provided all logs will be processed
+    - day_window timedelta to subtract from end_date.
+        If none is provided default DAY_WINDOW is used
+    - run_code to describe errors in a single file Errors-{run_code}.log
+    - course if only one course is to be processed
+
+    """
+
+    def make_row(row, date, vertical_to_associate):
+        completion_on_block = CompletionOnBlock(
+            vertical= vertical_to_associate,
+            username=row["username"],
+            completion=1,
+            time=date)
+        return completion_on_block
+
+    def compute_completions(dataframe, course_df, date, course_id, code):
+        course_code = course_df["course"][0]
+        cols_to_use = ['username', 'event_type']
+        dataframe = dataframe[cols_to_use]
+        completion_logs = dataframe[dataframe['event_type'].str.contains('publish_completion')].copy()
+        # Get block_id from event_type using RE
+        re_publish_completion = re.compile(r'(?<=/xblock/).+?(?=/)')
+        completion_logs['block_id'] = completion_logs.event_type.apply(lambda row: re_publish_completion.search(row).group(0))
+        
+        with transaction.atomic():
+            # Delete today's info to overwrite
+            previous_visits = CompletionOnBlock.objects.filter(
+                time__date=date, vertical__course=course_code)
+            previous_visits.delete()
+
+            # Upload bulks to DB
+            verticals = list(CourseVertical.objects.filter(course=course_code))
+            verticals_to_associate = {}
+            for b in verticals:
+                verticals_to_associate[b.block_id] = b
+            count, _ = completion_logs.shape
+            for i in range(0, count, BULK_UPLOAD_SIZE):
+                bulk = completion_logs[i:i+BULK_UPLOAD_SIZE]
+                completions = list(bulk.apply(
+                    lambda row: make_row(row, date, verticals_to_associate.get(row["block_id"])), axis=1))
+                CompletionOnBlock.objects.bulk_create(completions)
+
+            logger.info("Course {}, {} completions processed for {}".format(
+                course_id, count, date))
+
+    if course is not None:
+        process_logs_single_course(
+            compute_completions, "completions", course, end_date, day_window, run_code)
+    else:
+        process_logs_standard_procedure(
+            compute_completions, "completions", end_date, day_window, run_code)
+
+
+@shared_task
+def compute_completion_batches(initial_date=None, time_delta=timedelta(days=3), final_date=None, course=None):
+    """
+    Process all completions by batches from initial_date to today
+
+    Arguments
+    - initial_date string like 2018-09-24
+
+    - time_delta timedelta object
+    """
+    end = datetime.today()
+    if final_date is not None:
+        end = final_date
+    times = pd.date_range(
+        start=initial_date, end=end, freq=time_delta)
+    run_code = str(date.today())
+
+    for i in range(1, len(times)):
+        logger.info("Processing completions logs for time {} with offset {}".format(
+            times[i], time_delta))
+        # This is a pandas timestamp Timestamp class, it should be replaced with datetime for a more
+        # standard module
+        process_completion_count(times[i], time_delta,
+                            run_code=run_code, course=course)
+    logger.info("Finished processing completions")

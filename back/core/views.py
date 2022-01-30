@@ -84,8 +84,9 @@ def get_course_structure(request):
         return Response(status=status.HTTP_400_BAD_REQUEST, data="Search field required")
     # Look on course name and course code in format course-v1:COURSE without +type@course+block@course
     verticals = CourseVertical.objects.filter(
-        Q(course_name__icontains=request.query_params["search"]) |
-        Q(course=request.query_params["search"].replace("course-v1", "block-v1")+"+type@course+block@course"))
+        Q(is_active=True) &
+        (Q(course_name__icontains=request.query_params["search"]) |
+        Q(course=request.query_params["search"].replace("course-v1", "block-v1")+"+type@course+block@course")))
     if len(verticals) == 0:
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -107,7 +108,10 @@ def get_course_structure(request):
                 {"name": v.sequential_name})
         if v.vertical_number not in chapter[v.chapter_number][v.sequential_number]:
             chapter[v.chapter_number][v.sequential_number][v.vertical_number] = dict(
-                {"name": v.vertical_name, "block_id": v.block_id, "block_type": v.block_type, "block_url": v.student_view_url, "vertical_id": v.vertical})
+                {"name": v.vertical_name, "block_id": v.block_id, "block_type": v.block_type, "block_url": v.student_view_url, "vertical_id": v.vertical, "total": v.child_number})
+        else:
+            if chapter[v.chapter_number][v.sequential_number][v.vertical_number]['total']<v.child_number:
+                chapter[v.chapter_number][v.sequential_number][v.vertical_number]['total'] = v.child_number
     # Parse keys as arrays
     courses_names = courses.keys()
     mapped_courses = []
