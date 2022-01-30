@@ -39,7 +39,9 @@ const StudentDetails = ({
   parseFunction = (e) => e,
   clickFunction = (e) => e,
   doTotal = false,
+  doTip = false,
   doAnimation = false,
+  doColor = false,
 }) => {
   const [state, setState] = useState({
     useChaptersTable: true,
@@ -113,6 +115,7 @@ const StudentDetails = ({
       caption={caption}
       parseFunction={parseFunction}
       doTotal={doTotal}
+      doTip={doTip}
       onHeader={sortHeader}
       onRow={clickFunction}
       key="table-chapters"
@@ -125,9 +128,10 @@ const StudentDetails = ({
       caption={caption}
       parseFunction={parseFunction}
       doTotal={doTotal}
+      doTip={doTip}
       onHeader={sortHeader}
       onRow={clickFunction}
-      coloring={state.coloring ? coloringFunction : undefined}
+      coloring={doColor && state.coloring ? coloringFunction : undefined}
       key="table-verticals"
     />
   );
@@ -164,7 +168,7 @@ const StudentDetails = ({
         </Col>
 
         <Col sm={!isShort ? 3 : 12} key="coloring-transition">
-          {!state.useChaptersTable && (
+          {!state.useChaptersTable && doColor && (
             <Form.Group controlId="coloring-verticals">
               <Form.Check
                 type="switch"

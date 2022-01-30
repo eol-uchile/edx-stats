@@ -1,6 +1,13 @@
 import React from 'react';
 
-const parseToTableRows = (r, k, parse, classRuling = () => '', clickRuling) => (
+const parseToTableRows = (
+  r,
+  k,
+  parse,
+  classRuling = () => '',
+  clickRuling,
+  showTooltip = false
+) => (
   <tr key={'row' + k}>
     {r.map((d, kd) => (
       <td
@@ -12,6 +19,8 @@ const parseToTableRows = (r, k, parse, classRuling = () => '', clickRuling) => (
             : {}
         }
         onClick={0 === kd && clickRuling ? () => clickRuling(d) : undefined}
+        dataToggle={0 !== kd && showTooltip ? 'tooltip' : ''}
+        title={0 !== kd && showTooltip ? d : ''}
       >
         {0 === kd ? d : parse(d)}
       </td>

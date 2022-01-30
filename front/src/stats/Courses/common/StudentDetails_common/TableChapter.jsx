@@ -22,6 +22,7 @@ const TableChapter = ({
   caption,
   defaultPage = 10,
   doTotal = false,
+  doTip = false,
   parseFunction = (e) => e,
   onHeader = (e, _) => e,
   onRow = (e) => e,
@@ -99,7 +100,9 @@ const TableChapter = ({
             </thead>
             <tbody>
               {errors.length === 0 &&
-                subArray.map((e, k) => parseToTableRows(e, k, parseFunction, ()=>'', onRow))}
+                subArray.map((e, k) =>
+                  parseToTableRows(e, k, parseFunction, () => '', onRow, doTip)
+                )}
               <tr></tr>
             </tbody>
           </TableBT>

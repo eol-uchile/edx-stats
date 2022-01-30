@@ -4,18 +4,19 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { useMediaQuery } from 'react-responsive';
 import PropTypes from 'prop-types';
 import { StudentDetails } from '../../common';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const StudentVisits = ({ tableData, visits, completion, clickFunction }) => {
   const [useVisitsTable, setTable] = useState(true);
   const isShort = useMediaQuery({ maxWidth: 418 });
 
-  function parseToIcon(v) {
-    if (v === 0) {
-      return <FontAwesomeIcon icon={faTimes} />;
+  function parseToSymbol(v) {
+    if (v !== '0/0' && parseInt(v) !== 0) {
+      let div = v.split('/');
+      if (parseInt(div[0]) === parseInt(div[1])) {
+        return 'C';
+      }
     }
-    return <FontAwesomeIcon icon={faCheck} />;
+    return 'NC';
   }
   const table = useVisitsTable ? (
     <StudentDetails
@@ -24,6 +25,7 @@ const StudentVisits = ({ tableData, visits, completion, clickFunction }) => {
       tableData={tableData}
       clickFunction={clickFunction}
       doAnimation
+      doColor
     />
   ) : (
     <StudentDetails
@@ -31,7 +33,8 @@ const StudentVisits = ({ tableData, visits, completion, clickFunction }) => {
       rowData={completion}
       tableData={tableData}
       clickFunction={clickFunction}
-      parseFunction={parseToIcon}
+      parseFunction={parseToSymbol}
+      doTip
       doAnimation
     />
   );
@@ -50,8 +53,8 @@ const StudentVisits = ({ tableData, visits, completion, clickFunction }) => {
               type="switch"
               id="changing-tables"
               name="change"
-              label="Ver número de visitas"
-              checked={useVisitsTable}
+              label="Cambiar a tabla de completitud"
+              checked={!useVisitsTable}
               data-testid="changing-tables"
               onChange={(e) => {
                 setTable(!useVisitsTable);

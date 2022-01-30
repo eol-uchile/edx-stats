@@ -9,7 +9,7 @@ import { student as studentActions } from '../data/actions';
 import { visitActions } from '.';
 import { RadialBar, StudentInfoModal } from '../common';
 import { VisitTotals, DateBrowser, StudentVisits } from './components';
-import { useProcessDailyData } from './hooks';
+import { useProcessDailyData, useProcessSumCompletion } from './hooks';
 import {
   useLoadCourseInfo,
   useLoadStudentInfo,
@@ -46,6 +46,11 @@ const VisitsTable = (props) => {
     (i, l, u) => dispatch(visitActions.recoverCourseStudentVisitSum(i, l, u)),
     []
   );
+  const recoverCourseStudentCompletionSum = useCallback(
+    (i, l, u) =>
+      dispatch(visitActions.recoverCourseStudentCompletionSum(i, l, u)),
+    []
+  );
   const recoverDailyChapterVisits = useCallback(
     (i, l, u) => dispatch(visitActions.recoverDailyChapterVisits(i, l, u)),
     []
@@ -57,10 +62,21 @@ const VisitsTable = (props) => {
     visits.errors
   );
 
-  const [tableData, setTableData, rowData, _] = useProcessSumData(
+  const [tableData, setTableData, rowData, x] = useProcessSumData(
     visits.added_visits,
     'vertical__vertical',
     recoverCourseStudentVisitSum,
+    errors,
+    setErrors,
+    state.upperDate,
+    state.lowerDate
+  );
+
+  const [rowCompletion, y] = useProcessSumCompletion(
+    tableData,
+    visits.added_completions,
+    'vertical__vertical',
+    recoverCourseStudentCompletionSum,
     errors,
     setErrors,
     state.upperDate,
@@ -252,22 +268,25 @@ const VisitsTable = (props) => {
             <RadialBar
               data={[
                 {
-                  name: 'Módulo 1',
-                  uv: 31,
-                  pv: 2400,
-                  fill: '#8884d8',
+                  completed: 5,
+                  students: 8,
+                  val: '1.1.1',
+                  tooltip: 'Presentación',
+                  fill: '#ffc658',
                 },
                 {
-                  name: 'Módulo 2',
-                  uv: 26,
-                  pv: 4567,
-                  fill: '#83a6ed',
+                  completed: 5,
+                  students: 10,
+                  val: '2.1.1',
+                  tooltip: 'Presentación2',
+                  fill: '#ffc658',
                 },
                 {
-                  name: 'Módulo 3',
-                  uv: 0,
-                  pv: 1398,
-                  fill: '#8dd1e1',
+                  completed: 2,
+                  students: 8,
+                  val: '2.2.1',
+                  tooltip: 'Presentación3',
+                  fill: '#ffc658',
                 },
               ]}
             />
@@ -307,7 +326,7 @@ const VisitsTable = (props) => {
           />
           <StudentVisits
             visits={rowData}
-            completion={rowData}
+            completion={rowCompletion}
             tableData={tableData}
             clickFunction={(user) => {
               setUser({ username: user });

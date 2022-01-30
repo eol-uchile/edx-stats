@@ -6,11 +6,13 @@ export const LOADING_VISITS_ERROR = 'LOADING_VISITS_ERROR';
 export const LOADED_VISITS_RESET = 'LOADED_VISITS_RESET';
 export const LOADED_VISITS_SUM = 'LOADED_VISITS_SUM';
 export const LOADED_VISITS_CHAPTER_SUM = 'LOADED_VISITS_CHAPTER_SUM';
+export const LOADED_COMPLETIONS_SUM = 'LOADED_COMPLETIONS_SUM';
 
 const initialVisitsState = {
   visits: [],
   added_visits: [],
   added_chapter_visits: [],
+  added_completions: [],
   errors: [],
   loading: false,
 };
@@ -34,6 +36,7 @@ export function visits(state = initialVisitsState, action) {
         added_visits: [],
         visits: [],
         added_chapter_visits: [],
+        added_completions: [],
         errors: action.data,
         loading: false,
       };
@@ -41,6 +44,12 @@ export function visits(state = initialVisitsState, action) {
       return { ...initialVisitsState };
     case LOADED_VISITS_CHAPTER_SUM:
       return { ...state, added_chapter_visits: action.data };
+    case LOADED_COMPLETIONS_SUM:
+      return {
+        ...state,
+        added_completions: action.data,
+        errors: [],
+      };
     case CLEAN_ERRORS:
       return {
         ...state,

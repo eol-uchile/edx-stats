@@ -8,7 +8,7 @@ import {
 } from 'recharts';
 import PropTypes from 'prop-types';
 
-const PieChart = ({ data, height = 300 }) => {
+const PieChart = ({ data, dataKey, areaProps, height = 300 }) => {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <RadialBarChart
@@ -25,7 +25,8 @@ const PieChart = ({ data, height = 300 }) => {
           label={{ fill: '#666', position: 'insideStart' }}
           background
           clockWise={true}
-          dataKey="uv"
+          dataKey="completed"
+          name="tooltip"
         />
         <Legend
           iconSize={10}

@@ -29,6 +29,7 @@ const TableVertical = ({
   caption,
   defaultPage = 10,
   doTotal = false,
+  doTip = false,
   parseFunction = (e) => e,
   onHeader = (e, _) => e,
   onRow = (e) => e,
@@ -140,7 +141,7 @@ const TableVertical = ({
             <tbody>
               {errors.length === 0 &&
                 subArray.map((e, k) =>
-                  parseToTableRows(e, k, parseFunction, coloring, onRow)
+                  parseToTableRows(e, k, parseFunction, coloring, onRow, doTip)
                 )}
               <tr></tr>
             </tbody>
