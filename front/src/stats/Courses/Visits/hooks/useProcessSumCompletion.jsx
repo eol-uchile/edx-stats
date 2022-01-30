@@ -58,8 +58,8 @@ function useProcessSumCompletion(
       let users = {};
       let chapterRow = [];
       // for RadialBar
-      let verticals = {}; // {students, completed, name, id}
-      let grouped_verticals = []; // {students, completed}
+      let verticals = {}; // verticals sum info
+      let grouped_verticals = []; // chapter sum info
       // Group by username
       sum.map((t) => {
         if (t.username in users) {
@@ -93,20 +93,18 @@ function useProcessSumCompletion(
             let total_blocks = tableData.verticals[vertical_index].total_blocks;
             values[vertical_index] = `${visited_blocks}/${total_blocks}`;
 
-            // For verticals: Add 1 if user has completed current vertical
-            let sum = 0;
-            if (visited_blocks === total_blocks) {
-              sum = 1;
-            }
+            // For verticals sum: Add 1 if user has completed current vertical
             // Check if verticals have info
             if (verticals[users[u][index][sum_key]] !== undefined) {
-              verticals[users[u][index][sum_key]].completed =
-                verticals[users[u][index][sum_key]].completed + sum;
+              if (visited_blocks === total_blocks) {
+                verticals[users[u][index][sum_key]].completed =
+                  verticals[users[u][index][sum_key]].completed + 1;
+              }
               verticals[users[u][index][sum_key]].students =
                 verticals[users[u][index][sum_key]].students + 1;
             } else {
               verticals[users[u][index][sum_key]] = {
-                completed: sum,
+                completed: visited_blocks === total_blocks ? 1 : 0,
                 students: 1,
               };
             }
@@ -125,7 +123,7 @@ function useProcessSumCompletion(
         chapterRow.push(currentChapterRow);
       });
 
-      // For grouped_verticals
+      // For chapter sum
       // Process each chapter and add
       chapterRow.forEach((row_sum) => {
         row_sum.forEach((value, index) => {
@@ -135,7 +133,6 @@ function useProcessSumCompletion(
             let visited_blocks = parseInt(div[0]);
             let total_blocks = parseInt(div[1]);
             if (grouped_verticals[index - 1]) {
-              let div = value.split('/');
               if (visited_blocks === total_blocks) {
                 grouped_verticals[index - 1].completed =
                   grouped_verticals[index - 1].completed + 1;
@@ -161,32 +158,11 @@ function useProcessSumCompletion(
         };
       });
 
-      // Compute std deviation
-      // Traverse rows
-      // let vertical_errors = [];
-      // for (let i = 1; i < rows[0].length; i++) {
-      //   let user_v = rows.map((el) => el[i]);
-      //   vertical_errors.push(std(user_v));
-      // }
-
-      // Compute std deviation
-      // Traverse groups of rows
-      // to create a matrix to compute std
-      // NOTE: ignore index 1
-      // let grouped_verticals_errors = [];
-      // subtotalsIndex.forEach((st, k) => {
-      //   let leftIndex = subtotalsIndex[k - 1] ? subtotalsIndex[k - 1] : 0;
-      //   let subArray = rows.map((row) => row.slice(leftIndex + 1, st + 1));
-      //   grouped_verticals_errors.push(std(subArray));
-      // });
-
       setRowData({
         all: rows,
         chapters: chapterRow,
         verticals: named_verticals,
         grouped_verticals: grouped_verticals,
-        //vertical_errors,
-        //grouped_verticals_errors,
         loaded: true,
       });
       setErrors([]);

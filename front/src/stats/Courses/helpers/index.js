@@ -71,8 +71,10 @@ const parseStringToDMYDate = (d) => {
 
 const classNameRuling = (data, l0, l1, l2) => {
   if (typeof data !== 'number') {
-    return '';
-  } else if (data === 0) {
+    let div = data.split('/');
+    data = parseInt(div[0]) / parseInt(div[1]);
+  }
+  if (data === 0) {
     return 'data-table-coloring-zeros';
   } else if (data > l0 && data < l1) {
     return 'data-table-coloring-l0';
@@ -90,7 +92,11 @@ const sortByColumn = (rows, column, reverse = false, strings = false) => {
   let isStringSorting = column === 0 || strings;
 
   rows.forEach((r, k) => {
-    let key = isStringSorting ? r[column].toLowerCase() : r[column];
+    let key = isStringSorting
+      ? r[column].toLowerCase()
+      : String(r[column]).match(/(^\d+\/^\d+)/i)
+      ? r[column].split('/')[0] / r[column].split('/')[1]
+      : r[column];
     if (mapping[key] !== undefined) {
       mapping[key].push(k);
     } else {

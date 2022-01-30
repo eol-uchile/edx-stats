@@ -10,14 +10,13 @@ const StudentVisits = ({ tableData, visits, completion, clickFunction }) => {
   const isShort = useMediaQuery({ maxWidth: 418 });
 
   function parseToSymbol(v) {
-    if (v !== '0/0' && parseInt(v) !== 0) {
-      let div = v.split('/');
-      if (parseInt(div[0]) === parseInt(div[1])) {
-        return 'C';
-      }
+    let div = v.split('/');
+    if (parseInt(div[0]) === parseInt(div[1])) {
+      return 'C';
     }
     return 'NC';
   }
+
   const table = useVisitsTable ? (
     <StudentDetails
       title="Visitas"
@@ -25,7 +24,6 @@ const StudentVisits = ({ tableData, visits, completion, clickFunction }) => {
       tableData={tableData}
       clickFunction={clickFunction}
       doAnimation
-      doColor
     />
   ) : (
     <StudentDetails

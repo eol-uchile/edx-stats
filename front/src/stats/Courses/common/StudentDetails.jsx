@@ -41,7 +41,6 @@ const StudentDetails = ({
   doTotal = false,
   doTip = false,
   doAnimation = false,
-  doColor = false,
 }) => {
   const [state, setState] = useState({
     useChaptersTable: true,
@@ -68,11 +67,15 @@ const StudentDetails = ({
     var maxAll = -1;
     rowData.all.forEach((row) =>
       row.slice(1).forEach((el) => {
+        if (typeof el !== 'number') {
+          let div = el.split('/');
+          el = parseInt(div[0]) / parseInt(div[1]);
+        }
         maxAll = maxAll > el ? maxAll : el;
       })
     );
     // Asume min is zero
-    // Split into 3
+    // Split into 3 groups (1 for each color)
     var step = maxAll / 3;
     return (d) => classNameRuling(d, 0, step, step * 2);
   }, [rowData, classNameRuling]);
@@ -131,7 +134,7 @@ const StudentDetails = ({
       doTip={doTip}
       onHeader={sortHeader}
       onRow={clickFunction}
-      coloring={doColor && state.coloring ? coloringFunction : undefined}
+      coloring={state.coloring ? coloringFunction : undefined}
       key="table-verticals"
     />
   );
@@ -168,7 +171,7 @@ const StudentDetails = ({
         </Col>
 
         <Col sm={!isShort ? 3 : 12} key="coloring-transition">
-          {!state.useChaptersTable && doColor && (
+          {!state.useChaptersTable && (
             <Form.Group controlId="coloring-verticals">
               <Form.Check
                 type="switch"
