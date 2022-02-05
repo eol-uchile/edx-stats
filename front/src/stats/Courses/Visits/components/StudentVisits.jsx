@@ -11,7 +11,11 @@ const StudentVisits = ({ tableData, visits, completion, clickFunction }) => {
 
   function parseToSymbol(v) {
     let div = v.split('/');
-    if (parseInt(div[0]) === parseInt(div[1])) {
+    let completed = parseInt(div[0]);
+    let total = parseInt(div[1]);
+    if (completed === 0) {
+      return 'I';
+    } else if (completed === total) {
       return 'C';
     }
     return 'NC';
@@ -28,6 +32,7 @@ const StudentVisits = ({ tableData, visits, completion, clickFunction }) => {
   ) : (
     <StudentDetails
       title="Completitud"
+      helpMessage="Incompleto (I): El estudiante no ha visto el contenido. No completado (NC): El estudiante no ha terminado todos los componentes de la unidad. Completado (C): El estudiante completó todos los componentes de la unidad."
       rowData={completion}
       tableData={tableData}
       clickFunction={clickFunction}

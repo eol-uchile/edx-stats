@@ -32,7 +32,8 @@ const addTotal = (list) => {
  * was not working so it is disabled by default.
  */
 const StudentDetails = ({
-  title,
+  title = '',
+  helpMessage = '',
   rowData,
   tableData,
   caption = 'Detalle por estudiante',
@@ -67,11 +68,12 @@ const StudentDetails = ({
     var maxAll = -1;
     rowData.all.forEach((row) =>
       row.slice(1).forEach((el) => {
+        let currentV = el;
         if (typeof el !== 'number') {
           let div = el.split('/');
-          el = parseInt(div[0]) / parseInt(div[1]);
+          currentV = parseInt(div[0]) / parseInt(div[1]);
         }
-        maxAll = maxAll > el ? maxAll : el;
+        maxAll = maxAll > currentV ? maxAll : currentV;
       })
     );
     // Asume min is zero
@@ -117,6 +119,7 @@ const StudentDetails = ({
       data={sorted.chapters}
       caption={caption}
       parseFunction={parseFunction}
+      helpMessage={helpMessage}
       doTotal={doTotal}
       doTip={doTip}
       onHeader={sortHeader}
@@ -130,6 +133,7 @@ const StudentDetails = ({
       data={sorted.all}
       caption={caption}
       parseFunction={parseFunction}
+      helpMessage={helpMessage}
       doTotal={doTotal}
       doTip={doTip}
       onHeader={sortHeader}
@@ -212,8 +216,10 @@ StudentDetails.propTypes = {
     chapters: PropTypes.array.isRequired,
   }).isRequired,
   title: PropTypes.string,
+  helpMessage: PropTypes.string,
   caption: PropTypes.string,
   doTotal: PropTypes.bool,
+  doTip: PropTypes.bool,
   doAnimation: PropTypes.bool,
 };
 

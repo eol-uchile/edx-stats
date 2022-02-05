@@ -246,9 +246,9 @@ const VisitsTable = (props) => {
             <Col>
               <h4>Visitas de estudiantes por Módulo</h4>
               <ul>
-                <li>
+                {/* <li>
                   <a href="#Completitud">Completitud</a>
-                </li>
+                </li> */}
                 <li>
                   <a href="#VisitasTotales">Visitas totales</a>
                 </li>

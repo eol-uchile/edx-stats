@@ -12,6 +12,7 @@ import {
   faSort,
   faSortDown,
   faSortUp,
+  faQuestionCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
 import { parseToTableRows } from '../../helpers';
@@ -23,6 +24,7 @@ import { parseToTableRows } from '../../helpers';
  */
 const TableVertical = ({
   title,
+  helpMessage = '',
   headers,
   data,
   errors = [],
@@ -81,6 +83,15 @@ const TableVertical = ({
           <TableBT bordered hover size="sm" responsive striped>
             <caption>
               {caption}: {title}
+              {helpMessage !== '' ? (
+                <FontAwesomeIcon
+                  icon={faQuestionCircle}
+                  dataToggle="tooltip"
+                  title={helpMessage}
+                />
+              ) : (
+                ''
+              )}
             </caption>
             <colgroup />
             {headers.chapters.map((el, k) => (
@@ -175,6 +186,7 @@ const TableVertical = ({
 
 TableVertical.propTypes = {
   title: PropTypes.string,
+  helpMessage: PropTypes.string,
   headers: PropTypes.shape({
     chapters: PropTypes.arrayOf(
       PropTypes.shape({
