@@ -29,8 +29,8 @@ function useProcessSumCompletion(
   const [rowData, setRowData] = useState({
     all: [],
     chapters: [],
-    //verticals: [],
-    //grouped_verticals: [],
+    verticals: [],
+    grouped_verticals: [],
     loaded: false,
   });
 

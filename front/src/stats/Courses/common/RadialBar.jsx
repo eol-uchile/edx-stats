@@ -8,7 +8,25 @@ import {
 } from 'recharts';
 import PropTypes from 'prop-types';
 
-const PieChart = ({ data, dataKey, areaProps, height = 300 }) => {
+function CustomTooltip({ label, payload, active }, doLabel = false) {
+  if (active) {
+    return (
+      <div className="custom-tooltip">
+        {/* <p className="label">
+          {doLabel
+            ? `${label} : ${payload[0] && payload[0].payload.tooltip}`
+            : payload[0] && payload[0].payload.tooltip}
+        </p> */}
+        <p className="first">Probando</p>
+        <p className="second">Seguno</p>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+const PieChart = ({ data, height = 300, tooltipLabel = false }) => {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <RadialBarChart
@@ -26,7 +44,6 @@ const PieChart = ({ data, dataKey, areaProps, height = 300 }) => {
           background
           clockWise={true}
           dataKey="completed"
-          name="tooltip"
         />
         <Legend
           iconSize={10}
@@ -36,7 +53,7 @@ const PieChart = ({ data, dataKey, areaProps, height = 300 }) => {
           verticalAlign="middle"
           align="right"
         />
-        <Tooltip />
+        <Tooltip content={(arg) => CustomTooltip(arg, tooltipLabel)} />
       </RadialBarChart>
     </ResponsiveContainer>
   );

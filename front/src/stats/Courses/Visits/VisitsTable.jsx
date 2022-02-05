@@ -8,7 +8,12 @@ import { Link } from 'react-router-dom';
 import { student as studentActions } from '../data/actions';
 import { visitActions } from '.';
 import { RadialBar, StudentInfoModal } from '../common';
-import { VisitTotals, DateBrowser, StudentVisits } from './components';
+import {
+  VisitTotals,
+  DateBrowser,
+  StudentVisits,
+  CompletionTotals,
+} from './components';
 import { useProcessDailyData, useProcessSumCompletion } from './hooks';
 import {
   useLoadCourseInfo,
@@ -259,38 +264,26 @@ const VisitsTable = (props) => {
               </ul>
             </Col>
           </Row>
-          <Container fluid id="Completitud">
+          {/* <Container fluid id="Completitud">
             <Row>
               <Col>
                 <h4>Completitud</h4>
               </Col>
             </Row>
-            <RadialBar
-              data={[
-                {
-                  completed: 5,
-                  students: 8,
-                  val: '1.1.1',
-                  tooltip: 'Presentación',
-                  fill: '#ffc658',
-                },
-                {
-                  completed: 5,
-                  students: 10,
-                  val: '2.1.1',
-                  tooltip: 'Presentación2',
-                  fill: '#ffc658',
-                },
-                {
-                  completed: 2,
-                  students: 8,
-                  val: '2.2.1',
-                  tooltip: 'Presentación3',
-                  fill: '#ffc658',
-                },
-              ]}
-            />
-          </Container>
+            {rowCompletion.loaded && rowCompletion.verticals.length > 0 ? (
+              <CompletionTotals rowData={rowCompletion} tableData={tableData} />
+            ) : errors.length === 0 && !rowData.loaded ? (
+              <Row>
+                <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
+                  <Spinner animation="border" variant="primary" />
+                </Col>
+              </Row>
+            ) : (
+              <Row>
+                <Col>No hay datos</Col>
+              </Row>
+            )}
+          </Container> */}
           <Container fluid id="VisitasTotales">
             <Row>
               <Col>
