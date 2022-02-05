@@ -94,7 +94,7 @@ const sortByColumn = (rows, column, reverse = false, strings = false) => {
   rows.forEach((r, k) => {
     let key = isStringSorting
       ? r[column].toLowerCase()
-      : String(r[column]).match(/(^\d+\/\d+)/i)
+      : String(r[column]).match(/^\d+\/\d+/)
       ? r[column].split('/')[0] / r[column].split('/')[1]
       : r[column];
     if (mapping[key] !== undefined) {
