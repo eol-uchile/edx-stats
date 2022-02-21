@@ -23,7 +23,7 @@ import { parseToTableRows } from '../../helpers';
  * with pagination support
  */
 const TableVertical = ({
-  title,
+  title = '',
   helpMessage = '',
   headers,
   data,
@@ -83,14 +83,12 @@ const TableVertical = ({
           <TableBT bordered hover size="sm" responsive striped>
             <caption>
               {caption}: {title}
-              {helpMessage !== '' ? (
+              {helpMessage !== '' && (
                 <FontAwesomeIcon
                   icon={faQuestionCircle}
                   dataToggle="tooltip"
                   title={helpMessage}
                 />
-              ) : (
-                ''
               )}
             </caption>
             <colgroup />

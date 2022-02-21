@@ -16,7 +16,7 @@ import { parseToTableRows } from '../../helpers';
  * with pagination support
  */
 const TableChapter = ({
-  title,
+  title = '',
   helpMessage = '',
   headers,
   data,
@@ -76,14 +76,12 @@ const TableChapter = ({
           <TableBT bordered hover size="sm" responsive striped>
             <caption>
               {caption}: {title}
-              {helpMessage !== '' ? (
+              {helpMessage !== '' && (
                 <FontAwesomeIcon
                   icon={faQuestionCircle}
                   dataToggle="tooltip"
                   title={helpMessage}
                 />
-              ) : (
-                ''
               )}
             </caption>
             <thead>
