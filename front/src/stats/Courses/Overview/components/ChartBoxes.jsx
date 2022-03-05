@@ -112,24 +112,15 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
             <Col lg="6" className="week-line">
               <ChartBox title={'Total durante la semana'}>
                 <LineArea
+                  height={438.5}
                   data={dataLine.values}
-                  dataKey={['date', 'Cantidad diaria']}
-                  areaProps={[
-                    {
-                      type: 'monotone',
-                      dataKey: 'Tiempo',
-                      stroke: '#ffc658',
-                      fill: '#ffc658',
-                      activeDot: { r: 8 },
-                    },
-                    {
-                      type: 'monotone',
-                      dataKey: 'Visitas',
-                      stroke: '#8884d8',
-                      fill: '#8884d8',
-                      activeDot: { r: 8 },
-                    },
-                  ]}
+                  xKey="date"
+                  yLabel={'Cantidad diaria'}
+                  xProps={{ angle: -10 }}
+                  tooltip={{
+                    Tiempo: 'Tiempo de visualización [s]',
+                    Visitas: 'Cantidad de visitas',
+                  }}
                 />
               </ChartBox>
             </Col>

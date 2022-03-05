@@ -83,12 +83,14 @@ const VisitTotals = ({ rowData, tableData }) => {
         <Col>
           <ParallelBar
             data={state ? rowDataChaptersChart : rowDataChart}
-            bar1_key="Visitas Únicas usuarios"
-            bar2_key="Visitas totales"
-            name_key="val"
-            x_label={state ? 'Secciones' : 'Unidades del curso'}
-            y_label="Visitas"
-            tooltipLabel={!state} // modules already have labels
+            xKey="val"
+            xLabel={state ? 'Secciones' : 'Unidades'}
+            yLabel={'Visitas'}
+            tooltip={{
+              'Visitas Únicas usuarios': 'Estudiantes que vieron el contenido',
+              'Visitas totales': 'Total de minutos vistos',
+            }}
+            labelInTitle={!state} // modules already have labels
           />
         </Col>
       </Row>

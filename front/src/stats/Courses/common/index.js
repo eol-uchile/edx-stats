@@ -10,9 +10,11 @@ import PullUp from './PullUp';
 import StackedBar from './StackedBar';
 import StackedArea from './StackedArea';
 import StudentInfoModal from './StudentInfoModal';
+import CustomTooltip from './CustomTooltip';
 
 export {
   AsyncCSVButton,
+  CustomTooltip,
   ParallelBar,
   ErrorBarChart,
   MultiAxisBars,

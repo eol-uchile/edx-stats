@@ -62,64 +62,82 @@ function rgbToHex(rgb) {
 /**
  * Reference 'https://codesandbox.io/s/stacked-area-chart-ix341'
  */
-const TimeLineArea = ({ data, keys, mapping, height = '60%' }) => {
+const TimeLineArea = ({
+  data,
+  xKey,
+  xLabel,
+  yLabel,
+  xProps,
+  yProps,
+  tooltip,
+  height = 400,
+  labelInTitle = true,
+}) => {
+  const yKeys = useMemo(() => {
+    return Object.keys(tooltip);
+  }, [tooltip]);
   const colors = useMemo(() => {
-    let len = keys.length;
+    let len = yKeys.length;
     let fun = interpolateHsl('red', 'blue');
     let interpolated = [];
     for (let index = 0; index < len; index++) {
       interpolated.push(rgbToHex(fun(index / len + 1)));
     }
     return interpolated;
-  }, [keys]);
+  }, [yKeys]);
   return (
-    <ResponsiveContainer width="100%" height={height} minHeight={400}>
+    <ResponsiveContainer width="100%" height={height}>
       <AreaChart
         data={data}
         margin={{
           top: 10,
           right: 30,
-          left: 0,
+          left: 30,
           bottom: 0,
         }}
       >
+        <XAxis dataKey={xKey} stroke="#8884d8" {...xProps}>
+          <Label offset={-10} position="insideBottom" value={xLabel} />
+        </XAxis>
+        <YAxis {...yProps}>
+          <Label angle={-90} position="insideLeft" value={yLabel} />
+        </YAxis>
+        <Tooltip content={(arg) => CustomTooltip(arg, tooltip)} />
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" angle={-10} />
-        <YAxis
-          label={{
-            value: 'Visitas Totales',
-            angle: -90,
-            position: 'insideLeft',
-          }}
-        />
-        <Tooltip content={(arg) => CustomTooltip(arg, mapping)} />
-        {keys.map((data_k, k) => (
-          <Area
-            type="monotone"
-            dataKey={data_k}
-            stackId="1"
-            stroke={colors[k]}
-            fill={colors[k]}
-            key={data_k}
-          />
-        ))}
         <Legend
-          formatter={(v, e) => renderLegend(v, e, mapping)}
+          verticalAlign="bottom"
+          align="center"
           wrapperStyle={{
             bottom: '0px',
             lineHeight: '40px',
           }}
           iconType="square"
+          formatter={(v, e) => renderLegend(v, e, tooltip)}
         />
+        {yKeys.map((data_k, k) => (
+          <Area
+            dataKey={data_k}
+            key={k}
+            type="monotone"
+            stroke={colors[k]}
+            fill={colors[k]}
+          />
+        ))}
       </AreaChart>
     </ResponsiveContainer>
   );
 };
 
 TimeLineArea.propTypes = {
-  data: PropTypes.array.isRequired, // {hash1: count, hash2: count .... date: date}
-  keys: PropTypes.arrayOf(PropTypes.string).isRequired,
-  mapping: PropTypes.objectOf(PropTypes.string).isRequired,
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  xKey: PropTypes.string,
+  xLabel: PropTypes.string,
+  yLabel: PropTypes.string,
+  xProps: PropTypes.object,
+  yProps: PropTypes.object,
+  tooltip: PropTypes.object,
+  height: PropTypes.number,
+  labelInTitle: PropTypes.bool,
 };
 
 export default TimeLineArea;

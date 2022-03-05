@@ -27,7 +27,7 @@ const renderCustomizedLabel = ({
     <text
       x={x}
       y={y}
-      fill="black"
+      fill="#8884d8"
       textAnchor={x > cx ? 'start' : 'end'}
       dominantBaseline="central"
     >
@@ -52,7 +52,7 @@ function rgbToHex(rgb) {
   );
 }
 
-const PieChart = ({ data, height = 400 }) => {
+const PieChart = ({ data, xKey, height = 400 }) => {
   const colors = useMemo(() => {
     let len = data.length;
     let fun = interpolateHsl('red', 'blue');
@@ -63,15 +63,22 @@ const PieChart = ({ data, height = 400 }) => {
     return interpolated;
   }, [data]);
   return (
-    <ResponsiveContainer width="100%" height={height} minHeight={400}>
+    <ResponsiveContainer width="100%" height={height}>
       <RePieChart
         margin={{
           top: 10,
           right: 30,
-          left: 0,
+          left: 30,
           bottom: 0,
         }}
       >
+        <Legend
+          verticalAlign="top"
+          align="left"
+          wrapperStyle={{
+            lineHeight: '40px',
+          }}
+        />
         <Pie
           data={data}
           cx="50%"
@@ -80,20 +87,20 @@ const PieChart = ({ data, height = 400 }) => {
           label={renderCustomizedLabel}
           outerRadius={80}
           fill="#8884d8"
-          dataKey="value"
+          dataKey={xKey}
         >
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
           ))}
         </Pie>
-        <Legend verticalAlign="top" align="left" />
       </RePieChart>
     </ResponsiveContainer>
   );
 };
 
 PieChart.propTypes = {
-  data: PropTypes.array.isRequired,
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  xKey: PropTypes.string,
   height: PropTypes.number,
 };
 

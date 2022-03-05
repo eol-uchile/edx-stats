@@ -83,12 +83,14 @@ const TimeVsVisits = ({ tableData, rowData }) => {
         <Col>
           <MultiAxisBars
             data={state ? rowDataChaptersChart : rowDataChart}
-            bar1_key="Tiempo de visualización"
-            bar2_key="Visitas Únicas usuarios"
-            name_key="val"
-            x_label={state ? 'Secciones' : 'Unidades del curso'}
-            y1_label="Tiempo"
-            y2_label="Visitas"
+            xKey="val"
+            yProps={[{}, {}]} //TODO
+            xLabel={state ? 'Secciones' : 'Unidades'}
+            yLabel={['Tiempo', 'Visitas']}
+            tooltip={{
+              'Tiempo de visualización': 'Tiempo total',
+              'Visitas Únicas usuarios': 'Visitas únicas',
+            }}
             tooltipLabel={!state} // modules already have labels
           />
         </Col>

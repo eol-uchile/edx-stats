@@ -65,11 +65,13 @@ const VideoCoverage = ({ tableData, errors, setErrors }) => {
             <Col>
               <StackedBar
                 data={rowData.values}
-                bar1_key="Completo"
-                bar2_key="Incompleto"
-                name_key="position"
-                x_label="Ubicación de cada video"
-                y_label="Estudiantes"
+                xKey="position"
+                xLabel="Ubicación"
+                yLabel="Estudiantes"
+                tooltip={{
+                  Completo: 'Visualizaciones completas',
+                  Incompleto: 'Visualizaciones parciales',
+                }}
               />
             </Col>
           </Row>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   BarChart,
   Bar,
@@ -12,13 +12,22 @@ import {
 } from 'recharts';
 import PropTypes from 'prop-types';
 
-function CustomTooltip({ label, payload, active }) {
+function CustomTooltip({ payload, label, active }, mapping, labelInTitle) {
   if (active) {
     return (
       <div className="custom-tooltip">
-        <p className="label">{`${label} : ${payload[0].payload.name} `}</p>
-        <p className="first">{`${payload[1].value} estudiantes aún no terminan el video`}</p>
-        <p className="second">{`Mientras que ${payload[0].value} estudiantes ya lo hicieron.`}</p>
+        <p className="label">
+          {labelInTitle ? label : ''}{' '}
+          {payload[0]
+            ? payload[0].payload.tooltip && payload[0].payload.tooltip
+            : ''}
+        </p>
+        <p key={'Incompleto'}>
+          {mapping['Incompleto']}: {payload[1].value}
+        </p>
+        <p key={'Completo'}>
+          {mapping['Completo']}: {payload[0].value}
+        </p>
       </div>
     );
   }
@@ -28,61 +37,73 @@ function CustomTooltip({ label, payload, active }) {
 
 const StackedBar = ({
   data,
-  bar1_key,
-  bar2_key,
-  name_key,
-  x_label,
-  y_label,
-  width = '100%',
+  xKey,
+  xLabel,
+  yLabel,
+  xProps,
+  yProps,
+  tooltip,
+  height = 400,
+  labelInTitle = true,
 }) => {
+  const yKeys = useMemo(() => {
+    return Object.keys(tooltip);
+  }, [tooltip]);
+  const colors = ['#1f73d4', '#b4b4b4'];
   return (
-    <ResponsiveContainer width={width} height={450}>
+    <ResponsiveContainer width="100%" height={height}>
       <BarChart
-        width={500}
-        height={300}
         data={data}
         margin={{
-          top: 20,
+          top: 10,
           right: 30,
-          left: 20,
-          bottom: 5,
+          left: 30,
+          bottom: 0,
         }}
       >
-        <XAxis dataKey={name_key} stroke="#8884d8">
-          <Label value={x_label} offset={-10} position="insideBottom" />
+        <XAxis dataKey={xKey} stroke="#8884d8" {...xProps}>
+          <Label offset={-10} position="insideBottom" value={xLabel} />
         </XAxis>
-        <YAxis label={{ value: y_label, angle: -90, position: 'insideLeft' }} />
-        <Tooltip content={(arg) => CustomTooltip(arg)} />
+        <YAxis {...yProps}>
+          <Label angle={-90} position="insideLeft" value={yLabel} />
+        </YAxis>
+        <Tooltip content={(arg) => CustomTooltip(arg, tooltip, labelInTitle)} />
         <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
         <Legend
+          verticalAlign="bottom"
+          align="center"
           wrapperStyle={{
             bottom: '0px',
             lineHeight: '40px',
           }}
           iconType="square"
         />
-        <Bar stackId="a" dataKey={bar1_key} fill="#1f73d4" />
-        <Bar stackId="a" dataKey={bar2_key} fill="#b4b4b4" />
+        {yKeys.map((data_k, k) => (
+          <Bar
+            dataKey={data_k}
+            key={k}
+            stackId="a"
+            type="monotone"
+            barSize={60}
+            fill={colors[k]}
+          />
+        ))}
       </BarChart>
     </ResponsiveContainer>
   );
 };
 
 StackedBar.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      block_id: PropTypes.string,
-      name: PropTypes.string,
-      position: PropTypes.number,
-      Completo: PropTypes.number,
-      Incompleto: PropTypes.number,
-    })
-  ),
-  bar1_key: PropTypes.string.isRequired,
-  bar2_key: PropTypes.string.isRequired,
-  name_key: PropTypes.string.isRequired,
-  y_label: PropTypes.string.isRequired,
-  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  xKey: PropTypes.string,
+  xLabel: PropTypes.string,
+  yLabel: PropTypes.string,
+  xProps: PropTypes.object,
+  yProps: PropTypes.object,
+  tooltip: PropTypes.object,
+  asc: PropTypes.bool,
+  height: PropTypes.number,
+  labelInTitle: PropTypes.bool,
 };
 
 export default StackedBar;

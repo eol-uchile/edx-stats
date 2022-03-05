@@ -107,10 +107,11 @@ const VideoDetailed = ({ tableData, errors, setErrors }) => {
             <Col>
               <StackedArea
                 data={rowData.values}
-                bar1_key="Visualizaciones"
-                bar2_key="Repeticiones"
-                name_key="second"
-                y_label="Visualizaciones totales"
+                xKey="second"
+                tooltip={{
+                  Visualizaciones: 'Reproducciones',
+                  Repeticiones: 'Repeticiones',
+                }}
               />
             </Col>
           </Row>

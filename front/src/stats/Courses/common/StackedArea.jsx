@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   AreaChart,
   Area,
@@ -6,16 +6,21 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  Label,
 } from 'recharts';
 import PropTypes from 'prop-types';
 
-function CustomTooltip({ label, payload, active }) {
+function CustomTooltip({ label, payload, active }, mapping) {
   if (active) {
     return (
       <div className="custom-tooltip">
         <p className="label">{`Minuto ${label}`}</p>
-        <p className="first">{`${payload[1].value} estudiantes repitieron este segmento.`}</p>
-        <p className="second">{`${payload[0].value} estudiantes vieron este segmento.`}</p>
+        <p key={'Repeticiones'}>
+          {mapping['Repeticiones']}: {payload[1].value}
+        </p>
+        <p key={'Visualizaciones'}>
+          {mapping['Visualizaciones']}: {payload[0].value}
+        </p>
       </div>
     );
   }
@@ -25,30 +30,46 @@ function CustomTooltip({ label, payload, active }) {
 
 const StackedArea = ({
   data,
-  bar1_key,
-  bar2_key,
-  name_key,
-  y_label,
-  width = '100%',
+  xKey,
+  xLabel,
+  yLabel,
+  xProps,
+  yProps,
+  tooltip,
+  height = 400,
+  labelInTitle = true,
 }) => {
+  const yKeys = useMemo(() => {
+    return Object.keys(tooltip);
+  }, [tooltip]);
+  const colors = ['#009bdd', '#1e658d'];
   return (
-    <ResponsiveContainer width={width} height={450}>
+    <ResponsiveContainer width="100%" height={height}>
       <AreaChart
-        width={500}
-        height={400}
         data={data}
         margin={{
           top: 10,
           right: 30,
-          left: 0,
+          left: 30,
           bottom: 0,
         }}
       >
-        <XAxis dataKey={name_key} stroke="#8884d8" />
-        <YAxis label={{ value: y_label, angle: -90, position: 'insideLeft' }} />
-        <Tooltip content={(arg) => CustomTooltip(arg)} />
-        <Area dataKey={bar1_key} stackId="1" stroke="#009bdd" fill="#009bdd" />
-        <Area dataKey={bar2_key} stackId="1" stroke="#1e658d" fill="#1e658d" />
+        <XAxis dataKey={xKey} stroke="#8884d8" {...xProps}>
+          <Label offset={-10} position="insideBottom" value={xLabel} />
+        </XAxis>
+        <YAxis {...yProps}>
+          <Label angle={-90} position="insideLeft" value={yLabel} />
+        </YAxis>
+        <Tooltip content={(arg) => CustomTooltip(arg, tooltip)} />
+        {yKeys.map((data_k, k) => (
+          <Area
+            dataKey={data_k}
+            key={k}
+            stackId="a"
+            type="monotone"
+            fill={colors[k]}
+          />
+        ))}
       </AreaChart>
     </ResponsiveContainer>
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   BarChart,
   Bar,
@@ -44,77 +44,74 @@ function CustomTooltip({ payload, label, active }, doLabel = false) {
 
 const MultiAxisBars = ({
   data,
-  bar1_key,
-  bar2_key,
-  name_key,
-  x_label,
-  y1_label,
-  y2_label,
-  tooltipLabel = false,
-  width = '100%',
-}) => (
-  <ResponsiveContainer width={width} height={450}>
-    <BarChart data={data} margin={{ top: 5, right: 20, bottom: 30, left: 20 }}>
-      <XAxis dataKey={name_key} stroke="#8884d8">
-        <Label value={x_label} offset={-10} position="insideBottom" />
-      </XAxis>
-      <YAxis
-        domain={[0, 'dataMax']}
-        yAxisId="left"
-        tick={<CustomizedTick />}
-        label={{ value: y1_label, angle: -90, position: 'insideLeft' }}
-      />
-      <YAxis
-        domain={[0, 'dataMax']}
-        yAxisId="right"
-        orientation="right"
-        label={{ value: y2_label, angle: 90, position: 'insideRight' }}
-      />
-      <Tooltip content={(arg) => CustomTooltip(arg, tooltipLabel)} />
-      <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-      <Legend
-        wrapperStyle={{
-          bottom: '0px',
-          lineHeight: '40px',
-        }}
-        iconType="square"
-      />
-      <Bar
-        type="monotone"
-        dataKey={bar1_key}
-        stroke="#5b68dd"
-        fill="#5b68dd"
-        yAxisId="left"
-        strokeWidth={2}
-      />
-      <Bar
-        dataKey={bar2_key}
-        fill="#ff8949"
-        stroke="#ff8949"
-        strokeWidth={2}
-        yAxisId="right"
-      />
-    </BarChart>
-  </ResponsiveContainer>
-);
+  xKey,
+  xLabel,
+  yLabel,
+  xProps,
+  yProps,
+  tooltip,
+  asc = false,
+  height = 400,
+  labelInTitle = false,
+}) => {
+  const yKeys = useMemo(() => {
+    return Object.keys(tooltip);
+  }, [tooltip]);
+  const colors = ['#5b68dd', '#ff8949'];
+  return (
+    <ResponsiveContainer width="100%" height={height}>
+      <BarChart data={data} margin={{ top: 5, right: 30, left: 30, bottom: 0 }}>
+        <XAxis dataKey={xKey} stroke="#8884d8" {...xProps}>
+          <Label offset={-10} position="insideBottom" value={xLabel} />
+        </XAxis>
+        <YAxis
+          domain={[0, 'dataMax']}
+          yAxisId="left"
+          orientation="left"
+          tick={<CustomizedTick />}
+        >
+          <Label angle={-90} position="insideLeft" value={yLabel[0]} />
+        </YAxis>
+        <YAxis domain={[0, 'dataMax']} yAxisId="right" orientation="right">
+          <Label angle={90} position="insideRight" value={yLabel[1]} />
+        </YAxis>
+        <Tooltip content={(arg) => CustomTooltip(arg, labelInTitle)} />
+        <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+        <Legend
+          verticalAlign="bottom"
+          align="center"
+          wrapperStyle={{
+            bottom: '0px',
+            lineHeight: '40px',
+          }}
+          iconType="square"
+        />
+        {yKeys.map((data_k, k) => (
+          <Bar
+            dataKey={data_k}
+            key={k}
+            type="monotone"
+            stroke={colors[k]}
+            fill={colors[k]}
+            yAxisId={k == 0 ? 'left' : 'right'}
+          />
+        ))}
+      </BarChart>
+    </ResponsiveContainer>
+  );
+};
 
 MultiAxisBars.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      students: PropTypes.number,
-      visits: PropTypes.number,
-      tooltip: PropTypes.string.isRequired,
-      val: PropTypes.string.isRequired,
-      id: PropTypes.string,
-    })
-  ),
-  bar1_key: PropTypes.string.isRequired,
-  bar2_key: PropTypes.string.isRequired,
-  name_key: PropTypes.string.isRequired,
-  x_label: PropTypes.string.isRequired,
-  y1_label: PropTypes.string.isRequired,
-  y2_label: PropTypes.string.isRequired,
-  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  xKey: PropTypes.string,
+  xLabel: PropTypes.string,
+  yLabel: PropTypes.arrayOf(PropTypes.string),
+  xProps: PropTypes.object,
+  yProps: PropTypes.arrayOf(PropTypes.object),
+  tooltip: PropTypes.object,
+  asc: PropTypes.bool,
+  height: PropTypes.number,
+  labelInTitle: PropTypes.bool,
 };
 
 export default MultiAxisBars;

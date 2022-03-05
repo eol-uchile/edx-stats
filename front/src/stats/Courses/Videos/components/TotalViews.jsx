@@ -59,12 +59,13 @@ const TotalViews = ({ tableData, errors, setErrors }) => {
             <Col>
               <ParallelBar
                 data={rowData.values}
-                bar1_key="Usuarios"
-                bar2_key="Minutos"
-                name_key="position"
-                x_label="Ubicación de cada video"
-                y_label="Total"
-                tooltipLabel
+                xKey="position"
+                xLabel="Ubicación"
+                yLabel="Total"
+                tooltip={{
+                  Usuarios: 'Estudiantes que vieron el contenido',
+                  Minutos: 'Total de minutos vistos',
+                }}
               />
             </Col>
           </Row>

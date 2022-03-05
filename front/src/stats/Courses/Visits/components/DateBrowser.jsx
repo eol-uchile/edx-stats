@@ -115,8 +115,10 @@ const DateBrowser = ({ title, data, mapping, loading, haveErrors }) => {
             <Col>
               <TimeLineArea
                 data={data[state.selected] ? data[state.selected].data : []}
-                keys={Object.keys(mapping)}
-                mapping={mapping}
+                xKey="date"
+                yLabel="Visitas Totales"
+                xProps={{ angle: -10 }}
+                tooltip={mapping}
               />
             </Col>
           </Row>
