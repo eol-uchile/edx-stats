@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import { CustomTooltip } from '../../common';
 
 const renderLegend = (value, entry, mapping) => {
-  return <span>{mapping[value].label}</span>;
+  return <span>{mapping[value].label.replace(': {}', '')}</span>;
 };
 
 function componentToHex(c) {
