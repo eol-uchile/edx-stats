@@ -123,6 +123,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                       Tiempo: { label: 'Tiempo de visualización [s]: {}' },
                       Visitas: { label: 'Cantidad de visitas: {}' },
                     },
+                    order: 'dec',
                   }}
                 />
               </ChartBox>
