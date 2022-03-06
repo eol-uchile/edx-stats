@@ -100,7 +100,7 @@ const PieChart = ({ data, xKey, height = 400 }) => {
 
 PieChart.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
-  xKey: PropTypes.string,
+  xKey: PropTypes.string.isRequired,
   height: PropTypes.number,
 };
 

@@ -35,7 +35,12 @@ function CustomTooltip(
           (el) =>
             el.value > 0 && (
               <p key={el.dataKey}>
-                {body[el.dataKey]}: {el.value}
+                {body[el.dataKey].label.replace(
+                  '{}',
+                  body[el.dataKey].parser
+                    ? body[el.dataKey].parser(el.value)
+                    : el.value
+                )}
               </p>
             )
         )}

@@ -120,8 +120,8 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                   tooltip={{
                     title: 'Fecha {}',
                     body: {
-                      Tiempo: 'Tiempo de visualización [s]',
-                      Visitas: 'Cantidad de visitas',
+                      Tiempo: { label: 'Tiempo de visualización [s]: {}' },
+                      Visitas: { label: 'Cantidad de visitas: {}' },
                     },
                   }}
                 />
@@ -157,7 +157,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                 </Row>
                 <Row>
                   <Col>
-                    <PieChart data={dataPie.values} />
+                    <PieChart data={dataPie.values} xKey="value" />
                   </Col>
                 </Row>
               </ChartBox>

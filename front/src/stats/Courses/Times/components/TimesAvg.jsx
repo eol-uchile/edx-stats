@@ -3,6 +3,7 @@ import { Row, Col } from 'react-bootstrap';
 import { Form } from '@edx/paragon';
 import { useMediaQuery } from 'react-responsive';
 import { AsyncCSVButton, ErrorBarChart } from '../../common';
+import { parseFloatToTimeString } from '../../helpers';
 
 const TimesAvg = ({ tableData, rowData }) => {
   const [state, setState] = useState(true);
@@ -94,8 +95,14 @@ const TimesAvg = ({ tableData, rowData }) => {
             tooltip={{
               title: state ? '' : '{}:', // modules already have labels
               body: {
-                'Tiempo promedio visto': 'Tiempo promedio de visualización',
-                errorX: 'Desviación estándar',
+                'Tiempo promedio visto': {
+                  label: 'Tiempo promedio de visualización: {}',
+                  parser: parseFloatToTimeString,
+                },
+                errorX: {
+                  label: 'Desviación estándar: {}',
+                  parser: parseFloatToTimeString,
+                },
               },
             }}
           />

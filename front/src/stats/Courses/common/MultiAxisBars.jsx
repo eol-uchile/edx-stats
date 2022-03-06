@@ -79,14 +79,19 @@ const MultiAxisBars = ({
 
 MultiAxisBars.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
-  xKey: PropTypes.string,
+  xKey: PropTypes.string.isRequired,
   xLabel: PropTypes.string,
   yLabel: PropTypes.arrayOf(PropTypes.string),
   xProps: PropTypes.object,
   yProps: PropTypes.arrayOf(PropTypes.object),
   tooltip: PropTypes.shape({
     title: PropTypes.string,
-    body: PropTypes.object.isRequired,
+    body: PropTypes.shape({
+      yKey: PropTypes.shape({
+        label: PropTypes.string.isRequired,
+        parser: PropTypes.func,
+      }),
+    }).isRequired,
     order: PropTypes.string,
   }).isRequired,
   height: PropTypes.number,

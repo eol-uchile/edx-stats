@@ -89,11 +89,11 @@ const VisitTotals = ({ rowData, tableData }) => {
             tooltip={{
               title: state ? '' : '{}:', // modules already have labels
               body: {
-                'Visitas Únicas usuarios':
-                  'Estudiantes que vieron el contenido',
-                'Visitas totales': 'Total de minutos vistos',
+                'Visitas Únicas usuarios': {
+                  label: 'Estudiantes que vieron el contenido: {}',
+                },
+                'Visitas totales': { label: 'Total de minutos vistos: {}' },
               },
-              order: 'dec',
             }}
           />
         </Col>

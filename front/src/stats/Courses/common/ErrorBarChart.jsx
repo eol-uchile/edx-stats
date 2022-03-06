@@ -28,18 +28,20 @@ function CustomTooltip(
             ? payload[0].payload.tooltip && payload[0].payload.tooltip
             : ''}
         </p>
-        {Object.keys(body).map((data_k, k) =>
-          k === 0 ? (
-            <p key={k}>
-              {body[data_k]}: {parseFloatToTimeString(payload[0].value)}
-            </p>
-          ) : (
-            <p key={k}>
-              {body[data_k]}:{' '}
-              {parseFloatToTimeString(payload[0].payload.errorX)}
-            </p>
-          )
-        )}
+        {Object.keys(body).map((data_k, k) => (
+          <p key={k}>
+            {body[data_k].label.replace(
+              '{}',
+              k === 0
+                ? body[data_k].parser
+                  ? body[data_k].parser(payload[0].value)
+                  : payload[0].value
+                : body[data_k].parser
+                ? body[data_k].parser(payload[0].payload.errorX)
+                : payload[0].payload.errorX
+            )}
+          </p>
+        ))}
       </div>
     );
   }
@@ -110,7 +112,7 @@ const ErrorBarChart = ({
 
 ErrorBarChart.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
-  xKey: PropTypes.string,
+  xKey: PropTypes.string.isRequired,
   errorKey: PropTypes.string,
   xLabel: PropTypes.string,
   yLabel: PropTypes.string,
@@ -118,7 +120,12 @@ ErrorBarChart.propTypes = {
   yProps: PropTypes.object,
   tooltip: PropTypes.shape({
     title: PropTypes.string,
-    body: PropTypes.object.isRequired,
+    body: PropTypes.shape({
+      yKey: PropTypes.shape({
+        label: PropTypes.string.isRequired,
+        parser: PropTypes.func,
+      }),
+    }).isRequired,
     order: PropTypes.string,
   }).isRequired,
   height: PropTypes.number,

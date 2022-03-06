@@ -71,8 +71,8 @@ const VideoCoverage = ({ tableData, errors, setErrors }) => {
                 tooltip={{
                   title: '{}:',
                   body: {
-                    Completo: 'Visualizaciones completas',
-                    Incompleto: 'Visualizaciones parciales',
+                    Completo: { label: 'Visualizaciones completas: {}' },
+                    Incompleto: { label: 'Visualizaciones parciales: {}' },
                   },
                   order: 'reversed',
                 }}

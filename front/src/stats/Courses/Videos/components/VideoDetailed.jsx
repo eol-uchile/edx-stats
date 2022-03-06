@@ -93,8 +93,10 @@ const VideoDetailed = ({ tableData, errors, setErrors }) => {
                 }}
                 disabled={!rowData.loaded}
               >
-                {videoSelector.options.map((el) => (
-                  <option value={el.key}>{el.value}</option>
+                {videoSelector.options.map((el, k) => (
+                  <option key={k} value={el.key}>
+                    {el.value}
+                  </option>
                 ))}
               </select>
             </InputGroup>
@@ -111,8 +113,8 @@ const VideoDetailed = ({ tableData, errors, setErrors }) => {
                 tooltip={{
                   title: 'Minuto {}',
                   body: {
-                    Visualizaciones: 'Reproducciones',
-                    Repeticiones: 'Repeticiones',
+                    Visualizaciones: { label: 'Reproducciones: {}' },
+                    Repeticiones: { label: 'Repeticiones: {}' },
                   },
                   order: 'reversed',
                 }}

@@ -3,6 +3,7 @@ import { Row, Col } from 'react-bootstrap';
 import { Form } from '@edx/paragon';
 import { useMediaQuery } from 'react-responsive';
 import { AsyncCSVButton, MultiAxisBars } from '../../common';
+import { parseFloatToTimeString } from '../../helpers';
 
 const TimeVsVisits = ({ tableData, rowData }) => {
   const [state, setState] = useState(true);
@@ -90,10 +91,12 @@ const TimeVsVisits = ({ tableData, rowData }) => {
             tooltip={{
               title: state ? '' : '{}:', // modules already have labels
               body: {
-                'Tiempo de visualización': 'Tiempo total',
-                'Visitas Únicas usuarios': 'Visitas únicas',
+                'Tiempo de visualización': {
+                  label: 'Tiempo total: {}',
+                  parser: parseFloatToTimeString,
+                },
+                'Visitas Únicas usuarios': { label: 'Visitas únicas: {}' },
               },
-              order: 'dec',
             }}
           />
         </Col>

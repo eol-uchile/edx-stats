@@ -65,10 +65,11 @@ const TotalViews = ({ tableData, errors, setErrors }) => {
                 tooltip={{
                   title: '{}:',
                   body: {
-                    Usuarios: 'Estudiantes que vieron el contenido',
-                    Minutos: 'Total de minutos vistos',
+                    Usuarios: {
+                      label: 'Estudiantes que vieron el contenido: {}',
+                    },
+                    Minutos: { label: 'Total de minutos vistos: {}' },
                   },
-                  order: 'dec',
                 }}
               />
             </Col>
