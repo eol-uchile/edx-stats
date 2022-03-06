@@ -8,25 +8,8 @@ import {
   ResponsiveContainer,
   Label,
 } from 'recharts';
+import CustomTooltip from './CustomTooltip';
 import PropTypes from 'prop-types';
-
-function CustomTooltip({ label, payload, active }, mapping) {
-  if (active) {
-    return (
-      <div className="custom-tooltip">
-        <p className="label">{`Minuto ${label}`}</p>
-        <p key={'Repeticiones'}>
-          {mapping['Repeticiones']}: {payload[1].value}
-        </p>
-        <p key={'Visualizaciones'}>
-          {mapping['Visualizaciones']}: {payload[0].value}
-        </p>
-      </div>
-    );
-  }
-
-  return null;
-}
 
 const StackedArea = ({
   data,
@@ -37,10 +20,9 @@ const StackedArea = ({
   yProps,
   tooltip,
   height = 400,
-  labelInTitle = true,
 }) => {
   const yKeys = useMemo(() => {
-    return Object.keys(tooltip);
+    return Object.keys(tooltip.body);
   }, [tooltip]);
   const colors = ['#009bdd', '#1e658d'];
   return (
@@ -76,18 +58,18 @@ const StackedArea = ({
 };
 
 StackedArea.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      second: PropTypes.string,
-      Visualizaciones: PropTypes.number,
-      Repeticiones: PropTypes.number,
-    })
-  ),
-  bar1_key: PropTypes.string.isRequired,
-  bar2_key: PropTypes.string.isRequired,
-  name_key: PropTypes.string.isRequired,
-  y_label: PropTypes.string.isRequired,
-  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  xKey: PropTypes.string,
+  xLabel: PropTypes.string,
+  yLabel: PropTypes.string,
+  xProps: PropTypes.object,
+  yProps: PropTypes.object,
+  tooltip: PropTypes.shape({
+    title: PropTypes.string,
+    body: PropTypes.object.isRequired,
+    order: PropTypes.string,
+  }).isRequired,
+  height: PropTypes.number,
 };
 
 export default StackedArea;

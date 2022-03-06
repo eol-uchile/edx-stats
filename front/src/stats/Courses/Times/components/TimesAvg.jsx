@@ -89,13 +89,15 @@ const TimesAvg = ({ tableData, rowData }) => {
           <ErrorBarChart
             data={state ? averageChapterChart : averageChart}
             xKey="val"
-            errorKey="errorX"
             xLabel={state ? 'Secciones' : 'Unidades del curso'}
             yLabel="Tiempo"
             tooltip={{
-              'Tiempo promedio visto': 'Tiempo promedio de visualización',
+              title: state ? '' : '{}:', // modules already have labels
+              body: {
+                'Tiempo promedio visto': 'Tiempo promedio de visualización',
+                errorX: 'Desviación estándar',
+              },
             }}
-            tooltipLabel={!state} // modules already have labels
           />
         </Col>
       </Row>

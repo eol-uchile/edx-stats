@@ -15,28 +15,31 @@ import {
 import PropTypes from 'prop-types';
 import { parseFloatToTimeString } from '../helpers';
 
-const CustomizedTick = (props) => {
-  const { payload } = props;
-  return <Text {...props}>{parseFloatToTimeString(payload.value)}</Text>;
-};
-
-function CustomTooltip({ payload, label, active }, doLabel = false) {
+function CustomTooltip(
+  { payload, label, active },
+  { title = '', body, order = '' }
+) {
   if (active) {
     return (
       <div className="custom-tooltip">
         <p className="label">
-          {doLabel
-            ? `${label} : ${payload[0] && payload[0].payload.tooltip}`
-            : payload[0] && payload[0].payload.tooltip}
+          {title.replace('{}', label)}{' '}
+          {payload[0]
+            ? payload[0].payload.tooltip && payload[0].payload.tooltip
+            : ''}
         </p>
-        <p className="first">
-          Tiempo promedio de visualización:{' '}
-          {payload[0] && parseFloatToTimeString(payload[0].value)}
-        </p>
-        <p className="second">
-          Desviación estándar:{' '}
-          {payload[0] && parseFloatToTimeString(payload[0].payload.errorX)}
-        </p>
+        {Object.keys(body).map((data_k, k) =>
+          k === 0 ? (
+            <p key={k}>
+              {body[data_k]}: {parseFloatToTimeString(payload[0].value)}
+            </p>
+          ) : (
+            <p key={k}>
+              {body[data_k]}:{' '}
+              {parseFloatToTimeString(payload[0].payload.errorX)}
+            </p>
+          )
+        )}
       </div>
     );
   }
@@ -44,21 +47,23 @@ function CustomTooltip({ payload, label, active }, doLabel = false) {
   return null;
 }
 
+const CustomizedTick = (props) => {
+  const { payload } = props;
+  return <Text {...props}>{parseFloatToTimeString(payload.value)}</Text>;
+};
+
 const ErrorBarChart = ({
   data,
   xKey,
-  errorKey,
   xLabel,
   yLabel,
   xProps,
   yProps,
   tooltip,
-  asc = false,
   height = 400,
-  labelInTitle = false,
 }) => {
   const yKeys = useMemo(() => {
-    return Object.keys(tooltip);
+    return Object.keys(tooltip.body);
   }, [tooltip]);
   return (
     <ResponsiveContainer width="100%" height={height}>
@@ -69,10 +74,10 @@ const ErrorBarChart = ({
         <XAxis dataKey={xKey} stroke="#8884d8" {...xProps}>
           <Label offset={-10} position="insideBottom" value={xLabel} />
         </XAxis>
-        <YAxis {...yProps}>
+        <YAxis tick={<CustomizedTick />} {...yProps}>
           <Label angle={-90} position="insideLeft" value={yLabel} />
         </YAxis>
-        <Tooltip content={(arg) => CustomTooltip(arg, labelInTitle)} />
+        <Tooltip content={(arg) => CustomTooltip(arg, tooltip)} />
         <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
         <Legend
           verticalAlign="bottom"
@@ -91,7 +96,7 @@ const ErrorBarChart = ({
           fill="#5b68dd"
         >
           <ErrorBar
-            dataKey={errorKey}
+            dataKey={yKeys[1]}
             width={4}
             strokeWidth={2}
             stroke="green"
@@ -111,10 +116,12 @@ ErrorBarChart.propTypes = {
   yLabel: PropTypes.string,
   xProps: PropTypes.object,
   yProps: PropTypes.object,
-  tooltip: PropTypes.object,
-  asc: PropTypes.bool,
+  tooltip: PropTypes.shape({
+    title: PropTypes.string,
+    body: PropTypes.object.isRequired,
+    order: PropTypes.string,
+  }).isRequired,
   height: PropTypes.number,
-  labelInTitle: PropTypes.bool,
 };
 
 export default ErrorBarChart;

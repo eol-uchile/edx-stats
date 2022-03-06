@@ -25,7 +25,7 @@ const useProcessCoverage = (tableData, coverage, recoverData, errors) => {
         if (!acc[key]) {
           acc[key] = {
             block_id: obj['block_id'],
-            name: tableData.videos[obj['block_id']].name
+            tooltip: tableData.videos[obj['block_id']].name
               ? tableData.videos[obj['block_id']].name
               : '',
             position: tableData.videos[obj['block_id']].position

@@ -21,12 +21,10 @@ const ParallelBar = ({
   xProps,
   yProps,
   tooltip,
-  asc = false,
   height = 400,
-  labelInTitle = true,
 }) => {
   const yKeys = useMemo(() => {
-    return Object.keys(tooltip);
+    return Object.keys(tooltip.body);
   }, [tooltip]);
   const colors = ['#ffc500', '#00a9ff'];
   return (
@@ -41,9 +39,7 @@ const ParallelBar = ({
         <YAxis {...yProps}>
           <Label angle={-90} position="insideLeft" value={yLabel} />
         </YAxis>
-        <Tooltip
-          content={(arg) => CustomTooltip(arg, tooltip, asc, labelInTitle)}
-        />
+        <Tooltip content={(arg) => CustomTooltip(arg, tooltip)} />
         <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
         <Legend
           verticalAlign="bottom"
@@ -75,10 +71,12 @@ ParallelBar.propTypes = {
   yLabel: PropTypes.string,
   xProps: PropTypes.object,
   yProps: PropTypes.object,
-  tooltip: PropTypes.object,
-  asc: PropTypes.bool,
+  tooltip: PropTypes.shape({
+    title: PropTypes.string,
+    body: PropTypes.object.isRequired,
+    order: PropTypes.string,
+  }).isRequired,
   height: PropTypes.number,
-  labelInTitle: PropTypes.bool,
 };
 
 export default ParallelBar;

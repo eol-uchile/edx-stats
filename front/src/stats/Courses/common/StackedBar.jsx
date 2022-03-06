@@ -10,30 +10,8 @@ import {
   ResponsiveContainer,
   Label,
 } from 'recharts';
+import CustomTooltip from './CustomTooltip';
 import PropTypes from 'prop-types';
-
-function CustomTooltip({ payload, label, active }, mapping, labelInTitle) {
-  if (active) {
-    return (
-      <div className="custom-tooltip">
-        <p className="label">
-          {labelInTitle ? label : ''}{' '}
-          {payload[0]
-            ? payload[0].payload.tooltip && payload[0].payload.tooltip
-            : ''}
-        </p>
-        <p key={'Incompleto'}>
-          {mapping['Incompleto']}: {payload[1].value}
-        </p>
-        <p key={'Completo'}>
-          {mapping['Completo']}: {payload[0].value}
-        </p>
-      </div>
-    );
-  }
-
-  return null;
-}
 
 const StackedBar = ({
   data,
@@ -44,10 +22,9 @@ const StackedBar = ({
   yProps,
   tooltip,
   height = 400,
-  labelInTitle = true,
 }) => {
   const yKeys = useMemo(() => {
-    return Object.keys(tooltip);
+    return Object.keys(tooltip.body);
   }, [tooltip]);
   const colors = ['#1f73d4', '#b4b4b4'];
   return (
@@ -67,7 +44,7 @@ const StackedBar = ({
         <YAxis {...yProps}>
           <Label angle={-90} position="insideLeft" value={yLabel} />
         </YAxis>
-        <Tooltip content={(arg) => CustomTooltip(arg, tooltip, labelInTitle)} />
+        <Tooltip content={(arg) => CustomTooltip(arg, tooltip)} />
         <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
         <Legend
           verticalAlign="bottom"
@@ -100,10 +77,12 @@ StackedBar.propTypes = {
   yLabel: PropTypes.string,
   xProps: PropTypes.object,
   yProps: PropTypes.object,
-  tooltip: PropTypes.object,
-  asc: PropTypes.bool,
+  tooltip: PropTypes.shape({
+    title: PropTypes.string,
+    body: PropTypes.object.isRequired,
+    order: PropTypes.string,
+  }).isRequired,
   height: PropTypes.number,
-  labelInTitle: PropTypes.bool,
 };
 
 export default StackedBar;

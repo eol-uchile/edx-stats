@@ -88,10 +88,13 @@ const TimeVsVisits = ({ tableData, rowData }) => {
             xLabel={state ? 'Secciones' : 'Unidades'}
             yLabel={['Tiempo', 'Visitas']}
             tooltip={{
-              'Tiempo de visualización': 'Tiempo total',
-              'Visitas Únicas usuarios': 'Visitas únicas',
+              title: state ? '' : '{}:', // modules already have labels
+              body: {
+                'Tiempo de visualización': 'Tiempo total',
+                'Visitas Únicas usuarios': 'Visitas únicas',
+              },
+              order: 'dec',
             }}
-            tooltipLabel={!state} // modules already have labels
           />
         </Col>
       </Row>

@@ -118,8 +118,11 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                   yLabel={'Cantidad diaria'}
                   xProps={{ angle: -10 }}
                   tooltip={{
-                    Tiempo: 'Tiempo de visualización [s]',
-                    Visitas: 'Cantidad de visitas',
+                    title: 'Fecha {}',
+                    body: {
+                      Tiempo: 'Tiempo de visualización [s]',
+                      Visitas: 'Cantidad de visitas',
+                    },
                   }}
                 />
               </ChartBox>

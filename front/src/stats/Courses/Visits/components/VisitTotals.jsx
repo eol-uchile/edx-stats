@@ -87,10 +87,14 @@ const VisitTotals = ({ rowData, tableData }) => {
             xLabel={state ? 'Secciones' : 'Unidades'}
             yLabel={'Visitas'}
             tooltip={{
-              'Visitas Únicas usuarios': 'Estudiantes que vieron el contenido',
-              'Visitas totales': 'Total de minutos vistos',
+              title: state ? '' : '{}:', // modules already have labels
+              body: {
+                'Visitas Únicas usuarios':
+                  'Estudiantes que vieron el contenido',
+                'Visitas totales': 'Total de minutos vistos',
+              },
+              order: 'dec',
             }}
-            labelInTitle={!state} // modules already have labels
           />
         </Col>
       </Row>

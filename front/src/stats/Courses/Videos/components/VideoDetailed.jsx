@@ -109,8 +109,12 @@ const VideoDetailed = ({ tableData, errors, setErrors }) => {
                 data={rowData.values}
                 xKey="second"
                 tooltip={{
-                  Visualizaciones: 'Reproducciones',
-                  Repeticiones: 'Repeticiones',
+                  title: 'Minuto {}',
+                  body: {
+                    Visualizaciones: 'Reproducciones',
+                    Repeticiones: 'Repeticiones',
+                  },
+                  order: 'reversed',
                 }}
               />
             </Col>

@@ -12,32 +12,7 @@ import {
 } from 'recharts';
 import { interpolateHsl } from 'd3-interpolate';
 import PropTypes from 'prop-types';
-
-const MAX_TOOLTIP = 4;
-
-const CustomTooltip = ({ payload, label, active }, mapping) => {
-  if (active) {
-    let compareNumbers = (a, b) => b.value - a.value; // reversed
-    let sorted = payload.sort(compareNumbers).slice(0, MAX_TOOLTIP);
-
-    return (
-      <div className="custom-tooltip">
-        <p className="label">Fecha {label}</p>
-        {sorted.map(
-          (el) =>
-            el.value > 0 && (
-              <p key={el.dataKey}>
-                {mapping[el.dataKey]}: {el.value}
-              </p>
-            )
-        )}
-        {payload.length > MAX_TOOLTIP && <p>...</p>}
-      </div>
-    );
-  }
-
-  return null;
-};
+import { CustomTooltip } from '../../common';
 
 const renderLegend = (value, entry, mapping) => {
   return <span>{mapping[value]}</span>;
@@ -71,10 +46,9 @@ const TimeLineArea = ({
   yProps,
   tooltip,
   height = 400,
-  labelInTitle = true,
 }) => {
   const yKeys = useMemo(() => {
-    return Object.keys(tooltip);
+    return Object.keys(tooltip.body);
   }, [tooltip]);
   const colors = useMemo(() => {
     let len = yKeys.length;
@@ -112,7 +86,7 @@ const TimeLineArea = ({
             lineHeight: '40px',
           }}
           iconType="square"
-          formatter={(v, e) => renderLegend(v, e, tooltip)}
+          formatter={(v, e) => renderLegend(v, e, tooltip.body)}
         />
         {yKeys.map((data_k, k) => (
           <Area
@@ -135,9 +109,12 @@ TimeLineArea.propTypes = {
   yLabel: PropTypes.string,
   xProps: PropTypes.object,
   yProps: PropTypes.object,
-  tooltip: PropTypes.object,
+  tooltip: PropTypes.shape({
+    title: PropTypes.string,
+    body: PropTypes.object.isRequired,
+    order: PropTypes.string,
+  }).isRequired,
   height: PropTypes.number,
-  labelInTitle: PropTypes.bool,
 };
 
 export default TimeLineArea;

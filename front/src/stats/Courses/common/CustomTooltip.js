@@ -3,24 +3,39 @@ import PropTypes from 'prop-types';
 
 const MAX_TOOLTIP = 4;
 
-function CustomTooltip({ payload, label, active }, mapping, asc, labelInTitle) {
+function CustomTooltip(
+  { payload, label, active },
+  { title = '', body, order = '' }
+) {
   if (active) {
-    let compareNumbers = (a, b) =>
-      asc ? a.value - b.value : b.value - a.value;
-    let sorted = payload.sort(compareNumbers).slice(0, MAX_TOOLTIP);
+    let sorted = [];
+    switch (order) {
+      case 'reversed':
+        sorted = payload.reverse();
+        break;
+      case 'asc':
+        sorted = payload.sort((a, b) => a.value - b.value);
+        break;
+      case 'dec':
+        sorted = payload.sort((a, b) => b.value - a.value);
+        break;
+      default:
+        sorted = payload;
+    }
+    let sliced = sorted.slice(0, MAX_TOOLTIP);
     return (
       <div className="custom-tooltip">
         <p className="label">
-          {labelInTitle ? label : ''}{' '}
+          {title.replace('{}', label)}{' '}
           {payload[0]
             ? payload[0].payload.tooltip && payload[0].payload.tooltip
             : ''}
         </p>
-        {sorted.map(
+        {sliced.map(
           (el) =>
             el.value > 0 && (
               <p key={el.dataKey}>
-                {mapping[el.dataKey]}: {el.value}
+                {body[el.dataKey]}: {el.value}
               </p>
             )
         )}
@@ -38,9 +53,11 @@ CustomTooltip.PropTypes = {
     label: PropTypes.string.isRequired,
     active: PropTypes.bool.isRequired,
   }).isRequired,
-  asc: PropTypes.bool.isRequired,
-  mapping: PropTypes.object.isRequired,
-  labelInTitle: PropTypes.bool.isRequired,
+  tooltip: PropTypes.shape({
+    title: PropTypes.string,
+    body: PropTypes.object.isRequired,
+    order: PropTypes.string,
+  }).isRequired,
 };
 
 export default CustomTooltip;

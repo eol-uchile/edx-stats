@@ -13,34 +13,12 @@ import {
 } from 'recharts';
 import { parseFloatToTimeString } from '../helpers';
 import PropTypes from 'prop-types';
+import CustomTooltip from './CustomTooltip';
 
 const CustomizedTick = (props) => {
   const { payload } = props;
   return <Text {...props}>{parseFloatToTimeString(payload.value)}</Text>;
 };
-
-function CustomTooltip({ payload, label, active }, doLabel = false) {
-  if (active) {
-    return (
-      <div className="custom-tooltip">
-        <p className="label">
-          {doLabel
-            ? `${label} : ${payload[0] && payload[0].payload.tooltip}`
-            : payload[0] && payload[0].payload.tooltip}
-        </p>
-        <p className="first">
-          Tiempo total: {payload[0] && parseFloatToTimeString(payload[0].value)}
-          .
-        </p>
-        <p className="second">
-          {payload[1] && payload[1].value} estudiantes vieron el contenido.
-        </p>
-      </div>
-    );
-  }
-
-  return null;
-}
 
 const MultiAxisBars = ({
   data,
@@ -50,12 +28,10 @@ const MultiAxisBars = ({
   xProps,
   yProps,
   tooltip,
-  asc = false,
   height = 400,
-  labelInTitle = false,
 }) => {
   const yKeys = useMemo(() => {
-    return Object.keys(tooltip);
+    return Object.keys(tooltip.body);
   }, [tooltip]);
   const colors = ['#5b68dd', '#ff8949'];
   return (
@@ -75,7 +51,7 @@ const MultiAxisBars = ({
         <YAxis domain={[0, 'dataMax']} yAxisId="right" orientation="right">
           <Label angle={90} position="insideRight" value={yLabel[1]} />
         </YAxis>
-        <Tooltip content={(arg) => CustomTooltip(arg, labelInTitle)} />
+        <Tooltip content={(arg) => CustomTooltip(arg, tooltip)} />
         <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
         <Legend
           verticalAlign="bottom"
@@ -108,10 +84,12 @@ MultiAxisBars.propTypes = {
   yLabel: PropTypes.arrayOf(PropTypes.string),
   xProps: PropTypes.object,
   yProps: PropTypes.arrayOf(PropTypes.object),
-  tooltip: PropTypes.object,
-  asc: PropTypes.bool,
+  tooltip: PropTypes.shape({
+    title: PropTypes.string,
+    body: PropTypes.object.isRequired,
+    order: PropTypes.string,
+  }).isRequired,
   height: PropTypes.number,
-  labelInTitle: PropTypes.bool,
 };
 
 export default MultiAxisBars;

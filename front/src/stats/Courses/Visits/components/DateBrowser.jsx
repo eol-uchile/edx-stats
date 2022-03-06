@@ -118,7 +118,7 @@ const DateBrowser = ({ title, data, mapping, loading, haveErrors }) => {
                 xKey="date"
                 yLabel="Visitas Totales"
                 xProps={{ angle: -10 }}
-                tooltip={mapping}
+                tooltip={{ title: 'Fecha {}', body: mapping, order: 'dec' }}
               />
             </Col>
           </Row>

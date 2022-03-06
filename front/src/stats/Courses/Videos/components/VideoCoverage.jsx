@@ -23,7 +23,7 @@ const VideoCoverage = ({ tableData, errors, setErrors }) => {
   );
 
   const csvHeaders = useMemo(
-    () => ['Unidad', ...rowData.values.map((el) => el.name)],
+    () => ['Unidad', ...rowData.values.map((el) => el.tooltip)],
     [rowData.values]
   );
 
@@ -69,8 +69,12 @@ const VideoCoverage = ({ tableData, errors, setErrors }) => {
                 xLabel="Ubicación"
                 yLabel="Estudiantes"
                 tooltip={{
-                  Completo: 'Visualizaciones completas',
-                  Incompleto: 'Visualizaciones parciales',
+                  title: '{}:',
+                  body: {
+                    Completo: 'Visualizaciones completas',
+                    Incompleto: 'Visualizaciones parciales',
+                  },
+                  order: 'reversed',
                 }}
               />
             </Col>
@@ -97,7 +101,7 @@ VideoCoverage.propTypes = {
     videos: PropTypes.shape({
       duration: PropTypes.number,
       position: PropTypes.string,
-      name: PropTypes.string,
+      tooltip: PropTypes.string,
     }).isRequired,
   }).isRequired,
   errors: PropTypes.array.isRequired,
