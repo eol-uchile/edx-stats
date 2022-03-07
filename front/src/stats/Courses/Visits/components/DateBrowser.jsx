@@ -56,6 +56,13 @@ const DateBrowser = ({ title, data, mapping, loading, haveErrors }) => {
     }
   }, [data]);
 
+  const tooltipParser = (dict) => {
+    let body = {};
+    for (const [key, value] of Object.entries(dict)) {
+      body[key] = { label: `${value}: {}` };
+    }
+    return body;
+  };
   return (
     <Container fluid id="date-browser">
       <Row>
@@ -118,7 +125,11 @@ const DateBrowser = ({ title, data, mapping, loading, haveErrors }) => {
                 xKey="date"
                 yLabel="Visitas Totales"
                 xProps={{ angle: -10 }}
-                tooltip={{ title: 'Fecha {}', body: mapping, order: 'dec' }}
+                tooltip={{
+                  title: 'Fecha {}',
+                  body: tooltipParser(mapping),
+                  order: 'dec',
+                }}
               />
             </Col>
           </Row>

@@ -21,7 +21,7 @@ function useProcessDailyData(
   const getChapterMapping = (chapter) => {
     let mapping = {};
     chapter.forEach((element) => {
-      mapping[clean_hash(element.id)] = { label: `${element.name}: {}` };
+      mapping[clean_hash(element.id)] = element.name;
     });
     return mapping;
   };
