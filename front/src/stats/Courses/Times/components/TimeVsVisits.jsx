@@ -80,7 +80,6 @@ const TimeVsVisits = ({ tableData, rowData }) => {
           <MultiAxisBars
             data={state ? rowDataChaptersChart : rowDataChart}
             xKey="val"
-            yProps={[{}, {}]} //TODO
             xLabel={state ? 'Secciones' : 'Unidades'}
             yLabel={['Tiempo', 'Visitas']}
             tooltip={{

@@ -46,7 +46,7 @@ const MultiAxisBars = ({
           yAxisId="left"
           orientation="left"
           tick={<CustomizedTick />}
-          {...yProps[0]}
+          {...(yProps && yProps[0])}
         >
           <Label angle={-90} position="insideLeft" value={yLabel[0]} />
         </YAxis>
@@ -54,7 +54,7 @@ const MultiAxisBars = ({
           domain={[0, 'dataMax']}
           yAxisId="right"
           orientation="right"
-          {...yProps[1]}
+          {...(yProps && yProps[1])}
         >
           <Label angle={90} position="insideRight" value={yLabel[1]} />
         </YAxis>
