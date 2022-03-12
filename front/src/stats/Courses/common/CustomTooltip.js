@@ -27,9 +27,7 @@ function CustomTooltip(
       <div className="custom-tooltip">
         <p className="label">
           {title.replace('{}', label)}{' '}
-          {payload[0]
-            ? payload[0].payload.tooltip && payload[0].payload.tooltip
-            : ''}
+          {payload[0] && payload[0].payload.tooltip}
         </p>
         {sliced.map(
           (el) =>
