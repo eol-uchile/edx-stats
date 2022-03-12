@@ -10,10 +10,9 @@ import {
   ErrorBar,
   Label,
   Bar,
-  Text,
 } from 'recharts';
-import { parseFloatToTimeString } from '../helpers';
 import ColorGenerator from './ColorGenerator';
+import CustomTick from './CustomTick';
 import PropTypes from 'prop-types';
 
 function CustomTooltip(
@@ -48,11 +47,6 @@ function CustomTooltip(
   return null;
 }
 
-const CustomizedTick = (props) => {
-  const { payload } = props;
-  return <Text {...props}>{parseFloatToTimeString(payload.value)}</Text>;
-};
-
 const ErrorBarChart = ({
   data,
   xKey,
@@ -67,6 +61,9 @@ const ErrorBarChart = ({
     return Object.keys(tooltip.body);
   }, [tooltip]);
   const colors = ColorGenerator(yKeys.length);
+  const tickParser = useMemo(() => {
+    return yProps && yProps.parser;
+  }, [yProps]);
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart
@@ -76,7 +73,7 @@ const ErrorBarChart = ({
         <XAxis dataKey={xKey} stroke="#8884d8" {...xProps}>
           <Label offset={-10} position="insideBottom" value={xLabel} />
         </XAxis>
-        <YAxis tick={<CustomizedTick />} {...yProps}>
+        <YAxis tick={(props) => CustomTick(props, tickParser)} {...yProps}>
           <Label angle={-90} position="insideLeft" value={yLabel} />
         </YAxis>
         <Tooltip content={(arg) => CustomTooltip(arg, tooltip)} />

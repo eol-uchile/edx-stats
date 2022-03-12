@@ -92,6 +92,7 @@ const TimesAvg = ({ tableData, rowData }) => {
             xKey="val"
             xLabel={state ? 'Secciones' : 'Unidades del curso'}
             yLabel="Tiempo"
+            yProps={{ parser: parseFloatToTimeString }}
             tooltip={{
               title: state ? '' : '{}:', // modules already have labels
               body: {

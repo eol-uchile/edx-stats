@@ -82,6 +82,7 @@ const TimeVsVisits = ({ tableData, rowData }) => {
             xKey="val"
             xLabel={state ? 'Secciones' : 'Unidades'}
             yLabel={['Tiempo', 'Visitas']}
+            yProps={[{ parser: parseFloatToTimeString }]}
             tooltip={{
               title: state ? '' : '{}:', // modules already have labels
               body: {

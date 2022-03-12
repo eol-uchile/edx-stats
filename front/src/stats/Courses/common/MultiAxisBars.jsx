@@ -9,17 +9,11 @@ import {
   Legend,
   ResponsiveContainer,
   Label,
-  Text,
 } from 'recharts';
-import { parseFloatToTimeString } from '../helpers';
 import ColorGenerator from './ColorGenerator';
 import CustomTooltip from './CustomTooltip';
+import CustomTick from './CustomTick';
 import PropTypes from 'prop-types';
-
-const CustomizedTick = (props) => {
-  const { payload } = props;
-  return <Text {...props}>{parseFloatToTimeString(payload.value)}</Text>;
-};
 
 const MultiAxisBars = ({
   data,
@@ -35,6 +29,12 @@ const MultiAxisBars = ({
     return Object.keys(tooltip.body);
   }, [tooltip]);
   const colors = ColorGenerator(yKeys.length);
+  const tickParsers = useMemo(() => {
+    if (yProps) {
+      return [yProps[0] && yProps[0].parser, yProps[1] && yProps[1].parser];
+    }
+    return [false, false];
+  }, [yProps]);
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} margin={{ top: 5, right: 30, left: 30, bottom: 0 }}>
@@ -45,7 +45,7 @@ const MultiAxisBars = ({
           domain={[0, 'dataMax']}
           yAxisId="left"
           orientation="left"
-          tick={<CustomizedTick />}
+          tick={(props) => CustomTick(props, tickParsers[0])}
           {...(yProps && yProps[0])}
         >
           <Label angle={-90} position="insideLeft" value={yLabel[0]} />
@@ -54,6 +54,7 @@ const MultiAxisBars = ({
           domain={[0, 'dataMax']}
           yAxisId="right"
           orientation="right"
+          tick={(props) => CustomTick(props, tickParsers[0])}
           {...(yProps && yProps[1])}
         >
           <Label angle={90} position="insideRight" value={yLabel[1]} />

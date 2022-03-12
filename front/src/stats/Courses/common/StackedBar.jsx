@@ -10,8 +10,9 @@ import {
   ResponsiveContainer,
   Label,
 } from 'recharts';
-import CustomTooltip from './CustomTooltip';
 import ColorGenerator from './ColorGenerator';
+import CustomTooltip from './CustomTooltip';
+import CustomTick from './CustomTick';
 import PropTypes from 'prop-types';
 
 const StackedBar = ({
@@ -28,6 +29,9 @@ const StackedBar = ({
     return Object.keys(tooltip.body);
   }, [tooltip]);
   const colors = ColorGenerator(yKeys.length);
+  const tickParser = useMemo(() => {
+    return yProps && yProps.parser;
+  }, [yProps]);
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart
@@ -42,7 +46,7 @@ const StackedBar = ({
         <XAxis dataKey={xKey} stroke="#8884d8" {...xProps}>
           <Label offset={-10} position="insideBottom" value={xLabel} />
         </XAxis>
-        <YAxis {...yProps}>
+        <YAxis tick={(props) => CustomTick(props, tickParser)} {...yProps}>
           <Label angle={-90} position="insideLeft" value={yLabel} />
         </YAxis>
         <Tooltip content={(arg) => CustomTooltip(arg, tooltip)} />
