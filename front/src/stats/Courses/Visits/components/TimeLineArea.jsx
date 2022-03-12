@@ -10,29 +10,12 @@ import {
   Legend,
   Label,
 } from 'recharts';
-import { interpolateHsl } from 'd3-interpolate';
+import { ColorGenerator, CustomTooltip } from '../../common';
 import PropTypes from 'prop-types';
-import { CustomTooltip } from '../../common';
 
 const renderLegend = (value, entry, mapping) => {
   return <span>{mapping[value].label.replace(': {}', '')}</span>;
 };
-
-function componentToHex(c) {
-  var parsed = Number(c);
-  var hex = parsed.toString(16);
-  return hex.length == 1 ? '0' + hex : hex;
-}
-
-function rgbToHex(rgb) {
-  let c = rgb.slice(4, rgb.length - 1).split(',');
-  return (
-    '#' +
-    componentToHex(c[0].trim()) +
-    componentToHex(c[1].trim()) +
-    componentToHex(c[2].trim())
-  );
-}
 
 /**
  * Reference 'https://codesandbox.io/s/stacked-area-chart-ix341'
@@ -50,15 +33,7 @@ const TimeLineArea = ({
   const yKeys = useMemo(() => {
     return Object.keys(tooltip.body);
   }, [tooltip]);
-  const colors = useMemo(() => {
-    let len = yKeys.length;
-    let fun = interpolateHsl('red', 'blue');
-    let interpolated = [];
-    for (let index = 0; index < len; index++) {
-      interpolated.push(rgbToHex(fun(index / len + 1)));
-    }
-    return interpolated;
-  }, [yKeys]);
+  const colors = ColorGenerator(yKeys.length);
   return (
     <ResponsiveContainer width="100%" height={height}>
       <AreaChart

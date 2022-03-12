@@ -11,10 +11,12 @@ import StackedBar from './StackedBar';
 import StackedArea from './StackedArea';
 import StudentInfoModal from './StudentInfoModal';
 import CustomTooltip from './CustomTooltip';
+import ColorGenerator from './ColorGenerator';
 
 export {
   AsyncCSVButton,
   CustomTooltip,
+  ColorGenerator,
   ParallelBar,
   ErrorBarChart,
   MultiAxisBars,

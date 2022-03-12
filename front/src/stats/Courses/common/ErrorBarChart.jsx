@@ -12,8 +12,9 @@ import {
   Bar,
   Text,
 } from 'recharts';
-import PropTypes from 'prop-types';
 import { parseFloatToTimeString } from '../helpers';
+import ColorGenerator from './ColorGenerator';
+import PropTypes from 'prop-types';
 
 function CustomTooltip(
   { payload, label, active },
@@ -67,6 +68,7 @@ const ErrorBarChart = ({
   const yKeys = useMemo(() => {
     return Object.keys(tooltip.body);
   }, [tooltip]);
+  const colors = ColorGenerator(yKeys.length);
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart
@@ -95,7 +97,7 @@ const ErrorBarChart = ({
           key={0}
           type="monotone"
           barSize={120}
-          fill="#5b68dd"
+          fill={colors[0]}
         >
           <ErrorBar
             dataKey={yKeys[1]}

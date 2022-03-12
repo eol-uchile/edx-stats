@@ -12,8 +12,9 @@ import {
   Text,
 } from 'recharts';
 import { parseFloatToTimeString } from '../helpers';
-import PropTypes from 'prop-types';
+import ColorGenerator from './ColorGenerator';
 import CustomTooltip from './CustomTooltip';
+import PropTypes from 'prop-types';
 
 const CustomizedTick = (props) => {
   const { payload } = props;
@@ -33,7 +34,7 @@ const MultiAxisBars = ({
   const yKeys = useMemo(() => {
     return Object.keys(tooltip.body);
   }, [tooltip]);
-  const colors = ['#5b68dd', '#ff8949'];
+  const colors = ColorGenerator(yKeys.length);
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} margin={{ top: 5, right: 30, left: 30, bottom: 0 }}>

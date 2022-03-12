@@ -11,6 +11,7 @@ import {
   Label,
 } from 'recharts';
 import CustomTooltip from './CustomTooltip';
+import ColorGenerator from './ColorGenerator';
 import PropTypes from 'prop-types';
 
 const StackedBar = ({
@@ -26,7 +27,7 @@ const StackedBar = ({
   const yKeys = useMemo(() => {
     return Object.keys(tooltip.body);
   }, [tooltip]);
-  const colors = ['#1f73d4', '#b4b4b4'];
+  const colors = ColorGenerator(yKeys.length);
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart

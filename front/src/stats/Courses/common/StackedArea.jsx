@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
   Label,
 } from 'recharts';
+import ColorGenerator from './ColorGenerator';
 import CustomTooltip from './CustomTooltip';
 import PropTypes from 'prop-types';
 
@@ -24,7 +25,7 @@ const StackedArea = ({
   const yKeys = useMemo(() => {
     return Object.keys(tooltip.body);
   }, [tooltip]);
-  const colors = ['#009bdd', '#1e658d'];
+  const colors = ColorGenerator(yKeys.length);
   return (
     <ResponsiveContainer width="100%" height={height}>
       <AreaChart

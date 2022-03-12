@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
   Label,
 } from 'recharts';
+import ColorGenerator from './ColorGenerator';
 import CustomTooltip from './CustomTooltip';
 import PropTypes from 'prop-types';
 
@@ -26,7 +27,7 @@ const ParallelBar = ({
   const yKeys = useMemo(() => {
     return Object.keys(tooltip.body);
   }, [tooltip]);
-  const colors = ['#ffc500', '#00a9ff'];
+  const colors = ColorGenerator(yKeys.length);
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart
