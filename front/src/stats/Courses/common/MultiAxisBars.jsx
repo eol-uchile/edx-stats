@@ -46,10 +46,16 @@ const MultiAxisBars = ({
           yAxisId="left"
           orientation="left"
           tick={<CustomizedTick />}
+          {...yProps[0]}
         >
           <Label angle={-90} position="insideLeft" value={yLabel[0]} />
         </YAxis>
-        <YAxis domain={[0, 'dataMax']} yAxisId="right" orientation="right">
+        <YAxis
+          domain={[0, 'dataMax']}
+          yAxisId="right"
+          orientation="right"
+          {...yProps[1]}
+        >
           <Label angle={90} position="insideRight" value={yLabel[1]} />
         </YAxis>
         <Tooltip content={(arg) => CustomTooltip(arg, tooltip)} />
