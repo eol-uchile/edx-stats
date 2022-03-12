@@ -4,24 +4,19 @@ import { Form } from '@edx/paragon';
 import { useMediaQuery } from 'react-responsive';
 import { AsyncCSVButton, MultiAxisBars } from '../../common';
 import { parseFloatToTimeString } from '../../helpers';
+import useProcessCsvData from '../../hooks/useProcessCsvData';
 
 const TimeVsVisits = ({ tableData, rowData }) => {
   const [state, setState] = useState(true);
 
   const isShort = useMediaQuery({ maxWidth: 418 });
 
-  const csvHeaders = useMemo(
-    () => ['Título', ...tableData.verticals.map((el) => el.tooltip)],
-    [tableData.verticals]
-  );
-
-  const csvData = useMemo(
-    () => [
-      ['Sección', ...tableData.verticals.map((el) => el.val)],
-      ['Tiempo total (s)', ...rowData.verticals.map((el) => el.visits)],
-    ],
-    [tableData.verticals, rowData.verticals]
-  );
+  const csvData = useProcessCsvData(rowData.verticals, {
+    val: 'Ubicación',
+    tooltip: 'Título',
+    students: 'Estudiantes',
+    visits: 'Tiempo total (seg)',
+  });
 
   const rowDataChart = useMemo(
     () =>
@@ -51,8 +46,8 @@ const TimeVsVisits = ({ tableData, rowData }) => {
           <AsyncCSVButton
             text="Descargar Datos"
             filename="tiempos_totales.csv"
-            headers={csvHeaders}
-            data={csvData}
+            headers={csvData.headers}
+            data={csvData.body}
           />
         </Col>
         <Col sm={6}>

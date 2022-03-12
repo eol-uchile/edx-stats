@@ -6,6 +6,7 @@ import { AsyncCSVButton, StackedBar } from '../../common';
 import { videosActions } from '../';
 import { useProcessCoverage } from '../hooks';
 import PropTypes from 'prop-types';
+import { useProcessCsvData } from '../../hooks';
 
 const VideoCoverage = ({ tableData, errors, setErrors }) => {
   const videos = useSelector((state) => state.videos);
@@ -22,25 +23,12 @@ const VideoCoverage = ({ tableData, errors, setErrors }) => {
     errors
   );
 
-  const csvHeaders = useMemo(
-    () => ['Unidad', ...rowData.values.map((el) => el.tooltip)],
-    [rowData.values]
-  );
-
-  const csvData = useMemo(
-    () => [
-      ['Componente', ...rowData.values.map((el) => el.position)],
-      [
-        'Visualizaciones mayores al 90%',
-        ...rowData.values.map((el) => el.Completo),
-      ],
-      [
-        'Visualizaciones menores al 90%',
-        ...rowData.values.map((el) => el.Incompleto),
-      ],
-    ],
-    [rowData.values]
-  );
+  const csvData = useProcessCsvData(rowData.values, {
+    val: 'Ubicación',
+    tooltip: 'Título',
+    Completo: 'Visualizaciones mayores al 90%',
+    Incompleto: 'Visualizaciones menores al 90%',
+  });
 
   return (
     <Container fluid id="Cobertura">
@@ -56,8 +44,8 @@ const VideoCoverage = ({ tableData, errors, setErrors }) => {
               <AsyncCSVButton
                 text="Descargar Datos"
                 filename="cobertura_videos.csv"
-                headers={csvHeaders}
-                data={csvData}
+                headers={csvData.headers}
+                data={csvData.body}
               />
             </Col>
           </Row>
@@ -65,7 +53,7 @@ const VideoCoverage = ({ tableData, errors, setErrors }) => {
             <Col>
               <StackedBar
                 data={rowData.values}
-                xKey="position"
+                xKey="val"
                 xLabel="Ubicación"
                 yLabel="Estudiantes"
                 tooltip={{
@@ -100,7 +88,7 @@ VideoCoverage.propTypes = {
     loaded: PropTypes.bool.isRequired,
     videos: PropTypes.shape({
       duration: PropTypes.number,
-      position: PropTypes.string,
+      val: PropTypes.string,
       tooltip: PropTypes.string,
     }).isRequired,
   }).isRequired,

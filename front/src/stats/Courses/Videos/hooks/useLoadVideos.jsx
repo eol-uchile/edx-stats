@@ -22,8 +22,8 @@ const useLoadVideos = (videoList, recoverData, errors) => {
         (v) =>
           (videos[v.block_id] = {
             duration: v.duration,
-            position: v.position,
-            name: v.name,
+            val: v.position,
+            tooltip: v.name,
           })
       );
       setTableData({ loaded: true, videos: videos });
