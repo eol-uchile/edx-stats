@@ -14,7 +14,7 @@ it('renders without crashing', () => {
       data={sample_data}
       xKey="val"
       xLabel="x"
-      yLabel="y"
+      yLabel={['yLeft', 'yRight']}
       tooltip={{
         title: 'xKey: {} and tooltip:',
         body: {
@@ -24,6 +24,7 @@ it('renders without crashing', () => {
       }}
     />
   );
-  expect(screen.getByText('x'));
-  expect(screen.getByText('y'));
+  expect(screen.findByText('x'));
+  expect(screen.findByText('yLeft'));
+  expect(screen.findByText('yRight'));
 });

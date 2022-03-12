@@ -28,6 +28,6 @@ it('renders without crashing', () => {
       }}
     />
   );
-  expect(screen.getByText('x'));
-  expect(screen.getByText('y'));
+  expect(screen.findByText('x'));
+  expect(screen.findByText('y'));
 });
