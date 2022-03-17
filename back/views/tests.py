@@ -8,7 +8,7 @@ from views.models import Video, ViewOnVideo, Segment
 
 
 class TestViewOnCourse(UserMixin, JwtMixin, APITestCase):
-    url = reverse("video-views")
+    url = reverse("videos-views")
 
     def setUp(self):
         self.user = self.create_user()
