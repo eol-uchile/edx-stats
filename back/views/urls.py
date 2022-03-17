@@ -3,7 +3,7 @@ from rest_framework import routers
 from .views import *
 
 router = routers.DefaultRouter()
-router.register(r'video', VideoViewSet)
+router.register(r'videos', VideoViewSet)
 
 urlpatterns = [
     path(r'', include(router.urls)),

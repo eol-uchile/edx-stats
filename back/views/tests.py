@@ -87,7 +87,7 @@ class TestViewOnCourse(UserMixin, JwtMixin, APITestCase):
 
 
 class TestVideo(APITestCase):
-    url = "/api/views/video/"
+    url = "/api/videos/videos/"
 
     def setUp(self):
         pass
