@@ -43,7 +43,6 @@ class TestViewOnCourse(UserMixin, JwtMixin, APITestCase):
         ViewOnVideo.objects.create(
             video=Video.objects.filter(
                 block_id="a",
-                course="block-v1:Test-EOL_T2+type@course+block@course"
             ).first(),
             username="eol",
             coverage=0
