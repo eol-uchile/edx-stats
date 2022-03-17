@@ -39,6 +39,7 @@ class TestViewOnCourse(UserMixin, JwtMixin, APITestCase):
             block_id="a",
             duration=1,
             watch_time=1
+        )
         ViewOnVideo.objects.create(
             video=Video.objects.filter(
                 block_id="a",
