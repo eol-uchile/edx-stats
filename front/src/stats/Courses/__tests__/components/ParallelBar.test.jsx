@@ -12,14 +12,18 @@ it('renders without crashing', () => {
   render(
     <ParallelBar
       data={sample_data}
-      bar1_key="bar1"
-      bar2_key="bar2"
-      name_key="val"
-      x_label="x"
-      y_label="y"
-      width={200}
+      xKey="val"
+      xLabel="x"
+      yLabel="y"
+      tooltip={{
+        title: 'xKey: {} and tooltip:',
+        body: {
+          bar1: { label: 'First bar value: {}' },
+          bae1: { label: 'Second bar value: {}' },
+        },
+      }}
     />
   );
-  expect(screen.getByText('x'));
-  expect(screen.getByText('y'));
+  expect(screen.findByText('x'));
+  expect(screen.findByText('y'));
 });

@@ -27,7 +27,7 @@ const useProcessDetailed = (
         options.push({
           block_id: b,
           duration: tableData.videos[b].duration,
-          value: `${tableData.videos[b].position} ${tableData.videos[b].name}`,
+          value: `${tableData.videos[b].val} ${tableData.videos[b].tooltip}`,
           key: k,
         });
       });

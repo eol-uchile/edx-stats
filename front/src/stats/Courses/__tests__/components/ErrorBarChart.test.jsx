@@ -12,13 +12,22 @@ it('renders without crashing', () => {
   render(
     <ErrorBarChart
       data={sample_data}
-      area_key="area"
-      name_key="val"
-      x_label="x"
-      y_label="y"
-      width={200}
+      xKey="val"
+      xLabel="x"
+      yLabel="y"
+      tooltip={{
+        title: 'xKey: {} and tooltip:',
+        body: {
+          area: {
+            label: 'area: {}',
+          },
+          errorX: {
+            label: 'errorX: {}',
+          },
+        },
+      }}
     />
   );
-  expect(screen.getByText('x'));
-  expect(screen.getByText('y'));
+  expect(screen.findByText('x'));
+  expect(screen.findByText('y'));
 });

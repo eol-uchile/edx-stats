@@ -112,24 +112,19 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
             <Col lg="6" className="week-line">
               <ChartBox title={'Total durante la semana'}>
                 <LineArea
+                  height={438.5}
                   data={dataLine.values}
-                  dataKey={['date', 'Cantidad diaria']}
-                  areaProps={[
-                    {
-                      type: 'monotone',
-                      dataKey: 'Tiempo',
-                      stroke: '#ffc658',
-                      fill: '#ffc658',
-                      activeDot: { r: 8 },
+                  xKey="date"
+                  yLabel={'Cantidad diaria'}
+                  xProps={{ angle: -10 }}
+                  tooltip={{
+                    title: 'Fecha {}',
+                    body: {
+                      Tiempo: { label: 'Tiempo de visualización [s]: {}' },
+                      Visitas: { label: 'Cantidad de visitas: {}' },
                     },
-                    {
-                      type: 'monotone',
-                      dataKey: 'Visitas',
-                      stroke: '#8884d8',
-                      fill: '#8884d8',
-                      activeDot: { r: 8 },
-                    },
-                  ]}
+                    order: 'dec',
+                  }}
                 />
               </ChartBox>
             </Col>
@@ -163,7 +158,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                 </Row>
                 <Row>
                   <Col>
-                    <PieChart data={dataPie.values} />
+                    <PieChart data={dataPie.values} xKey="value" />
                   </Col>
                 </Row>
               </ChartBox>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   AreaChart,
   Area,
@@ -8,43 +8,91 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  Label,
 } from 'recharts';
+import ColorGenerator from './ColorGenerator';
+import CustomTooltip from './CustomTooltip';
+import CustomTick from './CustomTick';
 import PropTypes from 'prop-types';
 
-const LineArea = ({ data, dataKey, areaProps, height = 438.5 }) => {
+const LineArea = ({
+  data,
+  xKey,
+  xLabel,
+  yLabel,
+  xProps,
+  yProps,
+  tooltip,
+  height = 400,
+}) => {
+  const yKeys = useMemo(() => {
+    return Object.keys(tooltip.body);
+  }, [tooltip]);
+  const colors = ColorGenerator(yKeys.length);
+  const tickParser = useMemo(() => {
+    return yProps && yProps.parser;
+  }, [yProps]);
   return (
-    <ResponsiveContainer width="100%" height={height} minHeight={400}>
+    <ResponsiveContainer width="100%" height={height}>
       <AreaChart
         data={data}
         margin={{
           top: 10,
           right: 30,
-          left: 0,
+          left: 30,
           bottom: 0,
         }}
       >
+        <XAxis dataKey={xKey} stroke="#8884d8" {...xProps}>
+          <Label offset={-10} position="insideBottom" value={xLabel} />
+        </XAxis>
+        <YAxis tick={(props) => CustomTick(props, tickParser)} {...yProps}>
+          <Label angle={-90} position="insideLeft" value={yLabel} />
+        </YAxis>
+        <Tooltip content={(arg) => CustomTooltip(arg, tooltip)} />
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey={dataKey[0]} angle={-10} />
-        <YAxis
-          label={{
-            value: dataKey[1],
-            angle: -90,
-            position: 'insideLeft',
+        <Legend
+          verticalAlign="bottom"
+          align="center"
+          wrapperStyle={{
+            bottom: '0px',
+            lineHeight: '40px',
           }}
+          iconType="line"
         />
-        <Tooltip />
-        <Area {...areaProps[0]} />
-        <Area {...areaProps[1]} />
-        <Legend />
+        {yKeys.map((data_k, k) => (
+          <Area
+            dataKey={data_k}
+            key={k}
+            type="monotone"
+            stroke={colors[k]}
+            fill={colors[k]}
+            activeDot={{ r: 8 }}
+          />
+        ))}
+        )
       </AreaChart>
     </ResponsiveContainer>
   );
 };
 
 LineArea.propTypes = {
-  data: PropTypes.array.isRequired, // [{x_k: x_v, y1_k: y1_v, y2_k: y2_v}, ...]
-  dataKey: PropTypes.arrayOf(PropTypes.string).isRequired, // [x_k, y label]
-  areaProps: PropTypes.arrayOf(PropTypes.object).isRequired, // [{type, y1_k, stroke, fill, activeDot}, {type, y2_k, stroke, fill, activeDot}
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  xKey: PropTypes.string.isRequired,
+  xLabel: PropTypes.string,
+  yLabel: PropTypes.string,
+  xProps: PropTypes.object,
+  yProps: PropTypes.object,
+  tooltip: PropTypes.shape({
+    title: PropTypes.string,
+    body: PropTypes.shape({
+      yKey: PropTypes.shape({
+        label: PropTypes.string.isRequired,
+        parser: PropTypes.func,
+      }),
+    }).isRequired,
+    order: PropTypes.string,
+  }).isRequired,
   height: PropTypes.number,
 };
 

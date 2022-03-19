@@ -12,16 +12,19 @@ it('renders without crashing', () => {
   render(
     <MultiAxisBars
       data={sample_data}
-      bar1_key="bar1"
-      bar2_key="bar2"
-      name_key="val"
-      x_label="x"
-      y1_label="y1"
-      y2_label="y2"
-      width={200}
+      xKey="val"
+      xLabel="x"
+      yLabel={['yLeft', 'yRight']}
+      tooltip={{
+        title: 'xKey: {} and tooltip:',
+        body: {
+          bar1: { label: 'First bar value: {}' },
+          bae1: { label: 'Second bar value: {}' },
+        },
+      }}
     />
   );
-  expect(screen.getByText('x'));
-  expect(screen.getByText('y1'));
-  expect(screen.getByText('y2'));
+  expect(screen.findByText('x'));
+  expect(screen.findByText('yLeft'));
+  expect(screen.findByText('yRight'));
 });

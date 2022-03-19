@@ -8,23 +8,24 @@ const sample_data = [
   { hash1: 2, hash2: 2, date: '2021-03-25' },
 ];
 
-const keys = ['hash1', 'hash2'];
-
 const mapping = {
-  hash1: 'Modulo 1',
-  hash2: 'Modulo 2',
+  hash1: { label: 'First area value: {}' },
+  hash2: { label: 'Second area value: {}' },
 };
 
 it('renders without crashing', async () => {
   render(
     <TimeLineArea
       data={sample_data}
-      keys={keys}
-      mapping={mapping}
-      height={700}
+      xKey="date"
+      xLabel="x"
+      yLabel="y"
+      tooltip={{
+        title: 'xKey: {}',
+        body: mapping,
+      }}
     />
   );
-  // await waitFor(() => expect(screen.getByText('Visitas')));
-  // expect(screen.getByText('Modulo 1'));
-  // expect(screen.getByText('Modulo 2'));
+  expect(screen.findByText('x'));
+  expect(screen.findByText('y'));
 });

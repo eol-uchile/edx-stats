@@ -21,11 +21,11 @@ const useProcessViewSum = (tableData, views, recoverData, errors) => {
   useEffect(() => {
     if (tableData.loaded && views.length > 0 && errors.length === 0) {
       let bar = views.map((v) => ({
-        position: tableData.videos[v.block_id].position
-          ? tableData.videos[v.block_id].position
+        val: tableData.videos[v.block_id].val
+          ? tableData.videos[v.block_id].val
           : '',
-        tooltip: tableData.videos[v.block_id].name
-          ? tableData.videos[v.block_id].name
+        tooltip: tableData.videos[v.block_id].tooltip
+          ? tableData.videos[v.block_id].tooltip
           : '',
         Minutos: Math.floor(v.watch_time / 60),
         Usuarios: v.viewers,

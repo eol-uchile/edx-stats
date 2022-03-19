@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   BarChart,
   CartesianGrid,
@@ -10,33 +10,36 @@ import {
   ErrorBar,
   Label,
   Bar,
-  Text,
 } from 'recharts';
+import ColorGenerator from './ColorGenerator';
+import CustomTick from './CustomTick';
 import PropTypes from 'prop-types';
-import { parseFloatToTimeString } from '../helpers';
 
-const CustomizedTick = (props) => {
-  const { payload } = props;
-  return <Text {...props}>{parseFloatToTimeString(payload.value)}</Text>;
-};
-
-function CustomTooltip({ payload, label, active }, doLabel = false) {
+function CustomTooltip(
+  { payload, label, active },
+  { title = '', body, order = '' }
+) {
   if (active) {
     return (
       <div className="custom-tooltip">
         <p className="label">
-          {doLabel
-            ? `${label} : ${payload[0] && payload[0].payload.tooltip}`
-            : payload[0] && payload[0].payload.tooltip}
+          {title.replace('{}', label)}{' '}
+          {payload[0] && payload[0].payload.tooltip}
         </p>
-        <p className="first">
-          Tiempo promedio de visualización:{' '}
-          {payload[0] && parseFloatToTimeString(payload[0].value)}
-        </p>
-        <p className="second">
-          Desviación estándar:{' '}
-          {payload[0] && parseFloatToTimeString(payload[0].payload.errorX)}
-        </p>
+        {Object.keys(body).map((data_k, k) => (
+          <p key={k}>
+            {body[data_k].label.replace(
+              '{}',
+              k === 0
+                ? body[data_k].parser
+                  ? body[data_k].parser(payload[0].value)
+                  : payload[0].value
+                : body[data_k].parser
+                ? body[data_k].parser(payload[0].payload.errorX)
+                : payload[0].payload.errorX
+            )}
+          </p>
+        ))}
       </div>
     );
   }
@@ -46,66 +49,83 @@ function CustomTooltip({ payload, label, active }, doLabel = false) {
 
 const ErrorBarChart = ({
   data,
-  area_key,
-  name_key,
-  x_label,
-  y_label,
-  tooltipLabel = false,
-  width = '100%',
-}) => (
-  <ResponsiveContainer width={width} height={450}>
-    <BarChart data={data} margin={{ top: 5, right: 20, bottom: 30, left: 20 }}>
-      <XAxis dataKey={name_key} stroke="#8884d8">
-        <Label value={x_label} offset={-10} position="insideBottom" />
-      </XAxis>
-      <YAxis
-        tick={<CustomizedTick />}
-        label={{ value: y_label, angle: -90, position: 'insideLeft' }}
-      />
-      <Tooltip content={(arg) => CustomTooltip(arg, tooltipLabel)} />
-      <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-      <Legend
-        wrapperStyle={{
-          bottom: '0px',
-          lineHeight: '40px',
-        }}
-        iconType="square"
-      />
-      <Bar
-        type="monotone"
-        dataKey={area_key}
-        stroke="#5b68dd"
-        fill="#5b68dd"
-        strokeWidth={2}
+  xKey,
+  xLabel,
+  yLabel,
+  xProps,
+  yProps,
+  tooltip,
+  height = 400,
+}) => {
+  const yKeys = useMemo(() => {
+    return Object.keys(tooltip.body);
+  }, [tooltip]);
+  const colors = ColorGenerator(yKeys.length);
+  const tickParser = useMemo(() => {
+    return yProps && yProps.parser;
+  }, [yProps]);
+  return (
+    <ResponsiveContainer width="100%" height={height}>
+      <BarChart
+        data={data}
+        margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
       >
-        <ErrorBar
-          dataKey="errorX"
-          width={4}
-          strokeWidth={2}
-          stroke="green"
-          direction="y"
+        <XAxis dataKey={xKey} stroke="#8884d8" {...xProps}>
+          <Label offset={-10} position="insideBottom" value={xLabel} />
+        </XAxis>
+        <YAxis tick={(props) => CustomTick(props, tickParser)} {...yProps}>
+          <Label angle={-90} position="insideLeft" value={yLabel} />
+        </YAxis>
+        <Tooltip content={(arg) => CustomTooltip(arg, tooltip)} />
+        <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+        <Legend
+          verticalAlign="bottom"
+          align="center"
+          wrapperStyle={{
+            bottom: '0px',
+            lineHeight: '40px',
+          }}
+          iconType="square"
         />
-      </Bar>
-    </BarChart>
-  </ResponsiveContainer>
-);
+        <Bar
+          dataKey={yKeys[0]}
+          key={0}
+          type="monotone"
+          barSize={120}
+          fill={colors[0]}
+        >
+          <ErrorBar
+            dataKey={yKeys[1]}
+            width={4}
+            strokeWidth={2}
+            stroke="green"
+            direction="y"
+          />
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
+  );
+};
 
 ErrorBarChart.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      students: PropTypes.number,
-      visits: PropTypes.number,
-      tooltip: PropTypes.string.isRequired,
-      val: PropTypes.string.isRequired,
-      id: PropTypes.string,
-      errorX: PropTypes.number.isRequired,
-    })
-  ),
-  area_key: PropTypes.string.isRequired,
-  name_key: PropTypes.string.isRequired,
-  x_label: PropTypes.string.isRequired,
-  y_label: PropTypes.string.isRequired,
-  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  xKey: PropTypes.string.isRequired,
+  errorKey: PropTypes.string,
+  xLabel: PropTypes.string,
+  yLabel: PropTypes.string,
+  xProps: PropTypes.object,
+  yProps: PropTypes.object,
+  tooltip: PropTypes.shape({
+    title: PropTypes.string,
+    body: PropTypes.shape({
+      yKey: PropTypes.shape({
+        label: PropTypes.string.isRequired,
+        parser: PropTypes.func,
+      }),
+    }).isRequired,
+    order: PropTypes.string,
+  }).isRequired,
+  height: PropTypes.number,
 };
 
 export default ErrorBarChart;
