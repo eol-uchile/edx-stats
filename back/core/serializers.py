@@ -16,4 +16,4 @@ class CourseVerticalSerializer(serializers.ModelSerializer):
 class NestedCourseVerticalSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseVertical
-        fields = ('chapter_number', 'sequential_number', 'vertical_number', 'vertical_name')
+        fields = ('chapter_number', 'sequential_number', 'vertical_number', 'child_number', 'vertical_name')

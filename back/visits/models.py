@@ -14,4 +14,4 @@ class VisitOnPage(models.Model):
     time = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return "{} - {} count: {}".format(self.time, self.vertical, self.count)
+        return "{} {}".format(self.vertical, self.username)

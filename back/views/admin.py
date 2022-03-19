@@ -3,7 +3,11 @@ from views.models import Video, ViewOnVideo, Segment
 
 
 class VideoAdmin(admin.ModelAdmin):
-    search_fields = ['block_id', ]
+    search_fields = ['vertical__course', 'vertical__course_name',
+        'vertical__chapter', 'vertical__chapter_name',
+        'vertical__sequential', 'vertical__sequential_name',
+        'vertical__vertical', 'vertical__vertical_name',
+        'block_id']
     list_display = ('block_id', 'duration', 'watch_time')
 
 

@@ -20,7 +20,7 @@ BULK_UPLOAD_SIZE = 500
 
 
 @shared_task
-def process_views_count(end_date, day_window=None, run_code=None, course=None):
+def process_log_views(end_date=None, day_window=None, run_code=None, course=None):
     """Recovers logs from DB and computes views on videos per day for each video
 
     Computes views on videos for each day until the end date given a day window.
@@ -68,18 +68,11 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
             video_event_type + video_mobile_type)]
         return raw_video_course_logs
 
-    def test_exists(id, previous_objects):
+    def exists_in(id, previous_objects):
         """
-        Returns true if video/view exists in previous_objects dictionary
+        Returns true if the obj id is in dictionary
         """
         return previous_objects.get(id, None) is not None
-
-    def test_association_exists(id, objects_to_associate):
-        """
-        Returns true if vertical/video exists in objects_to_associate dictionary
-        to prevent multiple creation border case
-        """
-        return objects_to_associate.get(id, None) is not None
 
     def create_videos_row(row, vertical_to_associate):
         """
@@ -181,7 +174,7 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
                           end=int(row['end']))
         return segment
 
-    def compute_views(dataframe, course_df, date, course_id, code):
+    def process_views(dataframe, course_df, date, course_id, code):
         cols_to_use = ['username', 'time', 'event_type', 'event']
         raw_video_course_logs = get_video_logs(dataframe[cols_to_use])
         videos_in_logs = generate_video_dataframe(raw_video_course_logs)
@@ -198,8 +191,8 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
             previous_videos[b.block_id] = b
         # Split groups
         new_videos_row = videos_in_logs[videos_in_logs.apply(
-            lambda row: not test_exists(row["id"], previous_videos) and
-            test_association_exists(row["id"], verticals_to_associate),
+            lambda row: not exists_in(row["id"], previous_videos) and
+            exists_in(row["id"], verticals_to_associate),
             axis=1)]
         # Create new videos
         count, _ = new_videos_row.shape
@@ -230,9 +223,9 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
         for b in previous_info:
             previous_views[b.video.block_id + "-" + b.username] = b
         # Split groups
-        new_views_row = views_df[views_df.apply(lambda row: not test_exists(
+        new_views_row = views_df[views_df.apply(lambda row: not exists_in(
             row["id"] + "-" + row["username"], previous_views
-        ) and test_association_exists(row["id"], previous_videos),
+        ) and exists_in(row["id"], previous_videos),
                                                 axis=1)]
         # Create new views on video
         count, _ = new_views_row.shape
@@ -269,10 +262,10 @@ def process_views_count(end_date, day_window=None, run_code=None, course=None):
                 course_id, count, date))
 
     if course is not None:
-        process_logs_single_course(compute_views, "views", course, end_date,
+        process_logs_single_course(process_views, "views", course, end_date,
                                    day_window, run_code)
     else:
-        process_logs_standard_procedure(compute_views, "views", end_date,
+        process_logs_standard_procedure(process_views, "views", end_date,
                                         day_window, run_code)
 
 
@@ -301,7 +294,7 @@ def compute_view_batches(initial_date=None,
                 times[i], time_delta))
         # This is a pandas timestamp Timestamp class, it should be replaced with datetime for a more
         # standard module
-        process_views_count(times[i],
+        process_log_views(times[i],
                             time_delta,
                             run_code=run_code,
                             course=course)
@@ -317,15 +310,31 @@ def calculate_coverage(course=None):
     Arguments
     - course: course_id to be processed without block-v1 prefix
     """
-    def compute_coverage_single_course(course_id):
-        segments_user_video = ViewOnVideo.objects.filter(
-            video__vertical__is_active=True,
-            video__vertical__course__icontains=course_id+"+type@course+block@course",
-        ).order_by('video__vertical__chapter_number',
-                   'video__vertical__sequential_number',
-                   'video__vertical__vertical_number',
-                   'video__vertical__child_number').annotate(
-                       video_duration=F('video__duration'), )
+    def compute_coverage(course_id):
+        if course_id is not None:
+            segments_user_video = ViewOnVideo.objects.filter(
+                video__vertical__is_active=True,
+                video__vertical__course__icontains=course_id+"+type@course+block@course",
+                ).order_by(
+                    'video__vertical__chapter_number',
+                    'video__vertical__sequential_number',
+                    'video__vertical__vertical_number',
+                    'video__vertical__child_number'
+                ).annotate(
+                    video_duration=F('video__duration'), 
+                )
+        else:
+            segments_user_video = ViewOnVideo.objects.filter(
+                video__vertical__is_active=True
+                ).order_by(
+                    'video__vertical__course', 
+                    'video__vertical__chapter_number',
+                    'video__vertical__sequential_number',
+                    'video__vertical__vertical_number',
+                    'video__vertical__child_number'
+                ).annotate(
+                    video_duration=F('video__duration'), 
+                )
         for viewer in segments_user_video:
             segments = Segment.objects.filter(view__id=viewer.id, )
             length, _ = ut.klee_distance(segments)
@@ -333,25 +342,7 @@ def calculate_coverage(course=None):
             viewer.coverage = coverage
             viewer.save()
 
-    def compute_coverage():
-        segments_user_video = ViewOnVideo.objects.filter(
-            video__vertical__is_active=True, ).order_by(
-                'video__vertical__course', 'video__vertical__chapter_number',
-                'video__vertical__sequential_number',
-                'video__vertical__vertical_number',
-                'video__vertical__child_number').annotate(
-                    video_duration=F('video__duration'), )
-        for viewer in segments_user_video:
-            segments = Segment.objects.filter(view__id=viewer.id, )
-            length, _ = ut.klee_distance(segments)
-            coverage = length / viewer.video_duration
-            viewer.coverage = coverage
-            viewer.save()
-
-    if course is not None:
-        compute_coverage_single_course(course)
-    else:
-        compute_coverage()
+    compute_coverage(course)
 
 
 @shared_task

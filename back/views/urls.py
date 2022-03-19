@@ -7,8 +7,8 @@ router.register(r'videos', VideoViewSet)
 
 urlpatterns = [
     path(r'', include(router.urls)),
-    path(r'all/', videos_course, name="videos"),
-    path(r'viewsonvideos/', videos_statistics, name="videos-views"),
+    path(r'all/', all_active_videos, name="videos"),
+    path(r'viewsonvideos/', views_on_course, name="videos-views"),
     path(r'coverage/', videos_coverage, name="videos-coverage"),
     path(r'details/', video_details, name="video-details"),
 ]
