@@ -13,29 +13,22 @@ const sample_data = [
   { x: 'G', y1: 10, y2: 20 },
 ];
 
-const dataKeys = ['x', 'y values'];
-
-const areaProps = [
-  {
-    type: 'monotone',
-    dataKey: 'y1',
-    stroke: '#8884d8',
-    fill: '#8884d89e',
-    activeDot: { r: 8 },
-  },
-  {
-    type: 'monotone',
-    dataKey: 'y2',
-    stroke: '#82ca9d',
-    fill: '#82ca9da3',
-    activeDot: { r: 8 },
-  },
-];
-
 it('renders without crashing', () => {
   render(
-    <LineArea data={sample_data} dataKey={dataKeys} areaProps={areaProps} />
+    <LineArea
+      data={sample_data}
+      xKey="x"
+      xLabel="x"
+      yLabel="y"
+      tooltip={{
+        title: 'xKey: {}',
+        body: {
+          y1: { label: 'First area value: {}' },
+          y2: { label: 'Second area value: {}' },
+        },
+      }}
+    />
   );
-  expect(screen.findByText('y1'));
-  expect(screen.findByText('y2'));
+  expect(screen.findByText('x'));
+  expect(screen.findByText('y'));
 });

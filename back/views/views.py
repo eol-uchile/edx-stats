@@ -46,7 +46,7 @@ def manage_standard_request(request, query):
     return Response(videos)
 
 @api_view()
-def videos_course(request):
+def all_active_videos(request):
     """
     Returns active videos with its position
 
@@ -90,7 +90,7 @@ def videos_course(request):
     return manage_standard_request(request, query)
 
 @api_view()
-def videos_statistics(request):
+def views_on_course(request):
     """
     Returns active videos and its basics statistics
     Expects 1 query parameter

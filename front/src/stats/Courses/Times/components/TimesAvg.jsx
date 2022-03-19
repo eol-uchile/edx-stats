@@ -3,6 +3,7 @@ import { Row, Col } from 'react-bootstrap';
 import { Form } from '@edx/paragon';
 import { useMediaQuery } from 'react-responsive';
 import { AsyncCSVButton, ErrorBarChart } from '../../common';
+import { parseFloatToTimeString } from '../../helpers';
 
 const TimesAvg = ({ tableData, rowData }) => {
   const [state, setState] = useState(true);
@@ -88,11 +89,23 @@ const TimesAvg = ({ tableData, rowData }) => {
         <Col>
           <ErrorBarChart
             data={state ? averageChapterChart : averageChart}
-            area_key="Tiempo promedio visto"
-            name_key="val"
-            x_label={state ? 'Secciones' : 'Unidades del curso'}
-            y_label="Tiempo"
-            tooltipLabel={!state} // modules already have labels
+            xKey="val"
+            xLabel={state ? 'Secciones' : 'Unidades del curso'}
+            yLabel="Tiempo"
+            yProps={{ parser: parseFloatToTimeString }}
+            tooltip={{
+              title: state ? '' : '{}:', // modules already have labels
+              body: {
+                'Tiempo promedio visto': {
+                  label: 'Tiempo promedio de visualización: {}',
+                  parser: parseFloatToTimeString,
+                },
+                errorX: {
+                  label: 'Desviación estándar: {}',
+                  parser: parseFloatToTimeString,
+                },
+              },
+            }}
           />
         </Col>
       </Row>

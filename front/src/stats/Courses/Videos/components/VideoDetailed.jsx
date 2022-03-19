@@ -13,6 +13,7 @@ import { AsyncCSVButton, StackedArea } from '../../common';
 import { videosActions } from '../';
 import { useProcessDetailed } from '../hooks';
 import PropTypes from 'prop-types';
+import { useProcessCsvData } from '../../hooks';
 
 const VideoDetailed = ({ tableData, errors, setErrors }) => {
   const videos = useSelector((state) => state.videos);
@@ -27,21 +28,11 @@ const VideoDetailed = ({ tableData, errors, setErrors }) => {
 
   const isShort = useMediaQuery({ maxWidth: 418 });
 
-  const csvHeaders = useMemo(
-    () => ['Segundo', ...rowData.values.map((el) => el.second)],
-    [rowData.values]
-  );
-
-  const csvData = useMemo(
-    () => [
-      [
-        'Visualizaciones únicas',
-        ...rowData.values.map((el) => el.Visualizaciones),
-      ],
-      ['Repeticiones', ...rowData.values.map((el) => el.Repeticiones)],
-    ],
-    [rowData.values]
-  );
+  const csvData = useProcessCsvData(rowData.values, {
+    second: 'Minuto',
+    Visualizaciones: 'Visualizaciones únicas',
+    Repeticiones: 'Repeticiones',
+  });
 
   return (
     <Container fluid id="DetallesPorVideo">
@@ -56,11 +47,11 @@ const VideoDetailed = ({ tableData, errors, setErrors }) => {
             {rowData.loaded && (
               <AsyncCSVButton
                 text="Descargar Datos"
-                filename={`${
-                  videoSelector.options[videoSelector.selected].value
-                }.csv`}
-                headers={csvHeaders}
-                data={csvData}
+                filename={`detalles_video_${videoSelector.options[
+                  videoSelector.selected
+                ].value.replace(/\s/g, '_')}.csv`}
+                headers={csvData.headers}
+                data={csvData.body}
               />
             )}
           </Col>
@@ -93,8 +84,10 @@ const VideoDetailed = ({ tableData, errors, setErrors }) => {
                 }}
                 disabled={!rowData.loaded}
               >
-                {videoSelector.options.map((el) => (
-                  <option value={el.key}>{el.value}</option>
+                {videoSelector.options.map((el, k) => (
+                  <option key={k} value={el.key}>
+                    {el.value}
+                  </option>
                 ))}
               </select>
             </InputGroup>
@@ -107,10 +100,15 @@ const VideoDetailed = ({ tableData, errors, setErrors }) => {
             <Col>
               <StackedArea
                 data={rowData.values}
-                bar1_key="Visualizaciones"
-                bar2_key="Repeticiones"
-                name_key="second"
-                y_label="Visualizaciones totales"
+                xKey="second"
+                tooltip={{
+                  title: 'Minuto {}',
+                  body: {
+                    Visualizaciones: { label: 'Reproducciones: {}' },
+                    Repeticiones: { label: 'Repeticiones: {}' },
+                  },
+                  order: 'reversed',
+                }}
               />
             </Col>
           </Row>
@@ -135,7 +133,7 @@ VideoDetailed.propTypes = {
     loaded: PropTypes.bool.isRequired,
     videos: PropTypes.shape({
       duration: PropTypes.number,
-      position: PropTypes.string,
+      val: PropTypes.string,
       name: PropTypes.string,
     }).isRequired,
   }).isRequired,

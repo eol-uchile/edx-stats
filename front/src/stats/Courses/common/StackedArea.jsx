@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   AreaChart,
   Area,
@@ -6,67 +6,80 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  Label,
 } from 'recharts';
+import ColorGenerator from './ColorGenerator';
+import CustomTooltip from './CustomTooltip';
+import CustomTick from './CustomTick';
 import PropTypes from 'prop-types';
-
-function CustomTooltip({ label, payload, active }) {
-  if (active) {
-    return (
-      <div className="custom-tooltip">
-        <p className="label">{`Minuto ${label}`}</p>
-        <p className="first">{`${payload[1].value} estudiantes repitieron este segmento.`}</p>
-        <p className="second">{`${payload[0].value} estudiantes vieron este segmento.`}</p>
-      </div>
-    );
-  }
-
-  return null;
-}
 
 const StackedArea = ({
   data,
-  bar1_key,
-  bar2_key,
-  name_key,
-  y_label,
-  width = '100%',
+  xKey,
+  xLabel,
+  yLabel,
+  xProps,
+  yProps,
+  tooltip,
+  height = 400,
 }) => {
+  const yKeys = useMemo(() => {
+    return Object.keys(tooltip.body);
+  }, [tooltip]);
+  const colors = ColorGenerator(yKeys.length);
+  const tickParser = useMemo(() => {
+    return yProps && yProps.parser;
+  }, [yProps]);
   return (
-    <ResponsiveContainer width={width} height={450}>
+    <ResponsiveContainer width="100%" height={height}>
       <AreaChart
-        width={500}
-        height={400}
         data={data}
         margin={{
           top: 10,
           right: 30,
-          left: 0,
+          left: 30,
           bottom: 0,
         }}
       >
-        <XAxis dataKey={name_key} stroke="#8884d8" />
-        <YAxis label={{ value: y_label, angle: -90, position: 'insideLeft' }} />
-        <Tooltip content={(arg) => CustomTooltip(arg)} />
-        <Area dataKey={bar1_key} stackId="1" stroke="#009bdd" fill="#009bdd" />
-        <Area dataKey={bar2_key} stackId="1" stroke="#1e658d" fill="#1e658d" />
+        <XAxis dataKey={xKey} stroke="#8884d8" {...xProps}>
+          <Label offset={-10} position="insideBottom" value={xLabel} />
+        </XAxis>
+        <YAxis tick={(props) => CustomTick(props, tickParser)} {...yProps}>
+          <Label angle={-90} position="insideLeft" value={yLabel} />
+        </YAxis>
+        <Tooltip content={(arg) => CustomTooltip(arg, tooltip)} />
+        {yKeys.map((data_k, k) => (
+          <Area
+            dataKey={data_k}
+            key={k}
+            stackId="a"
+            type="monotone"
+            fill={colors[k]}
+          />
+        ))}
       </AreaChart>
     </ResponsiveContainer>
   );
 };
 
 StackedArea.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      second: PropTypes.string,
-      Visualizaciones: PropTypes.number,
-      Repeticiones: PropTypes.number,
-    })
-  ),
-  bar1_key: PropTypes.string.isRequired,
-  bar2_key: PropTypes.string.isRequired,
-  name_key: PropTypes.string.isRequired,
-  y_label: PropTypes.string.isRequired,
-  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  xKey: PropTypes.string.isRequired,
+  xLabel: PropTypes.string,
+  yLabel: PropTypes.string,
+  xProps: PropTypes.object,
+  yProps: PropTypes.object,
+  tooltip: PropTypes.shape({
+    title: PropTypes.string,
+    body: PropTypes.shape({
+      yKey: PropTypes.shape({
+        label: PropTypes.string.isRequired,
+        parser: PropTypes.func,
+      }),
+    }).isRequired,
+    order: PropTypes.string,
+  }).isRequired,
+  height: PropTypes.number,
 };
 
 export default StackedArea;

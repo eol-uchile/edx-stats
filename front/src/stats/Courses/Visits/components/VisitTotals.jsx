@@ -3,6 +3,7 @@ import { Row, Col } from 'react-bootstrap';
 import { Form } from '@edx/paragon';
 import { useMediaQuery } from 'react-responsive';
 import { AsyncCSVButton, ParallelBar } from '../../common';
+import { useProcessCsvData } from '../../hooks';
 
 const VisitTotals = ({ rowData, tableData }) => {
   const [state, setState] = useState(true);
@@ -30,18 +31,12 @@ const VisitTotals = ({ rowData, tableData }) => {
     [rowData.grouped_verticals]
   );
 
-  const csvHeaders = useMemo(
-    () => ['Título', ...tableData.verticals.map((el) => el.tooltip)],
-    [tableData.verticals]
-  );
-
-  const csvData = useMemo(
-    () => [
-      ['Sección', ...tableData.verticals.map((el) => el.val)],
-      ['Tiempo total (s)', ...rowData.verticals.map((el) => el.visits)],
-    ],
-    [tableData.verticals, rowData.verticals]
-  );
+  const csvData = useProcessCsvData(rowData.verticals, {
+    val: 'Ubicación',
+    tooltip: 'Título',
+    students: 'Estudiantes',
+    visits: 'Tiempo total (min)',
+  });
 
   return (
     <Fragment>
@@ -50,8 +45,8 @@ const VisitTotals = ({ rowData, tableData }) => {
           <AsyncCSVButton
             text="Descargar Datos"
             filename="visitas_totales.csv"
-            headers={csvHeaders}
-            data={csvData}
+            headers={csvData.headers}
+            data={csvData.body}
           />
         </Col>
         <Col sm={6}>
@@ -83,12 +78,18 @@ const VisitTotals = ({ rowData, tableData }) => {
         <Col>
           <ParallelBar
             data={state ? rowDataChaptersChart : rowDataChart}
-            bar1_key="Visitas Únicas usuarios"
-            bar2_key="Visitas totales"
-            name_key="val"
-            x_label={state ? 'Secciones' : 'Unidades del curso'}
-            y_label="Visitas"
-            tooltipLabel={!state} // modules already have labels
+            xKey="val"
+            xLabel={state ? 'Secciones' : 'Unidades'}
+            yLabel={'Visitas'}
+            tooltip={{
+              title: state ? '' : '{}:', // modules already have labels
+              body: {
+                'Visitas Únicas usuarios': {
+                  label: 'Estudiantes que vieron el contenido: {}',
+                },
+                'Visitas totales': { label: 'Total de minutos vistos: {}' },
+              },
+            }}
           />
         </Col>
       </Row>

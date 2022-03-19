@@ -9,7 +9,7 @@ const sample_data = [
 ];
 
 it('renders without crashing', () => {
-  render(<PieChart data={sample_data} />);
+  render(<PieChart data={sample_data} xKey="value" />);
   expect(screen.findByText('content 1'));
   expect(screen.findByText('content 2'));
   expect(screen.findByText('50%'));
