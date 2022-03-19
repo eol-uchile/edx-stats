@@ -29,7 +29,7 @@ import { overviewActions } from '../';
  * Dates can be changed with the button above.
  * Include a button on the graph on the right to change data visualization.
  * Both graphs are mutually dependent.
- * @param {*} props
+ * @param {Object} props
  * @returns
  */
 const ChartBoxes = ({ courseInfo }) => {

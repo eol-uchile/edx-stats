@@ -37,9 +37,9 @@ import { timesTutorial as steps } from '../data/tutorials';
  * TimesTable
  *
  * Search and display the student spent time on a course.
- * Dates can be changed with the button above.
  * Handle errors from course info, course structure and data states.
  * The course and dates can be provided by the URL.
+ * Dates can be changed with the button above.
  * @param {Object} props
  * @returns
  */

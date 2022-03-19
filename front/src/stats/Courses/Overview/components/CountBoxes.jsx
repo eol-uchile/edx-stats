@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
  * Display three boxes with general stadistics
  * (total visits, total users, total time).
  * Each box is independent.
- * @param {*} props
+ * @param {Object} props
  * @returns
  */
 const CountBoxes = ({ courseInfo }) => {
