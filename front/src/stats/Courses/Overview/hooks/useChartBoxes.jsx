@@ -13,7 +13,7 @@ const getDate = (dateISOString, d = 0) => {
 const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
   const course = useSelector((state) => state.course);
 
-  const [dataLoaded, setDataLoaded] = useState({
+  const [params, setParams] = useState({
     loaded: false,
     upperDate: TODAY.toISOString(),
     lowerDate: getDate(TODAY.toISOString(), -7).toISOString(),
@@ -22,8 +22,8 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
   const setWeek = (dateIsoString, d = 0) => {
     let DAY_IN_MILISECS = 24 * 60 * 60 * 1000;
     let date = new Date(dateIsoString);
-    setDataLoaded({
-      ...dataLoaded,
+    setParams({
+      ...params,
       upperDate: new Date(date.getTime() + d * DAY_IN_MILISECS).toISOString(),
       lowerDate: new Date(
         date.getTime() + (d - 7) * DAY_IN_MILISECS
@@ -37,25 +37,26 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
   useEffect(() => {
     if (course.course.length !== 0) {
       let current = course.course[0];
-      setDataLoaded({
-        ...dataLoaded,
+      setParams({
+        ...params,
         loaded: true,
       });
       // Load data
       recoverData(
         current.id,
-        new Date(dataLoaded.lowerDate),
-        new Date(dataLoaded.upperDate)
+        new Date(params.lowerDate),
+        new Date(params.upperDate)
       );
+      // Reset values
       setDataLine({ loaded: false, values: [] });
       setDataPie({ loaded: false, values: [] });
     }
     // eslint-disable-next-line
-  }, [course.course, dataLoaded.upperDate, dataLoaded.lowerDate]);
+  }, [course.course, params.upperDate, params.lowerDate]);
 
   useEffect(() => {
     if (
-      dataLoaded.loaded &&
+      params.loaded &&
       data.detailed_times !== '' &&
       data.detailed_visits.date !== ''
     ) {
@@ -91,11 +92,11 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
       });
       setDataLine({ loaded: true, values: sortedAscending });
     }
-  }, [dataLoaded.loaded, data.detailed_times, data.detailed_visits.date]);
+  }, [params.loaded, data.detailed_times, data.detailed_visits.date]);
 
   useEffect(() => {
     if (
-      dataLoaded.loaded &&
+      params.loaded &&
       data.detailed_visits.module !== '' &&
       data.detailed_visits.seq !== ''
     ) {
@@ -116,13 +117,13 @@ const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
       setDataPie({ loaded: true, values: circularPortions });
     }
   }, [
-    dataLoaded.loaded,
+    params.loaded,
     viewModules,
     data.detailed_visits.module,
     data.detailed_visits.seq,
   ]);
 
-  return [setWeek, dataLoaded, setDataLoaded, dataLine, dataPie];
+  return [setWeek, params, dataLine, dataPie];
 };
 
 export default useChartBoxes;

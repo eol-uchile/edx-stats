@@ -136,7 +136,7 @@ export const recoverCourseDetailedTimes =
       .catch((error) =>
         actions.manageError(
           error,
-          recoverCourseGeneralTimes,
+          recoverCourseDetailedTimes,
           LOADING_DETAILED_ERROR,
           dispatch,
           getState
@@ -168,7 +168,7 @@ export const recoverCourseDetailedVisits =
       .catch((error) =>
         actions.manageError(
           error,
-          recoverCourseGeneralVisits,
+          recoverCourseDetailedVisits,
           LOADING_DETAILED_ERROR,
           dispatch,
           getState
