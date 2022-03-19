@@ -4,8 +4,15 @@ import { Form } from '@edx/paragon';
 import { useMediaQuery } from 'react-responsive';
 import { AsyncCSVButton, ParallelBar } from '../../common';
 import { useProcessCsvData } from '../../hooks';
-
-const VisitTotals = ({ rowData, tableData }) => {
+/**
+ * VisitTotals
+ *
+ * Display a chart using courseStructure and data loaded for VisitsTable.
+ * Include two buttons to download data and change data visualization.
+ * @param {Object} props
+ * @returns
+ */
+const VisitTotals = ({ courseStructure, rowData }) => {
   const [state, setState] = useState(true);
 
   const isShort = useMediaQuery({ maxWidth: 418 });
@@ -25,7 +32,7 @@ const VisitTotals = ({ rowData, tableData }) => {
       rowData.grouped_verticals.map((el, k) => ({
         'Visitas totales': el.visits,
         'Visitas Únicas usuarios': el.students,
-        tooltip: tableData.chapters[k].name,
+        tooltip: courseStructure.chapters[k].name,
         val: 'Módulo ' + (k + 1),
       })),
     [rowData.grouped_verticals]

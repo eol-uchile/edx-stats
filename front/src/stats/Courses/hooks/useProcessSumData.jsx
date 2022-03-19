@@ -5,7 +5,17 @@ import { std, mean } from 'mathjs';
 const add = (a, b) => a + b;
 
 /**
- * Compute and parse course data into headers, rows and plot information
+ * Parse course structure
+ * Manage data recovery
+ * Parse data in rows grouped by chapter and verticals
+ * @param {Array} sum
+ * @param {String} sum_key
+ * @param {Function} recoverSum
+ * @param {Array} errors
+ * @param {Function} setErrors
+ * @param {String} upperDate
+ * @param {String} lowerDate
+ * @returns
  */
 function useProcessSumData(
   sum,

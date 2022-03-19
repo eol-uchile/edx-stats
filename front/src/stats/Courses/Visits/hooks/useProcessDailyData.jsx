@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-
+/**
+ * Manage data recovery
+ * @param {Array} dailySum
+ * @param {Function} loadFunction
+ * @param {Array} errors
+ * @param {String} lowerDate
+ * @param {String} upperDate
+ * @returns
+ */
 function useProcessDailyData(
   dailySum,
   loadFunction,

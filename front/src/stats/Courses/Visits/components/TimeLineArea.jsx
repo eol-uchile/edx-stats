@@ -16,9 +16,22 @@ import PropTypes from 'prop-types';
 const renderLegend = (value, entry, mapping) => {
   return <span>{mapping[value].label.replace(': {}', '')}</span>;
 };
-
 /**
  * Reference 'https://codesandbox.io/s/stacked-area-chart-ix341'
+ * TimeLineArea
+ *
+ * Display a chart using an array of objects.
+ *
+ * xKey is the key of the value to be plotted on the X-Axis (e.g. time).
+ *
+ * xLabel and yLabel are the labels of each axis (e.g. Time and Speed).
+ *
+ * xProps and yProps are properties of each axis (e.g. stroke).
+ *
+ * tooltip is an dictionary that contains a title, body and order keys
+ * to define the tooltip.
+ * @param {Object} props
+ * @returns
  */
 const TimeLineArea = ({
   data,

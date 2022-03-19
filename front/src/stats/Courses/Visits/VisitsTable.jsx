@@ -30,13 +30,15 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import '../common/TableandChart.css';
 import { visitsTutorial as steps } from '../data/tutorials';
-
 /**
  * VisitsTable
  *
  * Search and display the visits on a course.
- * The course is provided by the URL
- *
+ * Handle errors from course info, course structure and data states.
+ * The course and dates can be provided by the URL.
+ * Dates can be changed with the button above.
+ * @param {Object} props
+ * @returns
  */
 const VisitsTable = (props) => {
   const course = useSelector((state) => state.course);

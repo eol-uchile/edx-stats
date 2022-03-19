@@ -9,9 +9,18 @@ const addDiv = (a, b) => {
   let denominator = parseInt(x[1]) + parseInt(y[1]);
   return `${numerator}/${denominator}`;
 };
-
 /**
- * Compute and parse course data into headers, rows and plot information
+ * Manage data recovery
+ * Parse data in rows grouped by chapter and verticals
+ * @param {Object} tableData
+ * @param {Array} sum
+ * @param {String} sum_key
+ * @param {Function} recoverSum
+ * @param {Array} errors
+ * @param {Function} setErrors
+ * @param {String} upperDate
+ * @param {String} lowerDate
+ * @returns
  */
 function useProcessSumCompletion(
   tableData,
@@ -34,14 +43,6 @@ function useProcessSumCompletion(
     loaded: false,
   });
 
-  /** Recover incoming data for table.
-   *
-   *  Compute indices like 1.1.2 using the structure from
-   *  the LMS. Use the indices and sizes to prepare columns
-   *  with colSpans on a table.
-   *
-   *  Finally ask for sums
-   */
   useEffect(() => {
     if (course.course.length !== 0) {
       let current = course.course[0];
