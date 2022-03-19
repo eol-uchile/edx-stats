@@ -33,15 +33,16 @@ import {
 import '../common/TableandChart.css';
 import { parseFloatToTimeString } from '../helpers';
 import { timesTutorial as steps } from '../data/tutorials';
-
 /**
  * TimesTable
  *
  * Search and display the student spent time on a course.
- * The course can be provided by the URL, the
- *
+ * Dates can be changed with the button above.
+ * Handle errors from course info, course structure and data states.
+ * The course and dates can be provided by the URL.
+ * @param {Object} props
+ * @returns
  */
-
 const TimesTable = (props) => {
   const course = useSelector((state) => state.course);
   const times = useSelector((state) => state.times);
