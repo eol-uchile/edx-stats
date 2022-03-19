@@ -35,7 +35,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
   const [viewModules, setViewModules] = useState(true);
   const isShort = useMediaQuery({ maxWidth: 418 });
 
-  const [setWeek, dataLoaded, setDataLoaded, dataLine, dataPie] = useChartBoxes(
+  const [setWeek, params, dataLine, dataPie] = useChartBoxes(
     generalStats,
     recoverCourseDetailedStats,
     errors,
@@ -69,7 +69,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                   required
                   id="chart-uDate"
                   type="date"
-                  value={dataLoaded.upperDate.slice(0, 10)}
+                  value={params.upperDate.slice(0, 10)}
                   onChange={(e) => setWeek(e.target.value)}
                   disabled={generalStats.loading}
                 />
@@ -83,14 +83,14 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                 <FontAwesomeIcon icon={faAngleDoubleLeft} />
               </Button>
               <Button
-                onClick={() => setWeek(dataLoaded.upperDate, -7)}
+                onClick={() => setWeek(params.upperDate, -7)}
                 title="Retroceder una semana"
                 disabled={generalStats.loading}
               >
                 <FontAwesomeIcon icon={faAngleLeft} />
               </Button>
               <Button
-                onClick={() => setWeek(dataLoaded.upperDate, 7)}
+                onClick={() => setWeek(params.upperDate, 7)}
                 title="Avanzar una semana"
                 disabled={generalStats.loading}
               >
@@ -169,9 +169,9 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
               </ChartBox>
             </Col>
           </Row>
-        ) : ((!dataLine.loaded || !dataPie.loaded) &&
-            generalStats.detailed_errors.length === 0) ||
-          generalStats.loading ? (
+        ) : generalStats.loading ||
+          ((!dataLine.loaded || !dataPie.loaded) &&
+            generalStats.detailed_errors.length === 0) ? (
           <Row>
             <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
               <Spinner animation="border" variant="primary" />
