@@ -7,9 +7,14 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { student as studentActions } from '../data/actions';
 import { visitActions } from '.';
-import { StudentDetails, StudentInfoModal } from '../common';
-import { VisitTotals, DateBrowser } from './components';
-import { useProcessDailyData } from './hooks';
+import { RadialBar, StudentInfoModal } from '../common';
+import {
+  VisitTotals,
+  DateBrowser,
+  StudentVisits,
+  CompletionTotals,
+} from './components';
+import { useProcessDailyData, useProcessSumCompletion } from './hooks';
 import {
   useLoadCourseInfo,
   useLoadStudentInfo,
@@ -46,6 +51,11 @@ const VisitsTable = (props) => {
     (i, l, u) => dispatch(visitActions.recoverCourseStudentVisitSum(i, l, u)),
     []
   );
+  const recoverCourseStudentCompletionSum = useCallback(
+    (i, l, u) =>
+      dispatch(visitActions.recoverCourseStudentCompletionSum(i, l, u)),
+    []
+  );
   const recoverDailyChapterVisits = useCallback(
     (i, l, u) => dispatch(visitActions.recoverDailyChapterVisits(i, l, u)),
     []
@@ -57,10 +67,21 @@ const VisitsTable = (props) => {
     visits.errors
   );
 
-  const [tableData, setTableData, rowData, _] = useProcessSumData(
+  const [tableData, setTableData, rowData, x] = useProcessSumData(
     visits.added_visits,
     'vertical__vertical',
     recoverCourseStudentVisitSum,
+    errors,
+    setErrors,
+    state.upperDate,
+    state.lowerDate
+  );
+
+  const [rowCompletion, y] = useProcessSumCompletion(
+    tableData,
+    visits.added_completions,
+    'vertical__vertical',
+    recoverCourseStudentCompletionSum,
     errors,
     setErrors,
     state.upperDate,
@@ -225,6 +246,9 @@ const VisitsTable = (props) => {
             <Col>
               <h4>Visitas de estudiantes por Módulo</h4>
               <ul>
+                {/* <li>
+                  <a href="#Completitud">Completitud</a>
+                </li> */}
                 <li>
                   <a href="#VisitasTotales">Visitas totales</a>
                 </li>
@@ -240,6 +264,26 @@ const VisitsTable = (props) => {
               </ul>
             </Col>
           </Row>
+          {/* <Container fluid id="Completitud">
+            <Row>
+              <Col>
+                <h4>Completitud</h4>
+              </Col>
+            </Row>
+            {rowCompletion.loaded && rowCompletion.verticals.length > 0 ? (
+              <CompletionTotals rowData={rowCompletion} tableData={tableData} />
+            ) : errors.length === 0 && !rowData.loaded ? (
+              <Row>
+                <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
+                  <Spinner animation="border" variant="primary" />
+                </Col>
+              </Row>
+            ) : (
+              <Row>
+                <Col>No hay datos</Col>
+              </Row>
+            )}
+          </Container> */}
           <Container fluid id="VisitasTotales">
             <Row>
               <Col>
@@ -273,15 +317,14 @@ const VisitsTable = (props) => {
             data={studentInfo}
             errors={modalErrors}
           />
-          <StudentDetails
-            title="Visitas"
-            rowData={rowData}
+          <StudentVisits
+            visits={rowData}
+            completion={rowCompletion}
             tableData={tableData}
             clickFunction={(user) => {
               setUser({ username: user });
               setModal(!modal);
             }}
-            doAnimation
           />
           <Row>
             <Col>

@@ -23,8 +23,10 @@ const rowData = {
 };
 
 it('renders correctly', () => {
-  render(<StudentDetails tableData={tableData} rowData={rowData} />);
-  expect(screen.getByText('Detalle por estudiante'));
+  render(
+    <StudentDetails title="Test" tableData={tableData} rowData={rowData} />
+  );
+  expect(screen.getByText('Detalle por estudiante: Test'));
 });
 
 it('renders chapters by default', () => {

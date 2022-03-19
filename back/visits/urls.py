@@ -4,10 +4,12 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r'visitsonpage', views.VisitOnPageViewSet)
+router.register(r'completionsonpage', views.CompletionOnBlockViewSet)
 
 urlpatterns = [
     path(r'', include(router.urls)),
     path(r'visitsoncourse/', views.visits_on_course, name="visits"),
+    path(r'completionsoncourse/', views.completions_on_course, name="completions"),
     path(r'visitsoncourse/daily/',
          views.daily_visits_on_course, name="daily-visits"),
     path(r'visitsoncourse/daily/hour/',

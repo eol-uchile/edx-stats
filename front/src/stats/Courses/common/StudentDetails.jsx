@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, Fragment } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { SearchField, Form, TransitionReplace } from '@edx/paragon';
 import { useMediaQuery } from 'react-responsive';
@@ -32,13 +32,15 @@ const addTotal = (list) => {
  * was not working so it is disabled by default.
  */
 const StudentDetails = ({
-  title,
+  title = '',
+  helpMessage = '',
   rowData,
   tableData,
   caption = 'Detalle por estudiante',
   parseFunction = (e) => e,
   clickFunction = (e) => e,
   doTotal = false,
+  doTip = false,
   doAnimation = false,
 }) => {
   const [state, setState] = useState({
@@ -66,11 +68,16 @@ const StudentDetails = ({
     var maxAll = -1;
     rowData.all.forEach((row) =>
       row.slice(1).forEach((el) => {
-        maxAll = maxAll > el ? maxAll : el;
+        let currentV = el;
+        if (typeof el !== 'number') {
+          let div = el.split('/');
+          currentV = parseInt(div[0]) / parseInt(div[1]);
+        }
+        maxAll = maxAll > currentV ? maxAll : currentV;
       })
     );
     // Asume min is zero
-    // Split into 3
+    // Split into 3 groups (1 for each color)
     var step = maxAll / 3;
     return (d) => classNameRuling(d, 0, step, step * 2);
   }, [rowData, classNameRuling]);
@@ -112,7 +119,9 @@ const StudentDetails = ({
       data={sorted.chapters}
       caption={caption}
       parseFunction={parseFunction}
+      helpMessage={helpMessage}
       doTotal={doTotal}
+      doTip={doTip}
       onHeader={sortHeader}
       onRow={clickFunction}
       key="table-chapters"
@@ -124,7 +133,9 @@ const StudentDetails = ({
       data={sorted.all}
       caption={caption}
       parseFunction={parseFunction}
+      helpMessage={helpMessage}
       doTotal={doTotal}
+      doTip={doTip}
       onHeader={sortHeader}
       onRow={clickFunction}
       coloring={state.coloring ? coloringFunction : undefined}
@@ -133,12 +144,7 @@ const StudentDetails = ({
   );
 
   return (
-    <Container fluid id="DetallesPorEstudiante">
-      <Row style={{ marginTop: '1em' }}>
-        <Col>
-          <h4>Detalle por estudiante</h4>
-        </Col>
-      </Row>
+    <Fragment>
       <Row>
         <Col sm={!isShort ? 3 : 12}>
           <AsyncCSVButton
@@ -194,7 +200,7 @@ const StudentDetails = ({
         </Col>
       </Row>
       {doAnimation ? <TransitionReplace>{table}</TransitionReplace> : table}
-    </Container>
+    </Fragment>
   );
 };
 
@@ -210,8 +216,10 @@ StudentDetails.propTypes = {
     chapters: PropTypes.array.isRequired,
   }).isRequired,
   title: PropTypes.string,
+  helpMessage: PropTypes.string,
   caption: PropTypes.string,
   doTotal: PropTypes.bool,
+  doTip: PropTypes.bool,
   doAnimation: PropTypes.bool,
 };
 

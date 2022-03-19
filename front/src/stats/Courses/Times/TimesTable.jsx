@@ -283,18 +283,25 @@ const TimesTable = (props) => {
             data={studentInfo}
             errors={modalErrors}
           />
-          <StudentDetails
-            title="Tiempos"
-            rowData={rowData}
-            tableData={tableData}
-            parseFunction={parseFloatToTimeString}
-            clickFunction={(user) => {
-              setUser({ username: user });
-              setModal(!modal);
-            }}
-            doTotal
-            doAnimation
-          />
+          <Container fluid id="DetallesPorEstudiante">
+            <Row style={{ marginTop: '1em' }}>
+              <Col>
+                <h4>Detalle por estudiante</h4>
+              </Col>
+            </Row>
+            <StudentDetails
+              title="Tiempos"
+              rowData={rowData}
+              tableData={tableData}
+              parseFunction={parseFloatToTimeString}
+              clickFunction={(user) => {
+                setUser({ username: user });
+                setModal(!modal);
+              }}
+              doTotal
+              doAnimation
+            />
+          </Container>
           <Row>
             <Col>
               <h4 id="DatosUtilizados">Datos utilizados</h4>

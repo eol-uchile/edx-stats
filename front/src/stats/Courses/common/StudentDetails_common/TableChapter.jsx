@@ -6,6 +6,7 @@ import {
   faSort,
   faSortDown,
   faSortUp,
+  faQuestionCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
 import { parseToTableRows } from '../../helpers';
@@ -15,13 +16,15 @@ import { parseToTableRows } from '../../helpers';
  * with pagination support
  */
 const TableChapter = ({
-  title,
+  title = '',
+  helpMessage = '',
   headers,
   data,
   errors = [],
   caption,
   defaultPage = 10,
   doTotal = false,
+  doTip = false,
   parseFunction = (e) => e,
   onHeader = (e, _) => e,
   onRow = (e) => e,
@@ -73,6 +76,13 @@ const TableChapter = ({
           <TableBT bordered hover size="sm" responsive striped>
             <caption>
               {caption}: {title}
+              {helpMessage !== '' && (
+                <FontAwesomeIcon
+                  icon={faQuestionCircle}
+                  dataToggle="tooltip"
+                  title={helpMessage}
+                />
+              )}
             </caption>
             <thead>
               <tr>
@@ -99,7 +109,9 @@ const TableChapter = ({
             </thead>
             <tbody>
               {errors.length === 0 &&
-                subArray.map((e, k) => parseToTableRows(e, k, parseFunction, ()=>'', onRow))}
+                subArray.map((e, k) =>
+                  parseToTableRows(e, k, parseFunction, () => '', onRow, doTip)
+                )}
               <tr></tr>
             </tbody>
           </TableBT>
@@ -132,6 +144,7 @@ const TableChapter = ({
 
 TableChapter.propTypes = {
   title: PropTypes.string,
+  helpMessage: PropTypes.string,
   headers: PropTypes.shape({
     chapters: PropTypes.arrayOf(
       PropTypes.shape({

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from visits.models import VisitOnPage
+from visits.models import VisitOnPage, CompletionOnBlock
 
 
 class VisitsAdmin(admin.ModelAdmin):
@@ -17,5 +17,9 @@ class VisitsAdmin(admin.ModelAdmin):
     get_block_id.short_description = 'Block ID'
     get_block_id.admin_order_field = 'vertical__block_id'
 
+class CompletionsAdmin(admin.ModelAdmin):
+    pass
+
 
 admin.site.register(VisitOnPage, VisitsAdmin)
+admin.site.register(CompletionOnBlock, CompletionsAdmin)

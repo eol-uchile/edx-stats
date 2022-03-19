@@ -7,7 +7,7 @@ AWS_S3_ENDPOINT_URL: 'http://minio:9000'
 ALLOWED_HOSTS:
   - '*'
 BACKEND_SERVICE_EDX_OAUTH2_KEY: 'g4S52ki5v1VjdozsLh0sgzoeovbunfqTz2pHZxOl'
-BACKEND_SERVICE_EDX_OAUTH2_SECRET:  'ZLWeN0jegl0JxpwrSrgBvdNoP8X67HKKHJUi1rz2z49I4lQp6lPQQouYg9sDKp7D4dOnHyBxHccxmVdMBkHk877ZNGdx8CMDCVzuOxQlyrpLAtnFtn7EX5w9Lw1fXKZQ'  # Local Development Values
+BACKEND_SERVICE_EDX_OAUTH2_SECRET: 'ZLWeN0jegl0JxpwrSrgBvdNoP8X67HKKHJUi1rz2z49I4lQp6lPQQouYg9sDKp7D4dOnHyBxHccxmVdMBkHk877ZNGdx8CMDCVzuOxQlyrpLAtnFtn7EX5w9Lw1fXKZQ' # Local Development Values
 BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL: 'https://eol.andhael.cl/oauth2'
 BACKEND_LMS_BASE_URL: 'https://eol.andhael.cl'
 BACKEND_CMS_BASE_URL: 'https://cms.eol.andhael.cl'
@@ -37,10 +37,10 @@ DATABASES:
     HOST: 'db'
     PORT: 5432
 EDX_DRF_EXTENSIONS:
-  OAUTH2_USER_INFO_URL: "https://eol.andhael.cl/oauth2/user_info"
-JWT_AUTH: 
+  OAUTH2_USER_INFO_URL: 'https://eol.andhael.cl/oauth2/user_info'
+JWT_AUTH:
   JWT_ALGORITHM: 'RS512'
-  JWT_ISSUERS: 
+  JWT_ISSUERS:
     - AUDIENCE: 'set-me-please'
       ISSUER: 'https://eol.andhael.cl/oauth2/'
       SECRET_KEY: 'jwt_secret'
