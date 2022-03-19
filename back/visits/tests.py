@@ -144,21 +144,21 @@ class TestCompletionsOnCourse(UserMixin, JwtMixin, APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
     
-    @patch('completions.views.recoverUserCourseRoles')
+    @patch('visits.views.recoverUserCourseRoles')
     def test_no_search_field_fails(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "course-v1:Test-Eol-Fail", "role": ""}]}
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 400)
     
-    @patch('completions.views.recoverUserCourseRoles')
+    @patch('visits.views.recoverUserCourseRoles')
     def test_no_llimit_field_fails(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "course-v1:Test-Eol-Fail", "role": ""}]}
         response = self.client.get(self.url+"?course=block-v1:Test-EOL_T1")
         self.assertEqual(response.status_code, 400)
     
-    @patch('completions.views.recoverUserCourseRoles')
+    @patch('visits.views.recoverUserCourseRoles')
     def test_no_ulimit_field_fails(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "course-v1:Test-Eol-Fail", "role": ""}]}
@@ -166,7 +166,7 @@ class TestCompletionsOnCourse(UserMixin, JwtMixin, APITestCase):
             self.url+"?course=block-v1:Test-EOL_T1&time__gte=2019-09-04T00:00:00.000000")
         self.assertEqual(response.status_code, 400)
     
-    @patch('completions.views.recoverUserCourseRoles')
+    @patch('visits.views.recoverUserCourseRoles')
     def test_course_not_allowed(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {"roles": [{"course_id": "course-v1:Test-Eol-Fail", "role": ""}]}
@@ -174,7 +174,7 @@ class TestCompletionsOnCourse(UserMixin, JwtMixin, APITestCase):
             self.url+"?course=block-v1:Test-EOL_T1&time__gte=2019-09-04T00:00:00.000000&time__lte=2019-09-05T00:00:00.000000")
         self.assertEqual(response.status_code, 403)
 
-    @patch('completions.views.recoverUserCourseRoles')
+    @patch('visits.views.recoverUserCourseRoles')
     def test_course_empty(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {
@@ -183,7 +183,7 @@ class TestCompletionsOnCourse(UserMixin, JwtMixin, APITestCase):
             self.url+"?course=block-v1:Test-EOL_T1&time__gte=2019-09-04T00:00:00.000000&time__lte=2019-09-05T00:00:00.000000")
         self.assertEqual(response.status_code, 204)
 
-    @patch('completions.views.recoverUserCourseRoles')
+    @patch('visits.views.recoverUserCourseRoles')
     def test_course_has_content(self, mock_recoverUserCourseRoles):
         self.set_jwt_cookie()
         mock_recoverUserCourseRoles.return_value = {
@@ -191,3 +191,13 @@ class TestCompletionsOnCourse(UserMixin, JwtMixin, APITestCase):
         response = self.client.get(
             self.url+"?course=block-v1:Test-EOL_T2&time__gte=2019-09-04T00:00:00.000000&time__lte=2019-09-05T00:00:00.000000")
         self.assertEqual(response.status_code, 200)
+
+class TestCompletionOnPage(APITestCase):
+    url = "/api/visits/completionsonpage/"
+
+    def setUp(self):
+        pass
+
+    def test_redirect_to_login(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
