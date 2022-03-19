@@ -7,12 +7,10 @@ import { CountBoxes } from '../components';
 
 const flushPromises = () => new Promise(setImmediate);
 
-const courseData = {
+const courseInfo = {
   lowerDate: '2019-01-01',
   upperDate: '2019-01-02',
 };
-const errors = [];
-const setErrors = () => {};
 
 it('renders with no data', async () => {
   server.use(
@@ -49,7 +47,7 @@ it('renders with no data', async () => {
   );
   render(
     <CoursesWrapper
-      render={(props) => <CountBoxes {...{ courseData, errors, setErrors }} />}
+      render={(props) => <CountBoxes courseInfo={courseInfo} />}
     />
   );
   await flushPromises();
@@ -91,7 +89,7 @@ it('renders correctly', async () => {
   );
   render(
     <CoursesWrapper
-      render={(props) => <CountBoxes {...{ courseData, errors, setErrors }} />}
+      render={(props) => <CountBoxes courseInfo={courseInfo} />}
     />
   );
   await flushPromises();

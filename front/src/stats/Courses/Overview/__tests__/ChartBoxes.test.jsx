@@ -8,12 +8,10 @@ import userEvent from '@testing-library/user-event';
 
 const flushPromises = () => new Promise(setImmediate);
 
-const courseData = {
+const courseInfo = {
   lowerDate: '2019-01-01',
   upperDate: '2019-01-02',
 };
-const errors = [];
-const setErrors = () => {};
 
 const loadedData = {
   week_times: [{ time: '2019-01-01', total: 1000 }],
@@ -40,7 +38,7 @@ const loadedData = {
 it('renders no data message', async () => {
   render(
     <CoursesWrapper
-      render={(props) => <ChartBoxes {...{ courseData, errors, setErrors }} />}
+      render={(props) => <ChartBoxes courseInfo={courseInfo} />}
     />
   );
   await flushPromises();
@@ -77,7 +75,7 @@ it('renders correctly', async () => {
 
   render(
     <CoursesWrapper
-      render={(props) => <ChartBoxes {...{ courseData, errors, setErrors }} />}
+      render={(props) => <ChartBoxes courseInfo={courseInfo} />}
     />
   );
   await flushPromises();
@@ -115,7 +113,7 @@ it('has a second view mode', async () => {
   );
   render(
     <CoursesWrapper
-      render={(props) => <ChartBoxes {...{ courseData, errors, setErrors }} />}
+      render={(props) => <ChartBoxes courseInfo={courseInfo} />}
     />
   );
   await flushPromises();
