@@ -17,7 +17,11 @@ function rgbToHex(rgb) {
     componentToHex(c[2].trim())
   );
 }
-
+/**
+ * Generate n colors interpolated between red and blue
+ * @param {Number} n
+ * @returns
+ */
 function ColorGenerator(n) {
   const colors = useMemo(() => {
     let fun = interpolateHsl('red', 'blue');

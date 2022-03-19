@@ -1,7 +1,13 @@
 import React from 'react';
 import { Text } from 'recharts';
 import PropTypes from 'prop-types';
-
+/**
+ * Create a Customized Tick for Axis.
+ * Supports parser functions.
+ * @param {Object} props
+ * @param {Function} parser
+ * @returns
+ */
 function CustomTick(props, parser) {
   const { payload } = props;
   return (
