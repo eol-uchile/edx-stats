@@ -24,7 +24,7 @@ import { overviewTutorial as steps } from '../data/tutorials';
  * Display three boxes for general stadistics, two charts for weekly stadistics,
  * and a menu for detailed stadistics.
  * Handle errors from course info, course structure and data states.
- *
+ * The course can be provided by the URL.
  * @param {Object} props
  * @returns
  */

@@ -27,7 +27,7 @@ import { overviewActions } from '../';
  *
  * Display two charts with weekly stadistics.
  * Dates can be changed with the button above.
- * Include a button on the graph on the right to change data.
+ * Include a button on the graph on the right to change data visualization.
  * Both graphs are mutually dependent.
  * @param {*} props
  * @returns
