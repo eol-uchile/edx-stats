@@ -1,5 +1,14 @@
 import React, { useEffect } from 'react';
-
+/**
+ * Show a step-by-step tour when localCondition
+ * is true and the page is visited for the first time.
+ * Add a key to the local Storage.
+ * Allow to show the tutorial by calling the returned function.
+ * @param {Object} steps
+ * @param {Boolean} localCondition
+ * @param {String} storagedItem
+ * @returns
+ */
 function useShowTutorial(steps, localCondition, storagedItem) {
   const showTutorial = () => {
     introJs()

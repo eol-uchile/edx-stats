@@ -2,7 +2,15 @@ import React from 'react';
 import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import CountUp from 'react-countup';
 import PropTypes from 'prop-types';
-
+/**
+ * CountBox
+ *
+ * Display an increasing number using countUpProps,
+ * accompanied by an icon and a caption.
+ * While is loading, instead display a spinner.
+ * @param {Object} props
+ * @returns
+ */
 const CountBox = ({ image, caption, countUpProps, isLoading }) => {
   const digitStyle = {
     fontWeight: 700,

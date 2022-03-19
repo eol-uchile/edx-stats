@@ -22,8 +22,17 @@ import {
 import PropTypes from 'prop-types';
 import { useChartBoxes } from '../hooks';
 import { overviewActions } from '../';
-
-const ChartBoxes = ({ courseData, errors, setErrors }) => {
+/**
+ * ChartBoxes
+ *
+ * Display two charts with weekly stadistics.
+ * Dates can be changed with the button above.
+ * Include a button on the graph on the right to change data.
+ * Both graphs are mutually dependent.
+ * @param {*} props
+ * @returns
+ */
+const ChartBoxes = ({ courseInfo }) => {
   const generalStats = useSelector((state) => state.generalStats);
   const dispatch = useDispatch();
 
@@ -38,8 +47,6 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
   const [setWeek, params, dataLine, dataPie] = useChartBoxes(
     generalStats,
     recoverCourseDetailedStats,
-    errors,
-    setErrors,
     viewModules
   );
 
@@ -51,12 +58,12 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
       <ListGroupItem>
         <Row style={{ marginBottom: '1rem' }}>
           <Col>
-            {courseData.lowerDate && courseData.upperDate && (
+            {courseInfo.lowerDate && courseInfo.upperDate && (
               <p>
                 Este curso tiene fechas de inicio{' '}
-                {new Date(courseData.lowerDate).toLocaleDateString('es-ES')} y
+                {new Date(courseInfo.lowerDate).toLocaleDateString('es-ES')} y
                 de término{' '}
-                {new Date(courseData.upperDate).toLocaleDateString('es-ES')}.
+                {new Date(courseInfo.upperDate).toLocaleDateString('es-ES')}.
                 También se puede buscar fuera de estos límites de tiempo.
               </p>
             )}
@@ -75,7 +82,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                 />
               </InputGroup>
               <Button
-                onClick={() => setWeek(courseData.lowerDate)}
+                onClick={() => setWeek(courseInfo.lowerDate)}
                 data-testid="chart-startDate"
                 title="Ir al inicio del curso"
                 disabled={generalStats.loading}
@@ -97,7 +104,7 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
                 <FontAwesomeIcon icon={faAngleRight} />
               </Button>
               <Button
-                onClick={() => setWeek(courseData.upperDate)}
+                onClick={() => setWeek(courseInfo.upperDate)}
                 data-testid="chart-endDate"
                 title="Ir al fin del curso"
                 disabled={generalStats.loading}
@@ -183,15 +190,13 @@ const ChartBoxes = ({ courseData, errors, setErrors }) => {
 };
 
 ChartBoxes.propTypes = {
-  courseData: PropTypes.shape({
+  courseInfo: PropTypes.shape({
     allowed: PropTypes.bool,
     courseName: PropTypes.string,
     current: PropTypes.string,
     lowerDate: PropTypes.string.isRequired,
     upperDate: PropTypes.string.isRequired,
   }).isRequired,
-  errors: PropTypes.array.isRequired,
-  setErrors: PropTypes.func.isRequired,
 };
 
 export default ChartBoxes;

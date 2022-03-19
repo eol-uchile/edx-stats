@@ -10,7 +10,16 @@ const getDate = (dateISOString, d = 0) => {
   let finalDate = new Date(inMiliseconds + d * DAY_IN_MILISECS);
   return finalDate;
 };
-const useChartBoxes = (data, recoverData, errors, setErrors, viewModules) => {
+/**
+ * Manage date selection
+ * Manage data recovery
+ * Manage data selection
+ * @param {Object} data
+ * @param {Function} recoverData
+ * @param {Boolean} viewModules
+ * @returns
+ */
+const useChartBoxes = (data, recoverData, viewModules) => {
   const course = useSelector((state) => state.course);
 
   const [params, setParams] = useState({

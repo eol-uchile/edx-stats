@@ -7,7 +7,6 @@ import { course as courseActions, actions } from '../data/actions';
  * accounting for user permissions
  *
  * Recover courses if not loaded
- * Recover course structure
  * Clean Data on unmount
  * Manage Error grouping
  *

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-
-const useCountBoxes = (
-  data,
-  recoverData,
-  errors,
-  setErrors,
-  upperDate,
-  lowerDate
-) => {
+/**
+ * Manage data recovery
+ * @param {Object} data
+ * @param {Function} recoverData
+ * @param {String} upperDate
+ * @param {String} lowerDate
+ * @returns
+ */
+const useCountBoxes = (data, recoverData, upperDate, lowerDate) => {
   const course = useSelector((state) => state.course);
 
   useEffect(() => {

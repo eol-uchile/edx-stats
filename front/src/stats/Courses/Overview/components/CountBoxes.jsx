@@ -8,8 +8,16 @@ import { CountBox } from '.';
 import { useCountBoxes } from '../hooks';
 import { overviewActions } from '../';
 import PropTypes from 'prop-types';
-
-const CountBoxes = ({ courseData, errors, setErrors }) => {
+/**
+ * CountBoxes
+ *
+ * Display three boxes with general stadistics
+ * (total visits, total users, total time).
+ * Each box is independent.
+ * @param {*} props
+ * @returns
+ */
+const CountBoxes = ({ courseInfo }) => {
   const generalStats = useSelector((state) => state.generalStats);
   const dispatch = useDispatch();
 
@@ -22,10 +30,8 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
   const [visits, users, times] = useCountBoxes(
     generalStats,
     recoverCourseGeneralStats,
-    errors,
-    setErrors,
-    courseData.upperDate,
-    courseData.lowerDate
+    courseInfo.upperDate,
+    courseInfo.lowerDate
   );
 
   return (
@@ -34,7 +40,6 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
         <Col md={4}>
           <CountBox
             image={eyeIcon}
-            change={20}
             caption={'Visitas totales'}
             countUpProps={{
               start: 0,
@@ -50,7 +55,6 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
         <Col md={4}>
           <CountBox
             image={userIcon}
-            change={20}
             caption={'Usuarios registrados'}
             countUpProps={{
               start: 0,
@@ -66,7 +70,6 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
         <Col md={4}>
           <CountBox
             image={clockIcon}
-            change={20}
             caption={'Minutos vistos'}
             countUpProps={{
               start: 0,
@@ -85,15 +88,13 @@ const CountBoxes = ({ courseData, errors, setErrors }) => {
 };
 
 CountBoxes.propTypes = {
-  courseData: PropTypes.shape({
+  courseInfo: PropTypes.shape({
     allowed: PropTypes.bool,
     courseName: PropTypes.string,
     current: PropTypes.string,
     lowerDate: PropTypes.string.isRequired,
     upperDate: PropTypes.string.isRequired,
   }).isRequired,
-  errors: PropTypes.array.isRequired,
-  setErrors: PropTypes.func.isRequired,
 };
 
 export default CountBoxes;
