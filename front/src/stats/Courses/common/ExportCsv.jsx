@@ -6,7 +6,11 @@ import PropTypes from 'prop-types';
 
 const default_headers = [''];
 const default_data = [{}];
-
+/**
+ * Creates a button to download a csv file
+ * @param {Object} props
+ * @returns
+ */
 const AsyncCSVButton = ({
   data = default_data,
   headers = default_headers,

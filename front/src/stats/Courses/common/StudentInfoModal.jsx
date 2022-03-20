@@ -10,7 +10,11 @@ const getInfo = (data) => {
   }
   return 'Desconocido';
 };
-
+/**
+ * Creates a two-columns modal.
+ * @param {Object} props
+ * @returns
+ */
 const StudentInfoModal = ({ isOpen, doToggle, data, errors }) => {
   return (
     <Fragment>
@@ -126,18 +130,16 @@ const StudentInfoModal = ({ isOpen, doToggle, data, errors }) => {
 StudentInfoModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   doToggle: PropTypes.func.isRequired,
-  data: PropTypes.shape(
-    {
-      username: PropTypes.string,
-      date_joined: PropTypes.string,
-      name: PropTypes.string,
-      gender: PropTypes.string,
-      year_of_birth: PropTypes.string,
-      country: PropTypes.string,
-      email: PropTypes.string,
-    }
-  ),
-  errors: PropTypes.array.isRequired
+  data: PropTypes.shape({
+    username: PropTypes.string,
+    date_joined: PropTypes.string,
+    name: PropTypes.string,
+    gender: PropTypes.string,
+    year_of_birth: PropTypes.string,
+    country: PropTypes.string,
+    email: PropTypes.string,
+  }),
+  errors: PropTypes.array.isRequired,
 };
 
 export default StudentInfoModal;

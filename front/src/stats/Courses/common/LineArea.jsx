@@ -14,7 +14,20 @@ import ColorGenerator from './ColorGenerator';
 import CustomTooltip from './CustomTooltip';
 import CustomTick from './CustomTick';
 import PropTypes from 'prop-types';
-
+/**
+ * LineArea
+ * Display an area chart.
+ * Supports a tick parser function.
+ *
+ * xKey is the key of the value to be plotted on the X-Axis (e.g. time).
+ * xLabel and yLabel are the labels of each axis (e.g. Time and Speed).
+ * xProps and yProps are properties of each axis (e.g. stroke).
+ * tooltip is an dictionary that contains a title, body and order keys
+ * to define the customized tooltip. Body is used to obtain yKeys and
+ * plot Y-Axis bars.
+ * @param {Object} props
+ * @returns
+ */
 const LineArea = ({
   data,
   xKey,

@@ -46,7 +46,22 @@ function CustomTooltip(
 
   return null;
 }
-
+/**
+ * ErrorBarChart
+ * Display a bar chart including error bars.
+ * Use a customized tooltip.
+ * Supports a tick parser function.
+ *
+ * xKey is the key of the value to be plotted on the X-Axis (e.g. time).
+ * xLabel and yLabel are the labels of each axis (e.g. Time and Speed).
+ * xProps and yProps are properties of each axis (e.g. stroke).
+ * tooltip is an dictionary that contains a title, body and order keys
+ * to define the customized tooltip. Body is used to obtain yKeys and
+ * plot Y-Axis bars.
+ * The error data key must be in the second position in yKeys array.
+ * @param {Object} props
+ * @returns
+ */
 const ErrorBarChart = ({
   data,
   xKey,
