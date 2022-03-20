@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-
+/**
+ * Manage student information for a course
+ * Clean Data on closing modal
+ * Manage Error
+ * @param {Function} recoverInfo
+ * @param {Function} resetData
+ * @returns
+ */
 function useLoadStudentInfo(recoverInfo, resetData) {
   const course = useSelector((state) => state.course);
   const studentDetails = useSelector((state) => state.student);
@@ -21,7 +28,7 @@ function useLoadStudentInfo(recoverInfo, resetData) {
     email: '',
     date_joined: '',
     country: '',
-    last_update: ''
+    last_update: '',
   });
 
   const [errors, setErrors] = useState([]);
