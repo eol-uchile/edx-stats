@@ -18,7 +18,8 @@ import { videosTutorial as steps } from '../data/tutorials';
  * VideosTable
  *
  * Search and display the videos on a course and its statistics.
- * The course is provided by the URL
+ * Handle errors from course info and course structure states.
+ * The course can be provided by the URL.
  *
  */
 const VideosTable = (props) => {
@@ -40,7 +41,7 @@ const VideosTable = (props) => {
     videos.errors
   );
 
-  const [tableData, setTableData] = useLoadVideos(
+  const [courseVideos, setCourseVideos] = useLoadVideos(
     videos.video_list,
     recoverVideos,
     errors
@@ -50,7 +51,7 @@ const VideosTable = (props) => {
 
   const showTutorial = useShowTutorial(
     steps,
-    tableData.loaded,
+    courseVideos.loaded,
     'tutorial-videostable'
   );
 
@@ -105,13 +106,13 @@ const VideosTable = (props) => {
           </h2>
         </Col>
       </Row>
-      {course.course_status === 'loading' && !tableData.loaded ? (
+      {course.course_status === 'loading' && !courseVideos.loaded ? (
         <Row>
           <Col style={{ textAlign: 'center' }}>
             <Spinner animation="border" variant="primary" />
           </Col>
         </Row>
-      ) : tableData.loaded ? (
+      ) : courseVideos.loaded ? (
         <Fragment>
           <Row>
             <Col>
@@ -148,21 +149,9 @@ const VideosTable = (props) => {
               </ul>
             </Col>
           </Row>
-          <TotalViews
-            tableData={tableData}
-            errors={errors}
-            setErrors={setErrors}
-          />
-          <VideoCoverage
-            tableData={tableData}
-            errors={errors}
-            setErrors={setErrors}
-          />
-          <VideoDetailed
-            tableData={tableData}
-            errors={errors}
-            setErrors={setErrors}
-          />
+          <TotalViews courseVideos={courseVideos} errors={errors} />
+          <VideoCoverage courseVideos={courseVideos} errors={errors} />
+          <VideoDetailed courseVideos={courseVideos} errors={errors} />
           <Row>
             <Col>
               <h4 id="DatosUtilizados">Datos utilizados</h4>

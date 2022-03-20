@@ -7,8 +7,18 @@ import { videosActions } from '../';
 import { useProcessCoverage } from '../hooks';
 import PropTypes from 'prop-types';
 import { useProcessCsvData } from '../../hooks';
-
-const VideoCoverage = ({ tableData, errors, setErrors }) => {
+/**
+ * VideoCoverage
+ *
+ * Display a chart using courseVideo loaded in VideosTable.
+ * Load data to be displayed in the chart.
+ * While is loading, instead display a spinner.
+ * If there are errors, display a message.
+ * Include one button to download data.
+ * @param {Object} props
+ * @returns
+ */
+const VideoCoverage = ({ courseVideos, errors }) => {
   const videos = useSelector((state) => state.videos);
   const dispatch = useDispatch();
 
@@ -17,7 +27,7 @@ const VideoCoverage = ({ tableData, errors, setErrors }) => {
   }, []);
 
   const [rowData, setRowData] = useProcessCoverage(
-    tableData,
+    courseVideos,
     videos.coverage,
     recoverCoverage,
     errors
@@ -84,7 +94,7 @@ const VideoCoverage = ({ tableData, errors, setErrors }) => {
 };
 
 VideoCoverage.propTypes = {
-  tableData: PropTypes.shape({
+  courseVideos: PropTypes.shape({
     loaded: PropTypes.bool.isRequired,
     videos: PropTypes.shape({
       duration: PropTypes.number,
@@ -93,7 +103,6 @@ VideoCoverage.propTypes = {
     }).isRequired,
   }).isRequired,
   errors: PropTypes.array.isRequired,
-  setErrors: PropTypes.func.isRequired,
 };
 
 export default VideoCoverage;
