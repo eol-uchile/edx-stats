@@ -58,7 +58,6 @@ function useProcessSumCompletion(
       let rows = [];
       let users = {};
       let chapterRow = [];
-      // for RadialBar
       let verticals = {}; // verticals sum info
       let grouped_verticals = []; // chapter sum info
       // Group by username
