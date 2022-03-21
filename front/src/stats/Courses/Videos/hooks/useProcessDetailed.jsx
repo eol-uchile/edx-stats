@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { parseSecondToTimeString } from '../../helpers';
-
+/**
+ * Manage data recovery
+ * Manage list selector
+ * @param {Object} courseVideos
+ * @param {Array} partitionsPerUser
+ * @param {Function} recoverData
+ * @param {Array} errors
+ * @returns
+ */
 const useProcessDetailed = (
-  tableData,
+  courseVideos,
   partitionsPerUser,
   recoverData,
   errors
@@ -21,13 +29,13 @@ const useProcessDetailed = (
   });
 
   useEffect(() => {
-    if (tableData.loaded) {
+    if (courseVideos.loaded) {
       let options = [];
-      Object.keys(tableData.videos).forEach((b, k) => {
+      Object.keys(courseVideos.videos).forEach((b, k) => {
         options.push({
           block_id: b,
-          duration: tableData.videos[b].duration,
-          value: `${tableData.videos[b].val} ${tableData.videos[b].tooltip}`,
+          duration: courseVideos.videos[b].duration,
+          value: `${courseVideos.videos[b].val} ${courseVideos.videos[b].tooltip}`,
           key: k,
         });
       });
@@ -36,7 +44,7 @@ const useProcessDetailed = (
         options: options,
       });
     }
-  }, [tableData.loaded]);
+  }, [courseVideos.loaded]);
 
   useEffect(() => {
     if (
@@ -56,7 +64,7 @@ const useProcessDetailed = (
 
   useEffect(() => {
     if (
-      tableData.loaded &&
+      courseVideos.loaded &&
       partitionsPerUser.length > 0 &&
       errors.length === 0
     ) {
@@ -97,7 +105,7 @@ const useProcessDetailed = (
         loaded: true,
       });
     }
-  }, [tableData.loaded, partitionsPerUser]);
+  }, [courseVideos.loaded, partitionsPerUser]);
 
   useEffect(() => {
     if (errors.length > 0) {

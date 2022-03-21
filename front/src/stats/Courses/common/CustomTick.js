@@ -3,7 +3,7 @@ import { Text } from 'recharts';
 import PropTypes from 'prop-types';
 /**
  * Create a Customized Tick for Axis.
- * Supports parser functions.
+ * Supports a parser function.
  * @param {Object} props
  * @param {Function} parser
  * @returns

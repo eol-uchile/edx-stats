@@ -11,7 +11,7 @@ const getInfo = (data) => {
   return 'Desconocido';
 };
 /**
- * Creates a two-columns modal.
+ * Create a two-columns modal.
  * @param {Object} props
  * @returns
  */

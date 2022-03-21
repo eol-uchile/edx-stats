@@ -37,6 +37,8 @@ import { timesTutorial as steps } from '../data/tutorials';
  * TimesTable
  *
  * Search and display the student spent time on a course.
+ * While is loading, instead display a spinner.
+ * If there are errors, display a message.
  * Handle errors from course info, course structure and data states.
  * The course and dates can be provided by the URL.
  * Dates can be changed with the button above.

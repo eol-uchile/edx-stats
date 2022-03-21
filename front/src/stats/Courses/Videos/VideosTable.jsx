@@ -43,8 +43,7 @@ const VideosTable = (props) => {
 
   const [courseVideos, setCourseVideos] = useLoadVideos(
     videos.video_list,
-    recoverVideos,
-    errors
+    recoverVideos
   );
 
   const courseStructure = useLoadStructure(state, setErrors);

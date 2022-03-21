@@ -20,16 +20,16 @@ const renderLegend = (value, entry, mapping) => {
  * Reference 'https://codesandbox.io/s/stacked-area-chart-ix341'
  * TimeLineArea
  *
- * Display a chart using an array of objects.
+ * Display an area chart.
+ * Use a customized legend.
+ * Supports a tick parser function.
  *
  * xKey is the key of the value to be plotted on the X-Axis (e.g. time).
- *
  * xLabel and yLabel are the labels of each axis (e.g. Time and Speed).
- *
  * xProps and yProps are properties of each axis (e.g. stroke).
- *
  * tooltip is an dictionary that contains a title, body and order keys
- * to define the tooltip.
+ * to define the customized tooltip. Body is used to obtain yKeys and
+ * plot Y-Axis bars.
  * @param {Object} props
  * @returns
  */

@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-
-const useLoadVideos = (videoList, recoverData, errors) => {
+/**
+ * Recover a list of videos
+ * @param {Array|String} videoList
+ * @param {Function} recoverData
+ * @returns
+ */
+const useLoadVideos = (videoList, recoverData) => {
   const course = useSelector((state) => state.course);
 
   const [tableData, setTableData] = useState({ loaded: false, videos: {} });
