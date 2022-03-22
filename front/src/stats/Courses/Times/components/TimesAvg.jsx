@@ -4,8 +4,15 @@ import { Form } from '@edx/paragon';
 import { useMediaQuery } from 'react-responsive';
 import { AsyncCSVButton, ErrorBarChart } from '../../common';
 import { parseFloatToTimeString } from '../../helpers';
-
-const TimesAvg = ({ tableData, rowData }) => {
+/**
+ * TimesAvg
+ *
+ * Display a chart using courseStructure and data loaded for TimesTable.
+ * Include two buttons to download data and change data visualization.
+ * @param {Object} props
+ * @returns
+ */
+const TimesAvg = ({ courseStructure, rowData }) => {
   const [state, setState] = useState(true);
 
   const isShort = useMediaQuery({ maxWidth: 418 });
@@ -26,7 +33,7 @@ const TimesAvg = ({ tableData, rowData }) => {
       rowData.grouped_verticals.map((el, k) => ({
         'Tiempo promedio visto':
           el.visits / (rowData.all.length !== 0 ? rowData.all.length : 1),
-        tooltip: tableData.chapters[k].name,
+        tooltip: courseStructure.chapters[k].name,
         errorX: rowData.grouped_verticals_errors[k],
         val: 'Módulo ' + (k + 1),
       })),
@@ -34,20 +41,20 @@ const TimesAvg = ({ tableData, rowData }) => {
   );
 
   const csvHeaders = useMemo(
-    () => ['Título', ...tableData.verticals.map((el) => el.tooltip)],
-    [tableData.verticals]
+    () => ['Título', ...courseStructure.verticals.map((el) => el.tooltip)],
+    [courseStructure.verticals]
   );
 
   const csvAvData = useMemo(
     () => [
-      ['Sección', ...tableData.verticals.map((el) => el.val)],
+      ['Sección', ...courseStructure.verticals.map((el) => el.val)],
       [
         'Tiempo promedio visto',
         ...averageChart.map((el) => el['Tiempo promedio visto']),
       ],
       ['Desviación estándar', ...averageChart.map((el) => el['errorX'])],
     ],
-    [tableData.verticals, averageChart]
+    [courseStructure.verticals, averageChart]
   );
 
   return (

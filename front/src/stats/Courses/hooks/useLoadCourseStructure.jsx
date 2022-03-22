@@ -1,7 +1,13 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { course as courseActions, actions } from '../../Courses/data/actions';
-
+/**
+ * Recover course structure
+ * Add errors to error array
+ * @param {Object} courseInfo
+ * @param {Function} setLocalErrors
+ * @returns
+ */
 function useLoadStructure(courseInfo, setLocalErrors) {
   const dispatch = useDispatch();
   useEffect(() => {
@@ -29,12 +35,21 @@ function useLoadStructure(courseInfo, setLocalErrors) {
   ]);
   return;
 }
-
+/**
+ * Recover course structure using a button
+ * and reset boolean of object that stores it
+ * Add errors to error array
+ * @param {Object} courseInfo
+ * @param {Function} setLocalErrors
+ * @param {Object} courseStructure
+ * @param {Function} setCourseStructure
+ * @returns
+ */
 function useLoadStructureOnSubmit(
   courseInfo,
   setLocalErrors,
-  tableData,
-  setTableData
+  courseStructure,
+  setCourseStructure
 ) {
   const dispatch = useDispatch();
   // Load data when the button trigers
@@ -48,7 +63,7 @@ function useLoadStructureOnSubmit(
           'No tienes permisos para consultar estos datos',
         ]);
       } else {
-        setTableData({ ...tableData, loaded: false });
+        setCourseStructure({ ...courseStructure, loaded: false });
         dispatch(courseActions.recoverCourseStructure(courseInfo.current));
         setLocalErrors([]);
         dispatch(actions.cleanErrors());

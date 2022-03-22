@@ -16,7 +16,12 @@ const containsAtLeastOne = (list) => {
   }
   return false;
 };
-
+/**
+ * Manage selected course in Explorer component
+ * @param {Object} match
+ * @param {Array} myCourses
+ * @returns
+ */
 function useExplorer(match, myCourses) {
   const [state, setState] = useState({
     selected: -1,

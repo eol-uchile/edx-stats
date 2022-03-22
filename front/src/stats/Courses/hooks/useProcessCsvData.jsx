@@ -1,21 +1,27 @@
 import React, { useEffect, useState } from 'react';
-
-function useProcessCsvData(rowVerticals, keys) {
+/**
+ * Parse data in rows for csv file
+ * Columns contains key-label pairs,
+ * where key is used to get the value of a row
+ * and label is used to be displayed in the header
+ * @param {Array} rows
+ * @param {Object} columns
+ * @returns
+ */
+function useProcessCsvData(rows, columns) {
   const [table, setTable] = useState({
     headers: [],
     body: [],
   });
 
   useEffect(() => {
-    let headers = [...Object.values(keys)];
+    let headers = [...Object.values(columns)];
     let body = [
-      ...rowVerticals.map((data, k) => [
-        ...Object.keys(keys).map((key) => data[key]),
-      ]),
+      ...rows.map((col, k) => [...Object.keys(columns).map((key) => col[key])]),
     ];
 
     setTable({ headers, body });
-  }, [rowVerticals]);
+  }, [rows]);
 
   return table;
 }

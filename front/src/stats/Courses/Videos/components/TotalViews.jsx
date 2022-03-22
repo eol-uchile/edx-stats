@@ -7,8 +7,18 @@ import { videosActions } from '../';
 import { useProcessViewSum } from '../hooks';
 import PropTypes from 'prop-types';
 import { useProcessCsvData } from '../../hooks';
-
-const TotalViews = ({ tableData, errors, setErrors }) => {
+/**
+ * TotalViews
+ *
+ * Display a chart using courseVideo loaded in VideosTable.
+ * Load data to be displayed in the chart.
+ * While is loading, instead display a spinner.
+ * If there are errors, display a message.
+ * Include one button to download data.
+ * @param {Object} props
+ * @returns
+ */
+const TotalViews = ({ courseVideos, errors }) => {
   const videos = useSelector((state) => state.videos);
   const dispatch = useDispatch();
 
@@ -17,7 +27,7 @@ const TotalViews = ({ tableData, errors, setErrors }) => {
   }, []);
 
   const [rowData, setRowData] = useProcessViewSum(
-    tableData,
+    courseVideos,
     videos.views,
     recoverViewSum,
     errors
@@ -85,7 +95,7 @@ const TotalViews = ({ tableData, errors, setErrors }) => {
 };
 
 TotalViews.propTypes = {
-  tableData: PropTypes.shape({
+  courseVideos: PropTypes.shape({
     loaded: PropTypes.bool.isRequired,
     videos: PropTypes.shape({
       duration: PropTypes.number,
@@ -94,7 +104,6 @@ TotalViews.propTypes = {
     }).isRequired,
   }).isRequired,
   errors: PropTypes.array.isRequired,
-  setErrors: PropTypes.func.isRequired,
 };
 
 export default TotalViews;

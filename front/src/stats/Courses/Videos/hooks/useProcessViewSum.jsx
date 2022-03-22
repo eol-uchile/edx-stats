@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-
-const useProcessViewSum = (tableData, views, recoverData, errors) => {
+/**
+ * Manage data recovery
+ * @param {Object} courseVideos
+ * @param {Array} views
+ * @param {Function} recoverData
+ * @param {Array} errors
+ * @returns
+ */
+const useProcessViewSum = (courseVideos, views, recoverData, errors) => {
   const course = useSelector((state) => state.course);
 
   const [rowData, setRowData] = useState({
@@ -19,13 +26,13 @@ const useProcessViewSum = (tableData, views, recoverData, errors) => {
   }, [course.course]);
 
   useEffect(() => {
-    if (tableData.loaded && views.length > 0 && errors.length === 0) {
+    if (courseVideos.loaded && views.length > 0 && errors.length === 0) {
       let bar = views.map((v) => ({
-        val: tableData.videos[v.block_id].val
-          ? tableData.videos[v.block_id].val
+        val: courseVideos.videos[v.block_id].val
+          ? courseVideos.videos[v.block_id].val
           : '',
-        tooltip: tableData.videos[v.block_id].tooltip
-          ? tableData.videos[v.block_id].tooltip
+        tooltip: courseVideos.videos[v.block_id].tooltip
+          ? courseVideos.videos[v.block_id].tooltip
           : '',
         Minutos: Math.floor(v.watch_time / 60),
         Usuarios: v.viewers,
@@ -35,7 +42,7 @@ const useProcessViewSum = (tableData, views, recoverData, errors) => {
         loaded: true,
       });
     }
-  }, [tableData.loaded, views]);
+  }, [courseVideos.loaded, views]);
 
   useEffect(() => {
     if (errors.length > 0) {

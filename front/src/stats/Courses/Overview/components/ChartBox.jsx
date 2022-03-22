@@ -1,6 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+/**
+ * ChartBox
+ *
+ * Display a chart accompanied by a title.
+ * @param {Object} props
+ * @returns
+ */
 const ChartBox = ({ title, children }) => {
   const chartBox = {
     padding: '0.75rem 1.25rem',

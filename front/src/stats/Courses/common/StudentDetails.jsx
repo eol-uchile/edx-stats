@@ -26,6 +26,8 @@ const addTotal = (list) => {
  * Allows a parsing function for the final displayed values.
  * i.e. from seconds to minutes:seconds
  *
+ * Allows a click function for the first column.
+ *
  * Returns Rows with toggles, inputs and tables
  *
  * Developper NOTE: Testing using the animations for table switching

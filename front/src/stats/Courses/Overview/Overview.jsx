@@ -18,7 +18,16 @@ import PropTypes from 'prop-types';
 import { useLoadCourseInfo, useLoadStructure, useShowTutorial } from '../hooks';
 import { overviewActions } from '.';
 import { overviewTutorial as steps } from '../data/tutorials';
-
+/**
+ * Overview
+ *
+ * Display three boxes for general stadistics, two charts for weekly stadistics,
+ * and a menu for detailed stadistics.
+ * Handle errors from course info, course structure and data states.
+ * The course can be provided by the URL.
+ * @param {Object} props
+ * @returns
+ */
 const Overview = (props) => {
   const course = useSelector((state) => state.course);
   const dispatch = useDispatch();
@@ -119,16 +128,8 @@ const Overview = (props) => {
                 : null}
             </Col>
           </Row>
-          <CountBoxes
-            courseData={state}
-            errors={errors}
-            setErrors={setErrors}
-          />
-          <ChartBoxes
-            courseData={state}
-            errors={errors}
-            setErrors={setErrors}
-          />
+          <CountBoxes courseInfo={state} />
+          <ChartBoxes courseInfo={state} />
           <Menu
             url={{
               key: state.current,

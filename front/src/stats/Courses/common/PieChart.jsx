@@ -35,7 +35,15 @@ const renderCustomizedLabel = ({
     </text>
   );
 };
-
+/**
+ * PieChart
+ * Display a pie chart.
+ * Use a customized legend and label.
+ *
+ * xKey is the key of the value to be plotted.
+ * @param {Object} props
+ * @returns
+ */
 const PieChart = ({ data, xKey, height = 400 }) => {
   const colors = ColorGenerator(data.length);
   return (

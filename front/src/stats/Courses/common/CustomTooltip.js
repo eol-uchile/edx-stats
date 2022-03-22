@@ -2,7 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const MAX_TOOLTIP = 4;
-
+/**
+ * Display a custom message when the mouse hovers over a point/line/bar
+ * on the chart.
+ *
+ * title can contain the string '{}' to include xKey value (e.g. 'Time[s] {}').
+ * body must be a dictionary containing the key of the values
+ * to be plotted on the Y-Axis and its label as value. Supports parser functions.
+ * (e.g. Speed: {
+ *      label: 'At this instant of time, the speed is {} [km/h]',
+ *      parser: parserMsToKmh
+ * }).
+ * order property orders the body according to key (default, reversed) or value (asc, dec).
+ * @param {Object} data
+ * @param {Object} tooltipDictionary
+ * @returns
+ */
 function CustomTooltip(
   { payload, label, active },
   { title = '', body, order = '' }

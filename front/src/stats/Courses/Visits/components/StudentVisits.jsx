@@ -4,7 +4,14 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { useMediaQuery } from 'react-responsive';
 import PropTypes from 'prop-types';
 import { StudentDetails } from '../../common';
-
+/**
+ * StudentVisits
+ *
+ * Display a table using tableData and data loaded in VisitsTable.
+ * Include one button to change table and its data.
+ * @param {Object} props
+ * @returns
+ */
 const StudentVisits = ({ tableData, visits, completion, clickFunction }) => {
   const [useVisitsTable, setTable] = useState(true);
   const isShort = useMediaQuery({ maxWidth: 418 });

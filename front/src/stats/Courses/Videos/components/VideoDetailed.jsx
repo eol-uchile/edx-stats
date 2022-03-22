@@ -14,8 +14,18 @@ import { videosActions } from '../';
 import { useProcessDetailed } from '../hooks';
 import PropTypes from 'prop-types';
 import { useProcessCsvData } from '../../hooks';
-
-const VideoDetailed = ({ tableData, errors, setErrors }) => {
+/**
+ * VideoDetailed
+ *
+ * Display a chart using courseVideo loaded in VideosTable.
+ * Load data to be displayed in the chart.
+ * While is loading, instead display a spinner.
+ * If there are errors, display a message.
+ * Include two buttons to download data and change video.
+ * @param {Object} props
+ * @returns
+ */
+const VideoDetailed = ({ courseVideos, errors }) => {
   const videos = useSelector((state) => state.videos);
   const dispatch = useDispatch();
 
@@ -24,7 +34,12 @@ const VideoDetailed = ({ tableData, errors, setErrors }) => {
   }, []);
 
   const [videoSelector, setVideoSelector, rowData, setRowData] =
-    useProcessDetailed(tableData, videos.detailed, recoverVideoDetails, errors);
+    useProcessDetailed(
+      courseVideos,
+      videos.detailed,
+      recoverVideoDetails,
+      errors
+    );
 
   const isShort = useMediaQuery({ maxWidth: 418 });
 
@@ -41,7 +56,7 @@ const VideoDetailed = ({ tableData, errors, setErrors }) => {
           <h4>Detalles por video</h4>
         </Col>
       </Row>
-      {tableData.loaded && errors.length === 0 && (
+      {courseVideos.loaded && errors.length === 0 && (
         <Row>
           <Col sm={6}>
             {rowData.loaded && (
@@ -129,7 +144,7 @@ const VideoDetailed = ({ tableData, errors, setErrors }) => {
 };
 
 VideoDetailed.propTypes = {
-  tableData: PropTypes.shape({
+  courseVideos: PropTypes.shape({
     loaded: PropTypes.bool.isRequired,
     videos: PropTypes.shape({
       duration: PropTypes.number,
@@ -138,7 +153,6 @@ VideoDetailed.propTypes = {
     }).isRequired,
   }).isRequired,
   errors: PropTypes.array.isRequired,
-  setErrors: PropTypes.func.isRequired,
 };
 
 export default VideoDetailed;

@@ -5,7 +5,16 @@ import { useMediaQuery } from 'react-responsive';
 import { AsyncCSVButton } from '../../common';
 import TimeLineArea from './TimeLineArea';
 import PropTypes from 'prop-types';
-
+/**
+ * DateBrowser
+ *
+ * Display a chart using mapping dictionary and data loaded in VisitsTable.
+ * While is loading, instead display a spinner.
+ * If there are errors, display a message.
+ * Include one button to change date range.
+ * @param {Object} props
+ * @returns
+ */
 const DateBrowser = ({ title, data, mapping, loading, haveErrors }) => {
   const [state, setState] = useState({
     selected: '',

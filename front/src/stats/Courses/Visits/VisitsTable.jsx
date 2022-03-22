@@ -7,13 +7,8 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { student as studentActions } from '../data/actions';
 import { visitActions } from '.';
-import { RadialBar, StudentInfoModal } from '../common';
-import {
-  VisitTotals,
-  DateBrowser,
-  StudentVisits,
-  CompletionTotals,
-} from './components';
+import { StudentInfoModal } from '../common';
+import { VisitTotals, DateBrowser, StudentVisits } from './components';
 import { useProcessDailyData, useProcessSumCompletion } from './hooks';
 import {
   useLoadCourseInfo,
@@ -30,13 +25,17 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import '../common/TableandChart.css';
 import { visitsTutorial as steps } from '../data/tutorials';
-
 /**
  * VisitsTable
  *
  * Search and display the visits on a course.
- * The course is provided by the URL
- *
+ * While is loading, instead display a spinner.
+ * If there are errors, display a message.
+ * Handle errors from course info, course structure and data states.
+ * The course and dates can be provided by the URL.
+ * Dates can be changed with the button above.
+ * @param {Object} props
+ * @returns
  */
 const VisitsTable = (props) => {
   const course = useSelector((state) => state.course);
@@ -246,9 +245,6 @@ const VisitsTable = (props) => {
             <Col>
               <h4>Visitas de estudiantes por Módulo</h4>
               <ul>
-                {/* <li>
-                  <a href="#Completitud">Completitud</a>
-                </li> */}
                 <li>
                   <a href="#VisitasTotales">Visitas totales</a>
                 </li>
@@ -264,26 +260,6 @@ const VisitsTable = (props) => {
               </ul>
             </Col>
           </Row>
-          {/* <Container fluid id="Completitud">
-            <Row>
-              <Col>
-                <h4>Completitud</h4>
-              </Col>
-            </Row>
-            {rowCompletion.loaded && rowCompletion.verticals.length > 0 ? (
-              <CompletionTotals rowData={rowCompletion} tableData={tableData} />
-            ) : errors.length === 0 && !rowData.loaded ? (
-              <Row>
-                <Col style={{ textAlign: 'left', marginLeft: '2rem' }}>
-                  <Spinner animation="border" variant="primary" />
-                </Col>
-              </Row>
-            ) : (
-              <Row>
-                <Col>No hay datos</Col>
-              </Row>
-            )}
-          </Container> */}
           <Container fluid id="VisitasTotales">
             <Row>
               <Col>

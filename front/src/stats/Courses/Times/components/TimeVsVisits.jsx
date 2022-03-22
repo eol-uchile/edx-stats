@@ -5,8 +5,15 @@ import { useMediaQuery } from 'react-responsive';
 import { AsyncCSVButton, MultiAxisBars } from '../../common';
 import { parseFloatToTimeString } from '../../helpers';
 import useProcessCsvData from '../../hooks/useProcessCsvData';
-
-const TimeVsVisits = ({ tableData, rowData }) => {
+/**
+ * TimeVsVisits
+ *
+ * Display a chart using courseStructure and data loaded for TimesTable.
+ * Include two buttons to download data and change data visualization.
+ * @param {Object} props
+ * @returns
+ */
+const TimeVsVisits = ({ courseStructure, rowData }) => {
   const [state, setState] = useState(true);
 
   const isShort = useMediaQuery({ maxWidth: 418 });
@@ -33,7 +40,7 @@ const TimeVsVisits = ({ tableData, rowData }) => {
       rowData.grouped_verticals.map((el, k) => ({
         'Tiempo de visualización': el.visits,
         'Visitas Únicas usuarios': el.students,
-        tooltip: tableData.chapters[k].name,
+        tooltip: courseStructure.chapters[k].name,
         val: 'Módulo ' + (k + 1),
       })),
     [rowData.grouped_verticals]

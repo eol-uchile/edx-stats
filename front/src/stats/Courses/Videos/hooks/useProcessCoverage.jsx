@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-
-const useProcessCoverage = (tableData, coverage, recoverData, errors) => {
+/**
+ * Manage data recovery
+ * @param {Object} courseVideos
+ * @param {Array} coverage
+ * @param {Function} recoverData
+ * @param {Array} errors
+ * @returns
+ */
+const useProcessCoverage = (courseVideos, coverage, recoverData, errors) => {
   const course = useSelector((state) => state.course);
 
   const [rowData, setRowData] = useState({
@@ -19,17 +26,17 @@ const useProcessCoverage = (tableData, coverage, recoverData, errors) => {
   }, [course.course]);
 
   useEffect(() => {
-    if (tableData.loaded && coverage.length > 0 && errors.length === 0) {
+    if (courseVideos.loaded && coverage.length > 0 && errors.length === 0) {
       let videos = coverage.reduce((acc, obj) => {
         const key = obj['block_id'];
         if (!acc[key]) {
           acc[key] = {
             block_id: obj['block_id'],
-            tooltip: tableData.videos[obj['block_id']].tooltip
-              ? tableData.videos[obj['block_id']].tooltip
+            tooltip: courseVideos.videos[obj['block_id']].tooltip
+              ? courseVideos.videos[obj['block_id']].tooltip
               : '',
-            val: tableData.videos[obj['block_id']].val
-              ? tableData.videos[obj['block_id']].val
+            val: courseVideos.videos[obj['block_id']].val
+              ? courseVideos.videos[obj['block_id']].val
               : '',
             Completo: obj['completed'],
             Incompleto: obj['uncompleted'],
@@ -43,7 +50,7 @@ const useProcessCoverage = (tableData, coverage, recoverData, errors) => {
         loaded: true,
       });
     }
-  }, [tableData, coverage]);
+  }, [courseVideos, coverage]);
 
   useEffect(() => {
     if (errors.length > 0) {
