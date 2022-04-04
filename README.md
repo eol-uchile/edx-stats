@@ -1,9 +1,9 @@
 # Statistics Dashboard
 
 Custom dashboard to showcase statistics about student's progress on a course. 
-It uses course logs to compute kpi about time spent by students and student interaction with videos (Work in Progress).
+It uses course logs to compute kpi about time spent by students and student interaction with videos.
 
-Only course staff is authorized to see the dashboard's data.
+Only course staff is authorized to see the dashboard's data. They are also enabled to view student contact information.
 
 ## Foreword
 
