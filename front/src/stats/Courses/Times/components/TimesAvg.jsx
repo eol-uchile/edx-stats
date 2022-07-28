@@ -33,7 +33,7 @@ const TimesAvg = ({ courseStructure, rowData }) => {
       rowData.grouped_verticals.map((el, k) => ({
         'Tiempo promedio visto':
           el.visits / (rowData.all.length !== 0 ? rowData.all.length : 1),
-        tooltip: courseStructure.chapters[k].name,
+        tooltip: '',
         errorX: rowData.grouped_verticals_errors[k],
         val: 'Módulo ' + (k + 1),
       })),

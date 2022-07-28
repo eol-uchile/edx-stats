@@ -40,7 +40,7 @@ const TimeVsVisits = ({ courseStructure, rowData }) => {
       rowData.grouped_verticals.map((el, k) => ({
         'Tiempo de visualización': el.visits,
         'Visitas Únicas usuarios': el.students,
-        tooltip: courseStructure.chapters[k].name,
+        tooltip: '',
         val: 'Módulo ' + (k + 1),
       })),
     [rowData.grouped_verticals]
