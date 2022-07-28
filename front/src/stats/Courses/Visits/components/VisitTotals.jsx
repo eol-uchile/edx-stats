@@ -32,7 +32,7 @@ const VisitTotals = ({ courseStructure, rowData }) => {
       rowData.grouped_verticals.map((el, k) => ({
         'Visitas totales': el.visits,
         'Visitas Únicas usuarios': el.students,
-        tooltip: courseStructure.chapters[k].name,
+        tooltip: '',
         val: 'Módulo ' + (k + 1),
       })),
     [rowData.grouped_verticals]
