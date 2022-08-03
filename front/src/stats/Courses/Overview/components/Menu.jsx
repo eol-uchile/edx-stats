@@ -18,7 +18,7 @@ const Menu = ({ url }) => {
           <ListGroupItem style={{ backgroundColor: '#f2f2f2' }}>
             <h4>Consultar Analítica</h4>
           </ListGroupItem>
-          <ListGroupItem>
+          {/* <ListGroupItem>
             <Link to={`/courses/${key}/times/${start}/${end}`}>
               Ver tiempo de visualizaci&oacute;n general{' '}
               <FontAwesomeIcon
@@ -27,7 +27,7 @@ const Menu = ({ url }) => {
               />
             </Link>
             <p>Revisa donde los usuarios pasaron más tiempo en tu curso</p>
-          </ListGroupItem>
+          </ListGroupItem> */}
           <ListGroupItem>
             <Link to={`/courses/${key}/visits/${start}/${end}`}>
               Ver visitas por contenido{' '}
