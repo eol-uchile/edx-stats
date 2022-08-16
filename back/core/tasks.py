@@ -29,13 +29,13 @@ def load_course(filepath):
         vertical = CourseVertical(
             is_active=True,
             course=row["course"],
-            course_name=row["course_name"],
+            course_name=row["course_name"][:254],
             chapter=row["chapter"],
-            chapter_name=row["chapter_name"],
+            chapter_name=row["chapter_name"][:254],
             sequential=row["sequential"],
-            sequential_name=row["sequential_name"],
+            sequential_name=row["sequential_name"][:254],
             vertical=row["vertical"],
-            vertical_name=row["vertical_name"],
+            vertical_name=row["vertical_name"][:254],
             block_id=row["id"],
             vertical_number=row["vertical_number"],
             sequential_number=row["sequential_number"],
@@ -73,13 +73,13 @@ def load_course_from_api(course_code):
         vertical = CourseVertical(
             is_active=True,
             course=row["course"],
-            course_name=row["course_name"],
+            course_name=row["course_name"][:254],
             chapter=row["chapter"],
-            chapter_name=row["chapter_name"],
+            chapter_name=row["chapter_name"][:254],
             sequential=row["sequential"],
-            sequential_name=row["sequential_name"],
+            sequential_name=row["sequential_name"][:254],
             vertical=row["vertical"],
-            vertical_name=row["vertical_name"],
+            vertical_name=row["vertical_name"][:254],
             block_id=row["id"],
             vertical_number=row["vertical_number"],
             sequential_number=row["sequential_number"],
@@ -179,11 +179,11 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
 
     Arguments
     - procedure to compute stats given a dataframe with daily logs for a course.
-        Expected signature is 
+        Expected signature is
         procedure(dataframe, course_dataframe, date, course_id, run_code)
     - name to display during logging
     - course_id to process
-    - end_date datetime to use and upper date limit, 
+    - end_date datetime to use and upper date limit,
         lower date limit is set as end_date - DAY_WINDOW.
         If none is provided all logs will be processed
     - day_window timedelta to subtract from end_date.
@@ -218,13 +218,13 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
         vertical = CourseVertical(
             is_active=True,
             course=row["course"],
-            course_name=row["course_name"],
+            course_name=row["course_name"][:254],
             chapter=row["chapter"],
-            chapter_name=row["chapter_name"],
+            chapter_name=row["chapter_name"][:254],
             sequential=row["sequential"],
-            sequential_name=row["sequential_name"],
+            sequential_name=row["sequential_name"][:254],
             vertical=row["vertical"],
-            vertical_name=row["vertical_name"],
+            vertical_name=row["vertical_name"][:254],
             block_id=row["id"],
             vertical_number=row["vertical_number"],
             sequential_number=row["sequential_number"],
@@ -330,10 +330,10 @@ def process_logs_standard_procedure(procedure, name, end_date=None, day_window=N
 
     Arguments
     - procedure to compute stats given a dataframe with daily logs for a course.
-        Expected signature is 
+        Expected signature is
         procedure(dataframe, course_dataframe, date, course_id, run_code)
     - name to display during logging
-    - end_date datetime to use and upper date limit, 
+    - end_date datetime to use and upper date limit,
         lower date limit is set as end_date - DAY_WINDOW.
         If none is provided all logs will be processed
     - day_window timedelta to subtract from end_date.
