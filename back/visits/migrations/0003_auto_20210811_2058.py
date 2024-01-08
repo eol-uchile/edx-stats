@@ -23,7 +23,11 @@ class Migration(migrations.Migration):
             model_name='visitonpage',
             name='sequential',
         ),
-        migrations.AlterField(
+        migrations.RemoveField(
+            model_name='visitonpage',
+            name='vertical',
+        ),
+        migrations.AddField(
             model_name='visitonpage',
             name='vertical',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='core.CourseVertical'),
