@@ -1,6 +1,10 @@
 name: Docker Image CI
 
-on: [push]
+on:
+  push:
+    paths:
+      - 'front/**'
+      - 'back/**'
 
 jobs:
   # JOB to run change detection
@@ -40,6 +44,7 @@ jobs:
       run: docker run eoluchile/edx-stats-back:${GITHUB_SHA} python manage.py test
 
     - name: Push to Github Container Registry
+      if: github.ref == 'refs/heads/master'
       run: |
           echo "${CR_PAT}" | docker login ghcr.io -u eolito --password-stdin
           docker tag eoluchile/edx-stats-back:${GITHUB_SHA} ghcr.io/eol-uchile/edx-stats-back:${GITHUB_SHA}
