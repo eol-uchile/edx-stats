@@ -2,6 +2,8 @@ import math
 import os
 import pytz
 import logging
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 import pandas as pd
 from datetime import timedelta
 from celery import shared_task
@@ -12,6 +14,8 @@ from core.processing import read_json_course, read_json_course_file, \
     filter_course_team, filter_by_log_qty
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 BULK_UPLOAD_SIZE = 500
 
 
@@ -29,13 +33,13 @@ def load_course(filepath):
         vertical = CourseVertical(
             is_active=True,
             course=row["course"],
-            course_name=row["course_name"],
+            course_name=row["course_name"][:254],
             chapter=row["chapter"],
-            chapter_name=row["chapter_name"],
+            chapter_name=row["chapter_name"][:254],
             sequential=row["sequential"],
-            sequential_name=row["sequential_name"],
+            sequential_name=row["sequential_name"][:254],
             vertical=row["vertical"],
-            vertical_name=row["vertical_name"],
+            vertical_name=row["vertical_name"][:254],
             block_id=row["id"],
             vertical_number=row["vertical_number"],
             sequential_number=row["sequential_number"],
@@ -73,13 +77,13 @@ def load_course_from_api(course_code):
         vertical = CourseVertical(
             is_active=True,
             course=row["course"],
-            course_name=row["course_name"],
+            course_name=row["course_name"][:254],
             chapter=row["chapter"],
-            chapter_name=row["chapter_name"],
+            chapter_name=row["chapter_name"][:254],
             sequential=row["sequential"],
-            sequential_name=row["sequential_name"],
+            sequential_name=row["sequential_name"][:254],
             vertical=row["vertical"],
-            vertical_name=row["vertical_name"],
+            vertical_name=row["vertical_name"][:254],
             block_id=row["id"],
             vertical_number=row["vertical_number"],
             sequential_number=row["sequential_number"],
@@ -179,11 +183,11 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
 
     Arguments
     - procedure to compute stats given a dataframe with daily logs for a course.
-        Expected signature is 
+        Expected signature is
         procedure(dataframe, course_dataframe, date, course_id, run_code)
     - name to display during logging
     - course_id to process
-    - end_date datetime to use and upper date limit, 
+    - end_date datetime to use and upper date limit,
         lower date limit is set as end_date - DAY_WINDOW.
         If none is provided all logs will be processed
     - day_window timedelta to subtract from end_date.
@@ -218,13 +222,13 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
         vertical = CourseVertical(
             is_active=True,
             course=row["course"],
-            course_name=row["course_name"],
+            course_name=row["course_name"][:254],
             chapter=row["chapter"],
-            chapter_name=row["chapter_name"],
+            chapter_name=row["chapter_name"][:254],
             sequential=row["sequential"],
-            sequential_name=row["sequential_name"],
+            sequential_name=row["sequential_name"][:254],
             vertical=row["vertical"],
-            vertical_name=row["vertical_name"],
+            vertical_name=row["vertical_name"][:254],
             block_id=row["id"],
             vertical_number=row["vertical_number"],
             sequential_number=row["sequential_number"],
@@ -235,6 +239,7 @@ def process_logs_single_course(procedure, name, course_id, end_date=None, day_wi
             lms_web_url=row["lms_web_url"])
         return vertical
 
+    logger.debug("Init processing Course {}".format(course_id))
     time_window = DAY_WINDOW if day_window is None else day_window
     tz = pytz.timezone(settings.TIME_ZONE)
     end_date_localized = None if end_date is None else tz.localize(end_date)
@@ -330,10 +335,10 @@ def process_logs_standard_procedure(procedure, name, end_date=None, day_window=N
 
     Arguments
     - procedure to compute stats given a dataframe with daily logs for a course.
-        Expected signature is 
+        Expected signature is
         procedure(dataframe, course_dataframe, date, course_id, run_code)
     - name to display during logging
-    - end_date datetime to use and upper date limit, 
+    - end_date datetime to use and upper date limit,
         lower date limit is set as end_date - DAY_WINDOW.
         If none is provided all logs will be processed
     - day_window timedelta to subtract from end_date.
@@ -349,10 +354,10 @@ def process_logs_standard_procedure(procedure, name, end_date=None, day_window=N
     end_date_localized = None if end_date is None else tz.localize(end_date)
     # Get all course ids for the required date
     if end_date_localized is None:
-        course_ids_db = Log.objects.all().values("course_id").distinct()
+        course_ids_db = Log.objects.all().values("course_id").distinct().order_by('course_id')
     else:
         course_ids_db = Log.objects.filter(time__gte=(
-            end_date_localized - time_window), time__lt=(end_date_localized)).values("course_id").distinct()
+            end_date_localized - time_window), time__lt=(end_date_localized)).values("course_id").distinct().order_by('course_id')
 
     if course_ids_db.first() is None:
         logger.info("No logs for processing '{}'".format(name))

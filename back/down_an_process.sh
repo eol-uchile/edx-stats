@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 run(){
   python manage.py downloadlogs --prefix logrotate --from-date "$1" --check-exists
