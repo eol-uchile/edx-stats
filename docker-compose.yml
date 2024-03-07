@@ -16,8 +16,11 @@ services:
       context: ./back
       target: dev
     command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      REQUESTS_CA_BUNDLE: /usr/local/share/ca-certificates/MKCert_rootCA.crt
     volumes:
       - ./back:/app
+      - ../development-edx/data/mkcert/rootCA.pem:/usr/local/share/ca-certificates/MKCert_rootCA.crt
     ports:
       - "8000:8000"
       - "3500:3500"

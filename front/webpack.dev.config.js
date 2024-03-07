@@ -9,5 +9,7 @@ module.exports = createConfig('webpack-dev', {
     inline: true,
     publicPath: '/',
     disableHostCheck: true, // Local development with custom domain
+    sockHost: 'analytics.local-eol.uchile.cl',
+    sockPort: 443,
   },
 });
