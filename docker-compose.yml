@@ -20,7 +20,7 @@ services:
       - ./back:/app
     ports:
       - "8000:8000"
-      - "3500:3500"
+      # - "3500:3500"
     depends_on:
       - db
   front:
@@ -33,11 +33,11 @@ services:
       - /app/node_modules
     ports: 
       - "3000:3000"
+    extra_hosts:
+      - "local-eol.uchile.cl:host-gateway"
+      - "discovery.local-eol.uchile.cl:host-gateway"
+      - "s3.local-eol.uchile.cl:host-gateway"
 
   # The Redis image will run on the sandbox network
 
-networks:
-  default:
-      external:
-          name: sandbox_default
     

@@ -20,7 +20,7 @@ CMD ["npm", "start"]
 
 # Production Layers
 FROM dev as prod
-ARG env_file=.env.prod
+ARG env_file=.env.development
 RUN cp $env_file .env
 RUN npm run build
 
