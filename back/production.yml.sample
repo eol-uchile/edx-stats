@@ -47,10 +47,10 @@ JWT_AUTH:
   JWT_ISSUERS:
     - AUDIENCE: https://local-eol.uchile.cl
       ISSUER: https://local-eol.uchile.cl
-      SECRET_KEY: 'jwt_secret'
-  JWT_PUBLIC_SIGNING_JWK_SET: '{"keys": [{"kty": "RSA", "kid": "FEE4CI2B", "n": "6dmKES5VIa8BGU3CEpFU2qpd93jz5VySP2gTYmtjvpwP1TzrlzD2mys4Ia5b7WLSsZuhC0iPYD1oXclvYWW56qB-1rzAIXnqZo0q_9UB0cfxJzQknVK5AWA3Iu5hQLzEw4xPG46054KxiBIZaIhIVbl_HHMk1wVRy-v-3iRWN2yP-4nhsz9jRHAMqIaQTApXUFXTct3AZRbHBBffi9yJdIOYpp606HIMvbTCq6IzEi_WOFm7gCb1a3X4LtjagXFvASGfCiRjw7ZFBY5e9lEgoKcc3Yz14wZWwRZpd-_AFwjcAzK7NVWHXF-BYBHKSN_Kg-ecbOPF0hl2j5PzSK_r5w", "e": "AQAB"}]}'
+      SECRET_KEY: 'set-me-please'
+  JWT_PUBLIC_SIGNING_JWK_SET: 'set-me-please'
   JWT_SIGNING_ALGORITHM: RS512
-  JWT_SECRET_KEY: 'jwt_secret'
+  JWT_SECRET_KEY: 'set-me-please'
   JWT_AUTH_HEADER_PREFIX: 'JWT'
   JWT_AUTH_REFRESH_COOKIE: edx-jwt-refresh-cookie
   JWT_AUTH_COOKIE: 'edx-jwt-cookie'

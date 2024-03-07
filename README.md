@@ -24,16 +24,16 @@ If the eol development environment is on the same machine we can simply link the
 ### Configure domain files
 Configure the domain files for the frontend application on front/.env.* using the existing subdomain. The Dockerfile uses **.env.development** as default env file.
 
-Also the EDX Django Rest Framework configuration needs the correct domain. Replace in **back/production.yamls** the fields OAUTH2_USER_INFO_URL on EDX_DRF_EXTENSIONS, BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL, BACKEND_LMS_BASE_URL and BACKEND_CMS_BASE_URL.
+Also the EDX Django Rest Framework configuration needs the correct domain. Replace in **back/production.yml** the fields OAUTH2_USER_INFO_URL on EDX_DRF_EXTENSIONS, BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL, BACKEND_LMS_BASE_URL and BACKEND_CMS_BASE_URL.
 
 ### Configure Minio
-Configure Minio credentials in **back/production.yaml**. It is required to match the LMS values:
+Configure Minio credentials in **back/production.yml**. It is required to match the LMS values:
 - AWS_ACCESS_KEY_ID
 - AWS_SECRET_ACCESS_KEY
 - AWS_STORAGE_BUCKET_NAME
 
 ### Configure JWT
-The backend only needs to check the Token's signature. It requires the following fields in **back/production.yaml** to match the LMS values:
+The backend only needs to check the Token's signature. It requires the following fields in **back/production.yml** to match the LMS values:
 - JWT_ALGORITHM
 - JWT_AUTH header and cookies
 - JWT_ISSUER
@@ -52,7 +52,7 @@ To enable different info recovery from the LMS without forwarding JWT tokens fro
     * Authorization grant type: `Client credentials`
     * Client secret: `analytics-oauth-client-secret`
     * Skip authorization: checked
-- Complete the fields BACKEND_SERVICE_EDX_OAUTH2 on **back/production.yaml**.
+- Complete the fields BACKEND_SERVICE_EDX_OAUTH2 on **back/production.yml**.
 
 - Enter location `/admin/oauth_dispatch/applicationaccess/`
   * Add a new Application access with
