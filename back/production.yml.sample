@@ -1,0 +1,59 @@
+AWS_ACCESS_KEY_ID: 'set-me-please'
+AWS_SECRET_ACCESS_KEY: 'set-me-please'
+AWS_STORAGE_BUCKET_NAME: 'set-me-please'
+AWS_DEFAULT_ACL: 'public-read'
+AWS_S3_REGION_NAME: ''
+AWS_S3_ENDPOINT_URL: 'http://minio:9000'
+ALLOWED_HOSTS:
+  - '*'
+BACKEND_SERVICE_EDX_OAUTH2_KEY: 'analytics-oauth-client'
+BACKEND_SERVICE_EDX_OAUTH2_SECRET:  'analytics-oauth-client-secret'
+BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL: 'https://local-eol.uchile.cl/oauth2'
+BACKEND_LMS_BASE_URL: 'https://local-eol.uchile.cl'
+BACKEND_CMS_BASE_URL: 'https://studio.local-eol.uchile.cl'
+BACKEND_ALLOWED_ROLES:
+  - 'staff'
+  - 'data researcher'
+  - 'instructor'
+  - 'administrator'
+BACKEND_LOGS_DIR: '/app/logs'
+CACHE:
+  default:
+    BACKEND: 'django_redis.cache.RedisCache'
+    LOCATION: 'redis://@redis:6380/3'
+    OPTIONS:
+      CLIENT_CLASS: 'django_redis.client.DefaultClient'
+      PASSWORD: 'msecret318e401514dd45e97daf49d1d5c36cdbf9a7294395e84a9f52c08c6ad3699fcc0'
+    KEY_PREFIX: 'stats'
+CELERY_BROKER_URL: 'redis://msecret318e401514dd45e97daf49d1d5c36cdbf9a7294395e84a9f52c08c6ad3699fcc0@redis:6380/2'
+CELERY_BACKEND: 'redis://msecret318e401514dd45e97daf49d1d5c36cdbf9a7294395e84a9f52c08c6ad3699fcc0@redis:6380/2'
+DJANGO_SECRET_KEY: 'lif-s82+7##n-lma+v@l_suzftkxy0%o&-ohnt6^^g_t9fu1bx'
+DATABASES:
+  default:
+    ENGINE: 'django.db.backends.postgresql'
+    NAME: 'postgres'
+    USER: 'postgres'
+    PASSWORD: 'postgres'
+    HOST: 'db'
+    PORT: 5432
+EDX_DRF_EXTENSIONS:
+  OAUTH2_USER_INFO_URL: "https://local-eol.uchile.cl/oauth2/user_info"
+JWT_AUTH: 
+  JWT_ALGORITHM: HS256
+  JWT_AUTH_COOKIE_HEADER_PAYLOAD: edx-jwt-cookie-header-payload
+  JWT_AUTH_COOKIE_SIGNATURE: edx-jwt-cookie-signature
+  JWT_AUDIENCE: https://local-eol.uchile.cl
+  JWT_ISSUER: https://local-eol.uchile.cl
+  JWT_ISSUERS:
+    - AUDIENCE: https://local-eol.uchile.cl
+      ISSUER: https://local-eol.uchile.cl
+      SECRET_KEY: 'set-me-please'
+  JWT_PUBLIC_SIGNING_JWK_SET: 'set-me-please'
+  JWT_SIGNING_ALGORITHM: RS512
+  JWT_SECRET_KEY: 'set-me-please'
+  JWT_AUTH_HEADER_PREFIX: 'JWT'
+  JWT_AUTH_REFRESH_COOKIE: edx-jwt-refresh-cookie
+  JWT_AUTH_COOKIE: 'edx-jwt-cookie'
+  JWT_DECODE_HANDLER: 'edx_rest_framework_extensions.auth.jwt.decoder.jwt_decode_handler'
+  JWT_VERIFY_AUDIENCE: False
+TIME_ZONE: 'UTC'
