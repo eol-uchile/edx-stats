@@ -65,7 +65,7 @@ const TimesTable = (props) => {
 
   const [tableData, setTableData, rowData, setRowData] = useProcessSumData(
     times.added_times,
-    'event_type_vertical',
+    'vertical__vertical',
     recoverCourseStudentTimesSum,
     errors,
     setErrors,

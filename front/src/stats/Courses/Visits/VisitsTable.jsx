@@ -48,7 +48,7 @@ const VisitsTable = (props) => {
 
   const [tableData, setTableData, rowData, _] = useProcessSumData(
     visits.added_visits,
-    'vertical',
+    'vertical__vertical',
     recoverCourseStudentVisitSum,
     errors,
     setErrors,
