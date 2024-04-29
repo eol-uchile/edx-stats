@@ -53,15 +53,15 @@ To enable different info recovery from the LMS without forwarding JWT tokens fro
 
 ## DB Migrations
 ```
-docker-compose up -d db stats
-docker-compose exec stats python manage.py migrate
+docker compose up -d db stats
+docker compose exec stats python manage.py migrate
 ```
 
 ## Create user
-```docker-compose exec stats python manage.py createsuperuser```
+```docker compose exec stats python manage.py createsuperuser```
 
 ## Start docker
-```docker-compose up --build -d```
+```docker compose up --build -d```
 
 ## Update submodule
 Run on the front/ ```git submodule update --init --recursive```

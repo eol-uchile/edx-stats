@@ -1,5 +1,5 @@
 # pull official base image
-FROM node:12.18.3-stretch as dev
+FROM node:12.18.3-buster as dev
 
 WORKDIR /app
 # add `/app/node_modules/.bin` to $PATH

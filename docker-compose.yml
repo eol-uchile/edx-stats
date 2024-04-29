@@ -1,16 +1,12 @@
-version: '3.7'
-    
 services:
   db:
-    #image: postgres:12.4
-    image: timescale/timescaledb:latest-pg12
+    image: timescale/timescaledb:latest-pg13
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
       - ./db/postgresql:/var/lib/postgresql/data
-      #- ./dump:/dump
   stats:
     build:
       context: ./back
@@ -23,24 +19,23 @@ services:
       - ../development-edx/data/mkcert/rootCA.pem:/usr/local/share/ca-certificates/MKCert_rootCA.crt
     ports:
       - "8000:8000"
-      - "3500:3500"
     depends_on:
       - db
   front:
-    build: 
+    build:
       context: ./front
       target: dev
     command: npm start
     volumes:
       - ./front:/app
       - /app/node_modules
-    ports: 
+      #- ./logs:/root/.npm/_logs
+    ports:
       - "3000:3000"
 
   # The Redis image will run on the sandbox network
 
 networks:
   default:
-      external:
-          name: sandbox_default
-    
+    name: sandbox_default
+    external: true
