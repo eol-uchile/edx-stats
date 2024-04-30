@@ -43,6 +43,8 @@ class Command(BaseCommand):
             file_batch = client.list_objects_v2(
                 Bucket=self.bucket, Prefix=self.prefix, MaxKeys=1000)
 
+        if not 'Contents' in file_batch:
+            return
         keys = [k["Key"] for k in file_batch["Contents"]]
 
         for key in keys:
